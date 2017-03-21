@@ -1,0 +1,83 @@
+<ion-side-menus enable-menu-with-back-views="false" ng-controller="MainCtrl">
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-assertive" align-title="center">
+      <ion-nav-back-button class="button-clear">
+      	<img ng-src="img/logo.png" class="nav-logo"/>
+      </ion-nav-back-button>
+
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+        </button>
+      </ion-nav-buttons>
+      <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-ios-search" menu-toggle="right">
+        </button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-nav-view name="nlfeed-content"></ion-nav-view>
+  </ion-side-menu-content>
+  <ion-side-menu side="left">
+    <ion-content>
+    	<div class="main-sidebar-profile" >
+        <div class="profile-info">
+          <img id="profile-image" src="http://3.bp.blogspot.com/-zR75pEKCSSU/VYGjwNogrmI/AAAAAAAAA1Y/xgPrSXra3fE/s200-c/darts-102919_1280.jpg">
+          <a menu-close-keep-history href="#/app/profile" class="profile-name">John Doe</a>
+        </div>
+      </div>
+      <ion-list>
+        <ion-item menu-close-keep-history href="#/app/profile" class="item-icon-left">
+        	<i class="icon ion-ios-home"></i>
+          Profile
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/friends" class="item-icon-left">
+        	<i class="icon ion-ios-people"></i>
+          Friends
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/gallery" class="item-icon-left">
+        	<i class="icon ion-images"></i>
+          Photos
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/settings" class="item-icon-left">
+        	<i class="icon ion-ios-gear"></i>
+          Settings
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/admob" class="item-icon-left">
+        	<i class="icon ion-cash"></i>
+          Admob
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/push" class="item-icon-left">
+        	<i class="icon ion-paper-airplane"></i>
+          Push
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/features" class="item-icon-left">
+        	<i class="icon ion-arrow-expand"></i>
+          Features
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/contact" class="item-icon-left">
+        	<i class="icon ion-email"></i>
+          Contact us
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+  <ion-side-menu side="right">
+    <ion-content class="grey_bg">
+    	<div class="list list-inset">
+        <label class="item item-input">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="Search">
+        </label>
+      </div>
+      <ion-list>
+        <ion-item menu-close-keep-history href="#/app/profile" class="item-icon-left">
+        	<i class="icon ion-ios-home"></i>
+          Profile
+        </ion-item>
+        <ion-item menu-close-keep-history href="#/app/settings" class="item-icon-left">
+        	<i class="icon ion-ios-gear"></i>
+          Settings
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>

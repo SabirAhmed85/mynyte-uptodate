@@ -1,0 +1,20 @@
+<ion-view view-title="{{rootScope.pageTitle}} on myNyte.co.uk" class="black_bg">
+    <ion-content>
+        <div class="list summary-display view-wrapper">
+            <a class="item item-message-summary profile-item-summary no-bottom"
+                ng-click="rootScope.showPopoverImages(item.index)"
+                ng-repeat="item in photos"
+                ng-class="{'left': item.evenIndex == 'odd', 'profile-item-summary-third': item.picType == 'Profile Photo'}">
+                <div>
+                    <div style="width: 100%; overflow: hidden;" class="main-visual-image-display"
+                        ng-style="{height: windowWidth+'px'};">
+                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                            ng-if="item.picType == 'Profile Photo' || item.picType == 'Cover Photo'" />
+                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{_listingProfileId}}_{{item._folderId}}_{{item.name}}"
+                                ng-if="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'" />
+                    </div>
+                </div>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

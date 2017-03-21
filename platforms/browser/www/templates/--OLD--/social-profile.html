@@ -1,0 +1,21 @@
+<ion-view class="grey_bg" view-title="Social Profiles">
+   <ion-content class="has-header">
+		<div ng-repeat="social in socials" ng-if="$index%2==0" class="row assertive">
+
+			<div class="card col home">
+				<a class="item item-text-wrap item-home" href="{{socials[$index].url}}">
+					<h1><i class="icon {{socials[$index].icon}}"></i></h1>
+					<h2>{{socials[$index].title}}</h2>
+				</a>
+			</div>
+
+			<div class="card col home">
+				<a class="item item-text-wrap item-home" href="{{socials[$index + 1].url}}">
+					<h1><i class="icon {{socials[$index + 1].icon}}"></i></h1>
+					<h2>{{socials[$index + 1].title}}</h2>
+				</a>
+			</div>
+
+		</div>
+   </ion-content>
+</ion-view>

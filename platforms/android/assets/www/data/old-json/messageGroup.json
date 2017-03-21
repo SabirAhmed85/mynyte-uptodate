@@ -1,0 +1,74 @@
+[
+  {
+    "_id": 1,
+    "message_date": "30-06-2015",
+	 "text" : "Haii",
+	 "from" : "1"
+  },
+  {
+    "_id": 2,
+    "message_date": "30-06-2015",
+	 "text" : "Test messages",
+	 "from" : "1"
+  },
+  {
+    "_id": 3,
+    "message_date": "30-06-2015",
+	 "text" : "A long message with hello world, beep beep",
+	 "from" : "2"
+  },
+  {
+    "_id": 4,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum",
+	 "from" : "1"
+  },
+  {
+    "_id": 5,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "1"
+  },
+  {
+    "_id": 6,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "1"
+  },
+  {
+    "_id": 7,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "2"
+  },
+  {
+    "_id": 8,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "1"
+  },
+  {
+    "_id": 9,
+    "message_date": "30-06-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "2"
+  },
+  {
+    "_id": 10,
+    "message_date": "01-07-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "2"
+  },
+  {
+    "_id": 11,
+    "message_date": "02-07-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "1"
+  },
+  {
+    "_id": 12,
+    "message_date": "03-07-2015",
+	 "text" : "Lorem ipsum dolor sit amet, consectetuer Lorem ipsum dolor sit amet, consectetuer Lorem ipsum dolor sit amet, consectetuer Lorem ipsum dolor sit amet, consectetuer",
+	 "from" : "1"
+  }
+]

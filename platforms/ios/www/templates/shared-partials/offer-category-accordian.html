@@ -1,0 +1,57 @@
+<label ng-click="toggleCategoryShow(category);">
+    {{category.name}}
+    <i ng-class="{'ion-plus-round': !category.showFull, 'ion-minus-round': category.showFull}"></i>
+</label>
+<div class="content" ng-show="category.showFull" ng-class="{'open':category.showFull}">
+    <div class="offer" eat-click-if="!feature.isFeature" ng-repeat="feature in category.offers" 
+        ng-class="{'feature':feature._offerTypeId != '1', 'first': feature.index == 1}"
+        ng-click="goToOffer(feature);">
+        <span class="offer-food-style-label"
+            ng-if="feature.offerFoodStyle != null">{{feature.offerFoodStyle}}</span>
+        <span class="offer-exclusive-label"
+            ng-if="feature._offerTypeId == '3'">MyNyte Exclusive</span>
+            
+        <span class="offer-img-container"
+            ng-style="{'height': {{windowWidth * (7/16)}}+'px'}"
+            ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != 'default-offer.jpg'">
+            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}"
+                src="img/user_images/cover_photo/default-offer.jpg"
+                ng-if="feature.currentOfferCoverPhotoName != 'default-offer.jpg'"/>
+        </span>
+        <p class="offer-main-text">{{feature.description}}</p>
+        <i class="ion-chevron-right" ng-show="feature.businessIsFeatured == '1'"></i>
+        <div class="offer-where-container">
+            <p class="offer-where-text">Where: {{feature.businessName}}</p>
+        </div>
+        
+        <div class="offer-when-container">
+            <p class="offer-when-text">
+                <span>&nbsp;When:</span>
+                <span
+                    ng-if="feature.weekdayName != null && feature.timeScale != 'past'">
+                    &nbsp;Every {{feature.weekdayName}}
+                </span>
+                <span
+                    ng-if="feature.weekdayName == null && feature.timeScale == 'present'">
+                    &nbsp;Now
+                </span>
+                <span
+                    ng-if="feature.weekdayName != null && feature.timeScale != 'present' && feature.todayOrFuture == 'future'">
+                    &nbsp;from
+                </span>
+                <span
+                    ng-if="(feature.weekdayName == null && feature.startDateTimeString != feature.endDateTimeString && (feature.todayOrFuture == 'future' || feature.timeScale == 'past')) || (feature.weekdayName != null && feature.todayOrFuture != 'today' && feature.timeScale != 'present')">
+                    &nbsp;{{feature.startDateTimeString}}
+                </span>
+                <span ng-if="feature.startDateTimeString != feature.endDateTimeString">&nbsp;until</span>
+                <span>&nbsp;{{feature.endDateTimeString}}</span>
+            </p>
+        </div>
+        
+        <div class="offer-event-container"
+            ng-if="feature.relatedEventName != null">
+            <i class="ion-calendar"></i>Event: {{feature.relatedEventName}}
+        </div>
+        <div class="icon-bar-container" ng-include="'templates/shared-partials/listing-icon-bar.html'"></div>
+    </div>
+</div>

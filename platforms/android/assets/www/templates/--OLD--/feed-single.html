@@ -1,0 +1,21 @@
+<ion-view title="{{feedContent.title}}">
+    <ion-content class="has-header">
+        <div class="padding">
+            <h2 class="title">{{feedContent.title}}</h2>
+            <div padding="10">Posted {{feedContent.publishedDate }}</div>
+            <p ng-bind-html="content"></p>
+            
+            <p>
+            
+            	<button class="button button-full button-assertive" ng-click="shareArticle(feedContent.title,feedContent.link)">
+               	Share this
+             	</button>   
+
+            	<button class="button button-full button-positive" ng-click="openLinkArticle(feedContent.link)">
+            		View full article
+            	</button>    
+            </p>
+        </div>
+
+    </ion-content>
+</ion-view>

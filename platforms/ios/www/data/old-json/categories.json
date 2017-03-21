@@ -1,0 +1,57 @@
+[
+  {
+    "_id": 1,
+    "CategoryType": "Town",
+	 "Name": "Bedford"
+  },
+  {
+    "_id": 2,
+    "CategoryType": "Town",
+	 "Name": "Luton"
+  },
+  {
+    "_id": 3,
+    "CategoryType": "Town",
+	 "Name": "Northampton"
+  },
+  {
+    "_id": 4,
+    "CategoryType": "Town",
+	 "Name": "Milton Keynes"
+  },
+  {
+    "_id": 5,
+    "CategoryType": "Music",
+	 "Name": "All"
+  },
+  {
+    "_id": 6,
+    "CategoryType": "Music",
+	 "Name": "Pop / Chart"
+  },
+  {
+    "_id": 7,
+    "CategoryType": "Music",
+	 "Name": "Dance / House"
+  },
+  {
+    "_id": 8,
+    "CategoryType": "Music",
+	 "Name": "Rock / Live"
+  },
+  {
+    "_id": 9,
+    "CategoryType": "Music",
+   "Name": "R&b / Urban"
+  },
+  {
+    "_id": 10,
+    "CategoryType": "Offer",
+   "Name": "Drink's Deals (Drinks)"
+  },
+  {
+    "_id": 11,
+    "CategoryType": "Offer",
+   "Name": "Takeaway Deals (Food)"
+  }
+]

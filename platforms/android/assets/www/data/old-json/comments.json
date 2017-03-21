@@ -1,0 +1,30 @@
+[
+  {
+    "_id": 1,
+	 "comment": "Awesome photo comment"
+  },
+  {
+    "_id": 2,
+	 "comment": "Wow, that is a cool pic"
+  },
+  {
+    "_id": 3,
+	 "comment": "Simple comment"
+  },
+  {
+    "_id": 4,
+	 "comment": "Another simple comment"
+  },
+  {
+    "_id": 5,
+	 "comment": "Hi buddy, whatsup? hows your day going?"
+  },
+  {
+    "_id": 6,
+	 "comment": "Avengers is a beautiful film."
+  },
+  {
+    "_id": 7,
+	 "comment": "That is an awesome car, but costly"
+  }
+]
