@@ -7,7 +7,7 @@
 var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ionic.service.push', 'ImageCropper']);
 
 // not necessary for a web based app // needed for cordova/ phonegap application
-app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, Movies, Offers) {
+app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, Movies, Offers, EnvironmentVariables) {
   
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,
@@ -223,7 +223,12 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       ];
       $rootScope.currentSelectedListingTypeToFind = 'clubnight';
       
-      $rootScope.intendedPlatform = 'browser';
+      $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
+      $rootScope.metaContent = EnvironmentVariables.MetaContent;
+      $rootScope.rootUrl = EnvironmentVariables.RootUrl;
+      $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
+      $rootScope.assetsFolderRelUrl = EnvironmentVariables.AssetsFolderRelUrl;
+      console.log($rootScope.rootUrl, $rootScope.assetsFolderUrl, $rootScope.assetsFolderRelUrl);
       $rootScope.debugMode = true;
       $rootScope.relListing = null;
       $rootScope.nightFindSlideLocked = false;
@@ -266,10 +271,10 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
       $rootScope.initiateBottomRightImg = function () {
         $rootScope.bottomRightImgArray = [
-            {src: "/sneak-preview/img/download-the-mynyte-app.png",
+            {src: "/img/download-the-mynyte-app.png",
             show: true,
             class: "",
-            href: "/sneak-preview/img/download-the-mynyte-app.png"}
+            href: "/img/download-the-mynyte-app.png"}
             /*,{src:"/sneak-preview/img/download-the-mynyte-app.png",
             show: false,
             class: "absolute",

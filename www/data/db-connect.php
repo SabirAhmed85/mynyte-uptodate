@@ -1,7 +1,7 @@
 <?php
     $http_origin = $_SERVER['HTTP_ORIGIN'];
 
-    if ($http_origin == "http://www.mynyte.co.uk" || $http_origin == "http://localhost:8000")
+    if ($http_origin == "http://staging.mynyte.co.uk" || $http_origin == "http://localhost:8000")
     {
         header("Access-Control-Allow-Origin: $http_origin");
     }
