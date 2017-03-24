@@ -8090,11 +8090,11 @@ location-lookup ul li {
     }
     
     .tabs .tab-item.nightlife-tab i {
-        background-image: url('../img/n-icon-wide-inactive.png') !important;
+        background-image: url('../sneak-preview/img/n-icon-wide-inactive.png') !important;
         margin-top: 3px !important;
     }
     .tabs .tab-item .icon.nightlife-tab-icon-on {
-        background-image: url('../img/n-icon-wide-active.png') !important;
+        background-image: url('../sneak-preview/img/n-icon-wide-active.png') !important;
     }
     
     .tab-item span {

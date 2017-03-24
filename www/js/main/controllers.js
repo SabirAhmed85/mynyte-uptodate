@@ -271,10 +271,10 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
       $rootScope.initiateBottomRightImg = function () {
         $rootScope.bottomRightImgArray = [
-            {src: "/img/download-the-mynyte-app.png",
+            {src: "/sneak-preview/img/download-the-mynyte-app.png",
             show: true,
             class: "",
-            href: "/img/download-the-mynyte-app.png"}
+            href: "/sneak-preview/img/download-the-mynyte-app.png"}
             /*,{src:"/sneak-preview/img/download-the-mynyte-app.png",
             show: false,
             class: "absolute",
@@ -779,7 +779,7 @@ $timeout(function () {
         $rootScope.showingAssistant = true;
         $timeout(function () {$rootScope.showingAssistant = false;}, 180);
             
-        var imgRoot = 'img/assistant_images/';
+        var imgRoot = 'sneak-preview/img/assistant_images/';
         var assistantDisplayConfig = {
             'app.feed': {
                 'detail-img-array': [

@@ -34,13 +34,12 @@
     $accepted = ($_GET['accepted'] == undefined) ? "": mysql_real_escape_string($_GET['accepted']);
     $rejected = ($_GET['rejected'] == undefined) ? "": mysql_real_escape_string($_GET['rejected']);
     $completed = ($_GET['completed'] == undefined) ? "": mysql_real_escape_string($_GET['completed']);
+    $cancelled = ($_GET['cancelled'] == undefined) ? "": mysql_real_escape_string($_GET['cancelled']);
     $alternateDate = ($_GET['alternateDate'] == 'null') ? 'null': "'". mysql_real_escape_string($_GET['alternateDate']) . "'";
 
     if ($action == 'updateTableBooking') {
-      $result = mysql_query("CALL businessUpdateTableBooking($_tableBookingId, $accepted, $rejected, $completed, $alternateDate);");
+      $result = mysql_query("CALL businessUpdateTableBooking($_tableBookingId, $accepted, $rejected, $cancelled, $completed, $alternateDate);");
     } else {
-      $cancelled = ($_GET['cancelled'] == undefined) ? "": mysql_real_escape_string($_GET['cancelled']);
-
       $result = mysql_query("CALL personUpdateTableBooking($_tableBookingId, $accepted, $rejected, $cancelled, $completed, $alternateDate);");
     }
   }

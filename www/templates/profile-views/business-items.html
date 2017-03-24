@@ -110,6 +110,10 @@
                         <label class="booking-time">
                             {{item.dateRequested}} at {{item.timeRequested}}
                         </label>
+                        <label class="booking-time-suggested"
+                            ng-if="item.dateTimeSuggested != null">
+                            Suggested: at {{item.timeSuggested}}
+                        </label>
                         <span class="message-sub-note message-sub-note-large">
                             <span>
                                 <i 

@@ -3,9 +3,9 @@ var IntendedEnvironment = "Staging";
 var IntendedPlatform = "browser";
 /* */
 
-var AssetsFolderUrl = (IntendedEnvironment == 'Staging') ? "http://staging.mynyte.co.uk": "https://www.mynyte.co.uk/sneak-preview";
 var RootUrl = (IntendedEnvironment == 'Staging') ? "http://staging.mynyte.co.uk/": "https://www.mynyte.co.uk/";
 var ConnectionPrefix = (IntendedEnvironment == 'Staging') ? "http": "https";
+var AssetsFolderUrl = RootUrl + "sneak-preview";
 var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " "+ConnectionPrefix+"://csi.gstatic.com/ "+ConnectionPrefix+"://1.bp.blogspot.com/ "+ConnectionPrefix+"://maps.googleapis.com/ data:"
 
 app.constant("EnvironmentVariables", {

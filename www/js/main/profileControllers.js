@@ -1778,6 +1778,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 if (businessItemType == 'Table Booking') {
                     successData[i].timeRequested = datesService.getShortenedTimeString(successData[i].dateTimeRequested);
                     successData[i].dateRequested = convertToReadableDate(successData[i].dateTimeRequested);
+                    if (successData[i].dateTimeSuggested != null) {
+                        successData[i].timeSuggested = datesService.getShortenedTimeString(successData[i].dateTimeSuggested);
+                    }
                 }
                 else if (businessItemType == 'Event') {
                     successData[i].DATE = convertToReadableDate(successData[i].DATE);
@@ -3002,14 +3005,20 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         });
                     }
 
-                    $scope.finishUpdatingTableBooking = function (accepted, rejected, completed, alternateDate) {
-                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, completed, alternateDate).success(function (successData) {
+                    $scope.finishUpdatingTableBooking = function (accepted, rejected, cancelled, completed, alternateDate) {
+                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, cancelled, completed, alternateDate).success(function (successData) {
                             
                             if (accepted == 1 ||
                                 rejected == 1 ||
-                                (rejected == 0 && accepted == 0 && alternateDate != null)
+                                cancelled == 1 ||
+                                (rejected == 0 && accepted == 0 && cancelled == 0 && alternateDate != null)
                             ) {
-                                var text = (accepted == 1) ? "accepted": "rejected";
+                                var text = "accepted";
+                                if (rejected == 1) {
+                                    text = "rejected";
+                                } else if (cancelled == 1){
+                                    text = "cancelled";
+                                }
                                 if (alternateDate != null) {
                                     text += ", but a different Time was suggested.";
                                 } else {
@@ -3033,7 +3042,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $rootScope.backButtonFunction();
                             $rootScope.appLoading = false;
                         }).error(function () {
-                            $scope.finishUpdatingTableBooking(accepted, rejected, completed, alternateDate);
+                            $scope.finishUpdatingTableBooking(accepted, rejected, cancelled, completed, alternateDate);
                         });
                     }
 
@@ -3066,7 +3075,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                             var altDateTime = $scope.businessItem.dateTimeRequested.substr(0, $scope.businessItem.dateTimeRequested.indexOf(' ')) + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;
                             
-                            $scope.finishUpdatingTableBooking(0, 0, 0, altDateTime);
+                            $scope.finishUpdatingTableBooking(0, 0, 0, 0, altDateTime);
                           }
                         },
                         inputTime:64800,   //Optional
@@ -3081,14 +3090,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
                     $scope.updateTableBooking = function (updateType) {
                         $rootScope.appLoading = true;
-                        var accept = 0, reject = 0, alternateDate = null;
+                        var accept = 0, reject = 0, cancel = 0, alternateDate = null;
 
                         if (updateType == 'accept') {
                             accept = 1;
                         } else if (updateType == 'reject') {
                             reject = 1;
+                        } else if (updateType == 'cancel') {
+                            accept = $scope.businessItem.isAccepted;
+                            cancel = 1;
                         }
-                        $scope.finishUpdatingTableBooking(accept, reject, 0, alternateDate);
+                        $scope.finishUpdatingTableBooking(accept, reject, cancel, 0, alternateDate);
                     }
                     break;
                 case 'RequestedTakeawayOrders':

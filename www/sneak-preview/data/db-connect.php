@@ -15,7 +15,7 @@
 
   $db_pass = "The_edgesxa454";
 
-  $db_name = "MyNyte";
+  $db_name = "MyNyte_Staging";
   //$db_name = "MyNyte_MyTownCombinedTest";
 
 

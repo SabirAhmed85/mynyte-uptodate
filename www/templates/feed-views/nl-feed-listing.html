@@ -11,10 +11,10 @@
                 <div id="detailedContent-inner" class="detailedContent-inner">
                     <div id="listing-info">
                         
-                        <img id="listing-cover-image" src="/img/user_images/cover_photo/default.jpg"
+                        <img id="listing-cover-image" src="/sneak-preview/img/user_images/cover_photo/default.jpg"
                             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{listing.currentCoverPhotoName}}"
                             ng-click="seePhoto('CoverPhoto')"></img>
-                        <img id="listing-image" class="profile-listing-image" src="/img/user_images/profile_photo/default.jpg"
+                        <img id="listing-image" class="profile-listing-image" src="/sneak-preview/img/user_images/profile_photo/default.jpg"
                             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}"
                             ng-if="listing.listingType != 'Movie' && listing.listingType != 'Event'"
                             ng-click="seePhoto('ProfilePhoto')">

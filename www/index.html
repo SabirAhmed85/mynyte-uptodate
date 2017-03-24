@@ -228,7 +228,7 @@
                 ng-show="userLoggedIn">
                 <img
                     ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{user.currentProfilePhotoName}}"
-                    src="/img/user_images/profile_photo/default.jpg" />
+                    src="/sneak-preview/img/user_images/profile_photo/default.jpg" />
                 <span class="inner-wrapper">
                     <p class="title">Logged in</p>
                     <p class="name">{{user.displayName}}</p>
@@ -293,7 +293,7 @@
             ng-show="searchForm.searchQuery.length > 0 || (showHeaderButtons && searchPanelResultsToShow.length > 0)">
             <ul>
                 <li ui-sref="app.feed.nlfeedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in searchPanelResultsToShow">
-                    <img src="img/user_images/profile_photo/default.jpg"
+                    <img src="sneak-preview/img/user_images/profile_photo/default.jpg"
                         ng-src="{{assetsFolderUrl}}/img/user_images/{{result.currentPhotoAlbum}}/{{result.currentProfilePhotoName}}" />
 
                     <div class="listing-detail-container">
