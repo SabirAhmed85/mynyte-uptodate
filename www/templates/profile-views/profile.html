@@ -37,6 +37,8 @@
                 
                 <a href="#/app/registerIntro">Register with MyNyte</a>
                 <a href="#/app/resetPassword/1//">Forgot Your Password</a>
+                <a ng-if="rootScope.underConstruction && rootScope.adminUserLoggedIn"
+                    ng-click="rootScope.adminLogOut();">Log Out Admin User</a>
         	</div>
         </div>
         

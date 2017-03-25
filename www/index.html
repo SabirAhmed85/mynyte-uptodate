@@ -415,6 +415,23 @@
             </div>
         </div>
     </div>
+    <div id="under-construction-cover"
+        ng-if="underConstruction && !adminUserLoggedIn">
+        <h3>Under Construction</h3>
+        <img src="sneak-preview/img/n-logo.png" alt="MyNyte Logo">
+        <p>The MyNyte website is currently under construction, check back soon for the latest updates!</p>
+        <form name="adminLogInForm"
+            ng-submit="adminLogIn(adminLogInForm.email, adminLogInForm.password)">
+            <label>Log in as an Administrator</label>
+            <input type="email" placeholder="e-mail"
+                ng-model="adminLogInForm.email" required>
+            <input type="password" placeholder="password"
+                ng-model="adminLogInForm.password" required>
+            <button type="submit" class="button-red button button-large"
+                ng-class="{'disabled': adminLogInForm.$invalid}"
+                ng-disabled="adminLogInForm.$invalid">Log In</button>
+        </form>
+    </div>
     
     <!-- BROWSER Only -->
     <div id="breadcrumb-bar"

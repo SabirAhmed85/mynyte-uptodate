@@ -1,6 +1,7 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
 var IntendedEnvironment = "Staging";
 var IntendedPlatform = "browser";
+var UnderConstruction = true;
 /* */
 
 var RootUrl = (IntendedEnvironment == 'Staging') ? "http://staging.mynyte.co.uk/": "https://www.mynyte.co.uk/";
@@ -11,6 +12,7 @@ var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe
 app.constant("EnvironmentVariables", {
               "IntendedPlatform": IntendedPlatform,
               "IntendedEnvironment": IntendedEnvironment,
+              "UnderConstruction": UnderConstruction,
               "MetaContent": MetaContent,
               "RootUrl": RootUrl,
               "AssetsFolderUrl": AssetsFolderUrl,

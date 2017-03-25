@@ -1424,7 +1424,8 @@ app.factory('userService', ['$rootScope', function ($rootScope) {
 
         model: {
             user: {},
-            introTooltipShownCount: 0
+            introTooltipShownCount: 0,
+            adminUserLoggedIn: false
         },
 
         SaveState: function () {
