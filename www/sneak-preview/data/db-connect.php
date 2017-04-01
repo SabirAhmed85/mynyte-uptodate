@@ -1,7 +1,10 @@
 <?php
-    $http_origin = $_SERVER['HTTP_ORIGIN'];
+    $intended_environment = 'Staging';
 
-    if ($http_origin == "http://staging.mynyte.co.uk" || $http_origin == "http://localhost:8000")
+    $http_origin = $_SERVER['HTTP_ORIGIN'];
+    $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk";
+
+    if ($http_origin == $httpUrl || $http_origin == "http://localhost:8000")
     {
         header("Access-Control-Allow-Origin: $http_origin");
     }
@@ -9,18 +12,18 @@
     header('Access-Control-Allow-Methods: GET, SET, POST');
     header("Access-Control-Allow-Headers: X-Requested-With");
 
-  $db_host = "localhost:3306";
+  $db_host = "localhost";
 
-  $db_uid = "sabir_admin";
+  $db_uid = "qxiryynz_mynyteuser";
 
-  $db_pass = "The_edgesxa454";
+  $db_pass = "wM)Ln8-Q2o6g";
 
-  $db_name = "MyNyte_Staging";
+  $db_name = "qxiryynz_mynyte";
   //$db_name = "MyNyte_MyTownCombinedTest";
 
 
   $db_con = mysql_connect($db_host, $db_uid, $db_pass) or die(mysql_error());
-  
+
   mysql_select_db($db_name);
   
   //Debug

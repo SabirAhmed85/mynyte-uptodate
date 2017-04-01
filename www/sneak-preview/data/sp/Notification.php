@@ -2,7 +2,7 @@
 
   require_once('../db-connect.php');
     
-  $action = ($_GET['action'] == undefined) ? "": mysql_real_escape_string($_GET['action']);
+  $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
   
   if ($action == 'clearAllExpiredTransactions') {
     $result = mysql_query("CALL clearAllExpiredTransactions()");
@@ -10,18 +10,18 @@
   else if ($action == 'getNotifications') {
     
     if (isset($_GET['_profileId'])) {
-        $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+        $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
         
         $result = mysql_query("CALL getNotifications($_profileId)");
     }
   }
   else if ($action == 'getAllUserNotificationsSummaryForUpdate') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
     
     $result = mysql_query("CALL getAllUserNotificationsSummaryForUpdate($_profileId)");
   }
   else if ($action == 'getUnreadUserNotificationsSummaryForUpdate') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
     
     $result = mysql_query("CALL getUnreadUserNotificationsSummaryForUpdate($_profileId)");
   }

@@ -757,6 +757,8 @@ $timeout(function () {
     
     $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
     
+    $rootScope.Platform = ionic.Platform;
+    console.log($rootScope.Platform.isIOS(), $rootScope.Platform.isAndroid());
     $rootScope.showGlobalTownSelect = false;
     $rootScope.currentlyEditing = false;
     $rootScope.showSearchPanel = false;
@@ -778,6 +780,7 @@ $timeout(function () {
     /*Fuctions for Admins*/
     if ($rootScope.underConstruction && $rootScope.intendedPlatform == 'browser') {
       $rootScope.adminLoginForm = {email: "", password: ""};
+      $rootScope.showAdminLogInForm = false;
       $rootScope.adminLogIn = function (email, pword) {
         $rootScope.appLoading = true;
         Profile.logIn(email, pword).success(function (successData) {

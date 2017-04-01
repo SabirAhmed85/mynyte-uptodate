@@ -1,9 +1,9 @@
 <?php
     require_once('../db-connect.php');
     
-    $action = ($_GET['action'] == undefined) ? "": mysql_real_escape_string($_GET['action']);
+    $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
     
-    $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+    $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
 
     if ($action == 'getMenuItemCategories') {
         $result = mysql_query("CALL getMenuItemCategories('$_businessId');");
@@ -12,33 +12,33 @@
         $result = mysql_query("CALL getMenuItemSubCategories('$_businessId');");
     }
     elseif ($action == 'getMenuItems') {
-        $_menuItemCategoryId = ($_GET['_menuItemCategoryId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
-        $_menuTypeId = ($_GET['_menuTypeId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuTypeId']);
+        $_menuItemCategoryId = (empty($_GET['_menuItemCategoryId'])) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
+        $_menuTypeId = (empty($_GET['_menuTypeId'])) ? "": mysql_real_escape_string($_GET['_menuTypeId']);
         
         $result = mysql_query("CALL getMenuItems('$_businessId','$_menuItemCategoryId', '$_menuTypeId');");
     }
     elseif ($action == 'getMenuItem') {
-        $_menuItemId = ($_GET['_menuItemId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemId']);
+        $_menuItemId = (empty($_GET['_menuItemId'])) ? "": mysql_real_escape_string($_GET['_menuItemId']);
         
         $result = mysql_query("CALL getMenuItem('$_businessId','$_menuItemId');");
     }
     elseif ($action == 'getMenuItemsExtraOptions') {
-        $_menuItemId = ($_GET['_menuItemId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemId']);
+        $_menuItemId = (empty($_GET['_menuItemId'])) ? "": mysql_real_escape_string($_GET['_menuItemId']);
         
         $result = mysql_query("CALL getMenuItemsExtraOptions('$_businessId','$_menuItemId');");
     }
     elseif ($action == 'getMenuOrdersForBusiness') {
-        $orderType = ($_GET['orderType'] == undefined) ? "": mysql_real_escape_string($_GET['orderType']);
+        $orderType = (empty($_GET['orderType'])) ? "": mysql_real_escape_string($_GET['orderType']);
         
         $result = mysql_query("CALL getMenuOrdersForBusiness('$_businessId','$orderType');");
     }
     elseif ($action == 'getMenuOrderForBusiness') {
-        $_menuOrderId = ($_GET['_menuOrderId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
+        $_menuOrderId = (empty($_GET['_menuOrderId'])) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
         
         $result = mysql_query("CALL getMenuOrderForBusiness('$_menuOrderId');");
     }
     elseif ($action == 'getMenuOrdersForUser') {
-        $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+        $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
         
         $result = mysql_query("CALL getMenuOrdersForUser('$_profileId');");
     }
@@ -46,7 +46,7 @@
         $result = mysql_query("CALL getMenuItemCategoriesForBusiness('$_businessId');");
     }
     elseif ($action == 'getMenuItemCategoryDetailsForBusiness') {
-        $_menuItemCategoryId = ($_GET['_menuItemCategoryId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
+        $_menuItemCategoryId = (empty($_GET['_menuItemCategoryId'])) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
         $result = mysql_query("CALL getMenuItemCategoryDetailsForBusiness('$_businessId', '$_menuItemCategoryId')");
     }
     elseif ($action == 'updateMenuItemCategoryDetailsForBusiness') {
@@ -65,7 +65,7 @@
         $result = mysql_query("CALL getMenuItemSubCategoriesForBusiness('$_businessId');");
     }
     elseif ($action == 'getMenuItemSubCategoryDetailsForBusiness') {
-        $_menuItemSubCategoryId = ($_GET['_menuItemSubCategoryId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemSubCategoryId']);
+        $_menuItemSubCategoryId = (empty($_GET['_menuItemSubCategoryId'])) ? "": mysql_real_escape_string($_GET['_menuItemSubCategoryId']);
         $result = mysql_query("CALL getMenuItemSubCategoryDetailsForBusiness('$_businessId', '$_menuItemSubCategoryId')");
     }
     elseif ($action == 'updateMenuItemSubCategoryDetailsForBusiness') {
@@ -87,7 +87,7 @@
         $result = mysql_query("CALL getAllMenuItemTemplateOptionsForBusiness('$_businessId');");
     }
     elseif ($action == 'getMenuItemTemplateOption') {
-        $_optionId = ($_GET['_optionId'] == undefined) ? "": mysql_real_escape_string($_GET['_optionId']);
+        $_optionId = (empty($_GET['_optionId'])) ? "": mysql_real_escape_string($_GET['_optionId']);
         
         $result = mysql_query("CALL getMenuItemTemplateOption('$_businessId', '$_optionId');");
     }
@@ -99,27 +99,27 @@
     }
     
     elseif ($action == 'acceptMenuOrder') {
-        $_menuOrderId = ($_GET['_menuOrderId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
+        $_menuOrderId = (empty($_GET['_menuOrderId'])) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
         
         $result = mysql_query("CALL acceptOrRejectMenuOrder('$_menuOrderId', 'Accept')");
     }
     elseif ($action == 'rejectMenuOrder') {
-        $_menuOrderId = ($_GET['_menuOrderId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
+        $_menuOrderId = (empty($_GET['_menuOrderId'])) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
         
         $result = mysql_query("CALL acceptOrRejectMenuOrder('$_menuOrderId', 'Reject')");
     }
     elseif ($action == 'acceptMenuOrderWithConditions') {
-        $_menuOrderId = ($_GET['_menuOrderId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
+        $_menuOrderId = (empty($_GET['_menuOrderId'])) ? "": mysql_real_escape_string($_GET['_menuOrderId']);
         
         $result = mysql_query("CALL acceptOrRejectMenuOrder('$_menuOrderId', 'Accept with Conditions')");
     }
     elseif ($action == 'createMenuItem') {
-        $_menuTypeId = ($_GET['_menuTypeId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuTypeId']);
-        $_menuItemCategoryId = ($_GET['_menuItemCategoryId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
-        $_menuItemSubCategoryId = ($_GET['_menuItemSubCategoryId'] == undefined) ? NULL: mysql_real_escape_string($_GET['_menuItemSubCategoryId']);
-        $name = ($_GET['name'] == undefined) ? "": mysql_real_escape_string($_GET['name']);
-        $price = ($_GET['price'] == undefined) ? "": mysql_real_escape_string($_GET['price']);
-        $description = ($_GET['description'] == undefined) ? "": mysql_real_escape_string($_GET['description']);
+        $_menuTypeId = (empty($_GET['_menuTypeId'])) ? "": mysql_real_escape_string($_GET['_menuTypeId']);
+        $_menuItemCategoryId = (empty($_GET['_menuItemCategoryId'])) ? "": mysql_real_escape_string($_GET['_menuItemCategoryId']);
+        $_menuItemSubCategoryId = (empty($_GET['_menuItemSubCategoryId'])) ? NULL: mysql_real_escape_string($_GET['_menuItemSubCategoryId']);
+        $name = (empty($_GET['name'])) ? "": mysql_real_escape_string($_GET['name']);
+        $price = (empty($_GET['price'])) ? "": mysql_real_escape_string($_GET['price']);
+        $description = (empty($_GET['description'])) ? "": mysql_real_escape_string($_GET['description']);
         
         $data = file_get_contents("php://input");
         $dataJsonDecode = json_decode($data);
@@ -140,13 +140,13 @@
         }
     }
     elseif ($action == 'updateMenuItem') {
-        $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
-        $_menuItemId = ($_GET['_menuItemId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemId']);
-        $_menuItemCatId = ($_GET['_menuItemCatId'] == undefined) ? "": mysql_real_escape_string($_GET['_menuItemCatId']);
-        $_menuItemSubCatId = ($_GET['_menuItemSubCatId'] == undefined) ? "NULL": mysql_real_escape_string($_GET['_menuItemSubCatId']);
-        $name = ($_GET['name'] == undefined) ? "": mysql_real_escape_string($_GET['name']);
-        $price = ($_GET['price'] == undefined) ? "": mysql_real_escape_string($_GET['price']);
-        $description = ($_GET['description'] == undefined) ? "": mysql_real_escape_string($_GET['description']);
+        $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
+        $_menuItemId = (empty($_GET['_menuItemId'])) ? "": mysql_real_escape_string($_GET['_menuItemId']);
+        $_menuItemCatId = (empty($_GET['_menuItemCatId'])) ? "": mysql_real_escape_string($_GET['_menuItemCatId']);
+        $_menuItemSubCatId = (empty($_GET['_menuItemSubCatId'])) ? "NULL": mysql_real_escape_string($_GET['_menuItemSubCatId']);
+        $name = (empty($_GET['name'])) ? "": mysql_real_escape_string($_GET['name']);
+        $price = (empty($_GET['price'])) ? "": mysql_real_escape_string($_GET['price']);
+        $description = (empty($_GET['description'])) ? "": mysql_real_escape_string($_GET['description']);
         
         $data = file_get_contents("php://input");
         $dataJsonDecode = json_decode($data);
@@ -168,7 +168,7 @@
         }
     }
     elseif ($action == 'deleteMenuItemTemplateOptionOption') {
-        $_optionId = ($_GET['_optionId'] == undefined) ? "": mysql_real_escape_string($_GET['_optionId']);
+        $_optionId = (empty($_GET['_optionId'])) ? "": mysql_real_escape_string($_GET['_optionId']);
         
         $orderIndexResult = mysql_query("SELECT orderIndex as orderIndex FROM MenuExtraOptionOption WHERE _id = '$_optionId' limit 1");
         $value = mysql_fetch_object($orderIndexResult);
@@ -203,7 +203,7 @@
         $result = mysql_query("INSERT INTO MenuItemSubCategory (_businessId, name, description) VALUES ('$_businessId', '$catName', '$catDescription')");
     }
     elseif ($action == 'createMenuItemTemplateOptionOption') {
-        $_optionId = ($_GET['_optionId'] == undefined) ? "": mysql_real_escape_string($_GET['_optionId']);
+        $_optionId = (empty($_GET['_optionId'])) ? "": mysql_real_escape_string($_GET['_optionId']);
         $data               = file_get_contents("php://input");
         $dataJsonDecode     = json_decode($data);
         
@@ -217,7 +217,7 @@
         $result2 = mysql_query("UPDATE MenuExtraOptionOption SET orderIndex = orderIndex + 1 WHERE orderIndex > $orderIndex - 1 AND _menuExtraOptionId = $_optionId AND _id != $newId");
     }
     elseif ($action == 'updateMenuItemTemplateOption') {
-        $_catId = ($_GET['_catId'] == undefined) ? "": mysql_real_escape_string($_GET['_catId']);
+        $_catId = (empty($_GET['_catId'])) ? "": mysql_real_escape_string($_GET['_catId']);
         $data               = file_get_contents("php://input");
         $dataJsonDecode     = json_decode($data);
         
@@ -247,7 +247,7 @@
         }
     }
     elseif ($action == 'createMenuItemTemplateOption') {
-        $_catId = ($_GET['_catId'] == undefined) ? "": mysql_real_escape_string($_GET['_catId']);
+        $_catId = (empty($_GET['_catId'])) ? "": mysql_real_escape_string($_GET['_catId']);
         $data               = file_get_contents("php://input");
         $dataJsonDecode     = json_decode($data);
         
@@ -278,7 +278,7 @@
     }
     
     elseif ($action == 'createMenuOrder') {
-        $_profileId = ($_GET['_profileId'] == undefined || $_GET['_profileId'] == 'null' || is_null($_GET['_profileId'])) ? "NULL": "'".mysql_real_escape_string($_GET['_profileId'])."'";
+        $_profileId = (empty($_GET['_profileId']) || $_GET['_profileId'] == 'null' || is_null($_GET['_profileId'])) ? "NULL": "'".mysql_real_escape_string($_GET['_profileId'])."'";
         
         $data               = file_get_contents("php://input");
         $dataJsonDecode     = json_decode($data);

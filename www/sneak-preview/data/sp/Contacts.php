@@ -7,11 +7,11 @@
     $town = mysql_real_escape_string($_GET['town']);
     $companyName = mysql_real_escape_string($_GET['companyName']);
     $name = mysql_real_escape_string($_GET['name']);
-    $role = ($_GET['role'] == undefined) ? "": mysql_real_escape_string($_GET['role']);
-    $email = ($_GET['email'] == undefined) ? "": mysql_real_escape_string($_GET['email']);
-    $website = ($_GET['website'] == undefined) ? "": mysql_real_escape_string($_GET['website']);
-    $note = ($_GET['note'] == undefined) ? "": mysql_real_escape_string($_GET['note']);
-    $phone = ($_GET['phone'] == undefined) ? "": mysql_real_escape_string($_GET['phone']);
+    $role = (empty($_GET['role'])) ? "": mysql_real_escape_string($_GET['role']);
+    $email = (empty($_GET['email'])) ? "": mysql_real_escape_string($_GET['email']);
+    $website = (empty($_GET['website'])) ? "": mysql_real_escape_string($_GET['website']);
+    $note = (empty($_GET['note'])) ? "": mysql_real_escape_string($_GET['note']);
+    $phone = (empty($_GET['phone'])) ? "": mysql_real_escape_string($_GET['phone']);
     
     $_businessTypeIdQuery = mysql_query("SELECT _id as _id FROM BusinessType WHERE name = '$businessType' LIMIT 1");
     $_businessTypeId = mysql_fetch_array($_businessTypeIdQuery)["_id"];
@@ -36,7 +36,7 @@
         print($sql);
     }
     elseif (($_GET['action']) == 'edit') {
-        $contactId = ($_GET['contactId']);
+        $contactId = (empty($_GET['contactId']);
         $sql    = "UPDATE `Contact` SET _businessTypeId = '$_businessTypeId', _townId = '$_townId', companyName = '$companyName', name = '$name', role = '$role', phone = '$phone', email = '$email', website = '$website', note = '$note' WHERE _id = '$contactId'";
         print("UPDATE `Contact` SET _businessTypeId = '$_businessTypeId', _townId = '$_townId', companyName = '$companyName', name = '$name', role = '$role', phone = '$phone', email = '$email', website = '$website', note = '$note' WHERE _id = '$contactId'");
     }

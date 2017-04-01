@@ -1,7 +1,7 @@
 <?php
     require_once('../db-connect.php');
     
-    $action = ($_GET['action'] == undefined) ? "": mysql_real_escape_string($_GET['action']);
+    $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
     
     function sendJson ($result) {
         //print(json_encode($_usersId));
@@ -45,16 +45,16 @@
         sendJson($result);
     }
     elseif ($action == 'getTaxiBookingsForBusiness') {
-        $mode = ($_GET['mode'] == undefined) ? "": mysql_real_escape_string($_GET['mode']);
-        $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+        $mode = (empty($_GET['mode'])) ? "": mysql_real_escape_string($_GET['mode']);
+        $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
         
         $result = mysql_query("CALL getTaxiBookingsForBusiness('$mode', $_businessId);");
         
         sendJson($result);
     }
     elseif ($action == 'getTaxiBookingForBusiness') {
-        $_id = ($_GET['_id'] == undefined) ? "": mysql_real_escape_string($_GET['_id']);
-        $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+        $_id = (empty($_GET['_id'])) ? "": mysql_real_escape_string($_GET['_id']);
+        $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
         $result = mysql_query("CALL getTaxiBookingForBusiness('$_id', '$_businessId')");
                               
         sendJson($result);
@@ -72,22 +72,22 @@
         sendJson($result);
     }
     elseif ($action == 'bookTaxi') {
-        $_relContactId = ($_GET['_relContactId'] == undefined || $_GET['_relContactId'] == 'null' || is_null($_GET['_relContactId'])) ? "NULL": "'".mysql_real_escape_string($_GET['_relContactId'])."'";
+        $_relContactId = (empty($_GET['_relContactId']) || $_GET['_relContactId'] == 'null' || is_null($_GET['_relContactId'])) ? "NULL": "'".mysql_real_escape_string($_GET['_relContactId'])."'";
         
         $pickUpTown = ($_GET['pickUpTown'] == '') ? "Bedford": mysql_real_escape_string($_GET['pickUpTown']);
         
-        $_pickUpPlaceId = ($_GET['pickUpPlaceId'] == undefined || $_GET['pickUpPlaceId'] == '') ? 0: mysql_real_escape_string($_GET['pickUpPlaceId']);
-        $_dropOffPlaceId = ($_GET['dropOffPlaceId'] == undefined || $_GET['dropOffPlaceId'] == '') ? 0: mysql_real_escape_string($_GET['dropOffPlaceId']);
-        $totalPassengers = ($_GET['totalPassengers'] == undefined) ? "": mysql_real_escape_string($_GET['totalPassengers']);
+        $_pickUpPlaceId = (empty($_GET['pickUpPlaceId']) || $_GET['pickUpPlaceId'] == '') ? 0: mysql_real_escape_string($_GET['pickUpPlaceId']);
+        $_dropOffPlaceId = (empty($_GET['dropOffPlaceId']) || $_GET['dropOffPlaceId'] == '') ? 0: mysql_real_escape_string($_GET['dropOffPlaceId']);
+        $totalPassengers = (empty($_GET['totalPassengers'])) ? "": mysql_real_escape_string($_GET['totalPassengers']);
         
-        $pickUpLongAddress = ($_GET['lookedUpPickUpLocation'] == undefined) ? "": mysql_real_escape_string($_GET['lookedUpPickUpLocation']);
-        $pickUpAddressLine1 = ($_GET['pickUpAddressLine1'] == undefined) ? "": mysql_real_escape_string($_GET['pickUpAddressLine1']);
-        $pickUpPostCode = ($_GET['pickUpPostCode'] == undefined) ? "": mysql_real_escape_string($_GET['pickUpPostCode']);
+        $pickUpLongAddress = (empty($_GET['lookedUpPickUpLocation'])) ? "": mysql_real_escape_string($_GET['lookedUpPickUpLocation']);
+        $pickUpAddressLine1 = (empty($_GET['pickUpAddressLine1'])) ? "": mysql_real_escape_string($_GET['pickUpAddressLine1']);
+        $pickUpPostCode = (empty($_GET['pickUpPostCode'])) ? "": mysql_real_escape_string($_GET['pickUpPostCode']);
         
-        $dropOffLongAddress = ($_GET['lookedUpDropOffLocation'] == undefined) ? "": mysql_real_escape_string($_GET['lookedUpDropOffLocation']);
-        $dropOffAddressLine1 = ($_GET['dropOffAddressLine1'] == undefined) ? "": mysql_real_escape_string($_GET['dropOffAddressLine1']);
+        $dropOffLongAddress = (empty($_GET['lookedUpDropOffLocation'])) ? "": mysql_real_escape_string($_GET['lookedUpDropOffLocation']);
+        $dropOffAddressLine1 = (empty($_GET['dropOffAddressLine1'])) ? "": mysql_real_escape_string($_GET['dropOffAddressLine1']);
         $dropOffTown = ($_GET['dropOffTown'] == '') ? "Bedford": mysql_real_escape_string($_GET['dropOffTown']);
-        $dropOffPostCode = ($_GET['dropOffPostCode'] == undefined) ? "": mysql_real_escape_string($_GET['dropOffPostCode']);
+        $dropOffPostCode = (empty($_GET['dropOffPostCode'])) ? "": mysql_real_escape_string($_GET['dropOffPostCode']);
         
         $quickestIsRequired = $_GET['quickestIsRequired'];
         
@@ -97,10 +97,10 @@
         sendJson($result);
     }
     elseif ($action == "respondToTaxiBookingRequest") {
-        $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
-        $_bookingId = ($_GET['_bookingId'] == undefined) ? "": mysql_real_escape_string($_GET['_bookingId']);
-        $lowestPrice = ($_GET['lowestPrice'] == undefined) ? "": mysql_real_escape_string($_GET['lowestPrice']);
-        $quickestTime = ($_GET['quickestTime'] == undefined) ? "": mysql_real_escape_string($_GET['quickestTime']);
+        $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
+        $_bookingId = (empty($_GET['_bookingId'])) ? "": mysql_real_escape_string($_GET['_bookingId']);
+        $lowestPrice = (empty($_GET['lowestPrice'])) ? "": mysql_real_escape_string($_GET['lowestPrice']);
+        $quickestTime = (empty($_GET['quickestTime'])) ? "": mysql_real_escape_string($_GET['quickestTime']);
         
         $result = mysql_query("CALL insertTaxiBookingResponse('$_businessId','$_bookingId',$lowestPrice, $quickestTime);");
         
@@ -108,16 +108,16 @@
         
     }
     elseif ($action == "getTaxiBookingForPerson") {
-        $_taxiBookingId = ($_GET['_taxiBookingId'] == undefined) ? "": mysql_real_escape_string($_GET['_taxiBookingId']);
+        $_taxiBookingId = (empty($_GET['_taxiBookingId'])) ? "": mysql_real_escape_string($_GET['_taxiBookingId']);
         
         $result = mysql_query("CALL getTaxiBookingForPerson($_taxiBookingId);");
         
         sendJson($result);
     }
     elseif ($action == "updateTaxiBookingByPerson") {
-        $_taxiBookingId = ($_GET['_taxiBookingId'] == undefined) ? "": mysql_real_escape_string($_GET['_taxiBookingId']);
-        $cancelled = ($_GET['cancelled'] == undefined) ? "": mysql_real_escape_string($_GET['cancelled']);
-        $completed = ($_GET['completed'] == undefined) ? "": mysql_real_escape_string($_GET['completed']);
+        $_taxiBookingId = (empty($_GET['_taxiBookingId'])) ? "": mysql_real_escape_string($_GET['_taxiBookingId']);
+        $cancelled = (empty($_GET['cancelled'])) ? "": mysql_real_escape_string($_GET['cancelled']);
+        $completed = (empty($_GET['completed'])) ? "": mysql_real_escape_string($_GET['completed']);
         
         $result = mysql_query("CALL personUpdateTaxiBooking($_taxiBookingId, '$cancelled', '$completed');");
     }

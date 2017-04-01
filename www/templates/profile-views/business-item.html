@@ -13,7 +13,7 @@
                     {{businessItem.name}}
                 </label>
                 <label class="item">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header">
                     First Showing Date
@@ -47,7 +47,7 @@
                 </label>
                 <label class="item"
                     ng-if="businessItem.currentOfferCoverPhotoName != null && businessItem.currentOfferCoverPhotoName != 'default-offer.jpg'">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{businessItem.currentOfferCoverPhotoName}}" />
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentOfferCoverPhotoName}}" />
                 </label>
                 <label class="item-header">
                     Offer Type
@@ -254,7 +254,7 @@
             
             <form ng-if="itemType=='OwnEvents'" class="business-item-form edit-form event-edit" ng-class="{'editing': editing}" name="updateEventForm">
                 <label class="item">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header first">
                     Event Details
@@ -1178,7 +1178,7 @@
                 </label>
                 <label class="item"
                     ng-if="businessItem.currentCoverPhotoName != null">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header">Status</label>
                 <label class="item focus-item">
@@ -1215,7 +1215,7 @@
                     Event Entry Details
                 </label>
                 <label class="item">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}"
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}"
                         ng-if="businessItem.currentCoverPhotoName != null"/>
                 </label>
                 <label class="item-header">Status</label>

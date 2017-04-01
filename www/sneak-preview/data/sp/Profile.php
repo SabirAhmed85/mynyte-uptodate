@@ -2,7 +2,7 @@
 
   require_once('../db-connect-headers.php');
     
-  $action = ($_GET['action']);
+  $action = $_GET['action'];
 
   if ($action == "createUserEngagement" || $action == "deleteUserEngagement") {
     require_once('../db-connect-sqli.php');
@@ -60,14 +60,20 @@
                 // Hash the password with the salt
                 $hash = crypt($word, $salt);
           
-                $firstName = explode(" ", $name)[0];
-                $lastName = explode(" ", $name)[count(explode(" ", $name))-1];
+                //need new way to get 
+                $firstName = explode(" ", $name);
+                $firstName = $firstName[0];
+                //need new way to get 
+                $lastName = explode(" ", $name);
+                $lastName = $lastName[count(explode(" ", $name))-1];
 
-                $result1 = mysql_query("CALL createProfileInitial('$profileType', '$hash', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId, '$wordLength');");
+                $result1 = mysql_query("CALL createProfileInitial('$profileType', '$hash', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId, '$wordLength');");
 
-                $result = mysql_query("SELECT @_usersId");
+                $result = mysql_query("SELECT _usersId");
 
-                $_usersId = mysql_fetch_array($result)["@_usersId"];
+                // new way to get Users Id
+                $_usersId = mysql_fetch_object($result);
+                $_usersId = $_usersId -> _usersId;
 
                 echo json_encode($_usersId);
                 //echo json_encodeint("CALL createProfileInitial('$profileType', '$hash', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId, '$wordLength');");
@@ -89,66 +95,69 @@
     $email = $dataJsonDecode->email;
     $fbId = $dataJsonDecode->fbId;
 
-    $firstName = explode(" ", $name)[0];
-    $lastName = explode(" ", $name)[count(explode(" ", $name)) - 1];
+    //need new way to get 
+    $firstName = explode(" ", $name);
+    $firstName = $firstName[0];
+    //need new way to get 
+    $lastName = explode(" ", $name);
+    $lastName = $lastName[count(explode(" ", $name)) - 1];
 
-    $result1 = mysql_query("CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId);");
-    $result1 = "CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId);";
-    $result = mysql_query("SELECT @_usersId");
-    //$value = mysql_fetch_object($result);
-    //$_usersId = $value->_usersId;
+    $result1 = mysql_query("CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId);");
+    $result1 = "CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId);";
+    $result = mysql_query("SELECT _usersId");
 
-
-    $_usersId = mysql_fetch_array($result)["@_usersId"];
+    //need new way to get Users Id $_usersId = mysql_fetch_array($result)["@_usersId"];
+    $_usersId = mysql_fetch_object($result);
+    $_usersId = $_usersId -> _usersId;
 
     //header('Content-Type: application/json');
     echo json_encode($_usersId);
   }
   elseif ($action == 'makeUserActive') {
-      $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
-      $_oneSignalId = ($_GET['_oneSignalId'] == undefined) ? "": mysql_real_escape_string($_GET['_oneSignalId']);
+      $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
+      $_oneSignalId = (empty($_GET['_oneSignalId'])) ? "": mysql_real_escape_string($_GET['_oneSignalId']);
       
       $result = mysql_query("CALL makeUserActive($_profileId,$_oneSignalId)");
   }
   elseif ($action == 'makeUserInactive') {
-      $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
-      $_oneSignalId = ($_GET['_oneSignalId'] == undefined) ? "": mysql_real_escape_string($_GET['_oneSignalId']);
+      $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
+      $_oneSignalId = (empty($_GET['_oneSignalId'])) ? "": mysql_real_escape_string($_GET['_oneSignalId']);
       
       $result = mysql_query("CALL makeUserInactive($_profileId,$_oneSignalId)");
   }
   elseif ($action == 'getProfileItemCountForProfile') {
-      $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+      $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
       
       $result = mysql_query("CALL getProfileItemCountForProfile($_profileId)");
   }
   elseif ($action == 'getAllProfileDetails') {
-      $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+      $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
       
       $result = mysql_query("CALL getAllProfileDetails($_profileId)");
       
   }
   elseif ($action == 'getAllBusinessSettingsForBusiness') {
-      $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getAllBusinessSettingsForBusiness($_businessId)");
   }
   elseif ($action == 'getBusinessTypesForBusiness') {
-      $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getBusinessTypesForBusiness($_businessId)");
   }
   elseif ($action == 'getFoodStylesForBusiness') {
-      $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getFoodStylesForBusiness($_businessId)");
   }
   elseif ($action == 'getBusinessOpeningTimesForBusiness') {
-      $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getBusinessOpeningTimesForBusiness($_businessId)");
   }
   elseif ($action == 'getAllTonightsFeedOptionsForBusiness') {
-      $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getAllTonightsFeedOptionsForBusiness($_businessId)");
   }
@@ -244,7 +253,7 @@
         //echo json_encode("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $isAcceptingTaxiBookings, $isSearchable, $_tonightsFeedButtonOptionId);");
   }
   elseif ($action == 'updateBusinessTypesForBusiness') {
-    $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+    $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
     $_businessTypeIds = $_GET['_businessTypeIds'];
     $businessTypeIdString = ( $_businessTypeIds != undefined ? implode(', ', $_businessTypeIds) : "");
     $_foodStyleIds = $_GET['_foodStyleIds'];
@@ -253,7 +262,7 @@
     $result = mysql_query("CALL updateBusinessTypesForBusiness($_businessId, '$businessTypeIdString', '$foodStyleIdString');");
   }
   elseif ($action == 'updateOrInsertBusinessOpeningTimesForBusiness') {
-    $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+    $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
     $mondayOpeningTime = ($_GET['mondayOpeningTime'] == 'null') ? 'NULL': "'".mysql_real_escape_string($_GET['mondayOpeningTime'])."'";
     $tuesdayOpeningTime = ($_GET['tuesdayOpeningTime'] == 'null') ? 'NULL': "'".mysql_real_escape_string($_GET['tuesdayOpeningTime'])."'";
     $wednesdayOpeningTime = ($_GET['wednesdayOpeningTime'] == 'null') ? 'NULL': "'".mysql_real_escape_string($_GET['wednesdayOpeningTime'])."'";
@@ -274,10 +283,10 @@
   }
   elseif ($action == 'createUserEngagement' || $action == 'deleteUserEngagement') {
     //createUserEngagement($rootScope.userEngagementTypes[a]._id, $rootScope.user._id, listing.relListingId, listing.listingType)
-    $_engagementTypeId = ($_GET['_engagementTypeId']);
-    $_actionedListingId = ($_GET['_actionedListingId']);
-    $actionedListingTypeName = ($_GET['actionedListingTypeName']);
-    $_actionerId = ($_GET['_actionerId']);
+    $_engagementTypeId = $_GET['_engagementTypeId'];
+    $_actionedListingId = $_GET['_actionedListingId'];
+    $actionedListingTypeName = $_GET['actionedListingTypeName'];
+    $_actionerId = $_GET['_actionerId'];
     $_profileIds = $_GET['_profileIds'];
     $profileIdString = ( $_profileIds != undefined ? implode(', ', $_profileIds) : "");
 
@@ -360,7 +369,7 @@
   }
   elseif ($action == 'checkIfDisplayNameTaken') {
       $displayName = $_GET['displayName'];
-      $displayName = ($_GET['displayName'] == undefined) ? "": mysql_real_escape_string($_GET['displayName']);
+      $displayName = (empty($_GET['displayName'])) ? "": mysql_real_escape_string($_GET['displayName']);
       $sql    = mysql_query("SELECT COUNT(displayName) as total FROM `Profile` WHERE displayName = '$displayName'");
       $data=mysql_fetch_assoc($sql);
       print(json_encode($data));
@@ -398,13 +407,16 @@
     echo json_encode($_usersId);
   }
   elseif ($action == 'logIn') {
-    $email = ($_GET['email'] == undefined) ? "": mysql_real_escape_string($_GET['email']);
-    $word = ($_GET['word'] == undefined) ? "": mysql_real_escape_string($_GET['word']);
+    $email = (empty($_GET['email'])) ? "": mysql_real_escape_string($_GET['email']);
+    $word = (empty($_GET['word'])) ? "": mysql_real_escape_string($_GET['word']);
     
     $preResult = mysql_query("SELECT word FROM Profile WHERE email = '$email' LIMIT 1");
-    $hash = mysql_fetch_array($preResult)["word"];
+    //new way to get hash 
+    $hash = mysql_fetch_object($preResult);
+    $hash = $hash -> word;
     
     // Hashing the password with its hash as the salt returns the same hash
+    /*
     if ( hash_equals($hash, crypt($word, $hash)) ) {
       // Ok!
       $result = mysql_query("CALL logIn('$email','$hash');");
@@ -419,10 +431,11 @@
         header('Content-Type: application/json');
         echo json_encode($preResult);
     }
+    */
   }
   elseif ($action == 'logInThroughFb') {
-    $email = ($_GET['email'] == undefined) ? "": mysql_real_escape_string($_GET['email']);
-    $fbId = ($_GET['fbId'] == undefined) ? "": mysql_real_escape_string($_GET['fbId']);
+    $email = (empty($_GET['email'])) ? "": mysql_real_escape_string($_GET['email']);
+    $fbId = (empty($_GET['fbId'])) ? "": mysql_real_escape_string($_GET['fbId']);
     
     $result = mysql_query("CALL logInThroughFb('$email', $fbId);");
     
@@ -434,7 +447,7 @@
       echo json_encode($output);
   }
   elseif ($action == 'getProfiles') {
-    $_townId = ($_GET['_townId'] == undefined) ? "": mysql_real_escape_string($_GET['_townId']);
+    $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
     
     $result = mysql_query("SELECT Profile.*,
         IF(Profile.isBusiness = 0, Person._townId, Business._townid) as __actualTownId,
@@ -464,10 +477,10 @@
       echo json_encode($output);
   }
   elseif ($action == 'getListings') {
-    $_townId = ($_GET['_townId'] == undefined) ? "": mysql_real_escape_string($_GET['_townId']);
+    $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
     //print($_townId);
     if (isset($_GET['name'])) {
-        $name = ($_GET['name'] == undefined) ? "": mysql_real_escape_string($_GET['name']);
+        $name = (empty($_GET['name'])) ? "": mysql_real_escape_string($_GET['name']);
         
         $result = mysql_query(
             "SELECT Profile.displayName as name,
@@ -583,14 +596,15 @@
             GROUP BY m._id");
     }
     elseif (isset($_GET['_businessTypeId'])) {
-        $_businessTypeId = ($_GET['_businessTypeId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessTypeId']);
+        $_businessTypeId = (empty($_GET['_businessTypeId'])) ? "": mysql_real_escape_string($_GET['_businessTypeId']);
+        $_profileId = (empty($_GET['_profileId'])) ? "0": mysql_real_escape_string($_GET['_profileId']);
         
         $result = mysql_query("CALL getListingsByBusinessType('$_businessTypeId','$_townId','$_profileId')");
     }
     elseif (isset($_GET['_listingId'])) {
-        $listingType = ($_GET['listingType'] == undefined) ? "": mysql_real_escape_string($_GET['listingType']);
-        $_listingId = ($_GET['_listingId'] == undefined) ? "": mysql_real_escape_string($_GET['_listingId']);
-        $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+        $listingType = (empty($_GET['listingType'])) ? "": mysql_real_escape_string($_GET['listingType']);
+        $_listingId = (empty($_GET['_listingId'])) ? "": mysql_real_escape_string($_GET['_listingId']);
+        $_profileId = (empty($_GET['_profileId'])) ? "0": mysql_real_escape_string($_GET['_profileId']);
         
         $result1 = mysql_query("CALL updateAnalyticsListingView('$_listingId','$listingType');");
         
@@ -642,21 +656,21 @@
       echo json_encode($output);
   }
   elseif ($action == 'getAllOpenBusinessAccountsByTown') {
-    $_businessTypeId = ($_GET['_businessTypeId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessTypeId']);
-    $_townId = ($_GET['_townId'] == undefined) ? "": mysql_real_escape_string($_GET['_townId']);
+    $_businessTypeId = (empty($_GET['_businessTypeId'])) ? "": mysql_real_escape_string($_GET['_businessTypeId']);
+    $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
     
     $result = mysql_query("CALL getAllOpenBusinessAccountsByTown($_townId, $_businessTypeId)");
   }
   elseif ($action == 'getAllFollowersByName') {
-    $nameSearched = ($_GET['nameSearched'] == undefined) ? "": mysql_real_escape_string($_GET['nameSearched']);
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $nameSearched = (empty($_GET['nameSearched'])) ? "": mysql_real_escape_string($_GET['nameSearched']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
         
     $result = mysql_query("CALL getAllFollowersByName('$_profileId', '$nameSearched')");
   }
   elseif ($action == 'getAllBusinessesByName') {
-    $nameSearched = ($_GET['nameSearched'] == undefined) ? "": mysql_real_escape_string($_GET['nameSearched']);
-    $business1Type = ($_GET['business1Type'] == undefined) ? "": mysql_real_escape_string($_GET['business1Type']);
-    $business2Type = ($_GET['business2Type'] == undefined) ? "": mysql_real_escape_string($_GET['business2Type']);
+    $nameSearched = (empty($_GET['nameSearched'])) ? "": mysql_real_escape_string($_GET['nameSearched']);
+    $business1Type = (empty($_GET['business1Type'])) ? "": mysql_real_escape_string($_GET['business1Type']);
+    $business2Type = (empty($_GET['business2Type'])) ? "": mysql_real_escape_string($_GET['business2Type']);
         
     $result = mysql_query("CALL getAllBusinessesByName('$nameSearched', '$business1Type', '$business2Type')");
   }
@@ -664,7 +678,7 @@
     || $action == 'getFollowedListingsForProfile'
     || $action == 'getFollowingProfilesForProfile'
     || $action == 'getLikedListingsForProfile') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
     if ($action == 'getWatchedListingsForProfile') {
       $timeScale = $_GET['timeScale'];
       $result = mysql_query("CALL getWatchedListingsForProfile('$_profileId', '$timeScale')");
@@ -682,23 +696,23 @@
 
   }
   elseif ($action == 'getFollowerProfileIdsForBusiness') {
-    $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+    $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
     $result = mysql_query("CALL getFollowerProfileIdsForBusiness('$_businessId')");
   }
   elseif ($action == 'getPhotoAlbumsSummaryForProfile') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
     $result = mysql_query("CALL getPhotoAlbumsSummaryForProfile('$_profileId')");
 
   }
   elseif ($action == 'getPhotoAlbumsSummaryForListing') {
-    $_listingId = ($_GET['_listingId'] == undefined) ? "": mysql_real_escape_string($_GET['_listingId']);
-    $listingType = ($_GET['listingType'] == undefined) ? "": mysql_real_escape_string($_GET['listingType']);
+    $_listingId = (empty($_GET['_listingId'])) ? "": mysql_real_escape_string($_GET['_listingId']);
+    $listingType = (empty($_GET['listingType'])) ? "": mysql_real_escape_string($_GET['listingType']);
     $result = mysql_query("CALL getPhotoAlbumsSummaryForListing('$_listingId','$listingType')");
   }
   elseif ($action == 'getSpecificAlbumSummaryForListing') {
-    $_listingId = ($_GET['_listingId'] == undefined) ? "": mysql_real_escape_string($_GET['_listingId']);
-    $listingType = ($_GET['listingType'] == undefined) ? "": mysql_real_escape_string($_GET['listingType']);
-    $albumType = ($_GET['albumType'] == undefined) ? "": mysql_real_escape_string($_GET['albumType']);
+    $_listingId = (empty($_GET['_listingId'])) ? "": mysql_real_escape_string($_GET['_listingId']);
+    $listingType = (empty($_GET['listingType'])) ? "": mysql_real_escape_string($_GET['listingType']);
+    $albumType = (empty($_GET['albumType'])) ? "": mysql_real_escape_string($_GET['albumType']);
     //print($albumType);
     if ($albumType == 'Cover Photo') {
       $result = mysql_query("CALL getCoverPhotoAlbumSummaryForListing('$_listingId', '$listingType')");
@@ -706,13 +720,13 @@
     } else if ($albumType == 'Profile Photo') {
       $result = mysql_query("CALL getProfilePhotoAlbumSummaryForProfile('$_listingId')");
     } else {
-      $_albumId = ($_GET['_albumId'] == undefined) ? "": mysql_real_escape_string($_GET['_albumId']);
+      $_albumId = (empty($_GET['_albumId'])) ? "": mysql_real_escape_string($_GET['_albumId']);
       $result = mysql_query("CALL getGeneralPhotoAlbumSummaryForProfile('$_listingId', '$_albumId')");
     }
   }
   elseif ($action == 'getMyNyteActivityForPerson') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
-    $timeScale = ($_GET['timeScale'] == undefined) ? "": mysql_real_escape_string($_GET['timeScale']);
+    $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
+    $timeScale = (empty($_GET['timeScale'])) ? "": mysql_real_escape_string($_GET['timeScale']);
 
     $result = mysql_query("CALL getMyNyteActivityForPerson('$_profileId', '$timeScale')");
   }
@@ -762,14 +776,18 @@
             
             if ($isBusiness) {
                 $nameQuery = mysql_query("SELECT businessName FROM Business b JOIN Profile pr ON pr._id = b._profileId WHERE pr._id = ".$_id);
-                $name = mysql_fetch_array($nameQuery)["businessName"];
+                //new way to get name 
+                $name = mysql_fetch_object($nameQuery);
+                $name = $name -> businessName;
             } else {
                 $nameQuery = mysql_query("SELECT firstName FROM Person p JOIN Profile pr ON pr._id = p._profileId WHERE pr._id = ".$_id);
-                $name = mysql_fetch_array($nameQuery)["firstName"];
+                //new way to get name 
+                $name = mysql_fetch_object($nameQuery);
+                $name = $name -> firstName;
             }
             
             // Create a url which we will direct them to reset their password
-            $pwrurl = "https://www.mynyte.co.uk/sneak-preview/#/app/resetPassword/2/".$hash."/2";
+            $pwrurl = $httpUrl."/#/app/resetPassword/2/".$hash."/2";
             
             $to = $email; // note the comma
 
@@ -853,7 +871,7 @@
         echo json_encode("MyNyte Contact Failed");
     }
   }
-  //print(json_encode($_usersId));
+  //print(json_encode($_usersId)); 
 
   if ($action == 'getAllProfileDetails'
     || $action == 'getAllBusinessesByName'

@@ -354,6 +354,45 @@ progress[value]::-webkit-progress-value {
     box-shadow: inset 0 1px 4px rgba(0,0,0,.1);
 }
 
+.app-download-button {
+    width: 300px;
+    padding: 20px;
+    background: #181818;
+    float: left;
+    color: #bbb;
+    font-weight: bold;
+    border: 1px solid #333;
+    border-radius: 6px;
+    margin: 10px 10px 10px 0;
+}
+.app-download-button:hover {
+    cursor: pointer;
+    background: #212121;
+    border-color: #383838;
+}
+
+.app-download-button .inner-span {
+    float: left;
+    width: 100%;
+}
+
+.app-download-button .text {
+    float: left;
+    width: calc(100% - 105px);
+    margin: 0 !important;
+}
+
+.app-download-button i {
+    float: right;
+    font-size: 50px;
+    height: 45px;
+    margin-top: -7px;
+}
+.app-download-button:hover .text,
+.app-download-button:hover i {
+    color: #ddd;
+}
+
 
 /* Main Containers */
 
@@ -754,11 +793,15 @@ textarea {
     float: left;
     width: 140px;
     background: #181818;
-    border: 1px solid #4e4141;
-    border-radius: 6px;
+    border: 1px solid #333131;
     color: #d4c2c2;
     padding: 7px;
     font-size: 13px;
+    margin-left: 4px;
+}
+.web-back-button:hover {
+    background: #212121;
+    border: 1px solid #373737;
 }
 
 .web-top-right-button {
@@ -917,6 +960,10 @@ textarea {
     padding: 6px 0 0;
     /*background-color: #222;*/
     background-color: #282828;
+}
+.article-page .tile {
+    padding: 10px;
+    color: #999;
 }
 
 #searchBox,
@@ -2123,6 +2170,88 @@ textarea {
     border-bottom: 1px solid #2b2525;
     max-height: 10000px;
     opacity: 1;
+}
+
+.article-accordian {
+    border-bottom: 1px solid #333;
+    float: left;
+    width: 100%;
+}
+
+.article-accordian h3 {
+    float: left;
+    width: 100%;
+    padding: 15px 5px 10px;
+    border-bottom: 1px solid #333;
+    color: #ddd;
+    border-top: 1px solid #333;
+}
+.article-accordian h3.first {
+    padding-top: 0;
+    border-top: none;
+}
+
+.article-accordian .article-accordian-article {
+    float: left;
+    width: 100%;
+    border-bottom: 1px solid #111;
+}
+
+.article-accordian .header,
+.article-accordian .body {
+    float: left;
+    width: 100%;
+}
+
+.article-accordian .header {
+    background: #222;
+    border: 1px solid #333;
+    padding: 10px 10px 5px;
+    font-size: 14px;
+}
+.article-accordian .header:hover {
+    background: #242424;
+    cursor: pointer;
+    border-color: #443838;
+    color: #bbb;
+}
+
+.article-accordian .header i {
+    float: right;
+    font-size: 27px;
+    height: 37px;
+    margin-top: -8px;
+    margin-right: -10px;
+    padding: 5px 15px 2px;
+}
+.article-accordian .header:hover i {
+    color: #a29494;
+}
+
+.article-accordian .body {
+    border-left: 1px solid #3a3a3a;
+    border-right: 1px solid #3a3a3a;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 10px;
+}
+.article-accordian .body.open {
+    padding: 10px 10px;
+    max-height: none;
+}
+
+.article-accordian .body ul {
+    list-style-type: disc;
+    float: left;
+    padding-left: 0;
+    width: 100%;
+}
+
+.article-accordian .body li {
+    float: left;
+    clear: left;
+    margin-left: 20px;
+    margin-bottom: 10px;
 }
 
 .content .offer {
@@ -4553,6 +4682,7 @@ form div.item-header {
     height: 100%;
     overflow-y: scroll;
     z-index: 11;
+    padding-bottom: 30px;
 }
 #under-construction-cover::-webkit-scrollbar {
     width: 0.5em;
@@ -4591,7 +4721,7 @@ form div.item-header {
 }
 
 #under-construction-cover p {
-    width: 290px;
+    width: 305px;
     float: none;
     display: block;
     color: #999;
@@ -4608,13 +4738,28 @@ form div.item-header {
     float: none;
     margin: 0 auto;
     display: block;
-    margin-top: 30px;
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 25px;
+}
+#under-construction-cover form.show {
+    max-height: 400px;
 }
 
 #under-construction-cover label {
     color: #9c8282;
-    padding-bottom: 10px;
-    float: left;
+    float: none;
+    width: 300px;
+    margin: 30px auto 0;
+    display: block;
+    text-align: center;
+}
+#under-construction-cover label:hover {
+    color: #bba5a5;
+    cursor: pointer;
+}
+#under-construction-cover label.activated {
+    color: #c1acac;
 }
 
 #under-construction-cover input {
@@ -8363,8 +8508,6 @@ location-lookup ul li {
     .article-page .tile {
         width: 670px;
         border-radius: 0;
-        padding: 15px 25px 15px 20px;
-        color: #999;
     }
     .article-page .tile b,
     .article-page .tile strong {

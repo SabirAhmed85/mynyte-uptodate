@@ -67,6 +67,7 @@ app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig,
             , "app.feed"
             , "app.taxi"
             , "app.more"
+            , "app.downloadTheApp"
         ];
         var showTopRightButtonViews = [
             "app.profile.messageGroups"

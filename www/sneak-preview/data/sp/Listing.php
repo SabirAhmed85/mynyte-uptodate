@@ -49,13 +49,14 @@
     }
   
   if ($action == 'getListingsForFeed') {
-    $_userId = ($_GET['_userId'] == undefined) ? "": mysql_real_escape_string($_GET['_userId']);
+    $_userId = (empty($_GET['_userId'])) ? "0": mysql_real_escape_string($_GET['_userId']);
     
     $result_prep = mysqli_query($db_con, "CALL getOfferIdsForMainFeed($_townId);");
     $_offerIdsString = prepareOfferIdString($result_prep, 5);
     mysqli_next_result($db_con);
     
     $result_offers = mysqli_query($db_con, "CALL getOffersForMainFeed($_townId, $_userId, '$_offerIdsString');");
+    
     $output_offers = prepareOffersOutputObj($result_offers);
     mysqli_next_result($db_con);
     
@@ -89,18 +90,18 @@
   } 
 
   else if ($action == 'getRestaurantsOrTakeawaysByTownAndFoodStyle') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? 0: mysql_real_escape_string($_GET['_profileId']);
-    $_foodStyleId = ($_GET['_foodStyleId'] == undefined) ? "": mysql_real_escape_string($_GET['_foodStyleId']);
-    $businessType = ($_GET['businessType'] == undefined) ? "": mysql_real_escape_string($_GET['businessType']);
+    $_profileId = (empty($_GET['_profileId'])) ? 0: mysql_real_escape_string($_GET['_profileId']);
+    $_foodStyleId = (empty($_GET['_foodStyleId'])) ? 0: mysql_real_escape_string($_GET['_foodStyleId']);
+    $businessType = (empty($_GET['businessType'])) ? "": mysql_real_escape_string($_GET['businessType']);
     $result = mysql_query("CALL getRestaurantsOrTakeawaysByTownAndFoodStyle('$businessType', $_townId, $_foodStyleId, $_profileId)");
   }
   else if ($action == 'getMoviesByTownAndMovieStyle') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? 0: mysql_real_escape_string($_GET['_profileId']);
-    $_movieStyleId = ($_GET['_movieStyleId'] == undefined) ? "": mysql_real_escape_string($_GET['_movieStyleId']);
+    $_profileId = (empty($_GET['_profileId'])) ? 0: mysql_real_escape_string($_GET['_profileId']);
+    $_movieStyleId = (empty($_GET['_movieStyleId'])) ? 0: mysql_real_escape_string($_GET['_movieStyleId']);
     $result = mysql_query("CALL getMoviesByTownAndMovieStyle($_townId, $_movieStyleId, $_profileId)");
   }
   else if ($action == 'getBarsAndClubsByTown') {
-    $_profileId = ($_GET['_profileId'] == undefined) ? 0: mysql_real_escape_string($_GET['_profileId']);
+    $_profileId = (empty($_GET['_profileId'])) ? 0: mysql_real_escape_string($_GET['_profileId']);
     $result = mysql_query("CALL getBarsAndClubsByTown($_townId, $_profileId)");
   }
   else if ($action == 'getPhoneNumberForListing') {

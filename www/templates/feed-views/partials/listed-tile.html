@@ -1,6 +1,6 @@
 <div class="tile" ng-repeat="listing in listings" ui-sref="app.feedListing({_listingId:listing.relListingId, listingType:listing.listingType})">
     <div class="main-search-result-listing" ng-style="{'background': listing.bgColor }">
-        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}" />
+        <img ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}" />
         <div class="listing-detail-container">
             <span class="listing-name">{{listing.name}}</span>
             <span class="listing-description">{{listing.description}}</span>

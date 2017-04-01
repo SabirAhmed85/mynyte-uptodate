@@ -1,57 +1,58 @@
 <?php
     require_once('../db-connect.php');
     
-    $action = ($_GET['action'] == undefined) ? "": mysql_real_escape_string($_GET['action']);
+    $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
 
     if ($action == 'createEvent' || $action == 'updateEvent') {
-        $_businessPlaceId = ($_GET['_businessPlaceId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessPlaceId']);
-        $eventTitle = ($_GET['eventTitle'] == undefined) ? "": mysql_real_escape_string($_GET['eventTitle']);
-        $description = ($_GET['description'] == undefined) ? "": mysql_real_escape_string($_GET['description']);
-        $eventDateTime = ($_GET['eventDateTime'] == undefined) ? "": mysql_real_escape_string($_GET['eventDateTime']);
-        $dressCode = ($_GET['dressCode'] == undefined) ? "": mysql_real_escape_string($_GET['dressCode']);
-        $eventHasGuestList = ($_GET['eventHasGuestList'] == undefined) ? "": mysql_real_escape_string($_GET['eventHasGuestList']);
-        $dealsOnTheNight = ($_GET['dealsOnTheNight'] == undefined) ? "": mysql_real_escape_string($_GET['dealsOnTheNight']);
-        $extraInfo = ($_GET['extraInfo'] == undefined) ? "": mysql_real_escape_string($_GET['extraInfo']);
-        $guestListMax = ($_GET['guestListMax'] == undefined) ? "": mysql_real_escape_string($_GET['guestListMax']);
-        $weekdayIndex = ($_GET['weekdayIndex'] == undefined) ? "": mysql_real_escape_string($_GET['weekdayIndex']);
-        $weeksAhead = ($_GET['weeksAhead'] == undefined) ? "": mysql_real_escape_string($_GET['weeksAhead']);
+        $_businessPlaceId = (empty($_GET['_businessPlaceId'])) ? "": mysql_real_escape_string($_GET['_businessPlaceId']);
+        $eventTitle = (empty($_GET['eventTitle'])) ? "": mysql_real_escape_string($_GET['eventTitle']);
+        $description = (empty($_GET['description'])) ? "": mysql_real_escape_string($_GET['description']);
+        $eventDateTime = (empty($_GET['eventDateTime'])) ? "": mysql_real_escape_string($_GET['eventDateTime']);
+        $dressCode = (empty($_GET['dressCode'])) ? "": mysql_real_escape_string($_GET['dressCode']);
+        $eventHasGuestList = (empty($_GET['eventHasGuestList'])) ? "": mysql_real_escape_string($_GET['eventHasGuestList']);
+        $dealsOnTheNight = (empty($_GET['dealsOnTheNight'])) ? "": mysql_real_escape_string($_GET['dealsOnTheNight']);
+        $extraInfo = (empty($_GET['extraInfo'])) ? "": mysql_real_escape_string($_GET['extraInfo']);
+        $guestListMax = (empty($_GET['guestListMax'])) ? "": mysql_real_escape_string($_GET['guestListMax']);
+        $weekdayIndex = (empty($_GET['weekdayIndex'])) ? "": mysql_real_escape_string($_GET['weekdayIndex']);
+        $weeksAhead = (empty($_GET['weeksAhead'])) ? "": mysql_real_escape_string($_GET['weeksAhead']);
 
         $_musicStyleIds = $_GET['_musicStyleIds'];
         $musicStyleIdString = ( $_musicStyleIds != undefined ? implode(', ', $_musicStyleIds) : "");
 
         if ($action == 'createEvent') {
-            $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
-            $sqlQuery = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', @_eventId)");
-            $sqlQuery2 = mysql_query("SELECT @_eventId");
-            $output = mysql_fetch_array($sqlQuery2)["@_eventId"];
+            $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
+            $sqlQuery = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', _eventId)");
+            $sqlQuery2 = mysql_query("SELECT _eventId");
+            $output = mysql_fetch_object($sqlQuery2);
+            $output = $output -> _eventId;
             echo json_encode($output);
         } else {
-            $_eventId = ($_GET['_eventId'] == undefined) ? "": mysql_real_escape_string($_GET['_eventId']);
+            $_eventId = (empty($_GET['_eventId'])) ? "": mysql_real_escape_string($_GET['_eventId']);
             $sqlQuery = "CALL updateEvent($_eventId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString')";
             $result = mysql_query($sqlQuery);
         }
   
     }
     elseif ($action == 'createEventEntryBooking') {
-        $_eventId = ($_GET['_eventId'] == undefined) ? "": mysql_real_escape_string($_GET['_eventId']);
-        $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
-        $eventDate = ($_GET['eventDate'] == undefined) ? "": mysql_real_escape_string($_GET['eventDate']);
-        $additionalGuests = ($_GET['additionalGuests'] == undefined) ? "": mysql_real_escape_string($_GET['additionalGuests']);
-        $bookingType = ($_GET['bookingType'] == undefined) ? "": mysql_real_escape_string($_GET['bookingType']);
+        $_eventId = (empty($_GET['_eventId'])) ? "": mysql_real_escape_string($_GET['_eventId']);
+        $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
+        $eventDate = (empty($_GET['eventDate'])) ? "": mysql_real_escape_string($_GET['eventDate']);
+        $additionalGuests = (empty($_GET['additionalGuests'])) ? "": mysql_real_escape_string($_GET['additionalGuests']);
+        $bookingType = (empty($_GET['bookingType'])) ? "": mysql_real_escape_string($_GET['bookingType']);
 
         $result = mysql_query("CALL createEventEntryBooking($_eventId, $_profileId, '$eventDate', $additionalGuests, '$bookingType')");
         //print("CALL createEventEntryBooking($_eventId, $_profileId, '$eventDate', $additionalGuests, '$bookingType')");
     }
     elseif ($action == 'getEventEntryBooking') {
-        $_eventEntryBookingId = ($_GET['_entryBookingId'] == undefined) ? "": mysql_real_escape_string($_GET['_entryBookingId']);
+        $_eventEntryBookingId = (empty($_GET['_entryBookingId'])) ? "": mysql_real_escape_string($_GET['_entryBookingId']);
 
         $result = mysql_query("CALL getEventEntryBooking($_eventEntryBookingId)");
     }
     elseif ($action == 'updateEventEntryBookingByPerson') {
-        $_eventEntryBookingId = ($_GET['_entryBookingId'] == undefined) ? "": mysql_real_escape_string($_GET['_entryBookingId']);
-        $_eventDateId = ($_GET['_eventDateId'] == undefined) ? "": mysql_real_escape_string($_GET['_eventDateId']);
-        $addGuests = ($_GET['addGuests'] == undefined) ? "": mysql_real_escape_string($_GET['addGuests']);
-        $cancelled = ($_GET['cancelled'] == undefined) ? "": mysql_real_escape_string($_GET['cancelled']);
+        $_eventEntryBookingId = (empty($_GET['_entryBookingId'])) ? "": mysql_real_escape_string($_GET['_entryBookingId']);
+        $_eventDateId = (empty($_GET['_eventDateId'])) ? "": mysql_real_escape_string($_GET['_eventDateId']);
+        $addGuests = (empty($_GET['addGuests'])) ? "": mysql_real_escape_string($_GET['addGuests']);
+        $cancelled = (empty($_GET['cancelled'])) ? "": mysql_real_escape_string($_GET['cancelled']);
 
         $result = mysql_query("CALL personUpdateEventEntryBooking($_eventEntryBookingId, $_eventDateId, $addGuests, '$cancelled')");
     }
@@ -62,22 +63,22 @@
         $_townId = 0;
         $_profileId = 0;
         
-        $timeScale = ($_GET['timeScale'] == undefined) ? "": mysql_real_escape_string($_GET['timeScale']);
+        $timeScale = (empty($_GET['timeScale'])) ? "": mysql_real_escape_string($_GET['timeScale']);
         if (isset($_GET['_profileId'])) {
-            $_profileId = ($_GET['_profileId'] == undefined) ? "": mysql_real_escape_string($_GET['_profileId']);
+            $_profileId = $_GET['_profileId'];
         }
         if (isset($_GET['_businessId'])) {
-            $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+            $_businessId = $_GET['_businessId'];
         }
         elseif ($_GET['_townId']) {
-            $_townId = ($_GET['_townId'] == undefined) ? "": mysql_real_escape_string($_GET['_townId']);
+            $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
             if (isset($_GET['_musicStyleId'])) {
-                $_musicStyleId = ($_GET['_musicStyleId'] == undefined) ? "": mysql_real_escape_string($_GET['_musicStyleId']);
+                $_musicStyleId = (empty($_GET['_musicStyleId'])) ? "": mysql_real_escape_string($_GET['_musicStyleId']);
                 $result1 = mysql_query("CALL updateAnalyticsClubnightSearch('$_townId','$_musicStyleId');");
             }
         }
         elseif (isset($_GET['_eventId']) || isset($_GET['getDates'])) {
-            $_eventId = ($_GET['_eventId'] == undefined) ? "": mysql_real_escape_string($_GET['_eventId']);
+            $_eventId = (empty($_GET['_eventId'])) ? "": mysql_real_escape_string($_GET['_eventId']);
         }
         
         if (isset($_GET['getDates'])) {

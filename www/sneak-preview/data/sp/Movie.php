@@ -2,11 +2,11 @@
 
   require_once('../db-connect.php');
     
-  $action = ($_GET['action'] == undefined) ? "": mysql_real_escape_string($_GET['action']);
+  $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
   
   if ($action == 'getMoviesForMaintenance') {
-    $timeScale = ($_GET['timeScale'] == undefined) ? "": mysql_real_escape_string($_GET['timeScale']);
-    $_movieId = ($_GET['_movieId'] == undefined) ? "": mysql_real_escape_string($_GET['_movieId']);
+    $timeScale = (empty($_GET['timeScale'])) ? "": mysql_real_escape_string($_GET['timeScale']);
+    $_movieId = (empty($_GET['_movieId'])) ? "": mysql_real_escape_string($_GET['_movieId']);
     
     $result = mysql_query("CALL getMoviesForMaintenance('$timeScale', $_movieId)");
     
@@ -27,14 +27,14 @@
         $output[] = $row;
     
     shuffle($output);
-    $counter = ($output.length > 10) ? 10: count($output);
+    $counter = (count($output) > 10) ? 10: count($output);
     $output = array_slice($output, 0, $counter);
 
     header('Content-Type: application/json');
     echo json_encode($output);
   }
   if ($action == 'getMoviesTrailerLink') {
-    $_movieId = ($_GET['_movieId'] == undefined) ? "": mysql_real_escape_string($_GET['_movieId']);
+    $_movieId = (empty($_GET['_movieId'])) ? "": mysql_real_escape_string($_GET['_movieId']);
     
     $result = mysql_query("CALL getMoviesTrailerLink($_movieId)");
     

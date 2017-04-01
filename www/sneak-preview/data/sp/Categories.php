@@ -15,8 +15,8 @@
             $sql    = "CALL getAllFoodStyles()";
         }
         elseif (($_GET['categoryType']) == 'foodStylesForTown') {
-            $_townId = ($_GET['_townId'] == undefined) ? "": mysql_real_escape_string($_GET['_townId']);
-            $businessType = ($_GET['businessType'] == undefined) ? "": mysql_real_escape_string($_GET['businessType']);
+            $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
+            $businessType = (empty($_GET['businessType'])) ? "": mysql_real_escape_string($_GET['businessType']);
             $sql    = "CALL getAllFoodStylesForTown('$_townId', '$businessType')";
         }
         elseif (($_GET['categoryType']) == 'movieStyle') {
@@ -26,7 +26,7 @@
             $sql    = "CALL getAllMovieStylesForTown()";
         }
         elseif (($_GET['categoryType']) == 'getAllOfferCategoriesForBusiness') {
-            $_businessId = ($_GET['_businessId'] == undefined) ? "": mysql_real_escape_string($_GET['_businessId']);
+            $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
             $sql    = "CALL getAllOfferCategoriesForBusiness('$_businessId')";
         }
         

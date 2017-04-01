@@ -29,7 +29,7 @@
                 eat-click-if="notification.alertType == 'Offer Confirmation'
                     || notification.alertType == 'Taxi Booking Not Available'
                     || notification.alertType == 'Taxi Booking Won'" ng-repeat="notification in notifications">
-                <img class="icon ion-notification" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{notification.relProfilePhotoName}}"
+                <img class="icon ion-notification" ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{notification.relProfilePhotoName}}"
                     ng-if="notification.businessName != null" />
                 <i class="icon ion-notification"
                     ng-if="notification.businessName == null"

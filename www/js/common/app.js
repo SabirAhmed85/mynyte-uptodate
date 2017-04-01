@@ -1,10 +1,10 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
 var IntendedEnvironment = "Staging";
 var IntendedPlatform = "browser";
-var UnderConstruction = true;
+var UnderConstruction = false;
 /* */
 
-var RootUrl = (IntendedEnvironment == 'Staging') ? "http://staging.mynyte.co.uk/": "https://www.mynyte.co.uk/";
+var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";
 var ConnectionPrefix = (IntendedEnvironment == 'Staging') ? "http": "https";
 var AssetsFolderUrl = RootUrl + "sneak-preview";
 var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " "+ConnectionPrefix+"://csi.gstatic.com/ "+ConnectionPrefix+"://1.bp.blogspot.com/ "+ConnectionPrefix+"://maps.googleapis.com/ data:"
