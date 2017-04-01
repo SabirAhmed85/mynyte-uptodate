@@ -8,9 +8,9 @@
                 <div>
                     <div style="width: 100%; overflow: hidden;" class="main-visual-image-display"
                         ng-style="{height: windowWidth+'px'};">
-                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                        <img ng-src="{{assetsFolderUrl}}/img/user_images/{{item.albumName}}/{{item.name}}"
                             ng-if="item.picType == 'Profile Photo' || item.picType == 'Cover Photo'" />
-                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{_listingProfileId}}_{{item._folderId}}_{{item.name}}"
+                        <img ng-src="{{assetsFolderUrl}}/img/user_images/general_photo/{{_listingProfileId}}_{{item._folderId}}_{{item.name}}"
                                 ng-if="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'" />
                     </div>
                 </div>

@@ -7,9 +7,9 @@
                 <div>
                     <div style="width: 100%; overflow: hidden; border-bottom: 1px solid #444; margin-bottom: 5px;" class="main-visual-image-display"
                         ng-style="{height: windowWidth+'px'};">
-                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                        <img ng-src="{{assetsFolderUrl}}/img/user_images/{{item.albumName}}/{{item.name}}"
                             ng-if="item.picType == 'Cover Photo' || item.picType == 'Profile Photo'">
-                        <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{item._photoOwnerProfileId}}_{{item._albumId}}_{{item.name}}"
+                        <img ng-src="{{assetsFolderUrl}}/img/user_images/general_photo/{{item._photoOwnerProfileId}}_{{item._albumId}}_{{item.name}}"
                             ng-if="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">
                     </div>
                     

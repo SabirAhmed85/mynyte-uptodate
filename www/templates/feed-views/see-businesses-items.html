@@ -26,7 +26,7 @@
                 ui-sref="app.feedListing({_listingId:feature.relListingId, listingType:feature.listingType})"
                 ng-if="itemType == 'UpcomingEvents' && businessesItems.length > 0">
                 <div class="main-search-result-listing feed-item">
-                    <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}" />
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}" />
                     <div class="listing-detail-container">
                         <span class="listing-name">{{feature.name}}</span>
                         <span class="listing-description">{{feature.description}}</span>

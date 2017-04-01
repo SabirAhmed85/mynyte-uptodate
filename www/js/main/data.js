@@ -1224,10 +1224,10 @@ app.factory('TableBooking', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
-	data.updateTableBooking = function (_tableBookingId, accepted, rejected, completed, alternateDate) {
+	data.updateTableBooking = function (_tableBookingId, accepted, rejected, cancelled, completed, alternateDate) {
 		return $http(
             {
-				method: 'POST', url:Config.TableBookingUrl + '?action=updateTableBooking&_tableBookingId=' + _tableBookingId + '&accepted=' + accepted + '&rejected=' + rejected + '&completed=' + completed + '&alternateDate='+ alternateDate
+				method: 'POST', url:Config.TableBookingUrl + '?action=updateTableBooking&_tableBookingId=' + _tableBookingId + '&accepted=' + accepted + '&rejected=' + rejected + '&cancelled=' + cancelled + '&completed=' + completed + '&alternateDate='+ alternateDate
 			}
 		);
 	}
@@ -1424,7 +1424,8 @@ app.factory('userService', ['$rootScope', function ($rootScope) {
 
         model: {
             user: {},
-            introTooltipShownCount: 0
+            introTooltipShownCount: 0,
+            adminUserLoggedIn: false
         },
 
         SaveState: function () {
