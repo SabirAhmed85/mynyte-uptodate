@@ -758,7 +758,7 @@ $timeout(function () {
     $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
     
     $rootScope.Platform = ionic.Platform;
-    console.log($rootScope.Platform.isIOS(), $rootScope.Platform.isAndroid());
+    
     $rootScope.showGlobalTownSelect = false;
     $rootScope.currentlyEditing = false;
     $rootScope.showSearchPanel = false;

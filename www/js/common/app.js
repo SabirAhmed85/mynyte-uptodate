@@ -1,7 +1,7 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
 var IntendedEnvironment = "Live";
 var IntendedPlatform = "browser";
-var UnderConstruction = true;
+var UnderConstruction = false;
 /* */
 
 var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";

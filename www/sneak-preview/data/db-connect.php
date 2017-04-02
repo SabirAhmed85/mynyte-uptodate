@@ -1,5 +1,5 @@
 <?php
-    $intended_environment = 'Staging';
+    $intended_environment = 'Live';
 
     $http_origin = $_SERVER['HTTP_ORIGIN'];
     $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk";
@@ -18,7 +18,7 @@
 
   $db_pass = "wM)Ln8-Q2o6g";
 
-  $db_name = "qxiryynz_mynyte";
+  $db_name = ($intended_environment == 'Staging') ? "qxiryynz_mynyte": "qxiryynz_mynyte";
   //$db_name = "MyNyte_MyTownCombinedTest";
 
 
