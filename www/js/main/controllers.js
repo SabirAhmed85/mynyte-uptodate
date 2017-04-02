@@ -227,7 +227,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       $rootScope.currentSelectedListingTypeToFind = 'clubnight';
       
       $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
-      $rootScope.underConstruction = (EnvironmentVariables.UnderConstruction && EnvironmentVariables.IntendedPlatform == 'browser') ? true : false;
+      $rootScope.underConstruction = (EnvironmentVariables.DebugMode && EnvironmentVariables.IntendedPlatform == 'browser' && EnvironmentVariables.IntendedEnvironment == 'Live') ? true : false;
       $rootScope.metaContent = EnvironmentVariables.MetaContent;
       $rootScope.rootUrl = EnvironmentVariables.RootUrl;
       $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
