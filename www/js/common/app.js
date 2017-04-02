@@ -1,18 +1,18 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
-var IntendedEnvironment = "Live";
+var IntendedEnvironment = "Staging";
 var IntendedPlatform = "browser";
 var UnderConstruction = false;
+var DebugMode = false;
 /* */
 
 var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";
-var ConnectionPrefix = (IntendedEnvironment == 'Staging') ? "http": "https";
 var AssetsFolderUrl = RootUrl + "sneak-preview";
-var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " "+ConnectionPrefix+"://csi.gstatic.com/ "+ConnectionPrefix+"://1.bp.blogspot.com/ "+ConnectionPrefix+"://maps.googleapis.com/ data:"
+var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://maps.googleapis.com/ data:";
 
 app.constant("EnvironmentVariables", {
               "IntendedPlatform": IntendedPlatform,
               "IntendedEnvironment": IntendedEnvironment,
-              "UnderConstruction": UnderConstruction,
+              "DebugMode": DebugMode,
               "MetaContent": MetaContent,
               "RootUrl": RootUrl,
               "AssetsFolderUrl": AssetsFolderUrl,

@@ -227,12 +227,13 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       $rootScope.currentSelectedListingTypeToFind = 'clubnight';
       
       $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
-      $rootScope.underConstruction = (EnvironmentVariables.UnderConstruction && EnvironmentVariables.IntendedPlatform == 'browser') ? true : false;
+      $rootScope.underConstruction = (EnvironmentVariables.DebugMode && EnvironmentVariables.IntendedPlatform == 'browser' && EnvironmentVariables.IntendedEnvironment == 'Live') ? true : false;
       $rootScope.metaContent = EnvironmentVariables.MetaContent;
       $rootScope.rootUrl = EnvironmentVariables.RootUrl;
       $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
       $rootScope.assetsFolderRelUrl = EnvironmentVariables.AssetsFolderRelUrl;
-      $rootScope.debugMode = true;
+      $rootScope.debugMode = EnvironmentVariables.DebugMode;
+
       $rootScope.relListing = null;
       $rootScope.nightFindSlideLocked = false;
       $rootScope.messageGroupTimer = null;
@@ -758,7 +759,7 @@ $timeout(function () {
     $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
     
     $rootScope.Platform = ionic.Platform;
-    
+
     $rootScope.showGlobalTownSelect = false;
     $rootScope.currentlyEditing = false;
     $rootScope.showSearchPanel = false;
