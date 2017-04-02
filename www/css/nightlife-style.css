@@ -363,7 +363,7 @@ progress[value]::-webkit-progress-value {
     font-weight: bold;
     border: 1px solid #333;
     border-radius: 6px;
-    margin: 10px 10px 10px 0;
+    margin-right: 10px;
 }
 .app-download-button:hover {
     cursor: pointer;
@@ -2252,6 +2252,7 @@ textarea {
     clear: left;
     margin-left: 20px;
     margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .content .offer {
