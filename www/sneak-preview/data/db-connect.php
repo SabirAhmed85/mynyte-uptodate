@@ -1,4 +1,5 @@
 <?php
+
   $intended_environment = 'Staging';
 
   $http_origin = $_SERVER['HTTP_ORIGIN'];
