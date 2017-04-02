@@ -1,5 +1,5 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
-var IntendedEnvironment = "Staging";
+var IntendedEnvironment = "Live";
 var IntendedPlatform = "browser";
 var UnderConstruction = false;
 var DebugMode = false;
