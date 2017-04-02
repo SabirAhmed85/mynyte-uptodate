@@ -2,6 +2,7 @@
 var IntendedEnvironment = "Staging";
 var IntendedPlatform = "browser";
 var UnderConstruction = false;
+var DebugMode = false;
 /* */
 
 var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";
@@ -13,6 +14,7 @@ app.constant("EnvironmentVariables", {
               "IntendedPlatform": IntendedPlatform,
               "IntendedEnvironment": IntendedEnvironment,
               "UnderConstruction": UnderConstruction,
+              "DebugMode": DebugMode,
               "MetaContent": MetaContent,
               "RootUrl": RootUrl,
               "AssetsFolderUrl": AssetsFolderUrl,

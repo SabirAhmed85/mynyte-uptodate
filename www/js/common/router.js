@@ -553,7 +553,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 	 
     //  login page
     //Default Page App goes to on Start
-    console.log($urlRouterProvider);
+    
   	$urlRouterProvider.otherwise("/app/feed");
     //$ionicConfigProvider.footerBar.transition('none');
 

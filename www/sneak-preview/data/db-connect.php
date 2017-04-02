@@ -18,7 +18,7 @@
 
   $db_pass = "wM)Ln8-Q2o6g";
 
-  $db_name = "qxiryynz_mynyte";
+  $db_name = ($intended_environment == 'Staging') ? "qxiryynz_mynyte": "qxiryynz_mynyte";
   //$db_name = "MyNyte_MyTownCombinedTest";
 
 
