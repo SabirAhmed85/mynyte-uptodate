@@ -7,6 +7,9 @@
   if ($http_origin == $httpUrl) {
     header("Access-Control-Allow-Origin: $http_origin");
   }
+  
+  //Debug
+  //ini_set('display_errors', 1);
 
   $db_host = "localhost";
 
