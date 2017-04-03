@@ -2,7 +2,8 @@
     //Allow Headers
     require_once('../db-connect.php');
     $action = $_GET['action'];
-    $platform = ($_GET["platform"] == undefined) ? 'non-android': $_GET["platform"];
+    $platform = (empty($_GET["platform"])) ? 'non-android': $_GET["platform"];
+    $docRoot = ($intended_environment == 'Staging') ? $_SERVER['DOCUMENT_ROOT']."/staging": $_SERVER['DOCUMENT_ROOT'];
 
     if ($action == 'uploadImage') {
         $config["quality"] = 120; //jpeg quality
@@ -23,16 +24,16 @@
             $_businessPlaceId = $_POST["_businessPlaceId"];
             $eventTitle = $_POST["eventTitle"];
             $eventTitle = str_replace("'", "\'", $eventTitle);
-            $description = ($_POST["description"] == undefined) ? '': $_POST["description"];
+            $description = (empty($_POST["description"])) ? '': $_POST["description"];
             $description = str_replace("'", "\'", $description);
             $eventDateTime = $_POST["eventDateTime"];
-            $dressCode = ($_POST["dressCode"] == undefined) ? '': $_POST["dressCode"];
+            $dressCode = (empty($_POST["dressCode"])) ? '': $_POST["dressCode"];
             $dressCode = str_replace("'", "\'", $dressCode);
-            $eventHasGuestList = ($_POST["eventHasGuestList"] == undefined) ? '': $_POST["eventHasGuestList"];
+            $eventHasGuestList = (empty($_POST["eventHasGuestList"])) ? '': $_POST["eventHasGuestList"];
             $guestListMax = $_POST["guestListMax"];
-            $dealsOnTheNight = ($_POST["dealsOnTheNight"] == undefined) ? '': $_POST["dealsOnTheNight"];
+            $dealsOnTheNight = (empty($_POST["dealsOnTheNight"])) ? '': $_POST["dealsOnTheNight"];
             $dealsOnTheNight = str_replace("'", "\'", $dealsOnTheNight);
-            $extraInfo = ($_POST["extraInfo"] == undefined) ? '': $_POST["extraInfo"];
+            $extraInfo = (empty($_POST["extraInfo"])) ? '': $_POST["extraInfo"];
             $extraInfo = str_replace("'", "\'", $extraInfo);
             $weekdayIndex = $_POST["weekdayIndex"];
             $weeksAhead = $_POST["weeksAhead"];
@@ -73,16 +74,18 @@
         }
         else if ($imgEntryType == 'cover_photo' || $imgEntryType == 'event_cover_photo' || $imgEntryType == 'offer_cover_photo' || $imgEntryType == 'movie_cover_photo') {
             $uploadFolder = "cover_photo";
-            $uploadDir = $_SERVER['DOCUMENT_ROOT']."/sneak-preview/img/user_images/".$uploadFolder."/";
+            $uploadDir = $docRoot."/sneak-preview/img/user_images/".$uploadFolder."/";
             $_imageId = mysql_query("SELECT _id FROM CoverPhoto ORDER BY _id DESC LIMIT 1");
         }
         else if ($imgEntryType == 'profile_photo') {
             $uploadFolder = "profile_photo";
-            $uploadDir = $_SERVER['DOCUMENT_ROOT']."/sneak-preview/img/user_images/".$uploadFolder."/";
+            $uploadDir = $docRoot."/sneak-preview/img/user_images/".$uploadFolder."/";
             $_imageId = mysql_query("SELECT _id FROM ProfilePhoto ORDER BY _id DESC LIMIT 1");
         }
         
-        $_imageId = mysql_fetch_array($_imageId)["_id"] + 1;
+        $_imageId = mysql_fetch_object($_imageId);
+        $_imageId = $_imageId -> _id;
+        $_imageId = $_imageId + 1;
 
         if ($imgEntryType == 'cover_photo' || $imgEntryType == 'profile_photo' || $imgEntryType == 'event_cover_photo' || $imgEntryType == 'movie_cover_photo' || ($imgEntryType == 'offer_cover_photo' && !empty($imageName))) {
             $data = getimagesize($imageTmpName);
@@ -111,7 +114,14 @@
             }
             
             function image_fix_orientation($image, $filename) {
-                $image = imagerotate($image, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filename)['Orientation'] ?: 0], 0);
+                $array = array(0, 0, 0, 180, 0, 0, -90, 0, 90);
+                $array_vals = array_values($array);
+
+                $fileData = exif_read_data($filename);
+                $fileData = $fileData -> Orientation;
+
+                $array_vals = $array_vals -> $fileData ?: 0;
+                $image = imagerotate($image, $array_vals, 0);
             }
 
             image_fix_orientation($img_res, $imageTmpName);
@@ -173,7 +183,7 @@
             $result_thumb = true;
         }
         else {
-            $uploadDir = $_SERVER['DOCUMENT_ROOT']."/sneak-preview/img/user_images/".$uploadFolder."/";
+            $uploadDir = $docRoot."/sneak-preview/img/user_images/".$uploadFolder."/";
             
             //Move your files into upload folder
             $imgName = $imageName;
@@ -209,9 +219,10 @@
             }
             else if ($imgEntryType == 'event_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, @_eventId)");
-                    $sqlQuery2 = mysql_query("SELECT @_eventId");
-                    $output = mysql_fetch_array($sqlQuery2)["@_eventId"];
+                    $result = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, _eventId)");
+                    $sqlQuery2 = mysql_query("SELECT _eventId");
+                    $output = mysql_fetch_object($sqlQuery2);
+                    $output = $output -> _eventId;
                     echo json_encode($output);
                 } else {
                     echo json_encode('Thumb image not uploaded');
@@ -219,9 +230,10 @@
             }
             else if ($imgEntryType == 'offer_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageNameQuoted, @_offerId);");
-                    $sqlQuery2 = mysql_query("SELECT @_offerId");
-                    $output = mysql_fetch_array($sqlQuery2)["@_offerId"];
+                    $result = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageNameQuoted, _offerId);");
+                    $sqlQuery2 = mysql_query("SELECT _offerId");
+                    $output = mysql_fetch_object($sqlQuery2);
+                    $output = $output -> _offerId;
                     echo json_encode($output);
                 } else {
                     echo json_encode('Thumb image not uploaded');
@@ -229,9 +241,10 @@
             }
             else if ($imgEntryType == 'movie_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createMovie('$name', '$description', '$firstShowingDate', '$lastShowingDate', '$movieStyleIdString', '$movieTrailerLink', $newImageNameQuoted, @_movieId);");
-                    $sqlQuery2 = mysql_query("SELECT @_movieId");
-                    $output = mysql_fetch_array($sqlQuery2)["@_movieId"];
+                    $result = mysql_query("CALL createMovie('$name', '$description', '$firstShowingDate', '$lastShowingDate', '$movieStyleIdString', '$movieTrailerLink', $newImageNameQuoted, _movieId);");
+                    $sqlQuery2 = mysql_query("SELECT _movieId");
+                    $output = mysql_fetch_object($sqlQuery2);
+                    $output = $output -> _movieId;
                     echo json_encode($output);
                 } else {
                     echo json_encode('Thumb image not uploaded');
