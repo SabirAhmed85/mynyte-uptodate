@@ -44,7 +44,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 if ($stateParams.action != null) {
                     switch ($stateParams.action) {
                         case 'businessHelpPage':
-                            $state.go('app.profile.');
+                            $state.go('app.articles');
                         break;
                     }
                 }
@@ -6985,6 +6985,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
             $scope.businessArticles = {
                 restaurant: {
                     title: "Managing Table Bookings",
+                    icon: "ion-fork",
                     articles: [
                         {
                             show: false,
@@ -7005,6 +7006,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 },
                 nightclub: {
                     title: "Managing Events / Entry Booking",
+                    icon: "ion-clipboard",
                     articles: [
                         {
                             show: false,
@@ -7016,6 +7018,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 },
                 taxi: {
                     title: "Managing Taxi Bookings",
+                    icon: "ion-android-car",
                     articles: [
                         {
                             show: false,
@@ -7044,7 +7047,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                         {
                             show: false,
                             title: "How to Log into your Account",
-                            text: "<ul><li>>Go to the ‘MyNyte’ page (left side of the page menu).</li><li>In the boxes, type in your e-mail address and password and press enter.</li></ul>"
+                            text: "<ul><li>Go to the ‘MyNyte’ page (left side of the page menu).</li><li>In the boxes, type in your e-mail address and password and press enter.</li></ul>"
                         },
                         {
                             show: false,
