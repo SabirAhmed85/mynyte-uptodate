@@ -546,7 +546,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         url: "/downloadTheApp",
         views: {
           'more-tab' :{
-              templateUrl: "templates/profile-views/download-the-app.html",
+              templateUrl: "templates/more-views/download-the-app.html",
                   controller: "DownloadTheAppCtrl"
           }
         }
