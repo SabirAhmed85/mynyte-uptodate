@@ -84,16 +84,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             }
           }
         })
-        //Download the App
-        .state('app.downloadTheApp', {
-          url: "/downloadTheApp",
-          views: {
-            'profile-tab' :{
-                templateUrl: "templates/profile-views/download-the-app.html",
-                    controller: "DownloadTheAppCtrl"
-            }
-          }
-        })
+
         //Notifications
         .state('app.profile.notificationsSummary', {
           url: "/notificationsSummary/",
@@ -550,6 +541,16 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
       }
     })
+      //Download the App
+      .state('app.downloadTheApp', {
+        url: "/downloadTheApp",
+        views: {
+          'more-tab' :{
+              templateUrl: "templates/profile-views/download-the-app.html",
+                  controller: "DownloadTheAppCtrl"
+          }
+        }
+      })
 	 
     //  login page
     //Default Page App goes to on Start
