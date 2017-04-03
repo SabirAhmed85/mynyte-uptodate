@@ -1,5 +1,5 @@
 /*  Profile page template */
-app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
+app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, $stateParams, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
     //Variables & Constants
     //Cancel relListing in case someone has come back to profile page
     //after trying to attach a listing to a message.
