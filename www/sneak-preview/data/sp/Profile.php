@@ -416,7 +416,6 @@
     $hash = $hash -> word;
     
     // Hashing the password with its hash as the salt returns the same hash
-    /*
     if ( hash_equals($hash, crypt($word, $hash)) ) {
       // Ok!
       $result = mysql_query("CALL logIn('$email','$hash');");
@@ -431,7 +430,6 @@
         header('Content-Type: application/json');
         echo json_encode($preResult);
     }
-    */
   }
   elseif ($action == 'logInThroughFb') {
     $email = (empty($_GET['email'])) ? "": mysql_real_escape_string($_GET['email']);
