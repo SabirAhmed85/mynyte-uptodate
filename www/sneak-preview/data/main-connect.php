@@ -4,6 +4,9 @@
   $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk";
 
   header("Access-Control-Allow-Origin: $httpUrl");
+  if ($intended_environment != 'Staging') {
+    header("Access-Control-Allow-Origin: https://mynyte.co.uk");
+  }
   
   //Debug
   //ini_set('display_errors', 1);
