@@ -17,7 +17,7 @@
 
   $db_pass = "wM)Ln8-Q2o6g";
 
-  $db_name = ($intended_environment == 'Staging') ? "qxiryynz_MyNyte_Staging": "qxiryynz_mynyte";
+  $db_name = ($intended_environment == 'Staging') ? "qxiryynz_MyNyte_Staging": "qxiryynz_MyNyte";
 
   //Global Functions
   if(!function_exists('hash_equals')) {
