@@ -61,7 +61,7 @@
         $messageText = (empty($_GET['messageText'])) ? "": mysql_real_escape_string($_GET['messageText']);
         $_relListingId = (empty($_GET['_relListingId'])) ? NULL: mysql_real_escape_string($_GET['_relListingId']);
         $relListingType = (empty($_GET['relListingType'])) ? NULL: mysql_real_escape_string($_GET['relListingType']);
-        $profileIds = (!isset($_GET['_profileIds'])) ? [] : $_GET['_profileIds'];
+        $profileIds = (empty($_GET['_profileIds'])) ? array() : ($_GET['_profileIds']);
         $profileIdString = implode(', ', $profileIds);
         
         if ($_groupId == "null") {
