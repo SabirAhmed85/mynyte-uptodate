@@ -785,6 +785,9 @@ textarea {
 .platform-android #breadcrumb-bar {
     top: 112px;
 }
+.platform-android.intended-browser #breadcrumb-bar {
+    top: 92px;
+}
 #breadcrumb-bar.full {
     width: 871px;
 }
@@ -2181,14 +2184,26 @@ textarea {
 .article-accordian h3 {
     float: left;
     width: 100%;
-    padding: 15px 5px 10px;
+    padding: 15px 5px 8px;
     border-bottom: 1px solid #333;
     color: #ddd;
     border-top: 1px solid #333;
 }
 .article-accordian h3.first {
-    padding-top: 0;
+    padding-top: 3px;
+    padding-bottom: 13px;
     border-top: none;
+}
+
+.article-accordian h3 i {
+    float: left;
+    font-size: 39px;
+    margin-right: 14px;
+    width: 50px;
+    text-align: center;
+    margin-top: -10px;
+    border-right: 1px dotted #373737;
+    height: 38px;
 }
 
 .article-accordian .article-accordian-article {
@@ -7975,7 +7990,7 @@ form.editing label.item {
 }
 
 /*  Locator Modal Stuff  */
-@media (max-width : 48rem) {
+@media (max-width : 52rem) {
   nav small { display: none; }
   nav h1, nav a { line-height: 80px; }
   .tag-line { display: block; }
@@ -8146,6 +8161,9 @@ location-lookup ul li {
     .platform-android #header-bar .search-icon {
         top: 33px;
     }
+    .platform-android.intended-browser #header-bar .search-icon {
+        top: 13px;
+    }
     
     #header-bar #search-input {
         width: calc(79% - 110px) !important;
@@ -8210,6 +8228,9 @@ location-lookup ul li {
     .platform-android #header-bar i.top-right-button {
         top: 20px;
     }
+    .platform-android.intended-browser #header-bar i.top-right-button {
+        top: 0px;
+    }
     #header-bar i.top-right-button.ion-close-round {
         font-size: 27px !important;
         padding-left: 0px;
@@ -8230,6 +8251,9 @@ location-lookup ul li {
     .platform-ios #header-bar .header-log-in-container,
     .platform-android #header-bar .header-log-in-container {
         margin-top: 25px;
+    }
+    .platform-android.intended-browser #header-bar .header-log-in-container {
+        margin-top: 5px;
     }
 
     #header-bar .header-log-in,
@@ -8264,13 +8288,17 @@ location-lookup ul li {
         padding: 13px 2.5%;
     }
 
-    .tabs-standard>.tabs, .tabs.tabs-standard {
+    .tabs-standard>.tabs,
+    .tabs-striped>.tabs,
+    .tabs.tabs-standard,
+    .tabs.tabs-striped {
         bottom: auto;
         top: 44px;
         background: #600000;
         border-top: 1px solid #1d0b0b;
         color: #9A6C5D;
         border-bottom: 1px solid #000000;
+        border-top: none;
     }
     .platform-ios .tabs-standard>.tabs,
     .platform-android .tabs-standard>.tabs,
@@ -8290,6 +8318,7 @@ location-lookup ul li {
         margin-bottom: 10px;
         height: 38px;
         border-right: 1px solid #751717;
+        border-top: none;
     }
     
     .tabs-icon-top .tab-item.first-tab-item {
@@ -8307,6 +8336,7 @@ location-lookup ul li {
     
     .tab-item-active {
         color: #d2d2d1;
+        border-top: none;
     }
     
     .tab-item .icon {
@@ -9032,6 +9062,9 @@ location-lookup ul li {
     .platform-android .offers-side-display {
         top: 125px;
     }
+    .platform-android.intended-browser .offers-side-display {
+        top: 105px;
+    }
     .show .offers-side-display {
         opacity: 1;
     }
@@ -9054,6 +9087,10 @@ location-lookup ul li {
     .platform-android .movies-side-display {
         top: 125px;
     }
+    .platform-android.intended-browser .events-side-display,
+    .platform-android.intended-browser .movies-side-display {
+        top: 105px;
+    }
     .show .events-side-display,
     .show .movies-side-display {
         opacity: 1;
@@ -9073,6 +9110,9 @@ location-lookup ul li {
     .platform-android .kickstarter-side-display {
         top: 330px;
         max-height: calc(100% - 335px);
+    }
+    .platform-android.intended-browser .kickstarter-side-display {
+        top: 310px;
     }
     
     .whats-open-side-display {

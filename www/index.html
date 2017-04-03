@@ -99,27 +99,29 @@
     
     -->
   
-    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script></head>
-  <body>
+    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+  </head>
+  <body class="intended-browser">
     <div class="tooltip-screen-cover"
         ng-class="{'open': tooltipShowing}">
-        <span class="tooltip"><span class="tooltip-arrow"></span>
-        <span class="tooltip-text">
-            {{currentTooltipText}}
+        <span class="tooltip">
+            <span class="tooltip-arrow"></span>
+            <span class="tooltip-text">
+                {{currentTooltipText}}
+            </span>
+            <button class="btn-white"
+                ng-click="nextTooltipFunction()">
+                Got it!
+            </button>
+        </div>
+        <div class="full-screen-cover" ng-class="{'open': appLoading}">
+        </div>
+        <span class="full-screen-cover-icon" ng-class="{&apos;open&apos;: appLoading}">
+            <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+            <label>Loading ...</label>
         </span>
-        <button class="btn-white"
-            ng-click="nextTooltipFunction()">
-            Got it!
-        </button>
-    </div>
-    <div class="full-screen-cover" ng-class="{'open': appLoading}">
-    </div>
-    <span class="full-screen-cover-icon" ng-class="{&apos;open&apos;: appLoading}">
-        <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
-        <label>Loading ...</label>
-    </span>
-    <div ng-class="{'open': showFeedUpdateScreenCover}" class="screen-cover trans">
-</div>
+        <div ng-class="{'open': showFeedUpdateScreenCover}" class="screen-cover trans">
+        </div>
     <ion-nav-view></ion-nav-view>
     <ion-nav-bar animation="no-animation">
       <ion-header-bar style="opacity: 0;" id="header-bar" no-tap-scroll="true" align-title="left" class="bar-positive"

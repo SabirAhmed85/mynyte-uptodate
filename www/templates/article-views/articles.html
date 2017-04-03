@@ -5,7 +5,11 @@
 <script type="text/ng-template" id="/sectioned-article.html">
   <div class="article-accordian">
     <span ng-repeat="articleCategory in articleCategories">
-      <h3 ng-class="{'first': articleCategory == articleCategories[0]}">{{articleCategory.title}}</h3>
+      <h3 ng-class="{'first': articleCategory == articleCategories[0]}">
+        <i class="{{articleCategory.icon}}"
+          ng-if="articleCategory.icon != null"></i>
+        {{articleCategory.title}}
+      </h3>
       <span ng-repeat="article in articleCategory.articles" class="article-accordian-article">
         <span class="header"
           ng-click="article.show = !article.show">
