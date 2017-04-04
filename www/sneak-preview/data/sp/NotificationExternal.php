@@ -1,52 +1,48 @@
 <?php
-    
-  $action = $_GET['action'];
-  
-  if ($action == 'clearAllExpiredTransactionsExternal') {
 
     require_once('../db-connect.php');
-  
+
     function sendMessage($deviceTokens, $contentsInner, $headingsInner, $dataObj){
-		$contents = array(
-			"en" => $contentsInner
-			);
+    	$contents = array(
+    		"en" => $contentsInner
+    		);
         $headings = array(
-			"en" => $headingsInner
-			);
-		
-		$fields = array(
-			'app_id' => "5d38e847-c406-4e2e-85d6-27a76ce657f3",
-			'include_player_ids' => $deviceTokens,
-			'data' => $dataObj,
-			'contents' => $contents,
+    		"en" => $headingsInner
+    		);
+    	
+    	$fields = array(
+    		'app_id' => "5d38e847-c406-4e2e-85d6-27a76ce657f3",
+    		'include_player_ids' => $deviceTokens,
+    		'data' => $dataObj,
+    		'contents' => $contents,
             'headings' => $headings,
             'ios_badgType' => "Increase",
             'ios_badgeCount' => 1
-		);
-		
-		$fields = json_encode($fields);
+    	);
+    	
+    	$fields = json_encode($fields);
     	print("\nJSON sent:\n");
     	print($fields);
-		
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
-												   'Authorization: Basic NGEwMGZmMjItY2NkNy0xMWUzLTk5ZDUtMDAwYzI5NDBlNjJj'));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_HEADER, FALSE);
-		curl_setopt($ch, CURLOPT_POST, TRUE);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    	
+    	$ch = curl_init();
+    	curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+    											   'Authorization: Basic NGEwMGZmMjItY2NkNy0xMWUzLTk5ZDUtMDAwYzI5NDBlNjJj'));
+    	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    	curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    	curl_setopt($ch, CURLOPT_POST, TRUE);
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
-		$response = curl_exec($ch);
-		curl_close($ch);
-		
-		return $response;
-	}
-	
-    
+    	$response = curl_exec($ch);
+    	curl_close($ch);
+    	
+    	return $response;
+    }
+
+
     $result = mysql_query("CALL clearAllExpiredTransactionsExternal()");
-    
+
     while($rowInitial = mysql_fetch_assoc($result)) {
         $outputInitial[] = $rowInitial;
     }
@@ -123,5 +119,4 @@
     }
       
     mysql_close();
-  }
 ?>
