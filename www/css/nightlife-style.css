@@ -3722,9 +3722,11 @@ a.item .profile-item-counter.outstanding {
     width: 100%;
     height: 120%;
     z-index: 9999;
+    opacity: 0;
 }
 .final-profile-login-window.open {
     top: 0;
+    opacity: 1;
 }
 
 input.nightlife-input {
@@ -8283,6 +8285,10 @@ location-lookup ul li {
         margin-top: -6px;
     }
 
+    .top-message-container.show {
+        margin-left: calc(50% - 440px);
+    }
+
 
     .niceTile h2 {
         padding: 13px 2.5%;
@@ -8372,6 +8378,10 @@ location-lookup ul li {
         margin-right: 10px;
         margin-top: 11px;
         width: calc(100% - 65px);
+    }
+
+    .intended-browser .notification-counter {
+        display: none;
     }
     
     .bar-footer.has-tabs, .has-tabs {
@@ -8585,6 +8595,15 @@ location-lookup ul li {
         margin-right: calc(50% - 395px);
         margin: 25px auto 10px;
         width: 100%;
+    }
+
+    .final-profile-login-window {
+        width: 671px;
+        border-radius: 7px 7px 0 0;
+        border: 1px solid #444;
+    }
+    .final-profile-login-window.open {
+        top: 11px;
     }
 
     .message-group .message-group-wrapper {
