@@ -1268,13 +1268,13 @@ $timeout(function () {
     }
     
     $rootScope.checkIfDisplayNameTaken = function (displayName, $scope) {
-        if (displayName.length > 4) {
-            Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
-                $scope.displayNameTaken = (parseInt(result["total"]) > 0) ? true: false;
-            }).error(function () {
-                $rootScope.checkIfDisplayNameTaken(displayName, $scope);
-            });
-        }
+      if (displayName.length > 4) {
+        Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
+          $scope.displayNameTaken = (parseInt(result["total"]) == 0) ? false: true;
+        }).error(function () {
+          $rootScope.checkIfDisplayNameTaken(displayName, $scope);
+        });
+      }
     }
 }, 100)
     
