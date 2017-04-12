@@ -8119,6 +8119,15 @@ location-lookup ul li {
     background: #700000;
     border-bottom: 1px solid #990000;
     color: #ccc;
+    position: relative;
+}
+
+location-lookup ul li span {
+    padding: 5px 0 6px 10px;
+    border-left: 1px solid #850000;
+    position: absolute;
+    right: 10px;
+    top: 5px;
 }
 
 @media only screen and (min-width: 52rem) {
@@ -9020,6 +9029,10 @@ location-lookup ul li {
     
     #taxi-form form .column {
         width: 100%;
+    }
+
+    location-lookup ul li span {
+        font-weight: bold;
     }
 
     /*More page*/
