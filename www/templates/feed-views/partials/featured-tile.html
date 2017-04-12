@@ -1,0 +1,139 @@
+<a class="tile feed-item {{feature.listingType}}"
+    ng-repeat="feature in features"
+    ng-click="seeListingDetail(feature);"
+    ng-class="{'movie': feature.listingType == 'Movie'}">
+
+    <span ng-if="feature.listingType == 'Update'" class="feed-item-header">
+      <img src="https://1.bp.blogspot.com/-IMsTheNxIqo/VYGjyM2hLiI/AAAAAAAAA1g/ZQO2uRgQSU4/s800/cappadocia-805624_1280.jpg">
+      <span class="header-title">Simon Baker checked-in at Al-Badr Restaurant, Bedford</span>
+      <i class="ion-location"></i>
+    </span>
+    
+    <div class="main-img-container">
+        <img class="main-img"
+            src="/sneak-preview/img/user_images/cover_photo/default.jpg"
+            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}"
+            ng-if="feature.currentCoverPhotoName != null && feature.listingType != 'Offer'"/>
+        <img class="main-img profile-img"
+            src="/sneak-preview/img/user_images/profile_photo/default.jpg"
+            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
+            ng-if="feature.currentProfilePhotoName != null && feature.listingType == 'Offer'"/>
+    </div>
+    <div class="offer-description-container"
+        ng-if="feature.listingType == 'Offer'">
+        <span class="description">{{feature.description}}</span>
+        <span class="business-place"><span>at&nbsp;</span><span class="bold">{{feature.businessName}}</span></span>
+        <span class="description">
+            <span ng-if="feature.weekdayName != null">Every {{feature.weekdayName}}</span>
+            <span ng-if="feature.weekdayName == null">Ends {{feature.lastDate_readable}}</span>
+        </span>
+    </div>
+    <span class="feature-info-dummy"></span>
+    
+    <div class="add feature" ng-style="{'background-color': feature.bgColor}">
+        <span class="name-label red left top">{{feature.name}}</span>
+        <span class="offers-label white right top"
+            ng-if="feature.totalOffers > 0">
+            <i class="ion-social-usd"></i>{{feature.totalOffers}} Offer<span ng-if="feature.totalOffers > 1">s</span>
+        </span>
+        
+        <span class="feature-type-label white left bottom">
+            <span ng-repeat="listingTypeCat in feature.listingTypesCats">
+                <span ng-show="listingTypeCat != feature.listingTypesCats[0]">&amp;</span> {{listingTypeCat}}
+            </span>
+            <span ng-repeat="listingType in feature.listingTypes">
+                <span ng-show="listingType != feature.listingTypes[0]">&amp;</span> {{listingType}}
+            </span>
+            <span class="grey">in</span> {{feature.town}}
+        </span>
+        <span class="table-booking-note"
+            ng-if="feature.isAcceptingTableBookings == '1'"><i class="ion-checkmark"></i>Book Tables</span>
+        <span class="table-booking-note"
+            ng-if="feature.isGuestListAllowed != null && feature.isGuestListAllowed != 'null'"><i class="ion-checkmark"></i>Book Entry</span>
+        <!--<span class="followers-label red right bottom">126 Followers</span>-->
+    </div>
+
+    <!-- MOVIE ONLY
+    <div class="showing-times"
+        ng-show="feature.listingType == 'Movie' && feedType == 'movies'"
+        ng-class="{'activated': feature.showShowingTimeButtons}">
+        <div class="full-screen-cover trans" style="top: {{currentScrollTop}}px;"
+            ng-class="{'open': feature.showShowingTimeButtons}"
+            ng-click="hideShowingTimeButtons(feature, $event)">
+        </div>
+        <div class="main-label">Showing times (click for options)</div>
+        <div class="showing-times-pop-up trans"
+            ng-class="{'open': feature.showShowingTimeButtons}"
+            style="top: {{currentShowingTimePopUpTopVal}}px;">
+          <button class="button-left invite-friends"
+            ng-class="{'half': !rootScope.userLoggedIn, 'third': rootScope.userLoggedIn}">
+            <div>
+                <i class="ion-ios-people"></i>
+                <span class="text">Invite Friends</span>
+            </div>
+          </button>
+          <button class="button-left send"
+            ng-show="rootScope.userLoggedIn">
+            <div>
+                <i class="ion-email"></i>
+                <span class="text">Send Details</span>
+            </div>
+          </button>
+          <button class="button-right"
+            ng-class="{'half': !rootScope.userLoggedIn, 'third': rootScope.userLoggedIn}">
+            <div>
+                <i class="ion-film-marker"></i>
+                <span class="text">Book Tickets</span>
+            </div>
+          </button>
+          <span id="triangle" class="trans" style="left: calc(30px + {{currentShowingTimePopUpTriangleXVal}}px);"></span>
+        </div>
+        
+        <span style="z-index: 1500; width: 100%;"
+            ng-repeat="cinema in feature.cinemas">
+            <label class="cinema-label">
+                {{cinema.name}}
+                <span class="loc-label">
+                    <i class="ion-location"></i>
+                    <span>Locate</span>
+                </span>
+            </label>
+            
+            <!--
+            <div horizontal-slider feed-showing-times class="horizontal-slider feed-showing-times-slider slow-trans"
+                ng-class="{'active': cinema.active}">
+              <span class="showing-time"
+                ng-class="{'active': showingTime.active}"
+                ng-repeat="showingTime in cinema.showingTimes"
+                ng-click="showShowingTimeButtons(feature, cinema, showingTime, $event)">
+                    {{showingTime.time}}
+                    <i ng-class="{'ion-chevron-up': !showingTime.active, 'ion-close': showingTime.active}"></i>
+              </span>
+            </div>
+            -->
+            <!--
+        </span>
+    </div> -->
+    <!-- MOVIE ONLY -->
+    
+    <div class="icon-bar-container"
+        ng-include="'templates/shared-partials/listing-icon-bar.html'"
+        ng-show="feedType != 'food' && feedType != 'events' && feedType != 'movies'"></div>
+    <button class="btn-red button-full"
+        ng-show="(feedType == 'food' || feedType == 'events'|| feedType == 'movies') && feature.listingType != 'Offer'"
+        ng-click="feedButtonPressed(feature, $event); $event.stopPropogation();">
+        <span class="inner-wrapper">
+            <i class="display-icon {{feature.tonightsFeedButtonIconClass}}"></i>
+            <i class="arrow-icon ion-chevron-right"></i>
+            <span class="label">{{feature.tonightsFeedButtonOption}}</span>
+        </span>
+    </button>
+    
+    <!--
+    <span class="social-icon-bar">
+        <i class="ion-more"></i>
+    </span>
+    <span class="social-icon-bar-dummy">
+    </span>
+    -->
+</a>

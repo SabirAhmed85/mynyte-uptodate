@@ -1,0 +1,20 @@
+<ion-view view-title="Friends">
+   <ion-content class="post-content">
+   	<ion-refresher
+       	pulling-text="Pull to refresh..."
+       	on-refresh="doRefresh()">
+     	</ion-refresher>
+      <div class="list card">
+          <a href="#/app/profile" class="item item-avatar" ng-repeat="item in items">
+            <img ng-src="{{item.image}}"></img>
+            <h2>{{item.title}}</h2>
+            <h2>@{{item.title}}</h2>
+          </a>
+      </div>
+      <ion-infinite-scroll
+       	ng-if="postsCompleted == false"
+       	on-infinite="getPosts()"
+       	distance="10%">
+     	</ion-infinite-scroll>
+   </ion-content>
+</ion-view>

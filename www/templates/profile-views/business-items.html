@@ -1,0 +1,350 @@
+<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg">
+    <div class="page-loading-container"
+        ng-show="pageLoading != false">
+        <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+        <span class="loading-text">Loading ...</span>
+    </div>
+    <ion-content>
+        <div class="list summary-display {{itemType}} view-wrapper">
+            <div class="item item-message-summary business-item-summary"
+                ng-click="nextPageFunction(item)"
+                ng-repeat="item in businessItems"
+                ng-class="{'first': item == businessItems[0], 'business-item-with-categories': itemType == 'myNYTEActivity'}">
+                <div class="message-info" style="width: 100%;">
+                    <span class="message-header-icon"
+                        ng-if="itemType == 'myNYTEActivity'">
+                        <i class="{{item.icon}}"></i>
+                    </span>
+                    <span class="message-header">{{item.name}}</span>
+                    <span class="message-text">{{item.description}}</span>
+                    <span class="message-header" style="float: right; clear: none; margin-right: 2%;">
+                        <span style="color: #888;"
+                            ng-if="itemType == 'OwnOffers'">Ends: </span>
+                        {{item.endDateTime}}
+                    </span>
+                    <span class="message-header-icon right"
+                        ng-if="itemType == 'myNYTEActivity'"
+                        ng-click="toggleBusinessItemCatVisibility(item);">
+                        <i class="trans"
+                            ng-class="{'ion-plus-round': !item.show, 'ion-minus-round': item.show}"></i>
+                    </span>
+                    
+                    <div class="restaurant-table-business-item-summary" 
+                        ng-if="itemType == 'OwnOffers'">
+                        <span class="message-side-note"
+                            ng-if="item._relatedEventId != null">
+                            <span>Event Offer</span>
+                        </span>
+                    </div>
+                    
+                    <div class="restaurant-table-business-item-summary" 
+                        ng-if="itemType == 'Movies'">
+                        <label class="booking-time">
+                            <span class="message-text">Starts: {{item.earliestShowingStartDate}}</span>
+                        </label>
+                        <label class="booking-time">
+                            <span class="message-text">Ends: {{item.latestShowingEndDate}}</span>
+                        </label>
+                    </div>
+                    
+                    <div class="event-business-item-summary" 
+                        ng-if="itemType == 'OwnEvents'">
+                        <label
+                            ng-if="item.weekdayIndexId == null">
+                            <span class="message-text">Date: {{item.DATE}}</span>
+                        </label>
+                        <label
+                            ng-if="item.weekdayIndexId != null">
+                            <span class="message-text">Date: every {{item.weekdayName}} until {{item.lastDate}}</span>
+                        </label>
+                        <label class="guestlist-label"
+                            ng-show="timeScale == 'present'">
+                            <span class="message-text"
+                                ng-if="item.isGuestListAllowed != null">Guestlist: {{item.guestListCurrentTotal}}/{{item.guestListMax}}
+                                <span ng-if="item.weekdayIndexId != null">for the upcoming week</span>
+                            </span>
+                            <span class="message-text"
+                                ng-if="item.isGuestListAllowed == null">No Guestlist for this event.
+                            </span>
+                        </label>
+                        <span class="message-side-note">{{item.musicStyle}}</span>
+                    </div>
+                    
+                    <div class="taxi-business-item-summary" 
+                        ng-if="itemType == 'RequestedTaxiBookings' || itemType == 'OwnTaxiBookings'">
+                        <label class="pick-up-label">
+                            <span class="message-header">Pick Up:</span>
+                            <span class="message-text">{{item.pickUpAddressLine1}}</span>
+                        </label>
+                        <label class="drop-off-label">
+                            <span class="message-header">Drop Off:</span>
+                            <span class="message-text">{{item.dropOffAddressLine1}}</span>
+                        </label>
+                        <span class="booking-date">{{item.bookingDateTime}}</span>
+                        <span class="replied-label" ng-show="item.lowestPrice != null || item.quickestTime != null">Replied <i class="ion-icon ion-checkmark-circled"></i></span>
+                        <span class="message-sub-note message-sub-note-large">
+                            <span>
+                                <i ng-class="{'ion-checkmark': item.isCancelled == '0' && item._claimedByBusinessId != null,
+                                        'ion-close': item.isCancelled == '1' || (item.autoExpired == '1' && item._claimedByBusinessId == null),
+                                        'reject-red': item.isCancelled == '1' || (item.autoExpired == '1' && item._claimedByBusinessId == null),
+                                        'ion-minus-round': item._claimedByBusinessId == null && item.isComplete == '0' && item.isCancelled == '0',
+                                        'ion-checkmark-circled': item.isComplete == '1' && item.isCancelled == '0',
+                                        'ion-close-circled': item.isComplete == '1' && item.isCancelled == '1'}"></i>
+                                <span ng-if="item.isCancelled == '0' && item._claimedByBusinessId != null">Accepted</span>
+                                <span ng-if="item.autoExpired == '1' && item._claimedByBusinessId == null">Not accepted</span>
+                                <span ng-if="item.isCancelled == '1'">Cancelled</span>
+                                <span ng-if="( (item.isCancelled == '0' && item._claimedByBusinessId != null) || (item.autoExpired == '1' && item._claimedByBusinessId == null) || (item.isCancelled == '1') ) && item.isComplete == '1'">&nbsp&amp;</span>
+                                <span ng-if="item.isComplete == '1'">Completed</span>
+                                <span ng-if="item._claimedByBusinessId == null && item.isComplete == '0' && item.isCancelled == '0' && item.autoExpired == '0'">Waiting for reply...</span>
+                            </span>
+                        </span>
+                        <span class="message-sub-note">
+                            <span>
+                                <span>Passengers: {{item.numPassengers}}</span>
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <div class="table-booking-business-item-summary" 
+                        ng-if="itemType == 'RequestedTableBookings' || itemType == 'OwnTableBookings'">
+                        <label class="booking-time">
+                            {{item.dateRequested}} at {{item.timeRequested}}
+                        </label>
+                        <label class="booking-time-suggested"
+                            ng-if="item.dateTimeSuggested != null">
+                            Suggested: at {{item.timeSuggested}}
+                        </label>
+                        <span class="message-sub-note message-sub-note-large">
+                            <span>
+                                <i 
+                                    ng-class="{'ion-checkmark': item.isAccepted == '1',
+                                        'ion-close': item.isRejected == '1' || item.isCancelled == '1',
+                                        'reject-red': item.isRejected == '1' || item.isCancelled == '1',
+                                        'ion-minus-round': item.isAccepted == '0' && item.isRejected == '0' && item.isCompleted == '0' && item.isCancelled == '0' && item.dateTimeSuggested != null,
+                                        'ion-alert': item.isAccepted == '0' && item.isRejected == '0' && item.isCompleted == '0' && item.isCancelled == '0' && item.dateTimeSuggested == null,
+                                        'ion-checkmark-circled': item.isCompleted == '1' && item.isCancelled == '0',
+                                        'ion-close-circled': item.isCompleted == '1' && (item.isRejected == '1' || (item.isCancelled == '0' && item.isRejected == '0' && item.isAccepted == '0')) }"></i>
+                                <span ng-if="item.isAccepted == '1' && item.isCancelled == '0'">Accepted</span>
+                                <span ng-if="item.isRejected == '1'">Rejected</span>
+                                <span ng-if="item.isCancelled == '1'">Cancelled</span>
+                                <span ng-if="item.isCancelled == '0' && item.isRejected == '0' && item.isAccepted == '0' && item.isCompleted == '1'">Not accepted</span>
+                                <span ng-if="item.isCompleted == '1'">&nbsp&amp; Completed</span>
+                                <span ng-if="item.isAccepted == '0' && item.isRejected == '0' && item.isCompleted == '0' && item.isCancelled == '0' && item.dateTimeSuggested != null">Waiting for reply...</span>
+                                <span ng-if="item.isAccepted == '0' && item.isRejected == '0' && item.isCompleted == '0' && item.isCancelled == '0' && item.dateTimeSuggested == null">Action required!</span>
+                            </span>
+                        </span>
+                        <span class="message-sub-note">
+                            <span>Table for: {{item.tableFor}}</span>
+                        </span>
+                    </div>
+                    
+                    <div class="restaurant-table-business-item-summary" 
+                        ng-if="itemType == 'RequestedTakeawayOrders' || itemType == 'OwnTakeawayOrders'">
+                        <label class="booking-time" 
+                            ng-if="item.orderType == 'Delivery'">
+                            <span class="message-header">Address:</span>
+                            <span class="message-text">{{item.addressLine1}}, {{item.postcode}}</span>
+                        </label>
+                        <label class="booking-party-size">
+                            <span class="message-text order-type">{{item.orderType}}</span>
+                            <span class="date-time-created" class="message-text">{{item.dateTimeCreated}}</span>
+                        </label>
+                    </div>
+                    
+                    <div class="business-menu-item-categories-summary" 
+                        ng-if="itemType == 'BusinessCarteMenuItemCats'
+                            || itemType == 'BusinessTakeawayMenuItemCats'">
+                        <i class="ion-chevron-right"></i>
+                        <span class="message-count">Total Items: {{item.count}}</span>
+                    </div>
+                    <div class="business-menu-item-categories-summary" 
+                        ng-if="itemType == 'BusinessMenuItemCats'">
+                        <i class="ion-chevron-right"></i>
+                        <span class="message-count">View/edit your {{item.name}}</span>
+                    </div>
+                    
+                    <div class="menu-item-categories-summary" 
+                        ng-if="itemType == 'MenuItemCategories'">
+                        <i class="ion-chevron-right"></i>
+                        <span class="message-note"
+                             ng-show="item.isUniversal == '1'">
+                            <span><i class="ion-earth"></i>Universal Category</span>
+                        </span>
+                    </div>
+
+                    <div class="menu-item-sub-categories-summary" 
+                        ng-if="itemType == 'MenuItemSubCategories'">
+                        <i class="ion-chevron-right"></i>
+                        <span class="message-note"
+                             ng-show="item.description == ''">
+                            <span>No Description</span>
+                        </span>
+                    </div>
+                    
+                    <div class="menu-item-template-options-summary"
+                        ng-if="itemType == 'MenuItemTemplateOptions'">
+                        <span class="positioned-note">{{item.categoryName}}</span>
+                        <i class="ion-chevron-right"></i>
+                        <span class="message-main-note">Options:
+                            <span
+                                ng-repeat="option in item.options"> {{option.name}}<span ng-show="option != item.options[item.options.length - 1]">,</span></span>
+                        </span>
+                        <span class="message-note">
+                            <span ng-class="{'highlight': item.priceRelevant == '1', 'lowlight': item.priceRelevant != '1'}">
+                                <i class="ion-record"></i>
+                                <span ng-show="item.priceRelevant != '1'">Not a </span>
+                                Price-based Option</span>
+                            <span ng-class="{'highlight': item.quantityRelevant == '1', 'lowlight': item.quantityRelevant != '1'}">
+                                <i class="ion-record"></i>
+                                <span ng-show="item.quantityRelevant != '1'">Not a </span>
+                                Quantity-based Option</span>
+                        </span>
+                    </div>
+                </div>
+                <div style="max-height: 0;" class="mynyte-activity-category expandable-category trans"
+                    ng-if="itemType == 'myNYTEActivity'"
+                    ng-class="{'open': item.show}">
+                    <div class="empty-span"
+                        ng-if="item.items.length == 0">
+                        <span ng-if="item.dbName == 'Table Booking'">
+                            <span class="inner-span">You currently have 0 table bookings. Start looking for <a ui-sref="app.feed()">great places to eat</a> now.</span>
+                        </span>
+                        <span ng-if="item.dbName == 'Taxi Booking'">
+                            <span class="inner-span">You currently have 0 taxi bookings. <a ui-sref="app.feed()">Find somewhere to go</a>, and then <a ui-sref="app.taxi()">book your taxi</a> with ease.</span>
+                        </span>
+                        <span ng-if="item.dbName == 'Offer'">
+                            <span class="inner-span">You currently have 0 offers claimed, but it's never too late to start making the most out of all the <a ui-sref="app.offers()">great offers &amp; deals</a>.</span>
+                        </span>
+                        <span ng-if="item.dbName == 'Event Entry'">
+                            <span class="inner-span">You currently have 0 Event Bookings, but as the saying goes, <a ui-sref="app.feed()">the night is still young...</a></span>
+                        </span>
+                    </div>
+                    <div class="mynyte-activity-categories-summary"
+                        ng-repeat="specificItem in item.items"
+                        ng-click="goToMyNyteActivity(specificItem)">
+                        <i class="ion-chevron-right"></i>
+                        <span ng-if="specificItem.itemType == 'Table Booking'">
+                            <span class="message-main-note">
+                                <span>{{specificItem.businessName}}</span>
+                            </span>
+                            <span class="message-note message-date-note">
+                                <span>{{specificItem.dateRequested}} at {{specificItem.timeRequested}}</span>
+                            </span>
+                            <span class="message-sub-note message-sub-note-large">
+                                <span>
+                                    <i 
+                                        ng-class="{'ion-checkmark': specificItem.isAccepted == '1',
+                                            'ion-close': specificItem.isRejected == '1' || specificItem.isCancelled == '1',
+                                            'reject-red': specificItem.isRejected == '1' || (specificItem.isCompleted == '1' && specificItem.isCancelled == '0' && specificItem.isRejected == '0' && specificItem.isAccepted == '0'),
+                                            'ion-minus-round': specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0' && specificItem.dateTimeSuggested == null,
+                                            'ion-alert': specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0' && specificItem.dateTimeSuggested != null,
+                                            'ion-checkmark-circled': specificItem.isCompleted == '1' && specificItem.isCancelled == '0',
+                                            'ion-close-circled': specificItem.isCompleted == '1' && (specificItem.isRejected == '1' || (specificItem.isCancelled == '0' && specificItem.isRejected == '0' && specificItem.isAccepted == '0')) }"></i>
+                                    <span ng-if="specificItem.isAccepted == '1' && specificItem.isCancelled == '0'">Accepted</span>
+                                    <span ng-if="specificItem.isRejected == '1'">Rejected</span>
+                                    <span ng-if="specificItem.isCancelled == '1'">Cancelled</span>
+                                    <span ng-if="specificItem.isCancelled == '0' && specificItem.isRejected == '0' && specificItem.isAccepted == '0' && specificItem.isCompleted == '1' && specificItem.isCompleted == '1'">Not accepted</span>
+                                    <span ng-if="specificItem.isCompleted == '1'">&nbsp&amp; Completed</span>
+                                    <span ng-if="specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0' && specificItem.dateTimeSuggested == null">Waiting for reply...</span>
+                                    <span ng-if="specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0' && specificItem.dateTimeSuggested != null">Action required!</span>
+                                </span>
+                            </span>
+                            <span class="message-sub-note">
+                                <span>Table for: {{specificItem.tableFor}}</span>
+                            </span>
+                        </span>
+                        <span ng-if="specificItem.itemType == 'Taxi Booking'">
+                            <span class="message-main-note">
+                                <span>To: {{specificItem.dropOffPlace}}</span>
+                            </span>
+                            <span class="message-note">
+                                <span>From: {{specificItem.pickUpPlace}}</span>
+                            </span>
+                            <span class="message-note message-date-note">
+                                <span>Requested: {{specificItem.dateRequested}} at {{specificItem.timeRequested}}</span>
+                            </span>
+                            <span class="message-sub-note message-sub-note-large">
+                                <span>
+                                    <i 
+                                        ng-class="{'ion-checkmark': specificItem.isAccepted == '1',
+                                            'ion-close': specificItem.isRejected == '1' || specificItem.isCancelled == '1',
+                                            'reject-red': specificItem.isRejected == '1',
+                                            'ion-minus-round': specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0',
+                                            'ion-checkmark-circled': specificItem.isCompleted == '1' && (specificItem.isAccepted == '1' || specificItem.isCancelled == '0'),
+                                            'ion-close-circled': specificItem.isCompleted == '1' && (specificItem.isRejected == '1' || specificItem.isCancelled == '1')}"></i>
+                                    <span ng-if="specificItem.isAccepted == '1' && specificItem.isCancelled == '0'">Accepted</span>
+                                    <span ng-if="specificItem.isRejected == '1'">Not accepted</span>
+                                    <span ng-if="specificItem.isCancelled == '1'">Cancelled</span>
+                                    <span ng-if="(specificItem.isAccepted == '1' || specificItem.isRejected == '1' || specificItem.isCancelled == '1') && specificItem.isCompleted == '1'">&nbsp&amp;</span>
+                                    <span ng-if="specificItem.isCompleted == '1'">Completed</span>
+                                    <span ng-if="specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0'">Waiting for reply...</span>
+                                </span>
+                            </span>
+                            <span class="message-sub-note">
+                                <span>Passengers: {{specificItem.numPassengers}}</span>
+                            </span>
+                        </span>
+                        <span ng-if="specificItem.itemType == 'Offer'">
+                            <span class="message-main-note">
+                                <span>{{specificItem.businessName}}</span>
+                            </span>
+                            <span class="message-note">
+                                <span>{{specificItem.itemTitle}}</span>
+                            </span>
+                            <span class="message-note message-date-note">
+                                <span>Ends {{specificItem.endDate}}</span>
+                            </span>
+                            <span class="message-sub-note message-sub-note-large">
+                                <span>
+                                    <i 
+                                        ng-class="{'ion-checkmark': specificItem.isAccepted == '1',
+                                            'ion-close': specificItem.isRejected == '1' || specificItem.isCancelled == '1',
+                                            'reject-red': specificItem.isRejected == '1',
+                                            'ion-close-grey': specificItem.isCancelled == '1',
+                                            'ion-minus-round': specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0',
+                                            'ion-checkmark-circled': specificItem.isCompleted == '1' && (specificItem.isAccepted == '1' || specificItem.isCancelled == '0'),
+                                            'ion-close-circled': specificItem.isCompleted == '1' && (specificItem.isRejected == '1' || specificItem.isCancelled == '1')}"></i>
+                                    <span ng-if="specificItem.isAccepted == '1' && specificItem.isCancelled == '0'">Accepted</span>
+                                    <span ng-if="specificItem.isRejected == '1'">Rejected</span>
+                                    <span ng-if="specificItem.isCancelled == '1'">Cancelled</span>
+                                    <span ng-if="(specificItem.isAccepted == '1' || specificItem.isRejected == '1' || specificItem.isCancelled == '1') && specificItem.isCompleted == '1'">&nbsp&amp;</span>
+                                    <span ng-if="specificItem.isCompleted == '1'">Completed</span>
+                                    <span ng-if="specificItem.isAccepted == '0' && specificItem.isRejected == '0' && specificItem.isCompleted == '0' && specificItem.isCancelled == '0'">Waiting for reply...</span>
+                                </span>
+                            </span>
+                            <span class="message-sub-note">
+                            </span>
+                        </span>
+                        <span ng-if="specificItem.itemType == 'Event Entry'">
+                            <span class="message-main-note">
+                                <span>{{specificItem.businessName}}</span>
+                            </span>
+                            <span class="message-note">
+                                <span>{{specificItem.itemTitle}}</span>
+                            </span>
+                            <span class="message-note message-date-note">
+                                <span>{{specificItem.endDate}}</span>
+                            </span>
+                            <span class="message-sub-note message-sub-note-large">
+                                <span>
+                                    <i 
+                                        ng-class="{'ion-checkmark': specificItem.isCancelled == '0',
+                                            'ion-close': specificItem.isCancelled == '1',
+                                            'ion-checkmark-circled': specificItem.isCompleted == '1' && specificItem.isCancelled == '0',
+                                            'ion-close-circled': specificItem.isCompleted == '1' && specificItem.isCancelled == '1'}"></i>
+                                    <span ng-if="specificItem.isCancelled == '0'">Accepted</span>
+                                    <span ng-if="specificItem.isCancelled == '1'">Cancelled</span>
+                                    <span ng-if="specificItem.isCompleted == '1'">&nbsp&amp;</span>
+                                    <span ng-if="specificItem.isCompleted == '1'">Completed</span>
+                                </span>
+                            </span>
+                            <span class="message-sub-note">
+                                <span>Guests: +{{specificItem.additionalGuests}}</span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
