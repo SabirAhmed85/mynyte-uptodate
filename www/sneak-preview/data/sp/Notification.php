@@ -50,6 +50,8 @@
   }
   
   //print(json_encode($_usersId));
+    $result = ($result === null) ? array() : $result;
+    $output = null;
     while($row = mysql_fetch_assoc($result))
         $output[] = $row;
         
