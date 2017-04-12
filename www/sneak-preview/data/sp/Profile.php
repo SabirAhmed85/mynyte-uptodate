@@ -892,8 +892,10 @@
     || $action == 'getProfileItemCountForProfile'
     || $action == 'updateAllProfileDetails'
     || $action == 'updateProfilePasswordDetails') {
-    while($row = mysql_fetch_assoc($result))
-      $output[] = $row;  
+      $result = ($result === null) ? array() : $result;
+      $output = null;
+      while($row = mysql_fetch_assoc($result))
+        $output[] = $row;  
       echo json_encode($output);
   }
 

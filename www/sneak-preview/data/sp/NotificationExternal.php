@@ -42,7 +42,8 @@
 
 
     $result = mysql_query("CALL clearAllExpiredTransactionsExternal()");
-
+    
+    $outputInitial = array();
     while($rowInitial = mysql_fetch_assoc($result)) {
         $outputInitial[] = $rowInitial;
     }
