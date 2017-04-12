@@ -31,10 +31,10 @@
   }
   else if ($action == 'updateTableBooking' || $action == 'updateTableBookingByPerson') {
     $_tableBookingId = (empty($_GET['_tableBookingId'])) ? "": mysql_real_escape_string($_GET['_tableBookingId']);
-    $accepted = (empty($_GET['accepted'])) ? "": mysql_real_escape_string($_GET['accepted']);
-    $rejected = (empty($_GET['rejected'])) ? "": mysql_real_escape_string($_GET['rejected']);
-    $completed = (empty($_GET['completed'])) ? "": mysql_real_escape_string($_GET['completed']);
-    $cancelled = (empty($_GET['cancelled'])) ? "": mysql_real_escape_string($_GET['cancelled']);
+    $accepted = (empty($_GET['accepted'])) ? "0": mysql_real_escape_string($_GET['accepted']);
+    $rejected = (empty($_GET['rejected'])) ? "0": mysql_real_escape_string($_GET['rejected']);
+    $completed = (empty($_GET['completed'])) ? "0": mysql_real_escape_string($_GET['completed']);
+    $cancelled = (empty($_GET['cancelled'])) ? "0": mysql_real_escape_string($_GET['cancelled']);
     $alternateDate = (empty($_GET['alternateDate']) || $_GET['alternateDate'] == 'null') ? 'null': "'". mysql_real_escape_string($_GET['alternateDate']) . "'";
 
     if ($action == 'updateTableBooking') {
