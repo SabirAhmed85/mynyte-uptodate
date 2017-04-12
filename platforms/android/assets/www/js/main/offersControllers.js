@@ -5,12 +5,14 @@ app.controller('OffersCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 
     $scope.currentSearchTown = null;
     $scope.showTownSelect = false;
     $scope.pageLoading = true;
+    $scope.windowWidth = window.innerWidth;
     
     //Function to Sort Categories for Today and Future
     $scope.pageLoad = function () {
         $scope.sortCategories = function () {
             var _userId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
             Offers.getOffersByTownId($rootScope.currentSearchTown._id, _userId, 'present').success(function (offers) {
+                $rootScope.debugModeLog({'msg': 'OffersCtrl getOffersByTownId successData', 'data': offers});
                 
                 var todaysCategoryLabels = [];
                 var futureCategoryLabels = [];
@@ -23,10 +25,6 @@ app.controller('OffersCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 
                 var loopThroughCats = function () {
                     //Loop through Categories now and insert the offers into them
                     //(by Looping through the offers again and seeing if they match)
-                    if ($rootScope.debugMode) {
-                        console.log('OffersCtrl todaysCategoryLabels: ', todaysCategoryLabels);
-                        console.log('OffersCtrl futureCategoryLabels:', futureCategoryLabels);
-                    }
                     var pageIsReady = function () {
                         if (todaysCategoriesFilled && futureCategoriesFilled) {
                             $scope.pageLoading = false;
@@ -46,6 +44,9 @@ app.controller('OffersCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 
                             
                             for (b = 0; b < offers.length; b++) {
                                 var stringToCheck = offers[b].offerSubCategoryName;
+                                if (offers[b].description.length > 110) {
+                                    offers[b].description = offers[b].description.substr(0, 110) + '...';
+                                }
                                 if (offers[b].todayOrFuture == "today" && stringToCheck == todaysCategoryLabels[a]) {
                                     offers[b].index = todaysCategories[a].offers.length + 1;
                                     todaysCategories[a].offers.push(offers[b]);
@@ -101,10 +102,6 @@ app.controller('OffersCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 
                         loopThroughCats();
                     }
                 }
-                
-                if ($rootScope.debugMode) {
-                    console.log('OffersCtrl offers: ', offers);
-                }
             }).error(function () {
                 $scope.sortCategories();
             });
@@ -119,7 +116,7 @@ app.controller('OffersCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 
         }
         
         $scope.goToOffer = function (offer) {
-            $state.go('app.offerDetail', {_id: offer._id});
+            $state.go('app.offers.offerDetail', {_id: offer._id});
         }
 
         $scope.pinListingToMsg = function (listing, $event) {
@@ -150,6 +147,8 @@ app.controller('OfferDetailCtrl', ['$rootScope', '$state', '$stateParams', '$sco
         $scope.getOffer = function () {
             var _userId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
             Offers.getOffer($scope._id, _userId).success(function (offer) {
+                $rootScope.debugModeLog({'msg': 'OfferDetailCtrl getOffer successData', 'data': offer});
+                
                 if (offer != null) {
                     $scope.offer = offer[0];
                     $scope.offer.startDateTimeString = datesService.convertToDate($scope, new Date($scope.offer.relevantStartDateTime.split(' ')[0]));
@@ -161,9 +160,6 @@ app.controller('OfferDetailCtrl', ['$rootScope', '$state', '$stateParams', '$sco
                     $scope.pageTitle = $rootScope.pageTitle;
                 }
                 $scope.pageLoading = false;
-                if ($rootScope.debugMode) {
-                    console.log('Scope Offer:', $scope.offer);
-                }
             }).error(function () {
                 $scope.getOffer();
             });
@@ -183,17 +179,18 @@ app.controller('OfferDetailCtrl', ['$rootScope', '$state', '$stateParams', '$sco
                 $state.go('app.profile');
                 var relListing = $scope.offer;
                 $rootScope.relListing = relListing;
+                $rootScope.relListing.date = relListing.endDateTimeString;
                 $rootScope.relListing.relListingType = relListing.listingType;
                 $rootScope.relListing.relListingTypeAlias = "Offer";
                 $rootScope.relListing.relListingSpecItemId = relListing.relListingId;
                 var groupType = 'Business';
-                var timer = window.setTimeout(function () {$state.go('app.messageGroups', {'relListing': null, 'groupType': groupType});}, 60);
+                var timer = window.setTimeout(function () {$state.go('app.profile.messageGroups', {'relListing': null, 'groupType': groupType});}, 60);
                 var timer2 = window.setTimeout(function () {
                     Messages.checkIfMessageGroupExists([$rootScope.user._profileId, $scope.offer._profileId]).success(function (successData) {
                         if (successData == null) {
-                            $state.go('app.messageGroup', {'_id': null, 'relListing': null, '_profileIds': [$rootScope.user._profileId, $scope.offer._profileId], 'groupType': groupType});
+                            $state.go('app.profile.messageGroups.messageGroup', {'_id': null, 'relListing': null, '_profileIds': [$rootScope.user._profileId, $scope.offer._profileId], 'groupType': groupType, 'messageNameString': 'New Message to ' + $rootScope.relListing.businessName});
                         } else {
-                            $state.go('app.messageGroup', {'_id': successData[0]._id, 'relListing': null, '_profileIds': [], 'groupType': groupType});
+                            $state.go('app.profile.messageGroups.messageGroup', {'_id': successData[0]._id, 'relListing': null, '_profileIds': [], 'groupType': groupType, 'messageNameString': $rootScope.relListing.businessName});
                         }
                     }).error(function () {
 

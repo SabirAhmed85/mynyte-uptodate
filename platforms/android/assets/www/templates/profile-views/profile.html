@@ -1,9 +1,9 @@
-<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg border-top">
+<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg border-top no-breadcrumb">
    <ion-content has-header="true">
-        <div ng-if="!rootScope.userLoggedIn">
+        <div ng-if="!rootScope.userLoggedIn" id="log-in-container">
             <div class="item log-in">
                 <div>
-                    <img id="profile-image" src="img/n-logo.png">
+                    <img id="profile-image" src="sneak-preview/img/n-logo.png">
                 </div>
                 <form name="logInForm">
                     <label class="item-input-wrapper email">
@@ -37,6 +37,8 @@
                 
                 <a href="#/app/registerIntro">Register with MyNyte</a>
                 <a href="#/app/resetPassword/1//">Forgot Your Password</a>
+                <a ng-if="rootScope.underConstruction && rootScope.adminUserLoggedIn"
+                    ng-click="rootScope.adminLogOut();">Log Out Admin User</a>
         	</div>
         </div>
         
@@ -46,7 +48,7 @@
                 <label class="item-header first">
                     Choose a Display Name
                 </label>
-                <label class="item" style="padding-bottom: 35px;">
+                <label class="item">
                     <input name="displayName" class="white nightlife-input nightlife-input-square" type="text" placeholder="Display Name"
                         ng-keyup="checkIfDisplayNameTaken(fbRegistrationForm.displayName.$viewValue)"
                         ng-focus="showDisplayNameNoteFunc(true)"
@@ -54,15 +56,22 @@
                         ng-minlength="5"
                         ng-blur="showDisplayNameNoteFunc(false)"
                         ng-model="displayName"
+                        ng-pattern="/^([a-zA-Z0-9-_]+)$/"
                         required>
-                    <div class="form-note form-note-top form-note-white hide" ng-class="{'show': fbRegistrationForm.displayName.$viewValue.length < 5 && showDisplayNameNote}">
-                        <div>Display Names must be at least 5 characters in length.</div>
+                    
+                    <i class="ion-close input-alert"
+                        ng-if="(fbRegistrationForm.displayName.$viewValue.length > 0 && fbRegistrationForm.displayName.$viewValue.length < 5) || displayNameTaken"></i>
+                    <div class="form-note form-note-top form-note-white"
+                        ng-class="{'form-note-red-override': fbRegistrationForm.displayName.$error['pattern'] || (fbRegistrationForm.displayName.$invalid && fbRegistrationForm.displayName.$viewValue.length > 5),
+                            'show': showDisplayNameNote && (fbRegistrationForm.displayName.$viewValue.length < 5 || fbRegistrationForm.displayName.$invalid)}" role="alert">
+                        <div>Display Names must be at least 5 characters in length, and cannot contain any spaces. They can only contain letters, numbers and the following special characters: - _.</div>
                     </div>
-                    <div ng-show="fbRegistrationForm.displayName.$viewValue.length > 4 && showDisplayNameNote">
-                        <div class="form-note form-note-red" ng-show="displayNameTaken">
+                    <div class="form-note" role="alert" style="position:relative;"
+                        ng-class="{'show': fbRegistrationForm.displayName.$viewValue.length > 4 && !fbRegistrationForm.displayName.$invalid && showDisplayNameNote}">
+                        <div class="form-note-red" ng-show="displayNameTaken">
                             Display Name unavailable.
                         </div>
-                        <div class="form-note form-note-white" ng-show="!displayNameTaken">
+                        <div class="form-note-secondary form-note-white" ng-show="!displayNameTaken">
                             Display Name available!
                         </div>
                     </div>
@@ -92,14 +101,14 @@
                         }
                     </style>
                     <div class="list">
-                        <a class="item item-red item-icon-left first" href="#/app/notificationsSummary">
+                        <a class="item item-red item-icon-left first" ui-sref="app.profile.notificationsSummary()">
                             <i class="icon ion-android-notifications"></i>
                             Notifications
                             <span class="profile-item-counter"
                                 ng-class="{'outstanding': profileItemCount['notificationCountType'] == 'outstanding'}"
                                 ng-if="profileItemCount['notificationCountType'] == 'outstanding'">{{profileItemCount['notificationCount']}}</span>
                         </a>
-                        <a class="item item-red item-icon-left" ui-sref="app.messageGroups({relListing: null, groupType: 'Person'})"
+                        <a class="item item-red item-icon-left" ui-sref="app.profile.messageGroups({relListing: null, groupType: 'Person'})"
                             ng-show="rootScope.user.isBusiness == '0'">
                             <i class="icon ion-email"></i>
                             Messages
@@ -107,7 +116,7 @@
                                 ng-class="{'outstanding': profileItemCount['messageCountType'] == 'outstanding'}"
                                 ng-if="profileItemCount['messageCountType'] == 'outstanding'">{{profileItemCount['messageCount']}}</span>
                         </a>
-                        <a class="item item-red item-icon-left" ui-sref="app.messageGroups({relListing: null, groupType: 'Business'})">
+                        <a class="item item-red item-icon-left" ui-sref="app.profile.messageGroups({relListing: null, groupType: 'Business'})">
                             <i class="icon ion-email"></i>
                             Enquiries <span ng-show="rootScope.user.isBusiness == '0'">(Business)</span>
                             <span class="profile-item-counter"

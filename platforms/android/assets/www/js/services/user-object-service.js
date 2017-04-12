@@ -103,7 +103,9 @@ app.factory('userObjectService', ['$q', 'listingsService', '$rootScope', 'Profil
         checkIfUpdateShouldShow();
     }
     
-    var getUsersMessagesAndNotificationsUpdate = function (user) {
+    var getUsersMessagesAndNotificationsUpdate = function (user, counter) {
+        if (counter > 5) {return false};
+        
         Notifications.getUnreadUserMessagesAndNotificationsSummaryForUpdate(user._profileId).success(function (successData) {
             var res = [];
             if (successData != null) {
@@ -147,7 +149,7 @@ app.factory('userObjectService', ['$q', 'listingsService', '$rootScope', 'Profil
             };
             
         }).error(function (errorData) {
-            getUsersMessagesAndNotificationsUpdate(user);
+            getUsersMessagesAndNotificationsUpdate(user, counter+1);
         });
     }
     
@@ -214,16 +216,19 @@ app.factory('userObjectService', ['$q', 'listingsService', '$rootScope', 'Profil
         
         startUsersMessagesAndNotificationsUpdateTimer: function startUsersMessagesAndNotificationsUpdateTimer(user) {
             if ($rootScope.userLoggedIn && $rootScope.online) {
-                getUsersMessagesAndNotificationsUpdate(user);
+                getUsersMessagesAndNotificationsUpdate(user, 0);
                 $rootScope.userUpdateTimer = $timeout(function () {
                     startUsersMessagesAndNotificationsUpdateTimer(user);
                 }, 15000);
+            }
+            else {
+                $rootScope.userUpdateTimer = null;
             }
             return user;
         },
         
         getUsersMessagesAndNotificationsUpdateDirectly: function getUsersMessagesAndNotificationsUpdateDirectly(user) {
-            getUsersMessagesAndNotificationsUpdate(user);
+            getUsersMessagesAndNotificationsUpdate(user, 0);
             
             return user;
         },
@@ -285,14 +290,19 @@ app.factory('userObjectService', ['$q', 'listingsService', '$rootScope', 'Profil
         
         removeUnreadNotifications: function removeUnreadNotifications (user) {
             user.currentUnreadNotifications = [];
-            for (var a = user.unreadUserUpdates.length - 1; a > -1; a--) {
-                if (user.unreadUserUpdates[a].type == 'Notification') {
-                    user.unreadUserUpdates.splice(a, 0);
+            if (user.unreadUserUpdates.length > 0) {
+                for (var a = user.unreadUserUpdates.length - 1; a > -1; a--) {
+                    if (user.unreadUserUpdates[a].type == 'Notification') {
+                        user.unreadUserUpdates.splice(a, 0);
+                    }
+                    
+                    if (a == 0) {
+                        $rootScope.$broadcast('savestate');
+                    }
                 }
-                
-                if (a == 0) {
-                    $rootScope.$broadcast('savestate');
-                }
+            }
+            else {
+                $rootScope.$broadcast('savestate');
             }
             
             return user;

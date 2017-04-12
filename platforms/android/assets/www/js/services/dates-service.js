@@ -32,6 +32,10 @@ app.factory('datesService', ['$q', function($q) {
         scope.chosenWeekday = {index: date.getDay(), name: days[date.getDay()]};
         return days[date.getDay()] + ', ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
     };
+    var convertToDateWithoutComma = function (scope, date) {
+        scope.chosenWeekday = {index: date.getDay(), name: days[date.getDay()]};
+        return days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+    };
     var getShortenedDateString = function (dateTimeString) {
         return dateTimeString.substr(0, dateTimeString.indexOf(' '));
     };
@@ -66,6 +70,7 @@ app.factory('datesService', ['$q', function($q) {
 
         //Functions
         convertToDate: convertToDate,
+        convertToDateWithoutComma: convertToDateWithoutComma,
         convertToReadableDate: function (scope, dateProp) {
             var string = getShortenedDateString(dateProp);
             string = convertToDate(scope, new Date(string));

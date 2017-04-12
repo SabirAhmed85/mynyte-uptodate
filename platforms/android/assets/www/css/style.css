@@ -123,6 +123,15 @@ img {
 .nav-logo{
 	height:32px;
 }
+
+.form_logo.more-screen {
+    opacity: 1;
+}
+
+.form_logo.more-screen img {
+    max-width: 100%;
+}
+
 /* gallery styles */
 .gallery-small{
 	padding:0 !important;
@@ -143,7 +152,6 @@ img {
 }
 .fullscreen-image {
   max-width: 100%;
-  max-height: 100%;
   bottom: 0;
   left: 0;
   margin: auto;
@@ -173,7 +181,6 @@ img {
 }
 /* profile page */
 #content {
-   background-color: #fff;
    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.4);
    position: relative;
 }
@@ -218,14 +225,19 @@ img {
 #profile-image {
     display: block;
     border-radius: 10px;
-    border: 1px solid #350101;
-    width: 100px;
-    height: 100px;
+    width: 75px;
+    height: 75px;
     margin: 151px 0 0 8px;
-    box-shadow: 0px 0px 8px rgba(0,0,0,0.6);
     float: left;
     position: absolute;
     bottom: -31px;
+}
+
+#listing-image {
+    border: 1px solid #350101;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.6);
+    width: 100px;
+    height: 100px;
 }
 
 #listing-cover-image {
@@ -337,12 +349,12 @@ c
 	color:#fff !important;
 }
 .chat-bubble.right {
-    background-color: #990000;
+    background-color: #313131;
     color: #fff;
     float: right;
     margin-right: 10px;
     text-align: right;
-    border: 1px solid #ee0000;
+    border: 1px solid #4a4949;
 }
 
 .message-detail {
@@ -375,7 +387,7 @@ c
 }
 
 .chat-bubble.right .time-label {
-    color: #f1b8b8;
+    color: #f3e6e6;
     right: 9px;
     text-align: right;
 }
@@ -397,7 +409,8 @@ c
 
 .chat-bubble .message-sender {
     font-weight: bold;
-    color: #ffaaaa;
+    color: #f3f1f1;
+    text-align: left;
 }
 .chat-bubble .message-sender p{
     margin-bottom: 1px;

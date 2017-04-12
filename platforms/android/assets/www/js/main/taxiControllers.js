@@ -63,10 +63,25 @@ app.controller('TaxiCtrl', ['$rootScope', '$state','$scope', '$ionicPopup', '$io
             $scope.dropOffTown = $('input#dropoff-town').val();
             $scope.dropOffPostCode = $('input#dropoff-postcode').val();
             
-            console.log($scope._pickUpPlaceId, $scope.lookedUpPickUpLocation, $scope.pickUpAddressLine1, $scope.pickUpTown, $scope.pickUpPostCode, $scope._dropOffPlaceId, $scope.lookedUpDropOffLocation, $scope.dropOffAddressLine1, $scope.dropOffTown, $scope.dropOffPostCode, $scope.currentTotalPassengers, relContactName, relContactEmail, _relContactId, $scope.quickestIsRequired);
+            $rootScope.debugModeLog({'msg': 'TaxiCtrl bookTaxi paramsPassed', 'data': {
+                'pickUpPlaceId': $scope._pickUpPlaceId,
+                'lookedUpPickUpLocation': $scope.lookedUpPickUpLocation,
+                'pickUpAddressLine1': $scope.pickUpAddressLine1,
+                'pickUpTown': $scope.pickUpTown,
+                'pickUpPostCode': $scope.pickUpPostCode,
+                '_dropOffPlaceId': $scope._dropOffPlaceId,
+                'lookedUpDropOffLocation': $scope.lookedUpDropOffLocation,
+                'dropOffAddressLine1': $scope.dropOffAddressLine1,
+                'dropOffTown': $scope.dropOffTown,
+                'dropOffPostCode': $scope.dropOffPostCode,
+                'currentTotalPassengers': $scope.currentTotalPassengers,
+                'quickestIsRequired': $scope.quickestIsRequired,
+                '$rootScope.user._id': $rootScope.user._id
+            }});
             
             Taxi.bookTaxi($scope._pickUpPlaceId, $scope.lookedUpPickUpLocation, $scope.pickUpAddressLine1, $scope.pickUpTown, $scope.pickUpPostCode, $scope._dropOffPlaceId, $scope.lookedUpDropOffLocation, $scope.dropOffAddressLine1, $scope.dropOffTown, $scope.dropOffPostCode, $scope.currentTotalPassengers, $scope.quickestIsRequired, relContactName, relContactEmail, $rootScope.user._id).success(function (successData) {
-                console.log(successData);
+                $rootScope.debugModeLog({'msg': 'TaxiCtrl bookTaxi successData', 'data': successData});
+                
                 if (successData != null && successData != 'null') {
                     var contents = "New Taxi Booking Request received.";
                     var header = "Taxi Booking Requested";
@@ -86,7 +101,6 @@ app.controller('TaxiCtrl', ['$rootScope', '$state','$scope', '$ionicPopup', '$io
                     }
                     
                     $rootScope.appLoading = false;
-                    console.log(successData);
                     
                     $scope.lookedUpPickUpLocation = null;
                     $scope.lookedUpDropOffLocation = null;
@@ -105,8 +119,6 @@ app.controller('TaxiCtrl', ['$rootScope', '$state','$scope', '$ionicPopup', '$io
                     $('input#dropoff-town').val("");
                     $('input#dropoff-postcode').val("");
                     $('.taxi-form-hidden').removeClass("show");
-                    
-                    console.log($scope.lookedUpPickUpLocation, $scope.lookedUpDropOffLocation, $scope.pickUpManuallyEntered, $scope.dropOffManuallyEntered);
                     
                     $ionicPopup.show({
                         title: 'Taxi Booking Requested',

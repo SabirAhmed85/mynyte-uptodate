@@ -8,7 +8,7 @@
             </div>
             <div ng-show="rootScope.searchQuery.length == 0">
                 <ul>
-                    <li ui-sref="app.nlfeedListings({searchType: 'searchBusinessByCategory', _businessTypeId: businessCat._id})" class="search-category-listing" ng-repeat="businessCat in rootScope.searchPanelBusinessCatsToShow" ng-class="{'half': businessCat.name == 'Nightclub' || businessCat.name == 'Bar'|| businessCat.name == 'Events Promoter', 'special': businessCat.name == 'Restaurant' || businessCat.name == 'Takeaway'}">
+                    <li ui-sref="app.feedListings({searchType: 'searchBusinessByCategory', _businessTypeId: businessCat._id})" class="search-category-listing" ng-repeat="businessCat in rootScope.searchPanelBusinessCatsToShow" ng-class="{'half': businessCat.name == 'Nightclub' || businessCat.name == 'Bar'|| businessCat.name == 'Events Promoter', 'special': businessCat.name == 'Restaurant' || businessCat.name == 'Takeaway'}">
                         <div>
                             <span class="main-text" ng-show="businessCat.name !='Restaurant' && businessCat.name != 'Takeaway'">{{businessCat.name}}s</span>
                             <span class="main-text" ng-show="businessCat.name =='Restaurant' || businessCat.name == 'Takeaway'">{{businessCat.name}} Picker</span>
@@ -20,7 +20,7 @@
             </div>
             <div ng-show="rootScope.searchQuery.length > 0">
                 <ul>
-                    <li ui-sref="app.nlfeedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in rootScope.searchPanelResultsToShow">
+                    <li ui-sref="app.feedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in rootScope.searchPanelResultsToShow">
                         <img src="http://3.bp.blogspot.com/-zR75pEKCSSU/VYGjwNogrmI/AAAAAAAAA1Y/xgPrSXra3fE/s200-c/darts-102919_1280.jpg" />
                         <div class="listing-detail-container">
                             <span class="listing-name">{{result.name}}</span>
@@ -86,7 +86,7 @@ var map = L.skobbler.map('map', {
                 ng-class="{'empty': reloadingCentralContent}">
                 <a class="tile feed-item"
                     ng-repeat="feature in features"
-                    ui-sref="app.nlfeedListing({id:feature._id, type:feature.featureType})"
+                    ui-sref="app.feedListing({id:feature._id, type:feature.featureType})"
                     ng-class="{'movie': feature.listingType != 'Offer'}">
                 
                     <span ng-show="feature.listingType == 'Offer'" class="feed-item-header">
@@ -179,7 +179,7 @@ var map = L.skobbler.map('map', {
                     </span>
                 </a>
                 <a class="tile feed-item"
-                    ng-repeat="feature in features" ui-sref="app.nlfeedListing({id:feature._id, type:feature.featureType})"
+                    ng-repeat="feature in features" ui-sref="app.feedListing({id:feature._id, type:feature.featureType})"
                     ng-class="{'photos': feature.listingType != 'Offer'}">
                     
                     <span ng-show="feature.listingType != 'Offer'" class="feed-item-header">

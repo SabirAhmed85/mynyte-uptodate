@@ -1,16 +1,16 @@
-<ion-view view-title="See Bedford Offers on MyNyte.co.uk" class="black_bg border-top">
+<ion-view view-title="See Bedford Offers on MyNyte.co.uk" class="black_bg border-top no-breadcrumb">
   	<ion-content>
         <div class="list">
-            <div class="page-loading-container"
-                ng-show="pageLoading">
+            <div class="page-loading-container trans"
+                ng-class="{'isHidden': !pageLoading}">
                 <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
                 <span class="loading-text">Loading ...</span>
             </div>
-            <div id="offers-mainContent"
-                ng-show="!pageLoading">
+            <div id="offers-mainContent" class="trans"
+                ng-class="{'show': !pageLoading}">
                 <div class="add-message-container">
                     <div class="add-searchMessage topMessage">
-                        <p>You are currently looking at Offers in <b>Beford</b>.</p>
+                        <p>You are currently looking at Offers in <b>Bedford</b>.</p>
                     </div>
                 </div>
                 
@@ -24,11 +24,17 @@
                                     <i ng-class="{'ion-plus-round': !category.showFull, 'ion-minus-round': category.showFull}"></i>
                                 </label>
                                 <div class="content" ng-show="category.showFull" ng-class="{'open':category.showFull}">
-                                    <div class="offer" eat-click-if="feature.businessIsFeatured == '0'" ui-sref="app.offerDetail({_id:feature._id})" ng-repeat="feature in category.offers" ng-class="{'feature':feature._offerTypeId != '1', 'last': feature.index == category.offers.length}">
+                                    <div class="offer" eat-click-if="feature.businessIsFeatured == '0'" ui-sref="app.offers.offerDetail({_id:feature._id})" ng-repeat="feature in category.offers" ng-class="{'feature':feature._offerTypeId != '1', 'first': feature.index == 1}">
+                                        <span class="offer-food-style-label"
+                                            ng-if="feature.offerFoodStyle != null">{{feature.offerFoodStyle}}</span>
                                         <span class="offer-exclusive-label"
                                             ng-if="feature._offerTypeId == '3'">MyNyte Exclusive</span>
-                                        <span class="offer-img-container" ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != null">
-                                            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}" />
+                                        <span class="offer-img-container"
+                                            ng-style="{'height': {{windowWidth * (7/16)}}+'px'}"
+                                            ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != 'default-offer.jpg'">
+                                            <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}"
+                                                src="img/user_images/cover_photo/default-offer.jpg"
+                                                ng-if="feature.currentOfferCoverPhotoName != 'default-offer.jpg'"/>
                                         </span>
                                         <p class="offer-main-text">{{feature.description}}</p>
                                         <i class="ion-chevron-right" ng-show="feature.businessIsFeatured == '1'"></i>
@@ -75,6 +81,5 @@
             </div>
         </div>
     </ion-content>
-    <div class="offers-side side" ng-include="'templates/shared-partials/profile-info-sidebar.html'"></div>
     <div class="offers-side side" ng-include="'templates/shared-partials/events-sidebar.html'"></div>
 </ion-view>

@@ -1,4 +1,4 @@
-<ion-view view-title="Search Result Listing | {{rootScope.pageTitle}} in Bedford on myNyte.co.uk" class="grey_bg">
+<ion-view view-title="Search Result Listing | {{rootScope.pageTitle}} in Bedford on myNyte.co.uk" class="grey_bg nl-feed-listing">
   	<ion-content>
         <div>
             <div class="page-loading-container"
@@ -10,12 +10,13 @@
                 ng-class="{'isVisible': !pageLoading}">
                 <div id="detailedContent-inner" class="detailedContent-inner">
                     <div id="listing-info">
-                        <img id="listing-cover-image"
-                            ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{listing.currentCoverPhotoName}}"
+                        
+                        <img id="listing-cover-image" src="/sneak-preview/img/user_images/cover_photo/default.jpg"
+                            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{listing.currentCoverPhotoName}}"
                             ng-click="seePhoto('CoverPhoto')"></img>
-                        <img id="listing-image"
-                            ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}"
-                            ng-hide="listing.listingType == 'Movie' || listing.listingType == 'Event'"
+                        <img id="listing-image" class="profile-listing-image" src="/sneak-preview/img/user_images/profile_photo/default.jpg"
+                            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}"
+                            ng-if="listing.listingType != 'Movie' && listing.listingType != 'Event'"
                             ng-click="seePhoto('ProfilePhoto')">
                     </div>
                     
@@ -51,7 +52,7 @@
                                 </span>
                                 <span id="listing-location"
                                   ng-show="listing.listingType == 'Event'"
-                                  ui-sref="app.nlfeedListing({_listingId:listing._relatedBusinessId, listingType:'Business'})">
+                                  ui-sref="app.feed.nlfeedListing({_listingId:listing._relatedBusinessId, listingType:'Business'})">
                                   <i class="ion-home icon-left"></i>
                                   <span class="text">{{listing.businessName}}, {{listing.addressLine1}}, {{listing.postcode}}</span>
                                   <i class="ion-chevron-right icon-right"></i>
@@ -92,19 +93,22 @@
                                     See Trailer
                                 </span>
                               </a>
-                              <a class="option-panel double-line"
+                              <a class="option-panel guestlist-option double-line"
                                 ng-click="goToBookTickets();"
-                                ng-show="listing.listingType == 'Event'"
-                                ng-class="{'disabled': !listing.isGuestListAllowed || listing.isGuestListMaxReached}">
+                                ng-class="{
+                                    'disabled': !listing.isGuestListAllowed || listing.isGuestListMaxReached,
+                                    'show': listing.listingType == 'Event'}">
                                 <i class="ion-clipboard"></i>
                                 <span class="text-container">
                                   <span class="main">Get on the Guestlist</span>
                                   <span class="note"
-                                    ng-show="!listing.isGuestListAllowed && !listing.isGuestListMaxReached && !listing.isPastEvent">Not accepting guestlist bookings.</span>
+                                    ng-if="!listing.isGuestListAllowed && !listing.isGuestListMaxReached && !listing.isPastEvent">Not accepting guestlist bookings.</span>
                                   <span class="note"
-                                    ng-show="listing.isGuestListMaxReached">Guestlist fully booked!</span>
+                                    ng-if="listing.isGuestListMaxReached">Guestlist fully booked!</span>
                                   <span class="note"
                                     ng-show="listing.isGuestListAllowed">Now accepting guestlist bookings.</span>
+                                  <span class="note"
+                                    ng-if="listing.isPastEvent">This event has taken place already.</span>
                                 </span>
                               </a>
                               <a class="option-panel double-line"

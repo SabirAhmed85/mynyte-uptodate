@@ -1,6 +1,11 @@
 <ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg">
+    <div class="page-loading-container"
+        ng-show="pageLoading != false">
+        <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+        <span class="loading-text">Loading ...</span>
+    </div>
     <ion-content>
-        <div class="list">
+        <div class="list view-wrapper">
             <div class="item"
                 ng-if="messageGroups.length == 0">
                 <div class="profiles-items-note">
@@ -21,8 +26,8 @@
                     </p>
                 </div>
             </div>
-            <a class="item item-message-summary" ui-sref="app.messageGroup({_id:msgGroup._id, relListing: relListing, groupType: groupType, messageNameString: msgGroup.name})" ng-repeat="msgGroup in messageGroups">
-                <img class="icon ion-notification" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{msgGroup.mainPhoto}}"
+            <a class="item item-message-summary" ui-sref="app.profile.messageGroups.messageGroup({_id:msgGroup._id, relListing: relListing, groupType: groupType, messageNameString: msgGroup.name})" ng-repeat="msgGroup in messageGroups">
+                <img class="icon ion-notification" ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{msgGroup.mainPhoto}}"
                     ng-if="!msgGroup.multipleNames"/>
                 <i class="icon message-group-icon ion-ios-people"
                     ng-if="msgGroup.multipleNames"></i>

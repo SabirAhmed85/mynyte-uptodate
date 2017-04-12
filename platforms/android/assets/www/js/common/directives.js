@@ -1,10 +1,10 @@
-app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig, userService, Profile) {
+app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig, userService, Profile, $timeout) {
     $rootScope.$on('$stateChangeSuccess', function (evt, toState, $scope) {
         var currentViewName = toState.name;
         $rootScope.currentViewName = currentViewName;
 
         var allViewsObject = {
-            "app.nlfeed" : {title: ''}
+            "app.feed" : {title: ''}
             , "app.profile" : {title: 'MyNyte'}
             , "app.resetPassword" : {title: 'Reset Password'}
             , "app.registerIntro" : {title: 'Sign-up'}
@@ -14,7 +14,7 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             , "app.accountSettings" : {title: 'Profile Settings'}
             , "app.contactMyNyte" : {title: 'Contact the MyNyte Team'}
             , "app.offers" : {title: 'Offers'}
-            , "app.nlfeedListings" : {title: 'Listings'}
+            , "app.feed.nlfeedListings" : {title: 'Listings'}
             , "app.taxi" : {title: 'Taxi'}
             , "app.contacts" : {title: 'Contacts'}
             , "app.addContact" : {title: 'New Contact'}
@@ -27,11 +27,11 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
         var showAssistantPanelViews = [
             "app.profile",
             "app.offers",
-            "app.nlfeed",
+            "app.feed",
             "app.taxi"
         ];
         var showSearchViews = [
-            "app.nlfeed"
+            "app.feed"
         ];
         var hideWhatsOpenFunctionViews = [
             "app.profile"
@@ -39,12 +39,12 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             , "app.register"
             , "app.notificationsSummary"
             , "app.notification"
-            , "app.messageGroups"
-            , "app.messageGroup"
+            , "app.profile.messageGroups"
+            , "app.profile.messageGroups.messageGroup"
             , "app.offers"
-            , "app.offerDetail"
-            , "app.nlfeedListings"
-            , "app.nlfeedListing"
+            , "app.offers.offerDetail"
+            , "app.feed.nlfeedListings"
+            , "app.feed.nlfeedListing"
             , "app.taxi"
             , "app.contacts"
             , "app.addContact"
@@ -64,12 +64,13 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             "app.profile"
             ,"app.registerFinal"
             , "app.offers"
-            , "app.nlfeed"
+            , "app.feed"
             , "app.taxi"
             , "app.more"
+            , "app.downloadTheApp"
         ];
         var showTopRightButtonViews = [
-            "app.messageGroups"
+            "app.profile.messageGroups"
             , "app.contacts"
             , "app.contactDetail"
             , "app.businessItems"
@@ -78,12 +79,12 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             , "app.accountSettingsAdvanced"
         ];
         var topRightButtonIsPlusViews = [
-            , "app.messageGroups"
+            , "app.profile.messageGroups"
             , "app.contacts"
             , "app.seeBusinessMenuItems"
         ];
         var topRightButtonIsClockViews = [
-            "app.nlfeed"
+            "app.feed"
         ];
         var topRightButtonIsEditViews = [
             "app.contactDetail",
@@ -96,23 +97,122 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             "app.seeMenuItems"
         ];
         
+        /*
+        Maybe bring back in if we decide we want Breadcrumbs on website
+        if (!ionic.Platform.isIOS() && !ionic.Platform.isAndroid()) {
+            var breadcrumbObject = {
+                "topLevel": ["app.profile", "app.offers", "app.feed", "app.taxi", "app.more" ],
+                "thirdLevel": ["app.register","app.profile.messageGroups.messageGroup","app.businessItem","app.addBusinessItem","app.businessItemSettings","app.addProfileItem","app.addContact","app.contactDetail","app.feed.nlfeedListing"],
+                "fourthLevel": ["app.feedListing-photos","app.seeTrailer","app.bookTable","app.seeMenu","app.seeBusinessesItems","app.seeBusinessMenuItems"],
+                "fifthLevel": ["app.feedListing-specific-photos","app.seeMenuItems"],
+                "hidden": ["app.registerFinal"],
+                "secondLevelRoots": {
+                    "app.profile": ["app.notificationsSummary","app.profile.messageGroups","app.businessItems","app.profileItems","app.contactMynyte","app.accountSettings","app.accountSettingsAdvanced"],
+                    "app.offers": ["app.offerDetail"],
+                    "app.feed": ["app.feed.nlfeedListings"]
+                },
+                "thirdLevelRoots": {
+                    "app.register": {"prevLevel":"app.registerIntro"},
+                    "app.profile.messageGroups.messageGroup":{"prevLevel":"app.messageGroups"},
+                    "app.businessItem":{"prevLevel":"app.registerIntro"},
+                    "app.addBusinessItem":{"prevLevel":"app.registerIntro"},
+                    "app.businessItemSettings":{"prevLevel":"app.registerIntro"},
+                    "app.addProfileItem":{"prevLevel":"app.registerIntro"},
+                    "app.addContact":{"prevLevel":"app.registerIntro"},
+                    "app.contactDetail":{"prevLevel":"app.registerIntro"},
+                    "app.feed.nlfeedListing":{"prevLevel":"app.feed.nlfeedListings"}
+                },
+                "fourthLevelRoots": {
+                    "app.feedListing-photos": {"prevLevel":"app.feed.nlfeedListing"},
+                    "app.seeTrailer":{"prevLevel":"app.feed.nlfeedListing"},
+                    "app.bookTable":{"prevLevel":"app.feed.nlfeedListing"},
+                    "app.seeMenu":{"prevLevel":"app.feed.nlfeedListing"},
+                    "app.seeBusinessesItems":{"prevLevel":"app.feed.nlfeedListing"},
+                    "app.seeBusinessMenuItems":{"prevLevel":"app.feed.nlfeedListing"}
+                },
+                "fifthLevelRoots": {
+                    "app.feedListing-specific-photos": {"prevLevel":"app.feedListing-photos"},
+                    "app.seeMenuItems":{"prevLevel":"app.seeMenu"}
+                }
+            }
+            var analyseSecondLevel = function (viewName) {
+                for (var key in breadcrumbObject["secondLevelRoots"]) {
+                    console.log(breadcrumbObject["secondLevelRoots"][key]);
+                    if (breadcrumbObject["secondLevelRoots"][key].indexOf(viewName) != -1) {
+                        breadcrumbTrail.unshift(key);
+                   
+                        console.log("breadcrumbTrail: ", breadcrumbTrail);
+                    }
+                }
+            }
+            
+            var analyseUpperLevel = function (level, viewName) {
+                for (var key in breadcrumbObject[level]) {
+                    console.log(breadcrumbObject[level][key]);
+                    if (key == viewName) {
+                        breadcrumbTrail.unshift(key);
+                        var nextViewName = breadcrumbObject[level][key]["prevLevel"];
+                   
+                        if (level == "thirdLevelRoots") {
+                            analyseSecondLevel(nextViewName);
+                        }
+                        else if (level == "fourthLevelRoots") {
+                            var nextLevel;
+                            if (level == "fourthLevelRoots") {
+                                nextLevel = "thirdLevelRoots";
+                            }
+                            else if (level == "fifthLevelRoots") {
+                                nextLevel = "fourthLevelRoots";
+                            }
+                            if (level == "sixthLevelRoots") {
+                                nextLevel = "fifthLevelRoots";
+                            }
+                            analyseUpperLevel(nextLevel, nextViewName);
+                        }
+                    }
+                }
+            }
+            
+            var objectLevel = 0;
+            var breadcrumbTrail = [];
+            if (breadcrumbObject["topLevel"].indexOf(currentViewName) != -1) {
+                objectLevel = 1;
+            }
+            else if (breadcrumbObject["thirdLevel"].indexOf(currentViewName) != -1) {
+                analyseUpperLevel("thirdLevelRoots", currentViewName);
+            }
+            else if (breadcrumbObject["fourthLevel"].indexOf(currentViewName) != -1) {
+                analyseUpperLevel("fourthLevelRoots", currentViewName);
+            }
+            else if (breadcrumbObject["fifthLevel"].indexOf(currentViewName) != -1) {
+                analyseUpperLevel("fifthLevelRoots", currentViewName);
+            }
+            else if (breadcrumbObject["hidden"].indexOf(currentViewName) != -1) {
+                objectLevel = -1;
+            }
+            else {
+                analyseSecondLevel(currentViewName);
+            }
+        }
+        */
+        
         $rootScope.pageTitle = (typeof(allViewsObject[currentViewName]) !== 'undefined') ? allViewsObject[currentViewName]['title']: $rootScope.pageTitle;
         if (typeof(allViewsObject[currentViewName]) !== 'undefined') {
           $rootScope.$broadcast('view.enter', {viewName: currentViewName});
         }
-        $rootScope.pageSubtitle = ($rootScope.currentViewName == "app.messageGroup") ? $rootScope.pageSubtitle: null;
-        if ($rootScope.currentViewName != "app.messageGroup" && $rootScope.messageGroupTimer != null) {
+        $rootScope.pageSubtitle = ($rootScope.currentViewName == "app.profile.messageGroups.messageGroup") ? $rootScope.pageSubtitle: null;
+        if ($rootScope.currentViewName != "app.profile.messageGroups.messageGroup" && $rootScope.messageGroupTimer != null) {
             clearTimeout($rootScope.messageGroupTimer);
         }
         
         $rootScope.showAssistantButton = (showAssistantPanelViews.indexOf(currentViewName) == -1) ? false: true;
-        $rootScope.showAssistantButton = (currentViewName == 'app.nlfeed' && ($rootScope.showHeaderButtons || $rootScope.showSearchPanel)) ? false: $rootScope.showAssistantButton;
+        $rootScope.showAssistantButton = (currentViewName == 'app.feed' && ($rootScope.showHeaderButtons || $rootScope.showSearchPanel)) ? false: $rootScope.showAssistantButton;
         window.setTimeout(function () {
             $rootScope.assistantButtonActive = (showAssistantPanelViews.indexOf(currentViewName) == -1) ? false: true;
             }, 300);
 
         $rootScope.hideSearch = (showSearchViews.indexOf(currentViewName) != -1) ? false: true;
-        $rootScope.hideSearch = (currentViewName == 'app.nlfeed' && $rootScope.showHeaderButtons) ? true: $rootScope.hideSearch;
+        $rootScope.hideSearch = (currentViewName == 'app.feed' && $rootScope.showHeaderButtons) ? true: $rootScope.hideSearch;
         
         if (!$rootScope.hideSearch) {
             $('input#search-input').removeClass('isHidden').addClass('isVisible');
@@ -131,6 +231,7 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
         $rootScope.hideTheWhatsOpenFunction = (hideWhatsOpenFunctionViews.indexOf(currentViewName) != -1) ? true: false;
         
         $rootScope.showBackButton = (hideBackButtonViews.indexOf(currentViewName) != -1) ? false: true;
+        $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
         $ionicConfig.views.swipeBackEnabled(currentViewName != 'app.profile');
         
         $rootScope.showTopRightButton = (showTopRightButtonViews.indexOf(currentViewName) != -1) ? true: false;
@@ -142,11 +243,17 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
         $rootScope.topRightButtonIsPlus = ($rootScope.topRightButtonIsSettings) ? false: $rootScope.topRightButtonIsPlus;
         $rootScope.showTopRightMenuOrderTray = (showTopRightMenuOrderTray.indexOf(currentViewName) != -1) ? true: false;
         
-        if (currentViewName == "app.nlfeed") {
+        if (currentViewName == "app.feed") {
             $rootScope.topRightButtonFunction  = $rootScope.feedTopRightButtonFunction;
         }
         
-        if (currentViewName == "app.messageGroup") {
+        if ($rootScope.topRightButtonIsEdit || $rootScope.topRightButtonIsPlus || $rootScope.topRightButtonIsSettings || $rootScope.showBackButton) {
+            $('ion-view').addClass("has-breadcrumb");
+        } else {
+            $('ion-view').removeClass("has-breadcrumb");
+        }
+        
+        if (currentViewName == "app.profile.messageGroups.messageGroup") {
             if (typeof(cordova) !== 'undefined') {
                 if (cordova.plugins) {
                     cordova.plugins.Keyboard.disableScroll(false);
@@ -159,11 +266,11 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
         }
                 
         $rootScope.goBackOne = function ($event) {
+            $rootScope.goingBackOne = true;
+            $timeout(function () {$rootScope.goingBackOne = false;}, 180);
             $rootScope.currentlyEditing = false;
             $rootScope.editing = false;
             $rootScope.backButtonFunction();
-            
-            $rootScope.initialBackButtonFunction();
         }
         
         $rootScope.topRightTrayFunction = function () {}
@@ -172,7 +279,7 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
                 $rootScope.backButtonFunction();
                 
                 $rootScope.backButtonFunction = function () {
-                    $ionicHistory.goBack();
+                    //$ionicHistory.goBack();
                 }
             }
         }
@@ -202,7 +309,7 @@ app.run(function ($state, $rootScope, $ionicHistory, $stateParams, $ionicConfig,
             });
             if ($rootScope.addBackActiveUserTimer == null) {
                 $rootScope.addBackActiveUserTimer = window.setTimeout(function () {
-                    $rootScope.makeUserActive();
+                    //$rootScope.makeUserActive();
                     $rootScope.addBackActiveUserTimer = null;
                 }, 15000);
             }
@@ -348,34 +455,47 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
         var clickFn = function (e) {
             if ($($element[0]).hasClass('index-1')) {return false};
             
-            var val = 1;
-            var name = $($element[0]).attr('data-name');
-            
-            if ($($element[0]).hasClass('index-2')) {
-                val = - 1
-            }
-            
-            var elements = $('.nightfinder-horizontal-slider').find('.slider-option');
-            elements.each(function (index) {
-                var dataInd = $(this).attr('data-index');
-                var currentLeft = $(this).css('left');
+            if (window.innerWidth < 830) {
+                var val = 1;
+                var name = $($element[0]).attr('data-name');
                 
-                $(this).removeClass('index-' + dataInd);
-                
-                $(this).css({left: (currentLeft + (33.33*val)) + '%'});
-                
-                dataInd = parseInt(dataInd) + val;
-                dataInd = (dataInd == 4) ? -1: dataInd;
-                dataInd = (dataInd == -2) ? 3: dataInd;
-                $(this).attr('data-index', dataInd);
-                $(this).addClass('index-' + dataInd);
-                
-                if ($(this).attr('data-index') == 1) {
-                    $rootScope.updateCurrentListingTypeToFind($(this).attr('data-name'), e, 'click');
+                if ($($element[0]).hasClass('index-2')) {
+                    val = - 1
                 }
-                
-            });
-            scope.nightFindSlideLocked = false;
+              
+                var elements = $('.nightfinder-horizontal-slider').find('.slider-option');
+                elements.each(function (index) {
+                    var dataInd = $(this).attr('data-index');
+                    var currentLeft = $(this).css('left');
+                    
+                    $(this).removeClass('index-' + dataInd);
+                    
+                    $(this).css({left: (currentLeft + (33.33*val)) + '%'});
+                    
+                    dataInd = parseInt(dataInd) + val;
+                    dataInd = (dataInd == 4) ? -1: dataInd;
+                    dataInd = (dataInd == -2) ? 3: dataInd;
+                    $(this).attr('data-index', dataInd);
+                    $(this).addClass('index-' + dataInd);
+                    
+                    if ($(this).attr('data-index') == 1) {
+                        $rootScope.updateCurrentListingTypeToFind($(this).attr('data-name'), e, 'click');
+                    }
+                    
+                });
+                scope.nightFindSlideLocked = false;
+            }
+            else {
+                var elements = $('.nightfinder-horizontal-slider').find('.slider-option');
+                elements.each(function (index) {
+                    var dataInd = $(this).removeClass("index-1");
+                });
+                $($element[0]).removeClass(function (index, className) {
+                    return (className.match (/\bindex-\S+/g) || []).join(' ');
+                });
+                $($element[0]).addClass("index-1");
+                $rootScope.updateCurrentListingTypeToFind($($element[0]).attr('data-name'), e, 'click');
+            }
         }
 
         var handleClickDrag = function (e) {
@@ -419,19 +539,16 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
             if ($element.isMainSearchSlider && $element[0].slideLocked == false) {
               if (e.gesture.deltaX > 40) {
                 $element.currentLeft += ( (window.screen.availWidth / 100) * 33.33);
-                console.log("nup");
                 $element[0].slideLocked = true;
               }
               else if (e.gesture.deltaX < -40) {
                 $element.currentLeft -= ( (window.screen.availWidth / 100) * 33.33);
-                console.log("ndown");
                 $element[0].slideLocked = true;
               }
 
               if (e.gesture.deltaX > 40 || e.gesture.deltaX < -40) {console.log("nho");
                 $element[0].style[ionic.CSS.TRANSFORM] = 'translate3d('+$element.currentLeft+'px, 0, 0)'
                 var Timer = window.setTimeout(function () {
-                  console.log("unlocked");
                   $element[0].slideLocked = false;
                 }, 500);
               }
@@ -453,7 +570,6 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
           if(left < (320 - width)) left = 320 - width;
           if(left > 0) left = 0;
           $element.addClass('slider-bounce');
-        console.log("unlockdded");
           if ($element.isMainSearchSlider) {console.log("unlo;;;cked");
             var Timer = window.setTimeout(function () {
               console.log("unlocked");

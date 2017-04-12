@@ -5,7 +5,7 @@
         <span class="loading-text">Loading ...</span>
     </div>
     <ion-content>
-        <div class="list summary-display {{itemType}}">
+        <div class="list summary-display {{itemType}} view-wrapper">
             <div class="item item-message-summary business-item-summary"
                 ng-click="nextPageFunction(item)"
                 ng-repeat="item in businessItems"
@@ -25,8 +25,17 @@
                     <span class="message-header-icon right"
                         ng-if="itemType == 'myNYTEActivity'"
                         ng-click="toggleBusinessItemCatVisibility(item);">
-                        <i ng-class="{'ion-plus-round': !item.show, 'ion-minus-round': item.show}"></i>
+                        <i class="trans"
+                            ng-class="{'ion-plus-round': !item.show, 'ion-minus-round': item.show}"></i>
                     </span>
+                    
+                    <div class="restaurant-table-business-item-summary" 
+                        ng-if="itemType == 'OwnOffers'">
+                        <span class="message-side-note"
+                            ng-if="item._relatedEventId != null">
+                            <span>Event Offer</span>
+                        </span>
+                    </div>
                     
                     <div class="restaurant-table-business-item-summary" 
                         ng-if="itemType == 'Movies'">
@@ -51,14 +60,14 @@
                         <label class="guestlist-label"
                             ng-show="timeScale == 'present'">
                             <span class="message-text"
-                                ng-if="item.guestListAllowed != null">Guestlist: {{item.guestListCurrentTotal}}/{{item.guestListMax}}
+                                ng-if="item.isGuestListAllowed != null">Guestlist: {{item.guestListCurrentTotal}}/{{item.guestListMax}}
                                 <span ng-if="item.weekdayIndexId != null">for the upcoming week</span>
                             </span>
                             <span class="message-text"
-                                ng-if="item.guestListAllowed == null">No Guestlist for this event.
+                                ng-if="item.isGuestListAllowed == null">No Guestlist for this event.
                             </span>
                         </label>
-                        <span class="event-music">{{item.musicStyle}}</span>
+                        <span class="message-side-note">{{item.musicStyle}}</span>
                     </div>
                     
                     <div class="taxi-business-item-summary" 
@@ -100,6 +109,10 @@
                         ng-if="itemType == 'RequestedTableBookings' || itemType == 'OwnTableBookings'">
                         <label class="booking-time">
                             {{item.dateRequested}} at {{item.timeRequested}}
+                        </label>
+                        <label class="booking-time-suggested"
+                            ng-if="item.dateTimeSuggested != null">
+                            Suggested: at {{item.timeSuggested}}
                         </label>
                         <span class="message-sub-note message-sub-note-large">
                             <span>
@@ -188,22 +201,22 @@
                         </span>
                     </div>
                 </div>
-                <div class="mynyte-activity-category expandable-category trans" 
+                <div style="max-height: 0;" class="mynyte-activity-category expandable-category trans"
                     ng-if="itemType == 'myNYTEActivity'"
                     ng-class="{'open': item.show}">
                     <div class="empty-span"
                         ng-if="item.items.length == 0">
                         <span ng-if="item.dbName == 'Table Booking'">
-                            <span class="inner-span">You currently have 0 table bookings. Start looking for <a ui-sref="app.nlFeed()">great places to eat</a> now.</span>
+                            <span class="inner-span">You currently have 0 table bookings. Start looking for <a ui-sref="app.feed()">great places to eat</a> now.</span>
                         </span>
                         <span ng-if="item.dbName == 'Taxi Booking'">
-                            <span class="inner-span">You currently have 0 taxi bookings. <a ui-sref="app.nlFeed()">Find somewhere to go</a>, and then <a ui-sref="app.taxi()">book your taxi</a> with ease.</span>
+                            <span class="inner-span">You currently have 0 taxi bookings. <a ui-sref="app.feed()">Find somewhere to go</a>, and then <a ui-sref="app.taxi()">book your taxi</a> with ease.</span>
                         </span>
                         <span ng-if="item.dbName == 'Offer'">
                             <span class="inner-span">You currently have 0 offers claimed, but it's never too late to start making the most out of all the <a ui-sref="app.offers()">great offers &amp; deals</a>.</span>
                         </span>
                         <span ng-if="item.dbName == 'Event Entry'">
-                            <span class="inner-span">You currently have 0 Event Bookings, but as the saying goes, <a ui-sref="app.offers()">the night is still young...</a></span>
+                            <span class="inner-span">You currently have 0 Event Bookings, but as the saying goes, <a ui-sref="app.feed()">the night is still young...</a></span>
                         </span>
                     </div>
                     <div class="mynyte-activity-categories-summary"

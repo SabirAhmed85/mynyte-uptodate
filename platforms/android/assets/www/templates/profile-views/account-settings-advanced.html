@@ -1,6 +1,6 @@
-<ion-view view-title="Account Settings Advanced" class="black_bg">
+<ion-view view-title="Account Settings Advanced" class="black_bg account-settings-advanced">
     <ion-content padding="10">
-        <div>
+        <div class="view-wrapper">
             <div ng-if="settingsType == 'Business'">
                 <div ng-if="setting == 'OpeningTimes'">
                     <h2>Business Opening Times</h2>
@@ -55,76 +55,27 @@
                     </form>
                 </div>
                 <div ng-if="setting == 'BusinessType'">
-                    <h2>Business Category Settings</h2>
-                    <label class="item-header">
-                        <span class="line">
-                            Applied Business Categories
-                        </span>
-                    </label>
-                    <div class="item"
-                        ng-show="!editing">
-                        <span class="line"
-                            ng-repeat="category in appliedBusinessTypes">
-                            - {{category.name}}
-                        </span>
-                    </div>
-                    
-                    <span class="select-options-container">
-                        <ul class="select-options select-business-type-{{currentBusinessTypeIndexBeingToggled}}"
-                            ng-class="{'open': showBusinessTypes}">
-                            <li ng-click="selectBusinessType(businessType);"
-                                ng-repeat="businessType in businessTypes">
-                                {{businessType.name}}
-                            </li>
-                        </ul>
-                    </span>
-                    <div class="item item-with-selects item-grey-border"
-                        ng-show="editing">
-                        <div class="item special item-with-selects item-grey-border" style="float: left;">
-                            <div id="business-type-select-container" class="select-container"
-                                ng-repeat="type in chosenBusinessTypeObjects"
-                                ng-class="{'select-with-remove': type.index > 0}">
-                                <div ng-click="toggleBusinessType(type);" class="select-main">
-                                    <span>{{type.name}}</span>
-                                    <button><i ng-class="{'ion-chevron-down': !type.showBusinessTypes, 'ion-chevron-up': type.showBusinessTypes}"></i></button>
-                                    <button class="remove"
-                                        ng-if="type.index > 0"
-                                        ng-click="removeBusinessType(type);">Remove</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <form class="inner-form"
-                        ng-if="editing">
-                        <div class="item-header item-header-short">
-                            <button class="btn button-half btn-white"
-                                ng-class="{'disabled': chosenBusinessTypeIds.indexOf(null) != -1 || chosenBusinessTypeIds.length > 2}"
-                                ng-disabled="chosenBusinessTypeIds.indexOf(null) != -1 || chosenBusinessTypeIds.length > 2"
-                                ng-click="newBusinessType();">Add a Business Category</button>
-                        </div>
-                    </form>
-                    <div ng-if="chosenBusinessTypeIds.indexOf('4') != -1 || chosenBusinessTypeIds.indexOf('5') != -1">
-                        
+                    <form class="edit-form">
+                        <h2>Business Category Settings</h2>
                         <label class="item-header">
                             <span class="line">
-                                Applied Food Styles
+                                Applied Business Categories
                             </span>
                         </label>
                         <div class="item"
                             ng-show="!editing">
                             <span class="line"
-                                ng-repeat="foodStyle in appliedFoodStyles">
-                                - {{foodStyle.name}}
+                                ng-repeat="category in appliedBusinessTypes">
+                                - {{category.name}}
                             </span>
                         </div>
                         
-                        <span class="select-options-container"
-                            ng-show="editing">
-                            <ul class="select-options select-business-type-{{currentFoodStyleIndexBeingToggled}}"
-                                ng-class="{'open': showFoodStyles}">
-                                <li ng-click="selectFoodStyle(foodStyle);"
-                                    ng-repeat="foodStyle in foodStyles">
-                                    {{foodStyle.name}}
+                        <span class="select-options-container">
+                            <ul class="select-options select-business-type-{{currentBusinessTypeIndexBeingToggled}}"
+                                ng-class="{'open': showBusinessTypes}">
+                                <li ng-click="selectBusinessType(businessType);"
+                                    ng-repeat="businessType in businessTypes">
+                                    {{businessType.name}}
                                 </li>
                             </ul>
                         </span>
@@ -132,39 +83,90 @@
                             ng-show="editing">
                             <div class="item special item-with-selects item-grey-border" style="float: left;">
                                 <div id="business-type-select-container" class="select-container"
-                                    ng-repeat="type in chosenFoodStyleObjects"
+                                    ng-repeat="type in chosenBusinessTypeObjects"
                                     ng-class="{'select-with-remove': type.index > 0}">
-                                    <div ng-click="toggleFoodStyle(type);" class="select-main">
+                                    <div ng-click="toggleBusinessType(type);" class="select-main">
                                         <span>{{type.name}}</span>
-                                        <button><i ng-class="{'ion-chevron-down': !type.showFoodStyles, 'ion-chevron-up': type.showFoodStyles}"></i></button>
+                                        <button><i ng-class="{'ion-chevron-down': !type.showBusinessTypes, 'ion-chevron-up': type.showBusinessTypes}"></i></button>
                                         <button class="remove"
                                             ng-if="type.index > 0"
-                                            ng-click="removeFoodStyle(type);">Remove</button>
+                                            ng-click="removeBusinessType(type);">Remove</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <form class="inner-form"
+                        <div class="inner-form"
                             ng-if="editing">
                             <div class="item-header item-header-short">
                                 <button class="btn button-half btn-white"
-                                    ng-class="{'disabled': chosenFoodStyleIds.indexOf(null) != -1 || chosenFoodStyleIds.length > 2}"
-                                    ng-disabled="chosenFoodStyleIds.indexOf(null) != -1 || chosenFoodStyleIds.length > 2"
-                                    ng-click="newFoodStyle();">Add a Food Style</button>
+                                    ng-class="{'disabled': chosenBusinessTypeIds.indexOf(null) != -1 || chosenBusinessTypeIds.length > 2}"
+                                    ng-disabled="chosenBusinessTypeIds.indexOf(null) != -1 || chosenBusinessTypeIds.length > 2"
+                                    ng-click="newBusinessType();">Add a Business Category</button>
                             </div>
-                        </form>
-                    </div>
-                    
-                    <button class="button button-red button-large"
-                        ng-show="editing"
-                        ng-disabled="chosenBusinessTypeIds.indexOf(null) != -1 || 
-                            (
-                                (chosenBusinessTypeIds.indexOf('4') != -1 || chosenBusinessTypeIds.indexOf('5') != -1)
-                                && chosenFoodStyleIds.indexOf(null) != -1
-                            )"
-                        ng-click="applyChanges();">
-                        Apply Changes
-                    </button>
+                        </div>
+                        <div ng-if="chosenBusinessTypeIds.indexOf('4') != -1 || chosenBusinessTypeIds.indexOf('5') != -1">
+                            
+                            <label class="item-header">
+                                <span class="line">
+                                    Applied Food Styles
+                                </span>
+                            </label>
+                            <div class="item"
+                                ng-show="!editing">
+                                <span class="line"
+                                    ng-repeat="foodStyle in appliedFoodStyles">
+                                    - {{foodStyle.name}}
+                                </span>
+                            </div>
+                            
+                            <span class="select-options-container"
+                                ng-show="editing">
+                                <ul class="select-options select-business-type-{{currentFoodStyleIndexBeingToggled}}"
+                                    ng-class="{'open': showFoodStyles}">
+                                    <li ng-click="selectFoodStyle(foodStyle);"
+                                        ng-repeat="foodStyle in foodStyles">
+                                        {{foodStyle.name}}
+                                    </li>
+                                </ul>
+                            </span>
+                            <div class="item item-with-selects item-grey-border"
+                                ng-show="editing">
+                                <div class="item special item-with-selects item-grey-border" style="float: left;">
+                                    <div id="business-type-select-container" class="select-container"
+                                        ng-repeat="type in chosenFoodStyleObjects"
+                                        ng-class="{'select-with-remove': type.index > 0}">
+                                        <div ng-click="toggleFoodStyle(type);" class="select-main">
+                                            <span>{{type.name}}</span>
+                                            <button><i ng-class="{'ion-chevron-down': !type.showFoodStyles, 'ion-chevron-up': type.showFoodStyles}"></i></button>
+                                            <button class="remove"
+                                                ng-if="type.index > 0"
+                                                ng-click="removeFoodStyle(type);">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-form"
+                                ng-if="editing">
+                                <div class="item-header item-header-short">
+                                    <button class="btn button-half btn-white"
+                                        ng-class="{'disabled': chosenFoodStyleIds.indexOf(null) != -1 || chosenFoodStyleIds.length > 2}"
+                                        ng-disabled="chosenFoodStyleIds.indexOf(null) != -1 || chosenFoodStyleIds.length > 2"
+                                        ng-click="newFoodStyle();">Add a Food Style</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="button button-red button-large"
+                            ng-show="editing"
+                            ng-disabled="chosenBusinessTypeIds.indexOf(null) != -1 || 
+                                (
+                                    (chosenBusinessTypeIds.indexOf('4') != -1 || chosenBusinessTypeIds.indexOf('5') != -1)
+                                    && chosenFoodStyleIds.indexOf(null) != -1
+                                )"
+                            ng-click="applyChanges();">
+                            Apply Changes
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

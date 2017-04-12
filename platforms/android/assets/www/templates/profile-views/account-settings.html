@@ -1,6 +1,6 @@
-<ion-view view-title="Account Settings" class="black_bg">
+<ion-view view-title="Account Settings" class="black_bg account-settings">
     <ion-content padding="10">
-        <div>
+        <div class="view-wrapper">
             <div ng-if="settingsType == 'Business'">
                 <div ng-repeat="businessType in settings.businessSettings"
                     ng-if="businessType.specificSettings.length > 0">
@@ -53,7 +53,7 @@
                                         </span>
                                     </div>
                                     
-                                    <button class="button button-white button-large"
+                                    <button type="button" class="button button-white button-large"
                                         ng-show="editing && specificSetting.editing"
                                         ng-click="submitFieldEdit(specificSetting)">Apply Change</button>
                                 </div>
@@ -76,7 +76,7 @@
                                         </span>
                                     </div>
                                     
-                                    <button class="button button-white button-large"
+                                    <button type="button" class="button button-white button-large"
                                         ng-show="editing && specificSetting.editing"
                                         ng-click="submitFieldEdit(specificSetting)">Apply Change</button>
                                 </div>
@@ -122,7 +122,7 @@
                         </div>
                     </div>
                     
-                    <button class="button button-white button-large"
+                    <button type="button" class="button button-white button-large"
                         ng-show="settings.displayName.editing"
                         ng-disabled="displayNameTaken || updateAccountDetailsForm.displayName.$invalid || updateAccountDetailsForm.displayName.$viewValue == originalDisplayName || formIsValidating"
                         ng-click="submitFieldEdit(settings.displayName)">Apply Change</button>
@@ -154,7 +154,7 @@
                         <div>Passwords must be between 6 and 20 Characters, and must contain at least one letter and one number.</div>
                     </div>
                     
-                    <button class="button button-white button-large" type="button"
+                    <button type="button" class="button button-white button-large" type="button"
                         ng-show="settings.word.editing"
                         ng-disabled="updateAccountDetailsForm.password.$invalid"
                         ng-click="submitFieldEdit(settings.word)">Apply Change</button>
@@ -176,7 +176,7 @@
                             ng-maxlength="100"
                             ng-minlength="1"
                             required />
-                        <button class="button button-white button-large"
+                        <button type="button" class="button button-white button-large"
                             ng-show="settings.firstName.editing"
                             ng-disabled="updateAccountDetailsForm.firstName.$invalid"
                             ng-click="submitFieldEdit(settings.firstName)">Apply Change</button>
@@ -197,7 +197,7 @@
                             ng-maxlength="100"
                             ng-minlength="1"
                             required>
-                        <button class="button button-white button-large"
+                        <button type="button" class="button button-white button-large"
                             ng-show="settings.lastName.editing"
                             ng-disabled="updateAccountDetailsForm.lastName.$invalid"
                             ng-click="submitFieldEdit(settings.lastName)">Apply Change</button>
@@ -220,7 +220,7 @@
                             ng-maxlength="100"
                             ng-minlength="1"
                             required />
-                        <button class="button button-white button-large"
+                        <button type="button" class="button button-white button-large"
                             ng-show="settings.businessName.editing"
                             ng-disabled="updateAccountDetailsForm.businessName.$invalid"
                             ng-click="submitFieldEdit(settings.businessName)">Apply Change</button>
@@ -253,7 +253,7 @@
                         ng-model="settings.postcode.value"
                         ng-maxlength="12"
                         ng-required="rootScope.user.isBusiness == '1'">
-                    <button class="button button-white button-large"
+                    <button type="button" class="button button-white button-large"
                         ng-show="settings.addressLine1.editing"
                         ng-disabled="updateAccountDetailsForm.addressLine1.$invalid || updateAccountDetailsForm.postCode.$invalid"
                         ng-click="submitFieldEdit(settings.addressLine1)">Apply Change</button>
@@ -287,7 +287,7 @@
                         <div>That email address is already registered to an account.</div>
                     </div>
                     
-                    <button class="button button-white button-large"
+                    <button type="button" class="button button-white button-large"
                         ng-show="settings.email.editing"
                         ng-disabled="updateAccountDetailsForm.email.$invalid || formIsValidating || updateAccountDetailsForm.email.$viewValue == originalEmail"
                         ng-click="submitFieldEdit(settings.email)">Apply Change</button>
@@ -304,7 +304,7 @@
                     <p ng-show="settings.phone1.value == '' && !settings.phone1.editing">No main phone number saved.</p>
                     <p ng-hide="settings.phone1.editing">{{settings.phone1.value}}</p>
                     <input ng-show="settings.phone1.editing" class="white nightlife-input" type="text" placeholder="Main phone number (optional)" ng-model="settings.phone1.value" name="Phone 1" ng-max="100">
-                    <button class="button button-white button-large"
+                    <button type="button" class="button button-white button-large"
                         ng-show="settings.phone1.editing"
                         ng-click="submitFieldEdit(settings.phone1)">Apply Change</button>
                 </div>
@@ -320,7 +320,7 @@
                 <label class="item">
                     <p ng-hide="settings.description.editing">{{settings.description.value}}</p>
                     <input ng-show="settings.description.editing" class="white nightlife-input" type="number" placeholder="Description (optional)" ng-model="settings.description.value" name="Phone 2" ng-max="100">
-                    <button class="button button-white button-large"
+                    <button type="button" class="button button-white button-large"
                         ng-show="settings.description.editing"
                         ng-click="submitFieldEdit(settings.description)">Apply Change</button>
                 </label>

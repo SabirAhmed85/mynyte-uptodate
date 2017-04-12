@@ -1,4 +1,4 @@
-<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg special-h2">
+<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg special-h2 see-menu">
     <ion-content>
         <style>
             .special-h2 h2 {
@@ -26,6 +26,7 @@
             .menu-summary-item i.ion-chevron-right {
                 float: right;
                 color: #dbb;
+                margin-top: 4px;
             }
         
             .menu-summary-item .message-count {
@@ -84,7 +85,7 @@
             .menu-order-summary-item .order-summary {
                 width: 100%;
                 float: left;
-                padding: 5px;
+                padding: 0 5px 5px;
                 border-radius: 5px;
             }
 
@@ -99,26 +100,27 @@
                 padding-bottom: 5px;
             }
 
-            .menu-order-summary-item .order-summary button {
+            .menu-order-summary-item .order-summary .btn-pink {
                 margin-top: 5px;
                 margin-bottom: 0;
                 font-size: 13px;
-                padding-top: 3px;
-                padding-bottom: 3px;
             }
-            .menu-order-summary-item .order-summary button .inner-span {
-                max-width: 150px;
+            .menu-order-summary-item .order-summary .btn-pink .inner-span {
+                max-width: 140px;
                 float: none;
                 margin: 0 auto;
                 display: block;
+                color: #795353;
             }
-            .menu-order-summary-item .order-summary button .inner-span i {
+            .menu-order-summary-item .order-summary .btn-pink .inner-span i {
                 font-size: 25px;
                 float: left;
+                margin-top: 1px;
             }
-            .menu-order-summary-item .order-summary button .inner-span span {
+            .menu-order-summary-item .order-summary .btn-pink .inner-span span {
                 float: right;
-                margin-top: 10px;
+                margin-top: 2px;
+                margin-bottom: 7px;
             }
 
             .menu-order-summary-item .minimum-delivery-label {
@@ -173,15 +175,15 @@
                 Coming Soon: You'll be able to order through the app with myNYTE.
             </span>
             <div class="item menu-order-summary-item"
-                ng-show="rootScope.user.phone1 != '' && rootScope.user.phone1 != null && rootScope.callingEnabled">
+                ng-show="phone1 != '' && phone1 != null">
               <span class="order-summary">
-                <button class="btn-pink button-full"
-                    ng-href="tel:{{rootScope.user.phone1}}">
+                <a class="btn-pink button-full button"
+                    ng-href="tel:{{phone1}}">
                     <span class="inner-span">
                         <i class="ion-ios-telephone"></i>
                         <span>Call to Order Food</span>
                     </span>
-                </button>
+                </a>
               </span>
             </div>
             <div class="list">

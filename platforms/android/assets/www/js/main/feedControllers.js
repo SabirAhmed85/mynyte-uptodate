@@ -1,5 +1,5 @@
 // NL Feed //
-app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher', '$ionicScrollDelegate', '$ionicConfig', '$cordovaSocialSharing', '$state','$scope', 'Categories', 'Places', 'Events', 'NgMap', 'Profile', 'location', 'Offers', 'fileReader', 'userService', '$cordovaSQLite', '$cordovaFileTransfer', 'listingsService', 'categoriesService', function($rootScope, $ionicHistory, $ionicViewSwitcher, $ionicScrollDelegate, $ionicConfig, $cordovaSocialSharing, $state, $scope, Categories, Places, Events, NgMap, Profile, location, Offers, fileReader, userService, $cordovaSQLite, $cordovaFileTransfer, listingsService, categoriesService) {
+app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollDelegate', '$ionicConfig', '$cordovaSocialSharing', '$state','$scope', 'Categories', 'Places', 'Events', 'NgMap', 'Profile', 'location', 'Offers', 'fileReader', 'userService', '$cordovaSQLite', '$cordovaFileTransfer', 'listingsService', 'categoriesService', '$timeout', function($rootScope, $ionicViewSwitcher, $ionicScrollDelegate, $ionicConfig, $cordovaSocialSharing, $state, $scope, Categories, Places, Events, NgMap, Profile, location, Offers, fileReader, userService, $cordovaSQLite, $cordovaFileTransfer, listingsService, categoriesService, $timeout) {
     //location.get(angular.noop, angular.noop);
     $scope.pageLoading = true;
     
@@ -180,7 +180,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         };
         
         $scope.findNight = function () {
-                $state.go('app.nlfeedListings', {'_townId': $rootScope.currentSearchTown._id, '_musicStyleId': $rootScope.currentSearchMusic._id});
+                $state.go('app.feed.nlfeedListings', {'_townId': $rootScope.currentSearchTown._id, '_musicStyleId': $rootScope.currentSearchMusic._id});
             };
         //
 
@@ -375,7 +375,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         
             $rootScope.user.userInteractionObject.searchesConducted.clubNightSearches = $rootScope.user.userInteractionObject.searchesConducted.clubNightSearches || [];
             $rootScope.user.userInteractionObject.searchesConducted.clubNightSearches.push({'_townId': $rootScope.currentSearchTown._id, '_musicStyleId': $rootScope.currentSearchMusic._id});
-            $state.go('app.nlfeedListings', {'searchType': searchTypeName});
+            $state.go('app.feed.nlfeedListings', {'searchType': searchTypeName});
         };
         
         $scope.postUpdateToFeed = function () {
@@ -485,14 +485,55 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             $rootScope.possibleUpdateFollowers = [];
         }
 
-        $rootScope.getFile = function () {
+        $rootScope.getFile = function (paramsObj) {
             $rootScope.progress = 0;
             $rootScope.imageSrcs = [];
-            for (a = 0; a < $rootScope.files.length; a++) {
-                fileReader.readAsDataUrl($rootScope.files[a], $rootScope)
+
+            if (!ionic.Platform.isAndroid()) {
+                for (a = 0; a < $rootScope.files.length; a++) {
+                    fileReader.readAsDataUrl($rootScope.files[a], $rootScope)
+                      .then(function(result) {
+                          $rootScope.imageSrcs.push({'imageSrc': result});
+                      });
+                }
+            }
+            else {
+                console.log($rootScope.file);
+                var myImg = $rootScope.file;
+
+                window.resolveLocalFileSystemURL(myImg, function(entry){
+                    var fileName = entry.name;
+                    entry.file(function(fileObject){
+                        // Create a function to process the file once it's read
+                        fileReader.onloadend = function(evt) {
+                            var image = new Image()
+                            image.onload = function(evt) {
+                                // The image has been loaded and the data is ready
+                                var image_width = this.width
+                                var image_height = this.height
+                                console.log("IMAGE HEIGHT: " + image_height)
+                                console.log("IMAGE WIDTH: " + image_width)
+
+                                image = null
+                            }
+                            // Load the read data into the image source. It's base64 data
+                            image.src = evt.target.result
+                        }
+
+                        fileReader.readAsDataUrl(fileObject, $rootScope)
                           .then(function(result) {
                               $rootScope.imageSrcs.push({'imageSrc': result});
+                              $rootScope.fileName = fileName;
+                              console.log(paramsObj);
+                              $timeout(paramsObj.onComplete({fileName: fileName}), 2000);
                           });
+                    }, function(){
+                        console.log("There was an error reading or processing this file.")
+                    });
+                    
+                }, function(e){
+                    console.log(e);
+                });
             }
             if ($rootScope.files.length > 0) {
                 $rootScope.updateButtonDisabled = false;
@@ -500,7 +541,12 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         };
 
         $rootScope.imgUploadPrepare = function () {
-            document.getElementById('img-upload').click();
+            if (!ionic.Platform.isAndroid()) {
+                document.getElementById('img-upload').click();
+            }
+            else {
+                $rootScope.getAndroidImage({imgEntryType: 'cover_photo', onComplete: function () {}});
+            }
         }
      
         $rootScope.$on("fileProgress", function(e, progress) {
@@ -640,10 +686,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             if (feature.listingType == 'Offer') {
                 $state.go('app.offers');
                 var timer = window.setTimeout(function () {
-                    $state.go('app.offerDetail', {'_id': feature.relListingId});
+                    $state.go('app.offers.offerDetail', {'_id': feature.relListingId});
                 }, 100);
             } else {
-                $state.go('app.nlfeedListing', {_listingId:feature.relListingId, listingType:feature.listingType});
+                $state.go('app.feed.nlfeedListing', {_listingId:feature.relListingId, listingType:feature.listingType});
             }
         }
         
@@ -661,14 +707,14 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             };
             
             var listingId = (feature.listingType == 'Business') ? feature._profileId: feature.relListingId;
-            $state.go('app.nlfeedListing', {'_listingId': feature.relListingId, 'listingType':feature.listingType});
+            $state.go('app.feed.nlfeedListing', {'_listingId': feature.relListingId, 'listingType':feature.listingType});
             
             switch(feature.tonightsFeedButtonOption) {
                 case 'See Photos':
                     var listingType = (feature.listingType == 'Business') ? 'Profile': feature.listingType;
                     
                     var timer = window.setTimeout(function () {
-                        $state.go('app.nlfeedListing-photos', {_listingId: feature.relListingId, listingType: listingType, _id: listingId, listingName: feature.name});
+                        $state.go('app.feedListing-photos', {_listingId: feature.relListingId, listingType: listingType, _id: listingId, listingName: feature.name});
                     }, 120);
                     break;
                 case 'See Takeaway Menu':
@@ -718,7 +764,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
 }])
 
     // NL Feed Listings //
-    app.controller('NLFeedListingsCtrl', ['$ionicHistory', '$state','$scope', '$rootScope', '$stateParams', 'Categories', 'Places', 'Events', 'Profile', 'Listings', '$ionicViewSwitcher', 'listingsService', function($ionicHistory, $state, $scope, $rootScope, $stateParams, Categories, Places, Events, Profile, Listings, $ionicViewSwitcher, listingsService) {
+    app.controller('NLFeedListingsCtrl', ['$state','$scope', '$rootScope', '$stateParams', 'Categories', 'Places', 'Events', 'Profile', 'Listings', '$ionicViewSwitcher', 'listingsService', function($state, $scope, $rootScope, $stateParams, Categories, Places, Events, Profile, Listings, $ionicViewSwitcher, listingsService) {
         // Set Up Variables
         $scope.rootScope = $rootScope;
         $scope.pageLoading = true;
@@ -793,6 +839,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             $scope.findMovies = function () {
                 Listings.getMoviesByTownAndMovieStyle($rootScope.currentSearchTown._id, $rootScope.currentSearchMovieCat._id, $rootScope.user._profileId || 0).success(function (listings) {
                     addListingsToFeaturedListings(listings);
+                    console.log(listings);
                     if (listings != 'null' && listings != null) {
                         listingsService.sortThroughListingsResults($scope, listings, 0, 'listings');
                     }
@@ -828,7 +875,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             };
             
             $scope.seeListingDetail = function (feature) {
-                $state.go('app.nlfeedListing', {_listingId:feature.relListingId, listingType:feature.listingType, searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId});
+                $state.go('app.feed.nlfeedListing', {_listingId:feature.relListingId, listingType:feature.listingType, searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId});
             }
             
             switch($scope.searchType) {
@@ -897,7 +944,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
     }])
 
     // NL Feed Listing //
-    app.controller('NLFeedListingCtrl', ['$ionicHistory', '$rootScope', '$state','$scope', '$stateParams', '$ionicPopup', 'Categories', 'Places', 'Events', 'Profile', 'Messages', '$ionicViewSwitcher', 'datesService', 'listingsService', function($ionicHistory, $rootScope, $state, $scope, $stateParams, $ionicPopup, Categories, Places, Events, Profile, Messages, $ionicViewSwitcher, datesService, listingsService) {
+    app.controller('NLFeedListingCtrl', ['$rootScope', '$state','$scope', '$stateParams', '$ionicPopup', 'Categories', 'Places', 'Events', 'Profile', 'Messages', '$ionicViewSwitcher', 'datesService', 'listingsService', function($rootScope, $state, $scope, $stateParams, $ionicPopup, Categories, Places, Events, Profile, Messages, $ionicViewSwitcher, datesService, listingsService) {
         // Set Up Variables
         $scope.rootScope = $rootScope;
         $scope.listing = {};
@@ -945,12 +992,12 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                         $scope.listing.isPastEvent = (new Date() > $scope.selectedDate1) ? true: false;
 
                         $scope.listing.isGuestListAllowed = ($scope.listing.isGuestListAllowed != null) ? true : false;
-                        $scope.listing.isGuestListMaxReached = ($scope.listing.guestListMax != null && parseInt($scope.listing.guestListCurrentTotal) > parseInt($scope.listing.guestListMax)) ? true : false;
+                        $scope.listing.isGuestListMaxReached = ($scope.listing.guestListMax != null && parseInt($scope.listing.guestListCurrentTotal) >= parseInt($scope.listing.guestListMax)) ? true : false;
                         //console.log(new Date($scope.listing.dateString[0], $scope.listing.dateString[1] - 1, $scope.listing.dateString[2]));
                     }
                     else if ($scope.listing.listingType == 'Event' && $scope.listing.weekday != null) {
                         $scope.listing.lastDate = ($scope.listing.lastDate != null) ? datesService.getShortenedDateString($scope.listing.lastDate): null;
-                        $scope.listing.lastDate = ($scope.listing.lastDate != null) ? datesService.convertToDate($scope, new Date($scope.listing.lastDate)): null;
+                        $scope.listing.lastDate = ($scope.listing.lastDate != null) ? datesService.convertToDateWithoutComma($scope, new Date($scope.listing.lastDate)): null;
                     }
 
                     if ($rootScope.debugMode) {
@@ -986,10 +1033,14 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                     //Go to message Screen
                     $state.go('app.profile');
                     var relListing = ($scope.listing.listingType == 'Event') ? $scope.listing: null;
+                    var relListingName = ($scope.listing.listingType == 'Event') ? $scope.listing.businessName: $scope.listing.name;
                     
                     $rootScope.relListing = relListing;
                     if ($scope.listing.listingType == 'Event') {
                         $rootScope.relListing.relListingTypeAlias = "Event";
+                        $rootScope.relListing.date = (!$rootScope.relListing.weekday) ?
+                            datesService.convertToDate($scope, new Date($rootScope.relListing.date.split(' ')[0] ) ) :
+                            $rootScope.relListing.weekday + ', weekly';
                     }
                     if ($rootScope.relListing) {
                         $rootScope.relListing.relListingType = (relListing != null) ? relListing.listingType: null;
@@ -997,7 +1048,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                     }
                     
                     var groupType = ($scope.listing.isBusiness == '1' || $scope.listing.listingType == 'Event') ? 'Business' : 'Person';
-                    var timer = window.setTimeout(function () {$state.go('app.messageGroups', {'relListing': null, 'groupType': groupType});}, 60);
+                    var timer = window.setTimeout(function () {$state.go('app.profile.messageGroups', {'relListing': null, 'groupType': groupType});}, 60);
                     var timer2 = window.setTimeout(function () {
                         var checkIfMessageGroupExists = function () {
                             Messages.checkIfMessageGroupExists([$rootScope.user._profileId, $scope.listing._profileId]).success(function (successData) {
@@ -1005,9 +1056,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                                     console.log("checkIfMessageGroupExists successData: ", successData);
                                 }
                                 if (successData == null) {
-                                    $state.go('app.messageGroup', {'_id': null, 'relListing': null, '_profileIds': [$rootScope.user._profileId, $scope.listing._profileId], 'groupType': groupType, 'messageNameString': $scope.listing.name});
+                                    $state.go('app.profile.messageGroups.messageGroup', {'_id': null, 'relListing': null, '_profileIds': [$rootScope.user._profileId, $scope.listing._profileId], 'groupType': groupType, 'messageNameString': 'New Message to ' + relListingName});
                                 } else {
-                                    $state.go('app.messageGroup', {'_id': successData[0]._id, 'relListing': null, '_profileIds': [], 'groupType': groupType, 'messageNameString': $scope.listing.name});
+                                    $state.go('app.profile.messageGroups.messageGroup', {'_id': successData[0]._id, 'relListing': null, '_profileIds': [], 'groupType': groupType, 'messageNameString': relListingName});
                                 }
                             }).error(function () {
                                 checkIfMessageGroupExists();
@@ -1027,10 +1078,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             
             $scope.seePhoto = function (photoName) {
                 if (photoName == 'CoverPhoto') {
-                    $scope.popoverImages = [{'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/'+$scope.listing.currentCoverPhotoName}];
+                    $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/cover_photo/'+$scope.listing.currentCoverPhotoName}];
                 }
                 else if (photoName == 'ProfilePhoto') {
-                    $scope.popoverImages = [{'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/'+$scope.listing.currentProfilePhotoName}];
+                    $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/profile_photo/'+$scope.listing.currentProfilePhotoName}];
                 }
                 $rootScope.allPopoverImages = $scope.popoverImages;
                 $rootScope.showPopoverImages(0);
@@ -1045,7 +1096,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                     relId = listing._profileId;
                     relType = 'Profile';
                 }
-                $state.go('app.nlfeedListing-photos', {searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId, _listingId: $stateParams._listingId, listingType: listing.listingType, _id: relId, specificListingType: relType, listingName: $scope.listing.name});
+                $state.go('app.feedListing-photos', {searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId, _listingId: $stateParams._listingId, listingType: listing.listingType, _id: relId, specificListingType: relType, listingName: $scope.listing.name});
             }
             
             $scope.goToSeeTrailer = function () {
@@ -1109,10 +1160,6 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
         });
         
-        $scope.$on('$ionicView.enter', function () {
-            
-        });
-        
         $scope.pageLoad = function () {
             //Prepare Page Load Data
             $rootScope.pageTitle = $stateParams.listingName + ' Photos'
@@ -1146,10 +1193,12 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         
         $scope.$on('$ionicView.beforeEnter', function () {
             $rootScope.allPopoverImages = $scope.popoverImages || [];
+            $rootScope.pageTitle = $scope.pageTitle || $rootScope.pageTitle;
         });
         
         $scope.pageLoad = function () {
-            $rootScope.pageTitle = $stateParams.listingName + ' Photos';
+            $rootScope.pageTitle = $stateParams.listingName;
+            $rootScope.pageTitle += ($stateParams.albumType == 'Cover Photo') ? ' Cover Photos': ' Profile Photos';
             $scope.pageTitle = $rootScope.pageTitle;
             //Prepare Page Load Data
             var getSpecificAlbumSummaryForListing = function () {
@@ -1177,7 +1226,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                             
                             successData[a].index = a;
                             successData[a].evenIndex = (relModulus) ? 'even': 'odd';
-                            popoverImages.push({'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/'+albumName+'/' + successData[a].name});
+                            popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
                             
                             if (a == successData.length - 1) {
                                 $scope.popoverImages = popoverImages;
@@ -1204,6 +1253,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         $scope.rootScope = $rootScope;
         $scope.businessesItems = [];
         $scope.itemType = $stateParams.itemType;
+        $scope.windowWidth = window.innerWidth;
+        
         $scope.$on('$ionicView.enter', function() {
         
             if ($stateParams.itemType == 'Offers') {
@@ -1306,7 +1357,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                     $scope.goToOffer = function (offer) {
                         $state.go('app.offers');
                         var timer =window.setTimeout(function () {
-                            $state.go('app.offerDetail', {_id: offer._id});
+                            $state.go('app.offers.offerDetail', {_id: offer._id});
                         }, 200);
                     }
                     
@@ -1385,7 +1436,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
     }])
 
     // Book Table //
-    app.controller('BookTableCtrl', ['$ionicHistory', 'ionicDatePicker', 'ionicTimePicker', '$rootScope', '$state', '$scope', '$stateParams', 'TableBooking', '$ionicPopup', '$ionicViewSwitcher', 'datesService', function($ionicHistory, ionicDatePicker, ionicTimePicker, $rootScope, $state, $scope, $stateParams, TableBooking, $ionicPopup, $ionicViewSwitcher, datesService) {
+    app.controller('BookTableCtrl', ['$ionicHistory', 'ionicDatePicker', 'ionicTimePicker', '$rootScope', '$state', '$scope', '$stateParams', 'TableBooking', '$ionicPopup', '$ionicViewSwitcher', '$timeout', 'datesService', function($ionicHistory, ionicDatePicker, ionicTimePicker, $rootScope, $state, $scope, $stateParams, TableBooking, $ionicPopup, $ionicViewSwitcher, $timeout, datesService) {
         // Set Up Variables
         $scope.rootScope = $rootScope;
         $scope.listing = [];
@@ -1393,7 +1444,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         $scope.name = null;
         $scope.email = null;
         $scope.selectedDate1 = new Date();
-        $scope.selectedTime = new Date(64800 * 1000);
+        $scope.selectedTime = (new Date().getHours() < 18) ?
+            new Date(64800 * 1000) :
+            new Date();
         $scope.todaysDate = new Date();
         $scope.finalDate = new Date();
         $scope.days = datesService.days;
@@ -1406,6 +1459,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         $scope.pageLoad = function () {
             $rootScope.pageTitle = 'Book a Table at ' + $stateParams.listingName;
             $scope.pageTitle = $rootScope.pageTitle;
+            
             $scope.convertToDate = function () {
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
             }
@@ -1416,7 +1470,40 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             }
             $scope.dateInputHTML = $scope.convertToDate();
             $scope.timeInputHTML = $scope.convertToTime();
+            
+            var getCurrentInputTime = function () {
+                var d = new Date();
+                return (d.getMinutes() < 30) ?
+                    (d.getHours()*60*60)+(d.getMinutes()*60):
+                    ((d.getHours()-1)*60*60)+(d.getMinutes()*60);
+            }
 
+            var d = new Date();
+            var inputTime = (d.getHours() < 18) ?
+                64800:
+                getCurrentInputTime();
+                
+            var showPastTimePopup = function (params) {
+                $ionicPopup.show({
+                    title: 'Past time chosen',
+                    template: '<i class="ion-close main-icon"></i><p>The time you selected has already passed.</p>',
+                    //subTitle: 'Are you sure you want to Delete this item?',
+                    scope: $scope,
+                    buttons: [
+                        { 
+                            text: 'Close',
+                            onTap: function(e) {
+                                if (params.callback) {
+                                    $timeout(function () {
+                                        ionicTimePicker.openTimePicker(ipObj2)
+                                    }, 10);
+                                }
+                            } 
+                        }
+                    ]
+                });
+            }
+            
             var ipObj1 = {
               callback: function (val) {  //Mandatory
                 $scope.selectedDate1 = new Date(val);
@@ -1451,15 +1538,28 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                         console.log('Time not selected');
                     }
                   } else {
-                    $scope.selectedTime = new Date(val * 1000);
-                    $scope.timeInputHTML = $scope.convertToTime();
-                    ipObj2.inputTime = ($scope.selectedTime.getUTCMinutes() < 30) ? val: val - 3600;
+                    var d = new Date();
+                    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+                    var diffDays = Math.round(Math.abs((d.getTime() - $scope.selectedDate1.getTime())/(oneDay)));
+                    var currentTimeAsEpoch = (d.getHours()*60*60)+(d.getMinutes()*60);
+                    
+                    console.log(new Date(val * 1000), new Date(currentTimeAsEpoch*1000));
+                    if (diffDays == 0 && new Date(val * 1000) < new Date(currentTimeAsEpoch*1000)) {
+                        $timeout(function () {
+                            showPastTimePopup({callback: 'showTimePicker'});
+                        }, 5);
+                    }
+                    else {
+                        $scope.selectedTime = new Date(val * 1000);
+                        $scope.timeInputHTML = $scope.convertToTime();
+                        ipObj2.inputTime = ($scope.selectedTime.getUTCMinutes() < 30) ? val: val - 3600;
+                    }
                     if ($rootScope.debugMode) {
                         console.log('Selected epoch is : ', ipObj2.inputTime, 'and the time is ', $scope.selectedTime.getUTCHours(), 'H :', $scope.selectedTime.getUTCMinutes(), 'M');
                     }
                   }
                 },
-                inputTime: 64800,   //Optional
+                inputTime: inputTime,   //Optional
                 format: 12,         //Optional
                 step: 10,           //Optional
                 setLabel: 'Set'    //Optional
@@ -1479,7 +1579,15 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
 
             $scope.completeTableBooking = function (name, email) {
                 $scope.dateTimeString = $scope.selectedDate1.getFullYear() + '-' + ($scope.selectedDate1.getMonth() + 1) + '-' + $scope.selectedDate1.getDate() + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;
+                
+                var newDateString = ($scope.dateTimeString+':00').replace(/-/g, '/');
+                
+                if (new Date(newDateString) < new Date()) {
+                    showPastTimePopup({});
+                    return false;
+                }
                 var _profId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: null;
+                
                 TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString).success(function (successData) {
                     var contents = "You've received a Table Booking Request.";
                     var header = "Table Booking Requested";
@@ -1522,13 +1630,18 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         $scope.rootScope = $rootScope;
         $scope.listing = [];
         $scope.additionalGuests = 0;
+        $scope.maxGuestsPerBooking = 9;
         $scope.showEventDates = false;
         $scope.bookingAllowed = true;
         $scope.maxGuestListAllowed = null;
         
+        $scope.$on('$ionicView.beforeEnter', function () {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        
         $scope.pageLoad = function () {
             $scope.updateAdditionalGuests = function (val) {
-                $scope.additionalGuests = ( ($scope.additionalGuests == 0 && val == -1) || ($scope.additionalGuests == 10 && val == 1) || ($scope.additionalGuests + 1 == $scope.maxGuestListAllowed) ) ? $scope.additionalGuests: $scope.additionalGuests += val;
+                $scope.additionalGuests = (!$scope.bookingAllowed || ($scope.additionalGuests == 0 && val == -1) || ($scope.additionalGuests == $scope.maxGuestsPerBooking && val == 1) || ($scope.additionalGuests + 1 == $scope.maxGuestListAllowed && val == 1) ) ? $scope.additionalGuests: $scope.additionalGuests += val;
             }
 
             $scope.getEventDetails = function () {
@@ -1536,26 +1649,43 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                     if ($rootScope.debugMode) {
                         console.log('BookTicketsCtrl getEventDateDetails successData: ', successData);
                     }
+                    $rootScope.pageTitle = 'Book entry at ' + successData[0].name;
+                    $scope.pageTitle = $rootScope.pageTitle;
                     $scope.listing = successData[0];
+                    $scope.listing.guestListMax = ($scope.listing.guestListMax == null) ? null: parseInt($scope.listing.guestListMax);
+                    $scope.listing.guestListCurrentTotal = ($scope.listing.guestListCurrentTotal == null) ? 0: parseInt($scope.listing.guestListCurrentTotal);
+                    
                     if ($scope.listing.weekday == null) {
                         $scope.chosenDate = $scope.listing.date;
                         $scope.listing.dateString = $scope.listing.date.split(' ');
                         //$scope.listing.dateString = $scope.listing.dateString[0].split('-');
                         $scope.selectedDate1 = new Date($scope.listing.dateString[0]);
                         $scope.dateDisplay = datesService.convertToDate($scope, $scope.selectedDate1);
-                        $scope.bookingAllowed = ($scope.listing._week1DateBooked != null) ? false: true;
+                        $scope.bookingAllowed = ($scope.listing._week1DateBooked != null || ($scope.listing.guestListMax != null && ($scope.listing.guestListMax - $scope.listing.guestListCurrentTotal) < 1) ) ? false: true;
                         if ($scope.listing.guestListMax != null) {
-                            $scope.maxGuestListAllowed = $scope.listing.guestListMax - $scope.listing.guestListCurrentTotal;
+                            $scope.maxGuestListAllowed = parseInt($scope.listing.guestListMax) - parseInt($scope.listing.guestListCurrentTotal);
                         }
                     } else {
+                        $scope.listing.guestListWeek2Total = ($scope.listing.guestListWeek2Total == null) ? 0: parseInt($scope.listing.guestListWeek2Total);
+                        $scope.listing.guestListWeek3Total = ($scope.listing.guestListWeek3Total == null) ? 0: parseInt($scope.listing.guestListWeek3Total);
+                        $scope.listing.guestListWeek4Total = ($scope.listing.guestListWeek4Total == null) ? 0: parseInt($scope.listing.guestListWeek4Total);
+                        $scope.listing.guestListWeek5Total = ($scope.listing.guestListWeek5Total == null) ? 0: parseInt($scope.listing.guestListWeek5Total);
+                        $scope.listing.guestListWeek6Total = ($scope.listing.guestListWeek6Total == null) ? 0: parseInt($scope.listing.guestListWeek6Total);
+                        $scope.listing.guestListWeek7Total = ($scope.listing.guestListWeek7Total == null) ? 0: parseInt($scope.listing.guestListWeek7Total);
+                        $scope.listing.guestListWeek8Total = ($scope.listing.guestListWeek8Total == null) ? 0: parseInt($scope.listing.guestListWeek8Total);
+                        
                         if ($scope.listing.guestListMax != null) {
                             $scope.maxGuestListAllowed = $scope.listing.guestListMax - $scope.listing.guestListCurrentTotal;
                         }
                         $scope.eventDates = [];
                         $scope.eventDatesBooked = [];
 
-                        $scope.eventDates.push([$scope.listing.date, $scope.listing.guestListCurrentTotal, $scope.listing._week1DateBooked]);
-                        $scope.eventDatesBooked[0] = null;
+                        $scope.eventDates.push([$scope.listing.week1Date, $scope.listing.guestListCurrentTotal, $scope.listing._week1DateBooked]);
+                        $scope.eventDatesBooked[0] = ($scope.listing._week1DateBooked == null) ? null: $scope.listing.week1Date.split(' ')[0];
+                        
+                        $scope.bookingAllowed = ($scope.listing._week1DateBooked != null || ($scope.listing.guestListMax != null && ($scope.listing.guestListMax - $scope.listing.guestListCurrentTotal) < 1)) ? false: true;
+                        $scope.chosenDate = $scope.listing.week1Date.split(' ')[0];
+                        
                         if ($scope.listing.week2Date != null) {
                             $scope.eventDates.push([$scope.listing.week2Date, $scope.listing.guestListWeek2Total, $scope.listing._week2DateBooked]);
                             $scope.eventDatesBooked[1] = ($scope.listing._week2DateBooked == null) ? null: $scope.listing.week2Date.split(' ')[0];
@@ -1611,11 +1741,12 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                 for (a = 0; a < $scope.eventDates.length; a++) {
                     relIndex = ($scope.eventDates[a][0] == date[0]) ? a: relIndex;
                 }
-                $scope.bookingAllowed = ($scope.eventDatesBooked.indexOf($scope.eventDates[relIndex][0]) == -1) ? true: false;
+                $scope.bookingAllowed = ($scope.eventDatesBooked.indexOf($scope.eventDates[relIndex][0]) == -1) ?
+                    (($scope.listing.guestListMax - $scope.eventDates[relIndex][1]) > 0) ? true: false:
+                    false;
                 $scope.chosenEventDate = $scope.eventDates[relIndex][3];
                 $scope.maxGuestListAllowed = $scope.listing.guestListMax - $scope.eventDates[relIndex][1];
                 $scope.additionalGuests = ($scope.additionalGuests > $scope.guestListMax) ? $scope.guestListMax: $scope.additionalGuests;
-
             }
 
             $scope.completeTicketBooking = function () {
@@ -1632,7 +1763,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                         for (a = 0; a < $scope.eventDates.length; a++) {
                             if ($scope.eventDates[a][0] == $scope.chosenDate) {
                                 $scope.eventDates[a][1] = $scope.eventDates[a][1] + 1 + $scope.additionalGuests;
-                                $scope.eventDatesBooked[a].push($scope.eventDates[a][0]);
+                                $scope.eventDatesBooked[a] = $scope.eventDates[a][0];
                                 $scope.maxGuestListAllowed -= ($scope.additionalGuests + 1);
                             }
                         }
@@ -1676,7 +1807,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
     }])
 
     // See Menu Summary//
-    app.controller('SeeMenuCtrl', ['$ionicHistory', '$rootScope', '$state','$scope', '$stateParams', 'MenuItems', '$ionicViewSwitcher', function($ionicHistory, $rootScope, $state, $scope, $stateParams, MenuItems, $ionicViewSwitcher) {
+    app.controller('SeeMenuCtrl', ['$ionicHistory', '$rootScope', '$state','$scope', '$stateParams', 'MenuItems', 'Listings', '$ionicViewSwitcher', function($ionicHistory, $rootScope, $state, $scope, $stateParams, MenuItems, Listings, $ionicViewSwitcher) {
         // Set Up Variables
         $scope.rootScope = $rootScope;
         $scope.pageLoading = true;
@@ -1686,6 +1817,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
         });
         
         $scope.pageLoad = function () {
+            $scope.phone1 = null;
             $scope.menuItemCategories = [];
             $scope.menuItemCategoriesAdded = [];
             $scope.menuItems = [];
@@ -1842,6 +1974,16 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
                 });
             }
             
+            var getBusinessPhoneNumber = function () {
+                var paramsString = '_listingId='+$stateParams._businessId+'&listingType=Business';
+                Listings.getPhoneNumberForListing(paramsString).success(function (successData) {
+                    $scope.phone1 = (successData != null) ? successData[0].phone1: null;
+                    console.log($scope.phone1);
+                }).error(function (errorData) {
+                    getBusinessPhoneNumber();
+                });
+            }
+            
             $scope.changeOrderMethod = function (method) {
                 $scope.currentOrderReadyToSubmit = (parseFloat($rootScope.currentOrderTrayTotal) > parseFloat(10.00) || (method == 'Collection' && parseFloat($rootScope.currentOrderTrayTotal) > parseFloat(0.00))) ? true: false;
                 $scope.currentOrderMethod = method;
@@ -1854,6 +1996,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicHistory', '$ionicViewSwitcher
             }
             
             getMenuItems();
+            if ($rootScope.callingEnabled && $scope._menuTypeId == 1) {
+                getBusinessPhoneNumber();
+            }
             $rootScope.finalMenuOrderObjCleanse($scope);
         }
         

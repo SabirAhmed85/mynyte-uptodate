@@ -9,11 +9,14 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     
     // profile page
     .state('app.profile', {
-      url: "/profile",
+      url: "/profile/:action",
       views: {
         'profile-tab' :{
           	templateUrl: "templates/profile-views/profile.html",
 		  		controller: "ProfileCtrl"
+        },
+        params: {
+          action: null
         }
       }
     })
@@ -71,19 +74,31 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             usersPWord: null
           }
         })
-        .state('app.notificationsSummary', {
-          url: "/notificationsSummary",
+        //Privacy
+        .state('app.privacyPolicy', {
+          url: "/privacyPolicy",
           views: {
             'profile-tab' :{
+                templateUrl: "templates/profile-views/privacy-policy.html",
+                    controller: "PrivacyPolicyCtrl"
+            }
+          }
+        })
+
+        //Notifications
+        .state('app.profile.notificationsSummary', {
+          url: "/notificationsSummary/",
+          views: {
+            'profile-tab@app' :{
                 templateUrl: "templates/profile-views/notifications-summary.html",
                 controller: "NotificationsSummaryCtrl"
             }
           }
         })
-        .state('app.notification', {
+        .state('app.profile.notification', {
           url: "/notification/:id/:type",
           views: {
-            'profile-tab' :{
+            'profile-tab@app' :{
                 templateUrl: "templates/profile-views/notification.html",
                 controller: "NotificationCtrl"
             }
@@ -93,10 +108,10 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             type: null
           }
         })
-        .state('app.messageGroups', {
+        .state('app.profile.messageGroups', {
           url: "/messageGroups/:relListing/:groupType",
           views: {
-            'profile-tab' :{
+            'profile-tab@app' :{
                 templateUrl: "templates/profile-views/message-groups.html",
                 controller: "MessageGroupsCtrl"
             }
@@ -106,10 +121,11 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             groupType: null
           }
         })
-        .state('app.messageGroup', {
+        .state('app.profile.messageGroups.messageGroup', {
           url: "/messageGroups/:relListing/:groupType/messageGroup/:_id/:_profileIds/:messageNameString",
+          cache: true,
           views: {
-            'profile-tab' :{
+            'profile-tab@app' :{
                 templateUrl: "templates/profile-views/message-group.html",
                 controller: "MessageGroupCtrl"
             }
@@ -274,6 +290,34 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             _id: null
           }
         })
+
+        //Article Pages
+        .state('app.articles', {
+          url: "/articles/:articleType/:categories/:subCategories",
+          views: {
+            'profile-tab' :{
+                templateUrl: "templates/article-views/articles.html",
+                    controller: "ArticlesCtrl"
+            }
+          },
+          params : {
+            articleType: null,
+            categories: null,
+            subCategories: null
+          }
+        })
+        .state('app.articles.article', {
+          url: "/:articleId",
+          views: {
+            'profile-tab' :{
+                templateUrl: "templates/article-views/article.html",
+                    controller: "ArticleCtrl"
+            }
+          },
+          params : {
+            articleId: null
+          }
+        })
     
     //  offers
     .state('app.offers', {
@@ -285,10 +329,10 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
       }
     })
-        .state('app.offerDetail', {
-          url: "/offers/offerDetail/:_id",
+        .state('app.offers.offerDetail', {
+          url: "/offerDetail/:_id",
           views: {
-            'offers-tab' :{
+            'offers-tab@app' :{
                 templateUrl: "templates/offers-views/offer-detail.html",
                 controller: "OfferDetailCtrl"
             }
@@ -299,19 +343,19 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         })
     
     //  nl feed
-    .state('app.nlfeed', {
-      url: "/nl-feed",
+    .state('app.feed', {
+      url: "/feed",
       views: {
-        'nlfeed-tab' :{
+        'feed-tab' :{
           	templateUrl: "templates/feed-views/nl-feed.html",
 		  		controller: "NLFeedCtrl"
         }
       }
     })
-        .state('app.nlfeedListings', {
-          url: "/nl-feedListings/:searchType/:_businessTypeId",
+        .state('app.feed.nlfeedListings', {
+          url: "/nl-feedListings/:searchType/:_businessTypeId/",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab@app' :{
                 templateUrl: "templates/feed-views/nl-feed-listings.html",
                     controller: "NLFeedListingsCtrl"
             }
@@ -321,10 +365,10 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             _businessTypeId: null
           }
         })
-        .state('app.nlfeedListing', {
+        .state('app.feed.nlfeedListing', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab@app' :{
                 templateUrl: "templates/feed-views/nl-feed-listing.html",
                     controller: "NLFeedListingCtrl"
             }
@@ -335,10 +379,10 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             listingType: null
           }
         })
-        .state('app.nlfeedListing-photos', {
+        .state('app.feedListing-photos', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/:listingName/nl-feedListing-photos/:_id",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/nl-feed-listing-photos.html",
                     controller: "NLFeedListingPhotosCtrl"
             }
@@ -348,10 +392,10 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             _id: null, specificListingType: null
           }
         })
-        .state('app.nlfeedListing-specific-photos', {
+        .state('app.feedListing-specific-photos', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/:listingName/nl-feedListing-photos/:_id/nl-feedListing-specific-photos/:_listingProfileId/:_albumId/:albumType",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/nl-feed-listing-specific-photos.html",
                     controller: "NLFeedListingSpecificPhotosCtrl"
             }
@@ -366,7 +410,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.seeTrailer', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/:listingName/see-trailer/:_id/:movieTitle",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/see-trailer.html",
                     controller: "SeeTrailerCtrl"
             }
@@ -380,7 +424,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.bookTable', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/book-table/:_id/:listingName",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/book-table.html",
                     controller: "BookTableCtrl"
             }
@@ -394,7 +438,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.bookTickets', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/book-tickets/:_id/:listingName",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/book-tickets.html",
                     controller: "BookTicketsCtrl"
             }
@@ -408,7 +452,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.seeMenu', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/see-menu/:_businessId/:listingName/:_menuTypeId",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/see-menu.html",
                     controller: "SeeMenuCtrl"
             }
@@ -423,7 +467,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.seeMenuItems', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/see-menu/:_businessId/:listingName/:_menuTypeId/see-menu-items/:_menuItemCategoryId",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/see-menu-items.html",
                     controller: "SeeMenuItemsCtrl"
             }
@@ -436,7 +480,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.seeBusinessesItems', {
           url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/see-businesses-items/:_businessId/:itemType/:listingName",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/see-businesses-items.html",
                     controller: "SeeBusinessesItemsCtrl"
             }
@@ -467,7 +511,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         .state('app.completeTakeawayOrder', {
           url: "/complete-takeaway-order/:_businessId",
           views: {
-            'nlfeed-tab' :{
+            'feed-tab' :{
                 templateUrl: "templates/feed-views/complete-takeaway-order.html",
                     controller: "CompleteTakeawayOrderCtrl"
             }
@@ -479,7 +523,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     
     //  taxi
     .state('app.taxi', {
-      url: "/taxi",
+      url: "/taxi/",
       views: {
         'taxi-tab' :{
           	templateUrl: "templates/taxi-views/taxi.html",
@@ -489,7 +533,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     })
     // more page
     .state('app.more', {
-      url: "/more",
+      url: "/more/",
       views: {
         'more-tab' :{
           	templateUrl: "templates/more-views/more.html",
@@ -497,11 +541,21 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
       }
     })
+      //Download the App
+      .state('app.downloadTheApp', {
+        url: "/downloadTheApp",
+        views: {
+          'more-tab' :{
+              templateUrl: "templates/more-views/download-the-app.html",
+                  controller: "DownloadTheAppCtrl"
+          }
+        }
+      })
 	 
     //  login page
     //Default Page App goes to on Start
-  	$urlRouterProvider.otherwise("/app/nl-feed");
-    $ionicConfigProvider.views.maxCache(5);
+    
+  	$urlRouterProvider.otherwise("/app/feed");
     //$ionicConfigProvider.footerBar.transition('none');
 
 })

@@ -2,7 +2,9 @@
   	<ion-content>
         <h2>Complete Registration</h2>
       <div class="tile register register-final">
-        <button ng-show="profileType == 'person'" ui-sref="app.profile" class="skip-step">skip this step</button>
+        <button class="skip-step"
+             ng-show="profileType == 'person'"
+             ng-click="completeRegister(undefined, undefined, undefined, undefined, undefined, undefined);">skip this step</button>
         <form name="completeRegistrationForm">
             <div
                 ng-if="profileType != 'person'">

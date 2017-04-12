@@ -4,14 +4,19 @@
 </label>
 <div class="content" ng-show="category.showFull" ng-class="{'open':category.showFull}">
     <div class="offer" eat-click-if="!feature.isFeature" ng-repeat="feature in category.offers" 
-        ng-class="{'feature':feature._offerTypeId != '1', 'last': feature.index == category.offers.length}"
+        ng-class="{'feature':feature._offerTypeId != '1', 'first': feature.index == 1}"
         ng-click="goToOffer(feature);">
-        
+        <span class="offer-food-style-label"
+            ng-if="feature.offerFoodStyle != null">{{feature.offerFoodStyle}}</span>
         <span class="offer-exclusive-label"
             ng-if="feature._offerTypeId == '3'">MyNyte Exclusive</span>
             
-        <span class="offer-img-container" ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != null">
-            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}" />
+        <span class="offer-img-container"
+            ng-style="{'height': {{windowWidth * (7/16)}}+'px'}"
+            ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != 'default-offer.jpg'">
+            <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}"
+                src="img/user_images/cover_photo/default-offer.jpg"
+                ng-if="feature.currentOfferCoverPhotoName != 'default-offer.jpg'"/>
         </span>
         <p class="offer-main-text">{{feature.description}}</p>
         <i class="ion-chevron-right" ng-show="feature.businessIsFeatured == '1'"></i>

@@ -1,5 +1,5 @@
 /*  Profile page template */
-app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
+app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, $stateParams, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
     //Variables & Constants
     //Cancel relListing in case someone has come back to profile page
     //after trying to attach a listing to a message.
@@ -17,6 +17,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.getProfileItemCount = function () {
             Profile.getProfileItemCountForProfile($rootScope.user._profileId).success(function (successData) {
                 $scope.profileItemCount = successData[0];
+                if (successData[0].notificationCountType == 'outstanding') {
+                    var array = [];
+                    for (a = 0; a < successData[0].notificationCount; a++) {
+                        array.push(0);
+                        if (a == successData[0].notificationCount - 1) {
+                            $rootScope.user.currentUnreadNotifications = array;
+                            $rootScope.$broadcast('savestate');
+                        }
+                    }
+                }
             }).error(function (errorData) {
                 window.setTimeout(function () {
                     if ($rootScope.userLoggedIn) {
@@ -27,14 +37,24 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         }
         
         //Page load function
-        $scope.$on('$ionicView.enter', function() {
+        $scope.$on('$ionicView.beforeEnter', function() {
             if ($rootScope.userLoggedIn) {
                 $scope.getProfileItemCount();
+
+                if ($stateParams.action != null) {
+                    switch ($stateParams.action) {
+                        case 'businessHelpPage':
+                            $state.go('app.articles');
+                        break;
+                    }
+                }
             }
         });
         
         $rootScope.connectProfileToOneSignal = function () {
             Notifications.createOneSignalId($rootScope.user._profileId, $rootScope._userOneSignalId, 0).success(function (successData) {
+                $rootScope.debugModeLog({'msg': 'ProfileCtrl createOneSignalId successData', 'data': successData});
+            
                 $rootScope._userOneSignalId = successData[0]._oneSignalId;
                 if ($rootScope._userOneSignalId == 0 || typeof($rootScope._userOneSignalId) == 'undefined') {
                     $rootScope.user = userObjectService.startUsersMessagesAndNotificationsUpdateTimer($rootScope.user);
@@ -49,10 +69,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             ngFB.login({scope: 'email,user_about_me,email'}).then(
                 function (response) {
                     if (response.status === 'connected') {
-                        //alert('Facebook login succeeded');
                         $scope.closeLogin();
                     } else {
-                        alert('Facebook login failed');
+                        $rootScope.debugModeLog({'msg': 'Facebook Login Failed', 'data': []});
                     }
                 });
         };
@@ -65,25 +84,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 function (user) {
                     var savedUserId = user.id;
                     $rootScope.user = user;
-                    console.log($rootScope.user);
+                    
+                    $rootScope.debugModeLog({'msg': 'ProfileCtrl closeLogin $rootScope.user', 'data': $rootScope.user});
                     
                     $rootScope.appLoading = true;
                     var finalProfileLogIn = function () {
                         Profile.logInThroughFb($rootScope.user.email, $rootScope.user.id).success(function (successData) {
                             if (successData != 'null' && successData != undefined && successData != '' && successData != null) {
-                                /*
-                                var query = "INSERT INTO people (firstname, lastname) VALUES (?,?)";
-                                db.executeSql(query, ['Simon', 'Smith'], function(res) {
-                                    console.log("INSERT ID -> " + res.insertId);
-                                }, function (err) {
-                                    console.log('err', err);
-                                });
-                                */
                                 $ionicScrollDelegate.scrollTop();
                                 userService.model.user = successData[0];
                                 userService.model.user.id = savedUserId;
                                 $rootScope.$broadcast('savestate');
-                                //console.log(userService.model, 'model2');
                                 
                                 //All Objects which are attached to the old object and now need to be reattached should be dealt with
                                 var oldUserInteractionObject = $rootScope.user.userInteractionObject || {};
@@ -100,9 +111,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $rootScope.$broadcast('user-logged-in');
                                 $rootScope.appLoading = false;
                                 
-                                if ($rootScope.debugMode) {
-                                    console.log('ProfileCtrl logInThroughFb rootScope.user: ', $rootScope.user);
-                                }
+                                $rootScope.debugModeLog({'msg': 'ProfileCtrl logInThroughFb $rootScope.user: ', 'data': $rootScope.user});
                             }
                             else {
                                 $scope.showDisplayNameNote = false;
@@ -110,8 +119,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $scope.showFinalProfileLogInWindow = true;
                                 
                                 $scope.checkIfDisplayNameTaken = function (displayName) {
-                                    console.log($scope.displayName);
-                                    console.log('display: ', displayName);
                                     if (displayName.length > 4) {
                                         Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
                                             $scope.displayNameTaken = (parseInt(result["total"]) > 0) ? true: false;
@@ -125,14 +132,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     $scope.showDisplayNameNote = bool;
                                 }
                                 
-                                $scope.doRegister = function (displayName) {
-                                    console.log(displayName);
-                                    console.log(displayName, $rootScope.user.name, $rootScope.user.email, $rootScope.user.id);
-                                }
-                                
                                 $scope.createFBUserProfile = function (displayName) {
                                     Profile.createFBUserProfile($rootScope.user.name, displayName, $rootScope.user.email, $rootScope.user.id).success(function (successData) {
-                                        console.log(successData);
+                                        $rootScope.debugModeLog({'msg': 'ProfileCtrl createFBUserProfile successData: ', 'data': successData});
+                                        
                                         $state.go('app.registerFinal', {profileType: 'person', _usersId: successData, usersEMail: $rootScope.user.email, usersPWord: $scope.password});
                                         $scope.showFinalProfileLogInWindow = false;
                                     }).error(function () {
@@ -143,41 +146,32 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $rootScope.appLoading = false;
                             }
                         }).error(function (error) {
-                            console.log("error: " + error);
+                            $rootScope.debugModeLog({'msg': 'ProfileCtrl createFBUserProfile errorData: ', 'data': error});
+                            
                             finalProfileLogIn();
                         });
                     }
                     finalProfileLogIn();
                 },
                 function (error) {
-                    alert('Facebook error: ' + error.error_description);
+                    $rootScope.debugModeLog({'msg': 'Facebook Error', 'data': error.error_description});
                 });
         }
 
         $scope.logIn = function (email, word) {
             $rootScope.appLoading = true;
             Profile.logIn(email, word).success(function (successData) {
-                console.log(successData);
+                $rootScope.debugModeLog({'msg': 'ProfileCtrl logIn successData: ', 'data': successData});
                 if (successData != 'null' && successData != undefined && successData != '' && successData != null) {
-                    /*
-                    var query = "INSERT INTO people (firstname, lastname) VALUES (?,?)";
-                    db.executeSql(query, ['Simon', 'Smith'], function(res) {
-                        console.log("INSERT ID -> " + res.insertId);
-                    }, function (err) {
-                        console.log('err', err);
-                    });
-                    */
                     $ionicScrollDelegate.scrollTop();
                     userService.model.user = successData[0];
                     $rootScope.$broadcast('savestate');
-                    //console.log(userService.model, 'model2');
                     
                     //All Objects which are attached to the old object and now need to be reattached should be dealt with
                     var oldUserInteractionObject = $rootScope.user.userInteractionObject;
                     userService.model.user._userOneSignalId = $rootScope._userOneSignalId;
                     $rootScope.user = userObjectService.createUserObject(userService.model.user);
                     listingsService.createListingTypesObjForListing($rootScope.user);
-                    console.log($rootScope.user);
                     $rootScope.user.userInteractionObject = oldUserInteractionObject;
                     $rootScope.userLoggedIn = true;
                     if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
@@ -207,7 +201,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $rootScope.appLoading = false;
                 }
             }).error(function (error) {
-                console.log("error: " + error);
+                $rootScope.debugModeLog({'msg': 'ProfileCtrl logIn errorData: ', 'data': error});
                 $scope.logIn(email, word);
             });
         }
@@ -310,7 +304,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $rootScope.showBackButton = false;
                 
                 $scope.backToHomepage = function () {
-                    $state.go('app.nlfeed');
+                    $state.go('app.feed');
                 }
                 
                 $scope.updateProfilePasswordDetails = function () {
@@ -326,11 +320,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                         
                     Profile.updateProfilePasswordDetails($scope.updateParams).success(function (successData) {
-                        console.log(successData);
+                        $rootScope.debugModeLog({'msg': 'ProfileCtrl updateProfilePasswordDetails successData: ', 'data': successData});
                         
                         $scope.logIn = function (email, word) {
                             Profile.logIn(email, word).success(function (successData) {
-                                console.log(successData);
                                 if (successData != 'null' && successData != undefined && successData != '' && successData != null) {
                                 
                                     $ionicScrollDelegate.scrollTop();
@@ -342,7 +335,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     userService.model.user._userOneSignalId = $rootScope._userOneSignalId;
                                     $rootScope.user = userObjectService.createUserObject(userService.model.user);
                                     listingsService.createListingTypesObjForListing($rootScope.user);
-                                    console.log($rootScope.user);
                                     $rootScope.user.userInteractionObject = oldUserInteractionObject;
                                     $rootScope.userLoggedIn = true;
                                     if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
@@ -374,7 +366,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     $rootScope.appLoading = false;
                                 }
                             }).error(function (error) {
-                                console.log("error: " + error);
                                 $scope.logIn(email, word);
                             });
                         }
@@ -388,7 +379,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 
                 if (!$rootScope.userLoggedIn) {
                     Profile.checkPasswordResetCodeValidity($stateParams._profileId, $stateParams.code).success(function (successData) {
-                        console.log(successData);
+                        $rootScope.debugModeLog({'msg': 'ProfileCtrl checkPasswordResetCodeValidity successData', 'data': successData});
+                        
                         if (successData == 'Password Check Query Failed') {
                             $scope.queryUnsuccessful = true;
                         }
@@ -455,7 +447,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             $scope.formSubmitted = false;
             $scope.formIsValidating = false;
             $scope.profileType = $stateParams.profileType;
-            console.log($scope.profileType);
             $scope.pageHeader = ($scope.profileType == 'business') ? 'Sign your business up': 'Fill in your details';
             
             $scope.checkIfDisplayNameTaken = function (displayName) {
@@ -474,7 +465,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 if (email.length > 4) {
                     $scope.formIsValidating = true;
                     Profile.checkIfEmailTaken(email).success(function (result) {
-                        console.log('emailTaken: ', result);
+                        $rootScope.debugModeLog({'msg': 'RegisterCtrl checkIfEmailTaken successData', 'data': result});
                         $scope.emailTaken = (parseInt(result["total"]) > 0) ? true: false;
                         $scope.formIsValidating = false;
                     }).error(function () {
@@ -491,10 +482,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $scope.displayName = displayName;
                 $scope.email = email;
                 $scope.password = password;
-                console.log($scope.name, $scope.displayName, $scope.email, $scope.password);
                 
                 Profile.createProfile($scope.name, $scope.displayName, $scope.email, $scope.password, $scope.profileType).success(function (successData) {
-                    console.log(successData);
+                    $rootScope.debugModeLog({'msg': 'RegisterCtrl createProfile successData', 'data': successData});
+                    
                     if (successData == 'emailTaken') {
                         $ionicPopup.show({
                             title: 'Email already registered',
@@ -529,7 +520,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $state.go('app.registerFinal', {profileType: $scope.profileType, _usersId: successData, usersEMail: $scope.email, usersPWord: $scope.password});
                     }
                 }).error(function (error) {
-                    console.log(error);
+                    $rootScope.debugModeLog({'msg': 'RegisterCtrl checkIfEmailTaken errorData', 'data': error});
                     $scope.doRegister(name, displayName, email, password);
                 });
                 
@@ -542,7 +533,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $rootScope.checkForAppInit($scope);
     }])
     /*  Register Final Control */
-    app.controller('RegisterFinalCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'Profile', 'Categories', '$ionicScrollDelegate', 'userService', 'userObjectService', function($rootScope, $scope, $state, $stateParams, Profile, Categories, $ionicScrollDelegate, userService, userObjectService) {
+    app.controller('RegisterFinalCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'Profile', 'Categories', '$ionicScrollDelegate', 'userService', 'userObjectService', 'listingsService', function($rootScope, $scope, $state, $stateParams, Profile, Categories, $ionicScrollDelegate, userService, userObjectService, listingsService) {
         //Variables & Constants
         $scope.name = "";
         $scope.displayName = "";
@@ -591,13 +582,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             
             var getAvailableTowns = function () {
                 Categories.getAvailableTowns().success(function (towns) {
-                    console.log($scope.selectedBusinessTypes);
+                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl getAvailableTowns successData', 'data': towns});
                     $scope.availableTowns = towns;
-                    console.log(towns);
                     var getAvailableBusinessTypes = function () {
                         Categories.getAvailableBusinessTypes().success(function (businessTypes) {
-                            console.log("businessTypes");
-                            console.log(businessTypes);
+                            $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl getAvailableBusinessTypes successData', 'data': businessTypes});
                             for (a = 0; a < businessTypes.length; a++) {
                                 if (businessTypes[a].name == "Restaurant") {
                                     $scope.restaurantBusinessTypeId = businessTypes[a]._id;
@@ -609,8 +598,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $scope.businessTypes = businessTypes;
                             var getAllFoodStyles = function () {
                                 Categories.getAllFoodStyles().success(function (foodStyles) {
-                                    console.log("businessTypes");
-                                    console.log(businessTypes);
+                                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl getAllFoodStyles successData', 'data': foodStyles});
                                     $scope.foodStyles = foodStyles;
                                 }).error(function () {
                                     getAllFoodStyles();
@@ -630,13 +618,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
             //Functions based on User Interactions
             $scope.toggleBusinessTypes = function (businessTypeIndex) {
-                console.log("j: " + $scope.showBusinessTypes);
                 $scope.currentBusinessTypeSelectingIndex = businessTypeIndex;
                 $scope.showBusinessTypes = !$scope.showBusinessTypes;
             };
             
             $scope.toggleTowns = function () {
-                console.log("i: " + $scope.showTowns);
                 $scope.showTowns = !$scope.showTowns;
             };
             
@@ -648,13 +634,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             
             $scope.selectTown = function (town) {
                 $scope.selectedTown = town;
-                console.log($scope.selectedTown);
                 $scope.showTowns = !$scope.showTowns;
             }
             
             $scope.toggleBusinessType = function (businessType) {
                 $scope.currentBusinessTypeIndexBeingToggled = businessType.index;
-                console.log("0", $scope.currentBusinessTypeIndexBeingToggled);
                 for (a = 0; a < $scope.chosenBusinessTypeObjects.length; a++) {
                     if ($scope.chosenBusinessTypeObjects[a].index != businessType.index) {
                         $scope.chosenBusinessTypeObjects[a].showBusinessTypes = false;
@@ -683,7 +667,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                     }
                 }
-                console.log($scope.chosenBusinessTypeIds, $scope.currentBusinessTypeIndexBeingToggled);
+                
                 $scope.showBusinessTypes = false;
             }
             
@@ -719,13 +703,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     name: 'Select a Business Type',
                     showBusinessTypes: false});
                 $scope.chosenBusinessTypeIds.push(null);
-                console.log($scope.chosenBusinessTypeObjects, $scope.currentBusinessTypeIndexToAdd);
             }
             
             /**/
             $scope.toggleFoodStyle = function (foodStyle) {
                 $scope.currentFoodStyleIndexBeingToggled = foodStyle.index;
-                console.log("0", $scope.currentFoodStyleIndexBeingToggled);
                 for (a = 0; a < $scope.chosenFoodStyleObjects.length; a++) {
                     if ($scope.chosenFoodStyleObjects[a].index != foodStyle.index) {
                         $scope.chosenFoodStyleObjects[a].showFoodStyles = false;
@@ -754,7 +736,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                     }
                 }
-                console.log($scope.chosenFoodStyleIds, $scope.currentFoodStyleIndexBeingToggled);
+                
                 $scope.showFoodStyles = false;
             }
             
@@ -790,10 +772,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     name: 'Select a Food Style',
                     showFoodStyles: false});
                 $scope.chosenFoodStyleIds.push(null);
-                console.log($scope.chosenFoodStyleObjects, $scope.currentFoodStyleIndexToAdd);
             }
-
-            console.log($stateParams);
             
             $scope.completeRegister = function (phone1, phone2, name, addressLine1, addressLine2, postCode) {
                 if (typeof phone1 !== 'undefined') {
@@ -803,17 +782,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     phone2 = phone2.replace(/ /g, '');
                 }
                 
-                console.log("PARAMETERS: " + $scope._usersId + " _ " + phone1 + " _ " + phone2 + " _ " + name + " _ " + addressLine1 + " _ " + addressLine2 + " _ " + $scope.selectedTown._id + " _ " + postCode + " _ " + $scope.profileType + " _ " + $scope._businessTypeIds);
-                console.log($scope._businessTypeIds[0]);
                 $rootScope.appLoading = true;
+                
                 Profile.completeRegistration($scope._usersId, phone1, phone2, name, addressLine1, addressLine2, $scope.selectedTown._id, postCode, $scope.profileType, $scope.chosenBusinessTypeIds, $scope.chosenFoodStyleIds).success(function (successData) {
-                    console.log(successData);
+                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl completeRegistration successData', 'data': successData});
                     //If Registration was successful
                     if ($scope.profileType != 'myNyte') {
                         var logIn = function () {
                             if ($stateParams.usersPWord != null) {
                                 Profile.logIn($stateParams.usersEMail, $stateParams.usersPWord).success(function (successData) {
-                                    console.log(successData);
+                                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl comleteRegistration logIn successData', 'data': successData});
+                                    
                                     $rootScope.$broadcast('savestate');
                                     
                                     //All Objects which are attached to the old object and now need to be reattached should be dealt with
@@ -827,24 +806,15 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     $state.go('app.profile');
                                     $rootScope.appLoading = false;
                                 }).error(function (error) {
-                                    console.log("error: " + error);
+                                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl completeRegistration logIn errorData', 'data': error});
                                     logIn();
                                 });
                             } else {
                                 Profile.logInThroughFb($stateParams.usersEMail, $rootScope.user.id).success(function (successData) {
                                     if (successData != 'null' && successData != undefined) {
-                                        /*
-                                        var query = "INSERT INTO people (firstname, lastname) VALUES (?,?)";
-                                        db.executeSql(query, ['Simon', 'Smith'], function(res) {
-                                            console.log("INSERT ID -> " + res.insertId);
-                                        }, function (err) {
-                                            console.log('err', err);
-                                        });
-                                        */
                                         $ionicScrollDelegate.scrollTop();
                                         userService.model.user = successData[0];
                                         $rootScope.$broadcast('savestate');
-                                        //console.log(userService.model, 'model2');
                                         
                                         //All Objects which are attached to the old object and now need to be reattached should be dealt with
                                         var oldUserInteractionObject = $rootScope.user.userInteractionObject;
@@ -853,7 +823,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         $rootScope.user = userObjectService.createUserObject(userService.model.user);
                                         $rootScope.user.id = savedUserId;
                                         listingsService.createListingTypesObjForListing($rootScope.user);
-                                        console.log($rootScope.user);
                                         $rootScope.user.userInteractionObject = oldUserInteractionObject;
                                         $rootScope.userLoggedIn = true;
                                         $rootScope.$broadcast('user-logged-in');
@@ -868,7 +837,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         $rootScope.appLoading = false;
                                     }
                                 }).error(function (error) {
-                                    console.log("error: " + error);
+                                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl completeRegistration logInThroughFb errorData', 'data': error});
                                     logIn();
                                 });
                             }
@@ -881,7 +850,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
 
                 }).error(function (error) {
-                    console.log(error);
+                    $rootScope.debugModeLog({'msg': 'RegisterFinalCtrl completeRegistration errorData', 'data': error});
                     $scope.completeRegister(phone1, phone2, name, addressLine1, addressLine2, postCode);
                 });;
             }
@@ -902,7 +871,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             //Load Page Data
             $scope.loadPageData = function () {
                 Notifications.getNotifications($rootScope.user._profileId).success(function (notifications) {
-                    console.log(notifications);
+                    $rootScope.debugModeLog({'msg': 'NotificationsSummaryCtrl getNotifications successData', 'data': notifications});
                     userObjectService.removeUnreadNotifications($rootScope.user);
                     if (notifications != null && notifications != []) {
                         for (a = 0; a < notifications.length; a++) {
@@ -935,6 +904,32 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $rootScope.checkForAppInit($scope);
     }]);
 
+    /*  Privacy Policy Control */
+    app.controller('PrivacyPolicyCtrl', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        $scope.pageLoad = function () {
+            $rootScope.pageTitle = 'Privacy Policy';
+            $scope.pageTitle = $rootScope.pageTitle;
+        }
+
+        $rootScope.checkForAppInit($scope);
+    }]);
+    /*  Download the App Control */
+    app.controller('DownloadTheAppCtrl', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        $scope.pageLoad = function () {
+            $scope.rootScope = $rootScope;
+            $rootScope.pageTitle = 'Download the MyNyte App';
+            $scope.pageTitle = $rootScope.pageTitle;
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
+
     app.controller('NotificationCtrl', ['$rootScope', '$state','$scope', '$stateParams', 'Notifications', 'Profile', 'Followers', function($rootScope, $state, $scope, $stateParams, Notifications, Profile, Followers) {
         //Variables & Constants
         $scope.notificationId = $stateParams.id;
@@ -955,12 +950,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $rootScope.checkForAppInit($scope);
     }]);
 
-    app.controller('MessageGroupsCtrl', ['$rootScope', '$state', '$stateParams', '$scope', '$ionicHistory', 'Messages', 'Profile', '$ionicViewSwitcher', /*'socket', */'datesService', 'messagesWorkerFS', function($rootScope, $state, $stateParams, $scope, $ionicHistory, Messages, Profile, $ionicViewSwitcher, /*socket, */datesService, messagesWorkerFS) {
+    app.controller('MessageGroupsCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 'Messages', 'Profile', '$ionicViewSwitcher', /*'socket', */'datesService', 'messagesWorkerFS', function($rootScope, $state, $stateParams, $scope, Messages, Profile, $ionicViewSwitcher, /*socket, */datesService, messagesWorkerFS) {
         var socketMessagesReadFunction = function (data) {
         
         }
         var socketNewMessageFunction = function (data) {
-            alert("new message");
             if (data.newMessage._senderId == $rootScope.user._profileId || $scope.groupIdsArray.indexOf(data.newMessage._groupId) == -1) {
                 return false;
             }
@@ -986,30 +980,28 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             
             if ($rootScope.user.isBusiness != '1') {
                 $rootScope.topRightButtonFunction = function () {
-                    $state.go('app.messageGroup', {_id: null, relListing: null, _profileIds: [], groupType: $stateParams.groupType});
+                    $state.go('app.profile.messageGroups.messageGroup', {_id: null, relListing: null, _profileIds: [], groupType: $stateParams.groupType});
                 };
             } else {
                 $rootScope.topRightButtonIsPlus = false;
             }
+            
             $rootScope.backButtonFunction = function () {
-                /* SOCKET FUNCTIONS
-                socket.removeListener('messages-read', socketMessagesReadFunction);
-                socket.removeListener('new-message', socketNewMessageFunction);*/
                 $rootScope.relListing = null;
                 $rootScope.currentMessageInputPlaceholder = "Type your message here ...";
                 $ionicViewSwitcher.nextDirection('back');
                 $state.go('app.profile');
-                $rootScope.initialBackButtonFunction();
             }
         });
 
         //Variables & Constants
         $scope.rootScope = $rootScope;
-        $scope.messageGroups = [];
         $scope.groupType = $stateParams.groupType;
+        $scope.pageLoading = true;
 
         //Functions based on User Interactions
         $scope.pageLoad = function () {
+            $scope.relListing = $stateParams.relListing;
             /* SOCKET FUNCTION
             socket.on('new-message', socketNewMessageFunction);*/
             
@@ -1032,6 +1024,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         messageGroups[a].lastMessageText = (messageGroups[a].lastMessageText == "" && messageGroups[a]._lastMessageItemId != null) ? 'Attached Listing': messageGroups[a].lastMessageText;
                     }
                     $scope.messageGroups = messageGroups;
+                    $scope.pageLoading = false;
                 }).error(function () {
                     $scope.loadMessageGroups();
                 });
@@ -1071,7 +1064,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         var socketMessagesReadFunction = function (data) {
             alert("messages ...");
             if (data._groupId == $stateParams._id && $rootScope.user._profileId != data._profileId) {
-                alert("read");
                 for (a = 0; a < data.messagesJustReadArray.length; a++) {
                     for (b = 0; b < $scope.dates.length; b++) {
                         if ($scope.dates[b].date == data.messagesJustReadArray[a].date) {
@@ -1080,7 +1072,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     $scope.dates[b].posts[c].messageReadState = 'ReadBySome';
                   
                                     $scope.dates[a].posts[b].messageReadByParticipantsCounter += 1;
-                                    if ($scope.dates[a].posts[b].messageReadByParticipantsCounter == $scope.dates[a].posts[b].totalParticipants) {
+                                    if ($scope.dates[a].posts[b].messageReadByParticipantsCounter == $scope.dates[a].posts[b].totalParticipants || $scope.dates[a].posts[b].messageReadByParticipantsCounter > $scope.dates[a].posts[b].totalParticipants) {
                                         $scope.dates[a].posts[b].messageReadState = 'ReadByAll';
                                     }
                                 }
@@ -1154,26 +1146,39 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             
             $scope.messageGroupId = $stateParams._id;
             $scope.messageNameString = $stateParams.messageNameString;
-        
+            
             if ($stateParams.groupType == 'Business') {
                $rootScope.backButtonFunction = function () {
                     /* SOCKET FUNCTION
                     socket.removeListener('messages-read', socketMessagesReadFunction);
                     socket.removeListener('new-message', socketNewMessageFunction);
                     */
+                   
                     $rootScope.relListing = null;
                     $rootScope.currentMessageInputPlaceholder = "Type your message here ...";
-                    $rootScope.initialBackButtonFunction();
-                } 
+                    $ionicViewSwitcher.nextDirection('back');
+                    $state.go('app.profile.messageGroups', {groupType: $stateParams.groupType});
+                }
+            }
+            else {
+                $rootScope.backButtonFunction = function () {
+                    $ionicViewSwitcher.nextDirection('back');
+                    $state.go('app.profile.messageGroups', {groupType: $stateParams.groupType});
+                    
+                    //$rootScope.initialBackButtonFunction();
+                }
             }
             
-            $rootScope.messageGroupTimer = $timeout(function () {
-                if ($scope.messageGroupId != null) {
-                    $scope.reloadMessageGroup()
-                }
-            }, 10000);
+            $rootScope.messageGroupTimer = ($rootScope.messageGroupTimer == null) ?
+                $timeout(function () {
+                    if ($scope.messageGroupId != null) {
+                        $scope.reloadMessageGroup()
+                    }
+                }, 10000):
+                $rootScope.messageGroupTimer;
         });
         //Variables & Constants
+        
         $scope.rootScope = $rootScope;
         $scope.stateParams = $stateParams;
         $scope.pageLoading = true;
@@ -1229,10 +1234,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     var insertMessageReadReceipts = function () {
                         userObjectService.removeUnreadMessageGroup($rootScope.user, $stateParams._id);
                         Messages.insertMessageReadReceipts($stateParams._id, $rootScope.user._profileId, null).success(function (successData) {
-                        
-                            if ($rootScope.debugMode) {
-                                console.log('insertMessageReadReceipts successData: ', successData);
-                            }
+                            $rootScope.debugModeLog({'msg': 'insertMessageReadReceipts successData', 'data': successData});
                             /* Not Needed Until Socket INncluded
                             if (successData != null) {
                                 
@@ -1246,7 +1248,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                             'messagesJustReadArray': successDataProcessed
                                         });
                                     }, function (errorData) {
-                                        console.log('Messages Worker Error: ', errorData);
+                                        $rootScope.debugModeLog({'msg': 'Messages Worker Error: '', 'data': errorData});
                                     }
                                 );
                             }
@@ -1298,18 +1300,15 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     
                     messagesWorkerFS.f('addPostsToScope', [[posts, $scope.messagesIdsArray, $scope.messagesDatesArray, $rootScope.user._profileId, $scope.dates], 0]).then(
                         function (returnPosts) {
-                            if ($rootScope.debugMode) {
-                                console.log('Messages Worker: ', returnPosts);
-                            }
+                            $rootScope.debugModeLog({'msg': 'Messages Worker', 'data': returnPosts});
+                            
                             $scope.messagesIdsArray = returnPosts.messagesIdsArray;
                             $scope.messagesDatesArray = returnPosts.messagesDatesArray;
                             dates = returnPosts.dates;
                             
                             completeMessageDisplay(state, dates);
                         }, function (errorData) {
-                            if ($rootScope.debugMode) {
-                                console.log('Messages Worker Error: ', errorData);
-                            }
+                            $rootScope.debugModeLog({'msg': 'Messages Worker Error', 'data': errorData});
                         }
                     );
                     
@@ -1335,7 +1334,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.pageLoading = false;
                 }
                 else if ($scope.messageGroupId == null && $stateParams._profileIds.length > 0) {
-                    $rootScope.pageTitle = "New Message to " + $stateParams.messageNameString;
+                    $rootScope.pageTitle = $stateParams.messageNameString;
                     $scope.pageTitle = $rootScope.pageTitle;
                     $stateParams._profileIds = $stateParams._profileIds.split(',');
                     
@@ -1377,10 +1376,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 if (message.relatedItemType == "Offer") {
                     $state.go('app.offers');
                     var timer = window.setTimeout(function () {
-                        $state.go('app.offerDetail', {'_id': message._relatedItemId});
+                        $state.go('app.offers.offerDetail', {'_id': message._relatedItemId});
                     }, 220);
                 } else {
-                    $state.go('app.nlfeed');
+                    $state.go('app.feed');
                     var timer = null;
                     if (message.relatedItemType == "BusinessesOffers") {
                         timer = $timeout(function () {
@@ -1402,7 +1401,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }, 320);
                     } else if (message.relatedItemType == "BusinessesPhotos") {
                         timer = $timeout(function () {
-                            $state.go('app.nlfeedListing-photos', {'_listingId': message._relatedItemProfileId, 'listingType': 'Business', '_id': message._relatedItemProfileId, 'listingName': message.relatedItemsListingName});
+                            $state.go('app.feedListing-photos', {'_listingId': message._relatedItemProfileId, 'listingType': 'Business', '_id': message._relatedItemProfileId, 'listingName': message.relatedItemsListingName});
                         }, 320);
                     }
                     else if (message.relatedItemType == "EventsOffers") {
@@ -1412,7 +1411,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     else {
                         timer = $timeout(function () {
-                            $state.go('app.nlfeedListing', {'_listingId': message._relatedItemId, 'listingType':message.relatedItemType});
+                            $state.go('app.feed.nlfeedListing', {'_listingId': message._relatedItemId, 'listingType':message.relatedItemType});
                         }, 220);
                     }
 
@@ -1443,9 +1442,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $scope.finalAddMessage = function (newMessage) {
                     $rootScope.appLoading = true;
                     Messages.addMessage(newMessage).success(function (successData) {
-                        if ($rootScope.debugMode) {
-                            console.log('addMessage successData: ', successData);
-                        }
+                        $rootScope.debugModeLog({'msg': 'addMessage successData', 'data': successData});
                         if ($scope._messageGroupId == null) {
                             $scope._messageGroupId = successData[0]._groupId;
                             if ($stateParams.messageNameString == null) {
@@ -1586,13 +1583,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             }
             
             $scope.reloadMessageGroup = function () {
-                if ($rootScope.currentViewName == 'app.messageGroup') {
+                if ($rootScope.currentViewName == 'app.profile.messageGroups.messageGroup') {
                     $scope.showMessageGroup("subsequent");
-                    $rootScope.messageGroupTimer = $timeout(function () {
-                        if ($scope.messageGroupId != null) {
-                            $scope.reloadMessageGroup()
-                        }
-                    }, 15000);
+                    
+                        $rootScope.messageGroupTimer = ($rootScope.messageGroupTimer == null) ?
+                            $timeout(function () {
+                                if ($scope.messageGroupId != null) {
+                                    $scope.reloadMessageGroup()
+                                }
+                            }, 15000):
+                            $rootScope.messageGroupTimer;
                 }
             }
             
@@ -1606,6 +1606,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             "$destroy",
                 function( event ) {
                     $timeout.cancel( $rootScope.messageGroupTimer );
+                    $rootScope.messageGroupTimer = null;
                 }
             );
         }
@@ -1707,15 +1708,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         
         $scope.addContact = function (businessType, town, companyName, name, role, phone, email, website, note) {
             Contacts.addContact(businessType, town, companyName, name, role, phone, email, website, note).success(function (successData) {
-                if ($rootScope.debugMode) {
-                    console.log("addContact successData: ", successData);
-                }
+                $rootScope.debugModeLog({'msg': 'addContact successData', 'data': successData});
                 $rootScope.$broadcast('new-contact');
                 $state.go('app.contacts');
             }).error(function (errorData) {
-                if ($rootScope.debugMode) {
-                    console.log("addContact errorData: ", errorMessage);
-                }
+                $rootScope.debugModeLog({'msg': 'addMessage errorData', 'data': errorData});
             });
         }
     }]);
@@ -1736,9 +1733,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         
         $scope.editContact = function (_contactId, businessType, town, companyName, name, role, phone, email, website, note) {
             Contacts.editContact(_contactId, businessType, town, companyName, name, role, phone, email, website, note).success(function (successData) {
-                if ($rootScope.debugMode) {
-                    console.log('editContact successData: ', successData);
-                }
+                $rootScope.debugModeLog({'msg': 'editContact successData', 'data': successData});
                 $scope.editing = false;
                 $rootScope.currentlyEditing = false;
                 $rootScope.$broadcast('new-contact');
@@ -1756,6 +1751,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         
         $scope.$on('$ionicView.beforeEnter', function() {
             $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+            
+            $scope.timeScale = $stateParams.timeScale;
             
             if ($stateParams.itemType == 'BusinessMenuItemCats') {
                 $rootScope.topRightButtonShouldBeSettings = true;
@@ -1810,6 +1807,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 if (businessItemType == 'Table Booking') {
                     successData[i].timeRequested = datesService.getShortenedTimeString(successData[i].dateTimeRequested);
                     successData[i].dateRequested = convertToReadableDate(successData[i].dateTimeRequested);
+                    if (successData[i].dateTimeSuggested != null) {
+                        successData[i].timeSuggested = datesService.getShortenedTimeString(successData[i].dateTimeSuggested);
+                    }
                 }
                 else if (businessItemType == 'Event') {
                     successData[i].DATE = convertToReadableDate(successData[i].DATE);
@@ -1840,10 +1840,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 case 'Movies':
                     $scope.getBusinessItems = function () {
                         Movies.getMoviesForMaintenance($stateParams.timeScale, 0).success(function (successData) {
-                            if ($rootScope.debugMode) {
-                                console.log('getMoviesForMaintenance successData: ', successData);
-                            }
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'getMoviesForMaintenance successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 loopThroughBusinessItems(successData, 0, 'Movie')
                             } else {
                                 $scope.businessItems = [];
@@ -1870,10 +1869,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.pageTitle = $rootScope.pageTitle;
                         var _userId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
                         Offers.getOffersByBusinessId($rootScope.user._id, _userId, $stateParams.timeScale).success(function (successData) {
-                            if ($rootScope.debugMode) {
-                                console.log('BusinessItemsCtrl getOffersByBusinessId successData: ', successData);
-                            }
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getOffersByBusinessId successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 loopThroughBusinessItems(successData, 0, 'Offer')
                             } else {
                                 $scope.businessItems = [];
@@ -1899,9 +1897,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.pageTitle = $rootScope.pageTitle;
                     $scope.getBusinessItems = function () {
                         Events.getEventsByBusiness($rootScope.user._id, $stateParams.timeScale, $rootScope.user._profileId).success(function (successData) {
-                            if ($rootScope.debugMode) {
-                                console.log('BusinessItemsCtrl getEventsByBusiness successData: ', successData);
-                            }
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getEventsByBusiness successData', 'data': successData});
+                            
                             if (successData != 'null' && successData != null) {
                                 loopThroughBusinessItems(successData, 0, 'Event')
                             } else {
@@ -1918,9 +1915,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = "My Current Table Booking Requests";
                         $scope.pageTitle = $rootScope.pageTitle;
                         TableBooking.getRequestedTableBookings($rootScope.user._id).success(function (successData) {
-                            if ($rootScope.debugMode) {
-                                console.log('BusinessitemsCtrl getRequestedTableBookings successData: ', successData);
-                            }
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getRequestedTableBookings successData', 'data': successData});
+                            
                             if (successData != null) {
                                 loopThroughBusinessItems(successData, 0, 'Table Booking')
                             } else {
@@ -1947,9 +1943,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = ($stateParams.timeScale == 'present') ? "My Current Table Bookings": "My Past Table Bookings";
                         $scope.pageTitle = $rootScope.pageTitle;
                         TableBooking.getAcceptedTableBookings($rootScope.user._id, $stateParams.timeScale).success(function (successData) {
-                            if ($rootScope.debugMode) {
-                                console.log('BusinessitemsCtrl getAcceptedTableBookings successData: ', successData);
-                            }
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getAcceptedTableBookings successData', 'data': successData});
+                            
                             if (successData != null) {
                                 loopThroughBusinessItems(successData, 0, 'Table Booking')
                             } else {
@@ -1975,11 +1970,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
                     $scope.getBusinessItems = function () {
                         MenuItems.getMenuOrdersForBusiness($rootScope.user._id, requestType).success(function (successData) {
-                            //$rootScope.pageTitle = ();
-                            if ($rootScope.debugMode) {
-                                console.log('BusinessItemsCtrl getMenuOrdersForBusiness successData:', successData);
-                            }
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getMenuOrdersForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItems = successData;
                             } else {
                                 $scope.businessItems = [];
@@ -2024,7 +2017,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = ($stateParams.itemType == 'BusinessCarteMenuItemCats') ? "My a la Carte Menu": "My Takeaway Menu";
                         $scope.pageTitle = $rootScope.pageTitle;
                         $scope.sortMenuItems = function () {
-                            console.log("hi", $scope.menuItems);
                             for (z = 0; z < $scope.menuItems.length; z++) {
                                 var relIndex = $scope.menuItemCategoriesAdded.indexOf($scope.menuItems[z]._menuItemCategoryId);
                                 if (relIndex == -1) {
@@ -2049,12 +2041,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         var getMenuItems = function () {
                             MenuItems.getMenuItems($rootScope.user._id, 0, _menuTypeId).success(function (successData) {
-                                console.log("ko", successData);
+                                $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getMenuItems successData', 'data': successData});
+                                
                                 $scope.menuItemCategories = [];
                                 $scope.menuItemCategoriesAdded = [];
                                 $scope.menuItems = [];
                                 $scope.menuItemsAdded = [];
-                                var successData = (successData != 'null') ? successData : [];
+                                var successData = (successData != 'null' && successData != null) ? successData : [];
                                 for (a = 0; a < successData.length; a++) {
                                     tagsObj = {'tagName':successData[a].tagName, 'iconClass':successData[a].iconClass};
                                     if ($scope.menuItemsAdded.indexOf(successData[a]._id) == -1) {
@@ -2066,7 +2059,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                             if ($rootScope.currentSavedFoodOrders[b]._businessId == $stateParams._businessId) {
                                                 var thisTakeawaysOrderObject = $rootScope.currentSavedFoodOrders[b];
                                                 for (c = 0; c < thisTakeawaysOrderObject.menuItems.length; c++) {
-                                                    console.log(thisTakeawaysOrderObject.menuItems[c]);
                                                     if (thisTakeawaysOrderObject.menuItems[c].item._id == successData[a]._id) {
                                                         successData[a].itemsAddedToBasket = thisTakeawaysOrderObject.menuItems[c].item.itemsAddedToBasket;
                                                     }
@@ -2078,9 +2070,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         $scope.menuItemsAdded.push(successData[a]._id);
                                     }
                                     
-                                    if (a == successData.length - 1) {
+                                    if (a == successData.length - 1 && successData.length > 0) {
                                         $scope.sortMenuItems();
                                     }
+                                }
+                                if (successData.length == 0) {
+                                    $scope.businessItems = [];
+                                    $scope.pageLoading = false;
                                 }
                             }).error(function () {
                                 getMenuItems();
@@ -2105,8 +2101,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = "My Menu Categories";
                         $scope.pageTitle = $rootScope.pageTitle;
                         MenuItems.getMenuItemCategoriesForBusiness($rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getMenuItemCategoriesForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItems = successData;
                             } else {
                                 $scope.businessItems = [];
@@ -2132,8 +2129,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = "My Menu Sub-categories";
                         $scope.pageTitle = $rootScope.pageTitle;
                         MenuItems.getMenuItemSubCategoriesForBusiness($rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getMenuItemSubCategoriesForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItems = successData;
                             } else {
                                 $scope.businessItems = [];
@@ -2159,10 +2157,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = "My Menu Template Options";
                         $scope.pageTitle = $rootScope.pageTitle;
                         MenuItems.getAllMenuItemTemplateOptionsForBusiness($rootScope.user._id).success(function (successData) {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getAllMenuItemTemplateOptionsForBusiness successData', 'data': successData});
+                            
                             var businessItems = [];
                             var businessItemIds = [];
-                            console.log(successData);
-                            successData = (successData != 'null') ? successData: [];
+                            
+                            successData = (successData != 'null' && successData != null) ? successData: [];
                             for (a = 0; a < successData.length; a ++) {
                                 if (businessItemIds.indexOf(successData[a]._id) == -1) {
                                     businessItems.push({
@@ -2184,7 +2184,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             }
                             $scope.businessItems = businessItems;
                             $scope.pageLoading = false;
-                            console.log(businessItems);
                             
                         }).error(function () {
                             $scope.getBusinessItems();
@@ -2206,8 +2205,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = "Current Taxi Booking Requests";
                         $scope.pageTitle = $rootScope.pageTitle;
                         Taxi.getTaxiBookingsForBusiness('allRequested', $rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getTaxiBookingsForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItems = successData;
                             } else {
                                 $scope.businessItems = [];
@@ -2234,8 +2234,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $rootScope.pageTitle = ($stateParams.timeScale == 'present') ? "My Current Taxi Bookings": "My Past Taxi Bookings";
                         $scope.pageTitle = $rootScope.pageTitle;
                         Taxi.getTaxiBookingsForBusiness(mode, $rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getTaxiBookingsForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItems = successData;
                             } else {
                                 $scope.businessItems = [];
@@ -2248,15 +2249,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     break;
                 case 'myNYTEActivity':
                     $scope.getBusinessItems = function () {
+                        $scope.timeScale == $stateParams.timeScale;
                         $rootScope.pageTitle = ($stateParams.timeScale == 'present') ? "My Current MyNyte Activity" : "My Past MyNyte Activity";
                         $scope.pageTitle = $rootScope.pageTitle;
                         Profile.getMyNyteActivityForPerson($rootScope.user._profileId, $stateParams.timeScale).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemsCtrl getMyNyteActivityForPerson successData', 'data': successData});
+                            
                             $scope.businessItems = [
-                                {name: 'Table Bookings', dbName: 'Table Booking', icon: 'ion-fork', show: true, items: []}, 
-                                {name: 'Taxi Bookings', dbName: 'Taxi Booking', icon: 'ion-android-car', show: true, items: []}, 
-                                /*{name: 'Claimed Offers', dbName: 'Offer', icon: 'ion-social-usd', show: true, items: []},*/
-                                {name: 'Event Entry', dbName: 'Event Entry', icon: 'ion-clipboard', show: true, items: []}
+                                {name: 'Table Bookings', dbName: 'Table Booking', icon: 'ion-fork', show: $stateParams.timeScale == 'present', items: []},
+                                {name: 'Taxi Bookings', dbName: 'Taxi Booking', icon: 'ion-android-car', show: $stateParams.timeScale == 'present', items: []},
+                                /*{name: 'Claimed Offers', dbName: 'Offer', icon: 'ion-social-usd', show: $stateParams.timeScale == 'present', items: []},*/
+                                {name: 'Event Entry', dbName: 'Event Entry', icon: 'ion-clipboard', show: $stateParams.timeScale == 'present', items: []}
                             ];
                             if (successData != 'null' && successData != null) {
                                 var loopThroughBusinessItems = function (i) {
@@ -2264,7 +2267,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         if (i < $scope.businessItems.length - 1) {
                                             loopThroughBusinessItems(i + 1);
                                         } else {
-                                            console.log($scope.businessItems);
                                             $scope.pageLoading = false;
                                         }
                                     }
@@ -2325,7 +2327,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     break;
             };
             
-            console.log($stateParams.itemType);
             $scope.getBusinessItems();
         }
         
@@ -2336,7 +2337,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         //Variables & Constants
         $scope.storedBusinessItem = {};
         $rootScope.hideSearch = true;
-        console.log($stateParams);
         $scope.rootScope = $rootScope;
         $scope.itemType = $stateParams.itemType;
         
@@ -2365,7 +2365,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $scope.editing = !$scope.editing;
             };
             
-            var array = ['RequestedTableBookings', 'OwnTableBookings', 'myNYTEActivity', 'OwnTaxiBookings', 'RequestedTaxiBookings', 'OwnTakeawayOrders', 'RequestedTakeawayOrders'];
+            var array = ['RequestedTableBookings', 'OwnTableBookings', 'myNYTEActivity', 'OwnTaxiBookings', 'RequestedTaxiBookings', 'OwnTakeawayOrders', 'RequestedTakeawayOrders', 'Event Entry', 'Taxi Booking', 'Table Booking'];
             if (array.indexOf($stateParams.itemType) != -1 || $stateParams.timeScale == 'past') {
                 $rootScope.topRightButtonIsEdit = false;
             }
@@ -2407,11 +2407,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 case 'Movies':
                     $scope.getBusinessItem = function () {
                         Movies.getMoviesForMaintenance('', $stateParams._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getMoviesForMaintenance successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 convertToReadableDate(successData[0]);
                             }
-                            $scope.businessItem = (successData != 'null') ? successData[0]: [];
+                            $scope.businessItem = (successData != 'null' && successData != null) ? successData[0]: [];
                         }).error(function () {
                             $scope.getBusinessItem();
                         });
@@ -2422,18 +2423,21 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         var _userId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
                         Offers.getOffer($stateParams._id, _userId).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getOffer successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 convertToReadableDate(successData[0]);
                             }
-                            $scope.businessItem = (successData != 'null') ? successData[0]: [];
-                            $rootScope.pageTitle = (successData != 'null') ? successData[0].title: "Offer Error";
+                            $scope.businessItem = (successData != 'null' && successData != null) ? successData[0]: [];
+                            $rootScope.pageTitle = (successData != 'null' && successData != null) ? successData[0].title: "Offer Error";
                             $scope.pageTitle = $rootScope.pageTitle;
                             
                             $scope.getAllOfferCategoriesForBusiness = function () {
                                 Categories.getAllOfferCategoriesForBusiness($rootScope.user._id).success(function (successData) {
+                                    $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getAllOfferCategoriesForBusiness successData', 'data': successData});
+                                    
                                     $scope.businessItem.offerCategories = successData;
-                                    console.log($scope.businessItem.offerCategories);
+                                    
                                     for (b = 0; b < $scope.businessItem.offerCategories.length; b++) {
                                         if ($scope.businessItem.offerCategories[b]._id == $scope.businessItem._offerSubCategoryId) {
                                             $scope.businessItem.chosenOfferCat = $scope.businessItem.offerCategories[b];
@@ -2502,7 +2506,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             
                             $scope.businessItem.offerRegularityTypes = [
                                 {name: 'one-off', displayName: 'This is an offer that runs everyday for a certain period of time.', itemType: 'offerRegularityType', mustBeSelected: true},
-                                {name: 'weekly', displayName: 'This is a weekly event that occurs on a certain day every week.', itemType: 'offerRegularityType', mustBeSelected: true}
+                                {name: 'weekly', displayName: 'This is a weekly offer that occurs on a certain day every week.', itemType: 'offerRegularityType', mustBeSelected: true}
                             ];
                             
                             if ($scope.businessItem.weekdayName == null) {
@@ -2511,7 +2515,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 };
                             } else {
                                 $scope.businessItem.selectedOfferRegularityType = {
-                                    name: 'weekly', displayName: 'This is a weekly event that occurs on a certain day every week.', mustBeSelected: true
+                                    name: 'weekly', displayName: 'This is a weekly offer that occurs on a certain day every week.', mustBeSelected: true
                                 };
                             }
                             
@@ -2523,6 +2527,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $scope.todaysDate = new Date();
                             $scope.finalDate = new Date();
                             $scope.businessItem.dateChosen = false;
+                            var newEndDate = new Date($scope.businessItem.officialStartDate);
+                            newEndDate = newEndDate.setDate(newEndDate.getDate() + 60);
                             
                             for (a = 0; a < $scope.businessItem.availableWeeks.length; a++) {
                                 if ($scope.businessItem.availableWeeks[a]._id == $scope.businessItem.weeksAhead) {
@@ -2540,15 +2546,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $scope.ipObj1.inputDate = new Date(val);
                                 
                                 var result = angular.copy($scope.businessItem.selectedDate1);
-                                result.setDate(result.getDate() + 60);
-                                $scope.ipObj2.to = result;
+                                $scope.ipObj2.from = angular.copy($scope.businessItem.selectedDate1);
+                                $scope.ipObj2.to = angular.copy(new Date(result.setDate(result.getDate() + 60)));
                                 
                                 $scope.businessItem.dateChosen = true;
-                                console.log('Return value from the datepicker popup is : ' + new Date(val));
                               },
                               disabledDates: [],
                               from: new Date(), //Optional
-                              to: $scope.finalDate.setDate($scope.finalDate.getDate() + 60), //Optional
+                              to: ( new Date($scope.businessItem.officialEndDate) < new Date($scope.finalDate.getDate() + 30) )
+                                    ? new Date($scope.businessItem.officialEndDate)
+                                    : $scope.finalDate.setDate($scope.finalDate.getDate() + 30), //Optional
                               inputDate: new Date($scope.businessItem.officialStartDate),      //Optional
                               mondayFirst: true,          //Optional
                               disableWeekdays: [],       //Optional
@@ -2561,11 +2568,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $scope.businessItem.selectedDate2 = new Date(val);
                                 $scope.businessItem.endDateTimeString = datesService.convertToDate($scope, $scope.businessItem.selectedDate2);
                                 $scope.ipObj2.inputDate = new Date(val);
-                                console.log('Return value from the datepicker popup is : ' + new Date(val));
+                                var today = new Date();
+                                var newDate = today.setDate(today.getDate() + 30);
+                                
+                                $scope.ipObj1.to = (new Date(val) > new Date(newDate)) ? angular.copy(new Date(newDate)): angular.copy(new Date(val));
                               },
                               disabledDates: [],
-                              from: new Date(), //Optional
-                              to: $scope.finalDate.setDate($scope.finalDate.getDate() + 90), //Optional
+                              from: new Date($scope.businessItem.officialStartDate), //Optional
+                              to: newEndDate, //Optional
                               inputDate: new Date($scope.businessItem.officialEndDate),      //Optional
                               mondayFirst: true,          //Optional
                               disableWeekdays: [],       //Optional
@@ -2606,7 +2616,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     offer.weekdayIndex = ($scope.businessItem.selectedOfferRegularityType.name == 'weekly') ? offer.weekdayIndex: null;
 
                                     offer.weeksAhead = ($scope.businessItem.selectedOfferRegularityType.name == 'one-off') ? 0: $scope.businessItem.chosenWeeksAhead._id;
-                                    console.log(offer);
                                 }
 
                                 var offer = $scope.businessItem;
@@ -2626,7 +2635,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                                 
                                 updateOffer(offer);
-                                console.log($rootScope.user._id, offer.selectedOfferType._id, offer.chosenOfferCat._id, offer.title, offer.description, offer.startDateTimeStringToSubmit, offer.endDateTimeStringToSubmit, offer.weeksAhead, offer.weekdayIndex);
                             }
                         }).error(function () {
                             $scope.getBusinessItem();
@@ -2642,7 +2650,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.businessItem.dateInputHTML = datesService.convertToDate($scope, $scope.businessItem.selectedDate1);
                         ipObj1.inputDate = new Date(val);
                         $scope.businessItem.dateChosen = true;
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       },
                       disabledDates: [],
                       from: new Date(), //Optional
@@ -2660,7 +2667,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     $scope.toggleMusicCategory = function (musicCat) {
                         $scope.businessItem.currentMusicCategoryIndexBeingToggled = musicCat.index;
-                        console.log("0", $scope.businessItem.currentMusicCategoryIndexBeingToggled);
                         for (a = 0; a < $scope.businessItem.chosenMusicStyleObjects.length; a++) {
                             if ($scope.businessItem.chosenMusicStyleObjects[a].index != musicCat.index) {
                                 $scope.businessItem.chosenMusicStyleObjects[a].showMusicCategories = false;
@@ -2690,7 +2696,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                             }
                         }
-                        console.log($scope.businessItem.chosenMusicStyleIds, $scope.businessItem.currentMusicCategoryIndexBeingToggled);
+                        
                         $scope.businessItem.showMusicCategories = false;
                     }
 
@@ -2726,7 +2732,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             name: 'Select a Music Style',
                             showMusicCategories: false});
                         $scope.businessItem.chosenMusicStyleIds.push(null);
-                        console.log($scope.businessItem.chosenMusicStyleObjects, $scope.businessItem.currentMusicStyleIndexToAdd);
                         
                         $scope.businessItem.currentMusicStyleIndexToAdd = $scope.businessItem.currentMusicStyleIndexToAdd + 1;
                     }
@@ -2759,10 +2764,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                             var getEvent = function () {
                                 Events.getEvent($stateParams._id).success(function (successData) {
-                                    console.log(successData);
+                                    $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getEvent successData', 'data': successData});
                                     $rootScope.pageTitle = "Event Error";
                                     $scope.pageTitle = $rootScope.pageTitle;
-                                    if (successData != 'null') {
+                                    if (successData != 'null' && successData != null) {
                                         convertToReadableDate(successData[0]);
                                         $scope.businessItem = successData[0];
                                         $rootScope.pageTitle = $scope.businessItem.name;
@@ -2830,8 +2835,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                             displayName: '',
                                             mustBeSelected: true
                                         };
-                                        $scope.businessItem.selectedEventGuestListOption.name = ($scope.businessItem.guestListAllowed != null) ? 'true': 'false';
-                                        $scope.businessItem.selectedEventGuestListOption.displayName = ($scope.businessItem.guestListAllowed != null) ? 'There is an event guestlist for users': 'There is no event guestlist for users';
+                                        $scope.businessItem.selectedEventGuestListOption.name = ($scope.businessItem.isGuestListAllowed != null) ? 'true': 'false';
+                                        $scope.businessItem.selectedEventGuestListOption.displayName = ($scope.businessItem.isGuestListAllowed != null) ? 'There is an event guestlist for users': 'There is no event guestlist for users';
                                         
                                         $scope.guestListMaxInput = [{_id: 1}];
                                         if ($scope.businessItem.guestListMax != null) {
@@ -2848,7 +2853,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
                                         $scope.businessItem.eventHasGuestList = ($scope.businessItem.isGuestListAllowed != null) ? true: false;
                                         $scope.businessItem.guestListMax = ($scope.businessItem.guestListMax == null) ? ($scope.businessItem.eventHasGuestList) ? 'unlimited': null: parseInt($scope.businessItem.guestListMax);
-                                        console.log('d', $scope.businessItem.guestListCurrentTotal);
                                         $scope.businessItem.guestListCurrentTotal = ($scope.businessItem.guestListCurrentTotal == 'null') ? 0: $scope.businessItem.guestListCurrentTotal;
                                         $scope.businessItem.eventIsOneOff = ($scope.businessItem.weekdayIndexId == null) ? true: false;
                                         $scope.businessItem.eventIsWeekly = ($scope.businessItem.weekdayIndexId == null) ? false: true;
@@ -2911,11 +2915,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                             }
                                             $scope.businessItem.currentMusicStyleIndexToAdd = $scope.businessItem.currentMusicStyleIndexToAdd + 1;
                                         }
-
-                                        console.log($scope.businessItem.musicStyle1);
-                                        console.log($scope.businessItem.musicStylesApplied);
-                                        console.log($scope.businessItem);
-                                        console.log($scope.businessItem.currentMusicStyleIndexToAdd);
                                     }
                                 }).error(function () {
                                     getEvent();
@@ -2947,7 +2946,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             event.guestListMax = ($scope.guestListMaxInput[0].val == null) ? 0: $scope.guestListMaxInput[0].val;
                             event.weeksAhead = ($scope.businessItem.selectedEventRegularityType.name == 'one-off') ? 0: $scope.businessItem.chosenWeeksAhead._id;
                             event.eventHasGuestList = ($scope.businessItem.selectedEventGuestListOption.name == 'true') ? 1: 0;
-                            console.log(event);
                         }
 
                         var event = $scope.businessItem;
@@ -2956,7 +2954,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         var updateEvent = function (eventBusinessPlaceId, eventName, eventDescription, eventDateTimeString, eventDressCode, eventGuestListMax, eventDealsOnTheNight, eventExtraInfo, eventEventHasGuestList, eventWeekdayIndex, eventWeeksAhead) {
                             Events.updateEvent($stateParams._id, eventBusinessPlaceId, eventName, eventDescription, eventDateTimeString, eventDressCode, eventGuestListMax, eventDealsOnTheNight, eventExtraInfo, eventEventHasGuestList, eventWeekdayIndex, eventWeeksAhead, $scope.businessItem.chosenMusicStyleObjects).success(function (successData) {
-                                console.log(successData);
+                                $rootScope.debugModeLog({'msg': 'BusinessItemCtrl updateEvent successData', 'data': successData});
                                 
                                 var eventUpdateNotificationsArray = ["Event Date Cancelled", "Event Cancelled", "Event Date Changed"];
                                 var eventUpdateNotificationsObject =
@@ -2997,10 +2995,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                                 if (obj.items.length > 0) {
                                                     prepareNotif(obj);
                                                 }
-                                                
-                                                if (b == fullNotificationsArray.length - 1) {
-                                                    console.log(fullNotificationsObject);
-                                                }
                                             }
                                         }
                                     }
@@ -3017,7 +3011,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                         
                         updateEvent(event._businessPlaceId, event.name, event.description, event.dateTimeString.split(' ')[0], event.dressCode, event.guestListMax, event.dealsOnTheNight, event.extraInfo, event.eventHasGuestList, event.weekdayIndex, event.weeksAhead);
-                        console.log($stateParams._id, event._businessPlaceId, event.name, event.description, event.dateTimeString.split(' ')[0], event.dressCode, event.guestListMax, event.dealsOnTheNight, event.extraInfo, event.eventHasGuestList, event.weekdayIndex, event.weeksAhead, $scope.businessItem.chosenMusicStyleObjects);
                     }
                     break;
                 case 'RequestedTableBookings':
@@ -3036,20 +3029,25 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             if (ipObj2 != null) {
                                 ipObj2.inputTime = successData[0].timeIntegerString;
                             }
-                            console.log($scope.businessItem);
                         }).error(function () {
                             $scope.getBusinessItem();
                         });
                     }
 
-                    $scope.finishUpdatingTableBooking = function (accepted, rejected, completed, alternateDate) {
-                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, completed, alternateDate).success(function (successData) {
+                    $scope.finishUpdatingTableBooking = function (accepted, rejected, cancelled, completed, alternateDate) {
+                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, cancelled, completed, alternateDate).success(function (successData) {
                             
                             if (accepted == 1 ||
                                 rejected == 1 ||
-                                (rejected == 0 && accepted == 0 && alternateDate != null)
+                                cancelled == 1 ||
+                                (rejected == 0 && accepted == 0 && cancelled == 0 && alternateDate != null)
                             ) {
-                                var text = (accepted == 1) ? "accepted": "rejected";
+                                var text = "accepted";
+                                if (rejected == 1) {
+                                    text = "rejected";
+                                } else if (cancelled == 1){
+                                    text = "cancelled";
+                                }
                                 if (alternateDate != null) {
                                     text += ", but a different Time was suggested.";
                                 } else {
@@ -3073,14 +3071,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $rootScope.backButtonFunction();
                             $rootScope.appLoading = false;
                         }).error(function () {
-                            $scope.finishUpdatingTableBooking(accepted, rejected, completed, alternateDate);
+                            $scope.finishUpdatingTableBooking(accepted, rejected, cancelled, completed, alternateDate);
                         });
                     }
 
                     var ipObj2 = {
                         callback: function (val) {      //Mandatory
                           if (typeof (val) === 'undefined') {
-                            console.log('Time not selected');
+                          
                           } else if (val == $scope.businessItem.timeIntegerString){
                             window.setTimeout(function () {
                                 $ionicPopup.show({
@@ -3105,11 +3103,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $scope.selectedHour = ($scope.selectedTime.getUTCHours() < 10) ? '0' + $scope.selectedTime.getUTCHours(): $scope.selectedTime.getUTCHours();
                             $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                             var altDateTime = $scope.businessItem.dateTimeRequested.substr(0, $scope.businessItem.dateTimeRequested.indexOf(' ')) + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;
-                            console.log(altDateTime);
                             
-                            $scope.finishUpdatingTableBooking(0, 0, 0, altDateTime);
-                            
-                            console.log('Selected epoch is : ', ipObj2.inputTime, 'and the time is ', $scope.selectedTime.getUTCHours(), 'H :', $scope.selectedTime.getUTCMinutes(), 'M');
+                            $scope.finishUpdatingTableBooking(0, 0, 0, 0, altDateTime);
                           }
                         },
                         inputTime:64800,   //Optional
@@ -3124,15 +3119,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
                     $scope.updateTableBooking = function (updateType) {
                         $rootScope.appLoading = true;
-                        var accept = 0, reject = 0, alternateDate = null;
+                        var accept = 0, reject = 0, cancel = 0, alternateDate = null;
 
                         if (updateType == 'accept') {
                             accept = 1;
                         } else if (updateType == 'reject') {
                             reject = 1;
+                        } else if (updateType == 'cancel') {
+                            accept = $scope.businessItem.isAccepted;
+                            cancel = 1;
                         }
-                        console.log($stateParams._id, accept, reject, 0, alternateDate);
-                        $scope.finishUpdatingTableBooking(accept, reject, 0, alternateDate);
+                        $scope.finishUpdatingTableBooking(accept, reject, cancel, 0, alternateDate);
                     }
                     break;
                 case 'RequestedTakeawayOrders':
@@ -3142,10 +3139,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         var menuOrderTotalPrice = 0;
                         MenuItems.getMenuOrderForBusiness($stateParams._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getMenuOrderForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItem = successData;
-                                console.log($scope.businessItem);
                                 for (a = 0; a < $scope.businessItem.length; a++) {
                                     var totalPrice = $scope.businessItem[a].quantity * parseFloat($scope.businessItem[a].Price);
                                     $scope.businessItem[a].totalPrice = (totalPrice).formatMoney(2);
@@ -3170,9 +3167,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             responseString = 'acceptMenuOrderWithConditions';
                         }
                         MenuItems.acceptOrRejectMenuOrder($stateParams._id, responseString).success(function (successData) {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl acceptOrRejectMenuOrder successData', 'data': successData});
+                        
                             $rootScope.$broadcast('menu-order-updated');
                             $state.go('app.businessItems', {'itemType': 'RequestedTakeawayOrders', 'timeScale': 'present'});
-                            console.log(successData);
                         }).error(function () {
                             $scope.respondToMenuOrder(responseType);
                         });
@@ -3185,10 +3183,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         var menuOrderTotalPrice = 0;
                         MenuItems.getMenuOrderForBusiness($stateParams._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getMenuOrderForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItem = successData;
-                                console.log($scope.businessItem);
                                 for (a = 0; a < $scope.businessItem.length; a++) {
                                     var totalPrice = $scope.businessItem[a].quantity * parseFloat($scope.businessItem[a].Price);
                                     $scope.businessItem[a].totalPrice = (totalPrice).formatMoney(2);
@@ -3206,7 +3204,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         $scope.existingCatNames = [];
                         MenuItems.getMenuItemCategoriesForBusiness($rootScope.user._id).success(function (successData) {
-                            if (successData != 'null') {
+                            if (successData != 'null' && successData != null) {
                                 for (a = 0; a < successData.length; a++) {
                                     $scope.existingCatNames.push(successData[a].name);
                                 }
@@ -3219,10 +3217,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     }
                                     
                                     $scope.updateMenuCategory = function (catName, description) {
-                                        console.log(catName, description);
                                         $rootScope.appLoading = true;
                                         MenuItems.updateMenuItemCategoryDetailsForBusiness($rootScope.user._id, $stateParams._id, catName, description).success(function (successData2) {
-                                            console.log(successData2);
+                                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl updateMenuItemCategoryDetailsForBusiness successData', 'data': successData2});
+                                            
                                             $rootScope.appLoading = false;
                                             $rootScope.editing = false;
                                             $rootScope.currentlyEditing = false;
@@ -3247,7 +3245,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         $scope.existingCatNames = [];
                         MenuItems.getMenuItemSubCategoriesForBusiness($rootScope.user._id).success(function (successData) {
-                            if (successData != 'null') {
+                            if (successData != 'null' && successData != null) {
                                 for (a = 0; a < successData.length; a++) {
                                     $scope.existingCatNames.push(successData[a].name);
                                 }
@@ -3260,12 +3258,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         $scope.originalCatName = successData2[0].name;
                                     }
                                     
-                            console.log("what the");
                                     $scope.updateMenuSubCategory = function (catName, description) {
-                                        console.log(catName, description);
                                         $rootScope.appLoading = true;
                                         MenuItems.updateMenuItemSubCategoryDetailsForBusiness($rootScope.user._id, $stateParams._id, catName, description).success(function (successData2) {
-                                            console.log('ko', successData2);
+                                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl updateMenuItemSubCategoryDetailsForBusiness successData', 'data': successData2});
+                                            
                                             $rootScope.appLoading = false;
                                             $rootScope.editing = false;
                                             $rootScope.currentlyEditing = false;
@@ -3279,7 +3276,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     getMenuItemSubCategoryDetailsForBusiness();
                                 });
                             }
-                            getMenuItemSubCategoriesForBusiness();
+                            getMenuItemSubCategoryDetailsForBusiness();
                         }).error(function () {
                             $scope.getBusinessItem();
                         });
@@ -3349,16 +3346,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $scope.availableTags.groupTags = [];
                                 var getAllMenuItemTags = function () {
                                     MenuItems.getAllMenuItemTags().success(function (tags) {
-                                        console.log("ya", tags.length);
+                                        $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getAllMenuItemTags successData', 'data': tags});
+                                        
                                         for (a = 0; a < tags.length; a++) {
-                                            console.log(tags.length);
                                             if (tags[a]._menuItemTagGroupId == null) {
                                                 $scope.availableTags.singularTags.push(tags[a]);
                                             } else {
-                                                console.log("blah");
                                                 var tagAdded = false;
                                                 for (b = 0; b < $scope.availableTags.groupTags.length; b++) {
-                                                    console.log($scope.availableTags.groupTags.length);
                                                         $scope.availableTags.groupTags[b].array.push(tags[a]);
                                                         tagAdded = true;
                                                 }
@@ -3427,8 +3422,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                         
                         $scope.addItemToMenu = function (itemName, price, description) {
-                            console.log("hi");
-                            console.log($scope.MenuItems);
                             completeAdd(itemName, price, description);
                         }
                         
@@ -3443,16 +3436,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             }
                         }
                         $scope.applyTag = function (group, tag) {
-                            console.log(tag);
                             var tagNameIndex = $scope.preappliedTagsNames.indexOf(tag.name);
                             if (tagNameIndex == -1) {
-                                console.log(group);
                                 
                                 $scope.preappliedTags.push(tag);
                                 $scope.preappliedTagsNames.push(tag.name);
                                 
                                 for (a = 0; a < $scope.preappliedTags.length; a++) {
-                                    console.log($scope.preappliedTags[a].name);
                                     if ($scope.preappliedTags[a]._menuItemTagGroupId != null
                                         && $scope.preappliedTags[a]._menuItemTagGroupId == tag._menuItemTagGroupId
                                         && $scope.preappliedTags[a]._id != tag._id) {
@@ -3467,7 +3457,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                         
                         $scope.updateMenuItem = function (itemName, price, description) {
-                            console.log(itemName, description);
                             $rootScope.appLoading = true;
                             var appliedOptionsFinal = [];
                             for (a = 0; a < $scope.appliedOptions.length; a++) {
@@ -3498,8 +3487,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     
                         var getMenuTemplateOptionCategories = function () {
                             MenuItems.getMenuTemplateOptionCategories().success(function (successData) {
-                                console.log("hy", successData);
-                                $scope.menuItemTemplateOptionCategories = (successData != 'null') ? successData : [];
+                                $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getMenuTemplateOptionCategories successData', 'data': successData});
+                                
+                                $scope.menuItemTemplateOptionCategories = (successData != 'null' && successData != null) ? successData : [];
                             }).error(function () {
                                 getMenuTemplateOptionCategories();
                             });
@@ -3508,10 +3498,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         var getMenuItemTemplateOption = function () {
                             MenuItems.getMenuItemTemplateOption($rootScope.user._id, $stateParams._id).success(function (successData) {
+                                $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getMenuItemTemplateOption successData', 'data': successData});
+                                
                                 var businessItems = [];
                                 var businessItemIds = [];
-                                console.log(successData);
-                                successData = (successData != 'null') ? successData: [];
+                                
+                                successData = (successData != 'null' && successData != null) ? successData: [];
                                 for (a = 0; a < successData.length; a ++) {
                                     if (businessItemIds.indexOf(successData[a]._id) == -1) {
                                         businessItems.push({
@@ -3555,15 +3547,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     item.priceRelevant = !item.priceRelevant;
                                 }
                                 $scope.toggleQuantityRel = function (item) {
-                                    console.log(item.quantityRelevant);
                                     item.quantityRelevant = !item.quantityRelevant;
-                                    console.log(item.quantityRelevant);
                                 }
                                 
                                 $scope.updateMenuItemTemplateOption = function (option) {
-                                    console.log(option);
                                     MenuItems.updateMenuItemTemplateOption($rootScope.user._id, option, $scope.selectedCategory._id).success(function (successData) {
-                                        console.log(successData);
+                                        $rootScope.debugModeLog({'msg': 'BusinessItemCtrl updateMenuItemTemplateOption successData', 'data': successData});
+                                        
                                         $rootScope.appLoading = false;
                                         $rootScope.editing = false;
                                         $rootScope.currentlyEditing = false;
@@ -3590,7 +3580,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 
                                 $scope.moveOptionChoiceDown = function (choice) {
                                     var orderIndexToApply = parseInt(choice.orderIndex) + 1;
-                                    console.log(choice);
                                     
                                     for (a = 0; a < $scope.businessItem.options.length; a++) {
                                         if ($scope.businessItem.options[a].orderIndex == orderIndexToApply) {
@@ -3604,10 +3593,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                                 
                                 $scope.deleteOptionChoice = function (optionChoice) {
-                                    console.log(optionChoice);
                                     $rootScope.appLoading = true;
                                     MenuItems.deleteMenuItemTemplateOptionOption(optionChoice._id).success(function (successData) {
-                                            console.log(optionChoice);
+                                        $rootScope.debugModeLog({'msg': 'BusinessItemCtrl deleteMenuItemTemplateOptionOption successData', 'data': successData});
+                                        
                                         for (a = 0; a < $scope.businessItem.options.length; a++) {
                                             if ($scope.businessItem.options[a]._id == optionChoice._id) {
                                                 $scope.businessItem.options.splice(a, 1);
@@ -3627,9 +3616,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 
                                 $scope.currentOptionBeingAdded = {'name': '', 'extraPrice': 0.00, 'orderIndex': $scope.businessItem.options.length + 1};
                                 $scope.createOptionChoice = function () {
-                                    console.log($scope.currentOptionBeingAdded);
                                     $rootScope.appLoading = true;
                                     MenuItems.createMenuItemTemplateOptionOption($stateParams._id, $scope.currentOptionBeingAdded).success(function (successData) {
+                                        $rootScope.debugModeLog({'msg': 'BusinessItemCtrl createMenuItemTemplateOptionOption successData', 'data': successData});
+                                        
                                         $scope.businessItem.options.splice($scope.currentOptionBeingAdded.orderIndex - 1, 0, $scope.currentOptionBeingAdded);
                                         for (a = $scope.currentOptionBeingAdded.orderIndex; a < $scope.businessItem.options.length; a++) {
                                             $scope.businessItem.options[a].orderIndex = parseInt($scope.businessItem.options[a].orderIndex) + 1;
@@ -3637,15 +3627,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         }
                                         
                                         $scope.currentOptionBeingAdded = {'name': '', 'extraPrice': 0.00, 'orderIndex': $scope.businessItem.options.length + 1};
-                                            console.log(successData);
                                         
                                         $rootScope.appLoading = false;
                                     }).error(function () {
                                         $scope.createOptionChoice();
                                     });
                                 }
-                                
-                                console.log(businessItems);
                                 
                             }).error(function () {
                                 getMenuItemTemplateOption();
@@ -3659,8 +3646,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $rootScope.topRightButtonIsEdit = false;
                     $scope.getBusinessItem = function () {
                         Taxi.getTaxiBookingForBusiness($stateParams._id, $rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getTaxiBookingForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItem = successData[0];
                                 
                                 $scope.businessItem.newLowestPrice = 0;
@@ -3674,7 +3662,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.respondToTaxiBookingRequest = function () {
                         
                         Taxi.respondToTaxiBooking($rootScope.user._id, $stateParams._id, $scope.businessItem.newLowestPrice, $scope.businessItem.newQuickestTime).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl respondToTaxiBooking successData', 'data': successData});
+                            
                             if (successData != 'null' && successData != null) {
                                 var contents = "Your recent Taxi Booking Request has been accepted by " + successData[0]._claimedByBusinessBusinessName;
                                 var header = "Taxi Booking Accepted";
@@ -3726,8 +3715,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $rootScope.topRightButtonIsEdit = false;
                     $scope.getBusinessItem = function () {
                         Taxi.getTaxiBookingForBusiness($stateParams._id, $rootScope.user._id).success(function (successData) {
-                            console.log(successData);
-                            if (successData != 'null') {
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getTaxiBookingForBusiness successData', 'data': successData});
+                            
+                            if (successData != 'null' && successData != null) {
                                 $scope.businessItem = successData[0];
                                 
                                 if ($scope.businessItem.quickestIsRequired == '1') {
@@ -3744,9 +3734,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     
                     $scope.updateTaxiBooking = function (response) {
-                        console.log(response);
                         Taxi.updateTaxiBookingByPerson($stateParams._id, cancelled, completed).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl updateTaxiBookingByPerson successData', 'data': successData});
+                            
                             if ($scope.businessItem.quickestIsRequired == '1') {
                                     $scope.businessItem.quickestTime = response;
                                 } else {
@@ -3769,7 +3759,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             successData[0].dateString = datesService.getShortenedDateString(successData[0].dateTimeRequested);
                             successData[0].requestedTimeIntegerString = datesService.getTimeInTotalSeconds(successData[0].dateTimeRequested);
                             successData[0].suggestedTimeIntegerString = (successData[0].dateTimeSuggested != null) ? datesService.getTimeInTotalSeconds(successData[0].dateTimeSuggested) : null;
-                            console.log($scope.businessItem);
                         }).error(function () {
                             $scope.getBusinessItem();
                         });
@@ -3818,7 +3807,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     var ipObj2 = {
                         callback: function (val) {      //Mandatory
                           if (typeof (val) === 'undefined') {
-                            console.log('Time not selected');
+                          
                           } else if (val == $scope.businessItem.requestedTimeIntegerString
                                 || val == $scope.businessItem.suggestedTimeIntegerString){
                             var message = (val == $scope.businessItem.suggestedTimeIntegerString) ? 
@@ -3849,8 +3838,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             var altDateTime = $scope.businessItem.dateTimeRequested.substr(0, $scope.businessItem.dateTimeRequested.indexOf(' ')) + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;
                             
                             $scope.finishUpdatingTableBooking(0, 0, 0, 0, altDateTime);
-                            
-                            console.log('Selected epoch is : ', ipObj2.inputTime, 'and the time is ', $scope.selectedTime.getUTCHours(), 'H :', $scope.selectedTime.getUTCMinutes(), 'M');
                           }
                         },
                         inputTime:64800,   //Optional
@@ -3865,12 +3852,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         var rejected = (updateType == 'reject') ? 1: $scope.businessItem.isRejected;
                         var cancelled = (updateType == 'cancel') ? 1: $scope.businessItem.isCancelled;
                         var completed = (updateType == 'complete') ? 1: $scope.businessItem.isCompleted;
-                        console.log(accepted, rejected, completed, updateType);
                         $scope.finishUpdatingTableBooking(accepted, rejected, cancelled, completed, null);
                     }
 
                     $scope.openTimePicker = function () {
-                        console.log("dh");
                         ionicTimePicker.openTimePicker(ipObj2);
                     }
                     break;
@@ -3894,7 +3879,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     $scope.getBusinessItem = function () {
                         Taxi.getTaxiBookingForPerson($stateParams._id).success(function (successData) {
-                            console.log(successData[0]);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getTaxiBookingForPerson successData', 'data': successData});
+                            
                             if (successData != 'null') {
                                 successData[0].timeRequested = (successData[0].bookingDateTime != null) ? datesService.getShortenedTimeString(successData[0].bookingDateTime): null;
                                 successData[0].dateRequested = (successData[0].bookingDateTime != null) ? datesService.getShortenedDateString(successData[0].bookingDateTime): null;
@@ -3911,7 +3897,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getBusinessItem = function () {
                         var _userId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
                         Offers.getOffer($stateParams._id, _userId).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getOffer successData', 'data': successData});
+                            
                             if (successData != 'null') {
                                 $scope.businessItem = successData[0];
                             }
@@ -3938,7 +3925,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     $scope.getBusinessItem = function () {
                         Events.getEventEntryBooking($stateParams._id).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl getEventEntryBooking successData', 'data': successData});
+                            
                             if (successData != 'null') {
                                 successData[0].endDate = datesService.getShortenedDateString(successData[0].endDateTime);
                                 successData[0].endDate = datesService.convertToDate($scope, new Date(successData[0].endDate));
@@ -3961,7 +3949,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         //Variables & Constants
         $scope.rootScope = $rootScope;
         $scope.itemType = $stateParams.itemType;
-        console.log($stateParams);
         
         $scope.pageLoad = function () {
             $rootScope.$broadcast('reset-image-crop');
@@ -3973,6 +3960,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $rootScope.selectExtraOption(chosenOptionItem, $event, $scope);
             }
             
+            var idealImgW, idealImgH ,idealImgWPercent;
+                idealImgW = 960;
+                idealImgH = 640;
+                idealImgWPercent = 90;
+                
             switch($stateParams.itemType) {
                 case 'Movies':
                     $rootScope.pageTitle = 'Create New Movie';
@@ -3989,7 +3981,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getAllMovieStyles();
                     
                     $scope.imgEntryType = "movie_cover_photo";
-                    $scope.dataWidth = (window.innerWidth/100) * idealImgWPercent;
+                    $scope.dataWidth = (window.innerWidth > 830) ? 600 : (window.innerWidth/100) * idealImgWPercent;
                     $scope.dataHeight = (idealImgH/idealImgW) * $scope.dataWidth;
                     $rootScope.dataScale = ($scope.dataWidth/idealImgW);
                     
@@ -4007,7 +3999,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.selectedDateFirst = new Date(val);
                         $scope.firstShowingDateInputHTML = datesService.convertToDate($scope, $scope.selectedDateFirst);
                         ipObj[0].inputDate = new Date(val);
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       }
                     };
                     ipObj[1] = {
@@ -4015,7 +4006,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.selectedDateLast = new Date(val);
                         $scope.lastShowingDateInputHTML = datesService.convertToDate($scope, $scope.selectedDateLast);
                         ipObj[1].inputDate = new Date(val);
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       }
                     };
                     
@@ -4057,7 +4047,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             
                     $scope.toggleStyle = function (style, styleCategory) {
                         $scope.multiSelect[styleCategory].currentStyleIndexBeingToggled = style.index;
-                        console.log("0", $scope.multiSelect[styleCategory].currentStyleIndexBeingToggled);
                         for (a = 0; a < $scope.multiSelect[styleCategory].chosenStyleObjects.length; a++) {
                             if ($scope.multiSelect[styleCategory].chosenStyleObjects[a].index != style.index) {
                                 $scope.multiSelect[styleCategory].chosenStyleObjects[a].showStyles = false;
@@ -4087,7 +4076,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                             }
                         }
-                        console.log(styleSection.chosenStyleIds, styleSection.currentStyleIndexBeingToggled);
+                        
                         styleSection.showStyles = false;
                     }
                     
@@ -4109,11 +4098,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 $scope.multiSelect[styleCategory].chosenStyleObjects.splice(indexToRemove, 1);
                             }
                         }
-                        console.log($scope.multiSelect[styleCategory].chosenStyleIds);
+                        
                         if ($scope.multiSelect[styleCategory].chosenStyleIds.indexOf(null) != -1) {
                             $scope.multiSelect[styleCategory].chosenStyleIds.splice($scope.multiSelect[styleCategory].chosenStyleIds.indexOf(null), 1);
                         };
-                        console.log($scope.multiSelect[styleCategory].chosenStyleIds, $scope.multiSelect[styleCategory].chosenStyleIds.indexOf(null));
+                        
                         $scope.multiSelect[styleCategory].currentStyleIndexToAdd = $scope.multiSelect[styleCategory].currentStyleIndexToAdd - 1;
                     }
 
@@ -4128,14 +4117,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             name: 'Select a Style',
                             showStyles: false});
                         $scope.multiSelect[styleCategory].chosenStyleIds.push(null);
-                        console.log($scope.multiSelect[styleCategory].chosenStyleObjects, $scope.multiSelect[styleCategory].currentStyleIndexToAdd);
                     }
                     
                     $scope.createMovie = function (movieTitle, movieTrailerLink, description) {
+                        movieTitle = movieTitle.replace(/'/g, "\'");
+                        description = description.replace(/'/g, "\'");
                         var firstDateTimeString = $scope.selectedDateFirst.getFullYear() + '-' + ($scope.selectedDateFirst.getMonth() + 1) + '-' + $scope.selectedDateFirst.getDate() + ' 00:00';
                         var lastDateTimeString = $scope.selectedDateLast.getFullYear() + '-' + ($scope.selectedDateLast.getMonth() + 1) + '-' + $scope.selectedDateLast.getDate() + ' 00:00';
-                        
-                        console.log('Params: ', movieTitle, description, firstDateTimeString, lastDateTimeString, $scope.multiSelect['Movies'].chosenStyleIds, movieTrailerLink);
                         
                         var uploadComplete = function (successData) {
                             $rootScope.files = [];
@@ -4151,15 +4139,68 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             function isInt(value) {
                               return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
                             }
+
+                            var movieStyleIdString = "";
+                            if ($scope.multiSelect['Movies'].chosenStyleIds.length > 0) {
+                                for (a = 0; a < $scope.multiSelect['Movies'].chosenStyleIds.length; a++) {
+                                    if (a > 0 && $scope.multiSelect['Movies'].chosenStyleIds[a] != null) {
+                                        movieStyleIdString += ', ' + $scope.multiSelect['Movies'].chosenStyleIds[a];
+                                    }
+                                    if ($scope.multiSelect['Movies'].chosenStyleIds[a] != null) {
+                                        movieStyleIdString += $scope.multiSelect['Movies'].chosenStyleIds[a];
+                                    }
+                                }
+                            }
                             
                             if (ionic.Platform.isAndroid()) {
-                                $cordovaFileTransfer.upload(url, filename, options).then(function(result) {
-                                    // Success!
-                                }, function(err) {
-                                    // Error
-                                }, function (progress) {
-                                    // constant progress updates
-                                });
+                                var myImg = $rootScope.file,
+                                options = new FileUploadOptions(),
+                                ft = new FileTransfer(),
+                                params = {};
+                                
+                                options.fileName = $rootScope.fileName;
+                                options.fileKey="fileUpload";
+                                options.httpMethod="POST";
+                                options.chunkedMode = false;
+                                options.mimeType = "image/jpeg";
+
+                                params.user_token = localStorage.getItem('auth_token');
+                                params.user_email = localStorage.getItem('email');
+                                params._profileId = $rootScope.user._profileId;
+                                params.imgEntryType = "movie_cover_photo";
+                                params.startX = $scope.startX;
+                                params.xDist = $scope.xDist;
+                                params.startY = $scope.startY;
+                                params.yDist = $scope.yDist;
+
+                                params.movieTitle = movieTitle;
+                                params.description = description;
+                                params.firstDateTimeString = firstDateTimeString;
+                                params.lastDateTimeString = lastDateTimeString;
+                                params.movieTrailerLink = movieTrailerLink;
+                                params.movieStyleIdString = movieStyleIdString;
+
+                                options.params = params;
+
+                                var onUploadSuccess = function (successData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() successData', 'data': successData});
+                                    successData = successData.response.replace(/"/g, '');
+                                    if (isInt(successData)) {
+                                        uploadComplete(successData);
+                                    }
+                                }
+                                var onUploadFail = function (errorData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() errorData', 'data': errorData});
+                                    errorData = errorData.response.replace(/"/g, '');
+                                    if (isInt(errorData)) {
+                                        uploadComplete(errorData);
+                                    }
+                                    else {
+                                        uploadImage();
+                                    }
+                                }
+                                
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -4173,29 +4214,20 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 
                                 formData.append("movieTitle", movieTitle);
                                 formData.append("description", description);
-                                formData.append("firstDateTimeString", firstDateTimeString);
-                                formData.append("lastDateTimeString", lastDateTimeString);
+                                formData.append("firstShowingDate", firstDateTimeString);
+                                formData.append("lastShowingDate", lastDateTimeString);
                                 formData.append("movieTrailerLink", movieTrailerLink);
-                                var movieStyleIdString = "";
-                                if ($scope.multiSelect['Movies'].chosenStyleIds.length > 0) {
-                                    for (a = 0; a < $scope.multiSelect['Movies'].chosenStyleIds.length; a++) {
-                                        if (a > 0 && $scope.multiSelect['Movies'].chosenStyleIds[a] != null) {
-                                            movieStyleIdString += ', ' + $scope.multiSelect['Movies'].chosenStyleIds[a];
-                                        }
-                                        if ($scope.multiSelect['Movies'].chosenStyleIds[a] != null) {
-                                            movieStyleIdString += $scope.multiSelect['Movies'].chosenStyleIds[a];
-                                        }
-                                    }
-                                }
                                 formData.append("movieStyleIdString", movieStyleIdString);
                                 
                                 Images.uploadImageForMovieCreation(formData).success(function (successData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() successData: ', successData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() successData', 'data': successData});
+                                    
                                     if (isInt(successData)) {
                                         uploadComplete(successData);
                                     }
                                 }).error(function (errorData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() errorData: ', errorData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForMovieCreation() errorData', 'data': errorData});
+                                    
                                     if (isInt(errorData)) {
                                         uploadComplete();
                                     }
@@ -4208,12 +4240,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         uploadImage();
                     }
+                    break;
                 case 'OwnOffers':
-                    var idealImgW, idealImgH ,idealImgWPercent;
-                    idealImgW = 960;
-                    idealImgH = 640;
-                    idealImgWPercent = 90;
-                    
                     $rootScope.pageTitle = 'Create New Offer';
                     $scope.pageTitle = $rootScope.pageTitle;
                     
@@ -4234,8 +4262,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         var isClubOrBar = ($rootScope.user.listingTypes.indexOf('Nightclub') != -1 || $rootScope.user.listingTypes.indexOf('Bar') != -1) ? true : false;
                         if (isClubOrBar) {
                             Events.getEventsByBusiness($rootScope.user._id, 'present', $rootScope.user._profileId).success(function (successData) {
-                                console.log(successData);
-                                console.log($rootScope.user);
+                                $rootScope.debugModeLog({'msg': 'AddBusinessItemController getEventsByBusiness getEventsByBusiness() successData', 'data': successData});
+                                
                                 if (successData != null) {successData.unshift({_id: null, name: 'No event selected'})};
                                 $scope.availableEvents = (successData != 'null') ? successData: [];
                             }).error(function () {
@@ -4246,7 +4274,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.getAllUpcomingBusinessEvents();
                     
                     $scope.imgEntryType = "offer_cover_photo";
-                    $scope.dataWidth = (window.innerWidth/100) * idealImgWPercent;
+                    $scope.dataWidth = (window.innerWidth > 830) ? 600 : (window.innerWidth/100) * idealImgWPercent;
                     $scope.dataHeight = (idealImgH/idealImgW) * $scope.dataWidth;
                     $rootScope.dataScale = ($scope.dataWidth/idealImgW);
                     
@@ -4344,15 +4372,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.selectedDate1 = new Date(val);
                         $scope.dateInputHTML = datesService.convertToDate($scope, $scope.selectedDate1);
                         $scope.ipObj1.inputDate = new Date(val);
-                        var result = $scope.selectedDate1;
-                        result.setDate(result.getDate() + 60);
-                        $scope.ipObj2.to = result;
+                        
+                        var result = angular.copy($scope.selectedDate1);
+                        $scope.ipObj2.from = angular.copy($scope.selectedDate1);
+                        $scope.ipObj2.to = angular.copy(new Date(result.setDate(result.getDate() + 60)));
+                        
                         $scope.dateChosen = true;
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       },
                       disabledDates: [],
                       from: new Date(), //Optional
-                      to: $scope.finalDate.setDate($scope.finalDate.getDate() + 60), //Optional
+                      to: $scope.finalDate.setDate($scope.finalDate.getDate() + 30), //Optional
                       inputDate: $scope.selectedDate1,      //Optional
                       mondayFirst: true,          //Optional
                       disableWeekdays: [],       //Optional
@@ -4365,8 +4394,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.selectedDate2 = new Date(val);
                         $scope.offerEndDateInputHTML = datesService.convertToDate($scope, $scope.selectedDate2);
                         $scope.ipObj2.inputDate = new Date(val);
+                        var today = new Date();
+                        var newDate = today.setDate(today.getDate() + 30);
+                                
+                        $scope.ipObj1.to = (new Date(val) > new Date(newDate)) ? angular.copy(new Date(newDate)): angular.copy(new Date(val));
                         $scope.dateChosen = true;
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       },
                       disabledDates: [            //Optional
                         new Date(2016, 2, 16),
@@ -4407,7 +4439,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.selectOfferEvent = function (event) {
                         $scope.chosenOfferEvent.name = event.name;
                         $scope.chosenOfferEvent._id = event.relListingId;
-                        console.log($scope.chosenOfferEvent);
                         $scope.showEvents = !$scope.showEvents;
                         $timeout(function () {
                             $ionicScrollDelegate.resize();
@@ -4424,6 +4455,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     
                     $scope.addOffer = function (offerTitle, description, endDateTime) {
+                        offerTitle = offerTitle.replace(/'/g, "\'");
+                        description = description.replace(/'/g, "\'");
                         $rootScope.appLoading = true;
                         
                         var _offerTypeId = $scope.selectedOfferType._id;
@@ -4433,10 +4466,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         var weeksAhead = ($scope.selectedOfferRegularityType.name == 'one-off') ? 0: $scope.chosenWeeksAhead._id;
                         
-                        console.log('end: ', endDateTime);
                         var endDateTime = ($scope.selectedDate2 == null) ? 0: $scope.selectedDate2.getFullYear() + '-' + ($scope.selectedDate2.getMonth() + 1) + '-' + $scope.selectedDate2.getDate() + ' 00:00';
-                 
-                        console.log('x and y, ', $scope.startX, $scope.xDist, $scope.startY, $scope.yDist, $rootScope.imageSrcs);
                         
                         var uploadComplete = function (successData) {
                             $rootScope.files = [];
@@ -4457,7 +4487,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     for (a = 0; a < successData.length; a++) {
                                         recipientsArray.push(successData[a]._actionerProfileId);
                                         if (a == successData.length - 1) {
-                                            console.log(recipientsArray);
                                             $rootScope.prepareMessageNotificationFinal(recipientsArray, contents, header, dataObj);
                                         }
                                     }
@@ -4478,13 +4507,59 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             }
                             
                             if (ionic.Platform.isAndroid()) {
-                                $cordovaFileTransfer.upload(url, filename, options).then(function(result) {
-                                    // Success!
-                                }, function(err) {
-                                    // Error
-                                }, function (progress) {
-                                    // constant progress updates
-                                });
+                                var myImg = $rootScope.file,
+                                options = new FileUploadOptions(),
+                                ft = new FileTransfer(),
+                                params = {};
+                                
+                                options.fileName = $rootScope.fileName;
+                                options.fileKey="fileUpload";
+                                options.httpMethod="POST";
+                                options.chunkedMode = false;
+                                options.mimeType = "image/jpeg";
+
+                                params.user_token = localStorage.getItem('auth_token');
+                                params.user_email = localStorage.getItem('email');
+                                params._profileId = $rootScope.user._profileId;
+                                params.imgEntryType = "offer_cover_photo";
+                                params.startX = $scope.startX;
+                                params.xDist = $scope.xDist;
+                                params.startY = $scope.startY;
+                                params.yDist = $scope.yDist;
+
+                                params._businessId = $rootScope.user._id;
+                                params._offerTypeId = _offerTypeId;
+                                params._offerSubCategoryId = $scope.chosenOfferCat._id;
+                                params.offerTitle = offerTitle;
+                                params.description = description;
+                                params.startDateTime = startDateTime;
+                                params.endDateTime = endDateTime;
+                                params.weeksAhead = weeksAhead;
+                                params.weekdayIndex = weekdayIndex;
+                                params._eventId = $scope.chosenOfferEvent._id;
+
+                                options.params = params;
+
+                                var onUploadSuccess = function (successData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() successData', 'data': successData});
+                                    successData = successData.response.replace(/"/g, '');
+                                    
+                                    if (isInt(successData)) {
+                                        uploadComplete(successData);
+                                    }
+                                }
+                                var onUploadFail = function (errorData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() errorData', 'data': errorData});
+                                    errorData = errorData.response.replace(/"/g, '');
+                                    if (isInt(errorData)) {
+                                        uploadComplete();
+                                    }
+                                    else {
+                                        uploadImage();
+                                    }
+                                }
+                                
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -4508,12 +4583,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 formData.append("_eventId", $scope.chosenOfferEvent._id);
                                 
                                 Images.uploadImageForOfferCreation(formData).success(function (successData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() successData: ', successData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() successData', 'data': successData});
+                                    
                                     if (isInt(successData)) {
                                         uploadComplete(successData);
                                     }
                                 }).error(function (errorData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() errorData: ', errorData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() errorData', 'data': errorData});
+                                    
                                     if (isInt(errorData)) {
                                         uploadComplete();
                                     }
@@ -4558,7 +4635,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     idealImgH = 640;
                     idealImgWPercent = 90;
                     
-                    $scope.dataWidth = (window.innerWidth/100) * idealImgWPercent;
+                    $scope.dataWidth = (window.innerWidth > 830) ? 600 : (window.innerWidth/100) * idealImgWPercent;
                     $scope.dataHeight = (idealImgH/idealImgW) * $scope.dataWidth;
                     $rootScope.dataScale = ($scope.dataWidth/idealImgW);
                         
@@ -4604,7 +4681,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.dateInputHTML = datesService.convertToDate($scope, $scope.selectedDate1);
                         ipObj1.inputDate = new Date(val);
                         $scope.dateChosen = true;
-                        console.log('Return value from the datepicker popup is : ' + new Date(val));
                       },
                       disabledDates: [            //Optional
                         new Date(2016, 2, 16),
@@ -4631,7 +4707,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     $scope.toggleMusicCategory = function (musicCat) {
                         $scope.currentMusicCategoryIndexBeingToggled = musicCat.index;
-                        console.log("0", $scope.currentMusicCategoryIndexBeingToggled);
                         for (a = 0; a < $scope.chosenMusicStyleObjects.length; a++) {
                             if ($scope.chosenMusicStyleObjects[a].index != musicCat.index) {
                                 $scope.chosenMusicStyleObjects[a].showMusicCategories = false;
@@ -4660,7 +4735,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                             }
                         }
-                        console.log($scope.chosenMusicStyleIds, $scope.currentMusicCategoryIndexBeingToggled);
+                        
                         $scope.showMusicCategories = false;
                     }
 
@@ -4698,12 +4773,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             name: 'Select a Music Style',
                             showMusicCategories: false});
                         $scope.chosenMusicStyleIds.push(null);
-                        console.log($scope.chosenMusicStyleObjects, $scope.currentMusicStyleIndexToAdd);
                     }
                     
                     $scope.imgUploadPrepare = function () {
                         document.getElementById('img-upload').multiple = false;
-                        document.getElementById('img-upload').click();
+                        if (!ionic.Platform.isAndroid()) {
+                            document.getElementById('img-upload').click();
+                        }
+                        else {
+                            $rootScope.getAndroidImage({imgEntryType: "cover_photo", onComplete: function () {}});
+                        }
                     }
         
 
@@ -4742,7 +4821,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.addEvent = function (eventTitle, description, dressCode, dealsOnTheNight, extraInfo) {
                         $rootScope.appLoading = true;
                         
-                        console.log($scope.guestListMaxInput[0]);
                         var _businessPlaceId = null;
                         var dateTimeString = $scope.selectedDate1.getFullYear() + '-' + ($scope.selectedDate1.getMonth() + 1) + '-' + $scope.selectedDate1.getDate() + ' 00:00';
                         var weekdayIndex = ($scope.selectedDate1.getDay() == 0) ? 7 : $scope.selectedDate1.getDay();
@@ -4755,10 +4833,20 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                         
                         guestListMax = ($scope.guestListMaxInput[0].val == null) ? 0: $scope.guestListMaxInput[0].val;
-                        console.log($scope.guestListMax);
                         weeksAhead = ($scope.selectedEventRegularityType.name == 'one-off') ? 0: $scope.chosenWeeksAhead._id;
                         $scope.eventHasGuestList = ($scope.selectedEventGuestListOption.name == 'true') ? 1: 0;
-                        console.log(weekdayIndex, weeksAhead, dateTimeString);
+
+                        var musicStyleIdString = "";
+                        if ($scope.chosenMusicStyleIds.length > 0) {
+                            for (a = 0; a < $scope.chosenMusicStyleIds.length; a++) {
+                                if (a > 0 && $scope.chosenMusicStyleIds[a] != null) {
+                                    musicStyleIdString += ', ' + $scope.chosenMusicStyleIds[a];
+                                }
+                                if ($scope.chosenMusicStyleIds[a] != null) {
+                                    musicStyleIdString += $scope.chosenMusicStyleIds[a];
+                                }
+                            }
+                        }
                         
                         var uploadComplete = function (successData) {
                             $rootScope.files = [];
@@ -4780,7 +4868,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     for (a = 0; a < successData.length; a++) {
                                         recipientsArray.push(successData[a]._actionerProfileId);
                                         if (a == successData.length - 1) {
-                                            console.log(recipientsArray);
                                             $rootScope.prepareMessageNotificationFinal(recipientsArray, contents, header, dataObj);
                                         }
                                     }
@@ -4802,13 +4889,61 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             }
                             
                             if (ionic.Platform.isAndroid()) {
-                                $cordovaFileTransfer.upload(url, filename, options).then(function(result) {
-                                    // Success!
-                                }, function(err) {
-                                    // Error
-                                }, function (progress) {
-                                    // constant progress updates
-                                });
+                                var myImg = $rootScope.file,
+                                options = new FileUploadOptions(),
+                                ft = new FileTransfer(),
+                                params = {};
+                                
+                                options.fileName = $rootScope.fileName;
+                                options.fileKey="fileUpload";
+                                options.httpMethod="POST";
+                                options.chunkedMode = false;
+                                options.mimeType = "image/jpeg";
+
+                                params.user_token = localStorage.getItem('auth_token');
+                                params.user_email = localStorage.getItem('email');
+                                params._profileId = $rootScope.user._profileId;
+                                params.imgEntryType = "offer_cover_photo";
+                                params.startX = $scope.startX;
+                                params.xDist = $scope.xDist;
+                                params.startY = $scope.startY;
+                                params.yDist = $scope.yDist;
+
+                                params._businessPlaceId = _businessPlaceId
+                                params.eventTitle = eventTitle;
+                                params.description = description;
+                                params.eventDateTime = dateTimeString;
+                                params.dressCode = dressCode;
+                                params.guestListMax = guestListMax;
+                                params.dealsOnTheNight = dealsOnTheNight;
+                                params.extraInfo = extraInfo;
+                                params.weekdayIndex = weekdayIndex;
+                                params.weeksAhead = weeksAhead;
+                                params._businessId = $rootScope.user._id;
+                                params.eventHasGuestList = $scope.eventHasGuestList;
+                                params.musicStyleIdString = musicStyleIdString;
+
+                                options.params = params;
+
+                                var onUploadSuccess = function (successData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForEventCreation() successData', 'data': successData});
+                                    successData = successData.response.replace(/"/g, '');
+                                    if (isInt(successData)) {
+                                        uploadComplete(successData);
+                                    }
+                                }
+                                var onUploadFail = function (errorData) {
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForEventCreation() errorData', 'data': errorData});
+                                    errorData = errorData.response.replace(/"/g, '');
+                                    if (isInt(errorData)) {
+                                        uploadComplete();
+                                    }
+                                    else {
+                                        uploadImage();
+                                    }
+                                }
+
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -4832,27 +4967,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 formData.append("weeksAhead", weeksAhead);
                                 formData.append("_businessId", $rootScope.user._id);
                                 formData.append("eventHasGuestList", $scope.eventHasGuestList);
-                                var musicStyleIdString = "";
-                                if ($scope.chosenMusicStyleIds.length > 0) {
-                                    for (a = 0; a < $scope.chosenMusicStyleIds.length; a++) {
-                                        if (a > 0 && $scope.chosenMusicStyleIds[a] != null) {
-                                            musicStyleIdString += ', ' + $scope.chosenMusicStyleIds[a];
-                                        }
-                                        if ($scope.chosenMusicStyleIds[a] != null) {
-                                            musicStyleIdString += $scope.chosenMusicStyleIds[a];
-                                        }
-                                    }
-                                }
                                 formData.append("musicStyleIdString", musicStyleIdString);
                                 
                                 Images.uploadImageForEventCreation(formData).success(function (successData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForEventCreation() successData: ', successData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForEventCreation() successData', 'data': successData});
                                     
                                     if (isInt(successData)) {
                                         uploadComplete(successData);
                                     }
                                 }).error(function (errorData) {
-                                    console.log('ProfileController AddBusinessItemCtrl uploadImageForEventCreation() errorData: ', errorData);
+                                    $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForEventCreation() errorData', 'data': errorData});
+                                    
                                     if (isInt(errorData)) {
                                         uploadComplete();
                                     }
@@ -4904,7 +5029,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 MenuItems.getAllMenuItemTags().success(function (tags) {
                                     
                                     for (a = 0; a < tags.length; a++) {
-                                        console.log(tags[a]._menuItemTagGroupId);
                                         if (tags[a]._menuItemTagGroupId == null) {
                                             $scope.availableTags.singularTags.push(tags[a]);
                                         } else {
@@ -4925,14 +5049,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     
                                     var getMenuItemCategoriesForBusiness = function () {
                                         MenuItems.getMenuItemCategoriesForBusiness($rootScope.user._id).success(function (successData2) {
-                                            console.log('getMenuItemCategoriesForBusiness for OwnMenuItems in AddbusinessItem results: ', successData2);
+                                            $rootScope.debugModeLog({'msg': 'getMenuItemCategoriesForBusiness for OwnMenuItems in AddbusinessItem results', 'data': successData2});
+                                            
                                             $scope.menuItemCategories = successData2;
 
                                             if ($stateParams._secondaryItemTypeId != null) {
                                                 for (a = 0; a < $scope.menuItemCategories.length; a++) {
                                                     if ($scope.menuItemCategories[a]._id == $stateParams._secondaryItemTypeId) {
                                                         $scope.selectedCategory = $scope.menuItemCategories[a];
-                                                        console.log($scope.selectedCategory, "mk");
                                                     }
                                                 }
                                             }
@@ -4944,7 +5068,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     
                                     var getMenuItemSubCategoriesForBusiness = function () {
                                         MenuItems.getMenuItemSubCategoriesForBusiness($rootScope.user._id).success(function (successData3) {
-                                            console.log('getMenuItemSubCategoriesForBusiness for OwnMenuItems in AddbusinessItem results: ', successData3);
+                                            $rootScope.debugModeLog({'msg': 'getMenuItemCategoriesForBusiness for OwnMenuItems in AddbusinessItem results', 'data': successData3});
+                                            
                                             $scope.menuItemSubCategories = successData3;
                                         }).error(function () {
                                             getMenuItemSubCategoriesForBusiness();
@@ -4977,7 +5102,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             
                             var createMenuItem = function () {
                                 MenuItems.createMenuItem($rootScope.user._id, $scope._menuTypeId, $scope.selectedCategory._id, $scope.selectedSubCategory._id, itemName, price, description, appliedOptionsFinal, appliedTagsFinal).success(function (successData) {
-                                    console.log('createMenuItem for OwnMenuItems in AddBusinessItem results: ', successData);
+                                    $rootScope.debugModeLog({'msg': 'createMenuItem for OwnMenuItems in AddBusinessItem results', 'data': successData});
+                                    
                                     $scope.appliedOptions = [];
                                     $scope.appliedOptionsNames = [];
                                     $scope.appliedTags = [];
@@ -5117,7 +5243,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             getMenuTemplateOptionCategories();
                         });
                     }
-                    
+                    getMenuTemplateOptionCategories();
                     
                     //User Based functions
                     
@@ -5165,8 +5291,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     
                     $scope.deleteOptionChoice = function (optionChoice) {
-                        console.log(optionChoice);
-                        
                         for (a = 0; a < $scope.businessItem.options.length; a++) {
                             if ($scope.businessItem.options[a].orderIndex > optionChoice.orderIndex) {
                                 $scope.businessItem.options[a].orderIndex = parseInt($scope.businessItem.options[a].orderIndex) - 1;
@@ -5180,7 +5304,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     
                     $scope.currentOptionBeingAdded = {'name': '', 'extraPrice': 0.00, 'orderIndex': $scope.businessItem.options.length + 1};
                     $scope.createOptionChoice = function () {
-                        console.log($scope.currentOptionBeingAdded);
                         
                         $scope.businessItem.options.splice($scope.currentOptionBeingAdded.orderIndex - 1, 0, $scope.currentOptionBeingAdded);
                         for (a = $scope.currentOptionBeingAdded.orderIndex; a < $scope.businessItem.options.length; a++) {
@@ -5191,16 +5314,18 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                 
                     $scope.addTemplateOption = function () {
-                        console.log($scope.businessItem);
                         $rootScope.appLoading = true;
+                        
                         MenuItems.createMenuItemTemplateOption($rootScope.user._id, $scope.selectedCategory._id, $scope.businessItem).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'createMenuItemTemplateOption for OwnMenuItems in AddBusinessItem results', 'data': successData});
+                            
                             $rootScope.$broadcast('menu-item-template-options-changed');
                             $rootScope.backButtonFunction();
                             $rootScope.appLoading = false;
                         }).error(function () {
                             $scope.addTemplateOption();
                         });
+                        
                     }
                     
                     break;
@@ -5211,10 +5336,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $scope.xDist = Math.ceil($scope.dataWidth * (1/data.imageZoom));
                 $scope.startY = Math.floor((data.imageY*-1) * (1/data.imageZoom));
                 $scope.yDist = Math.ceil($scope.dataHeight * (1/data.imageZoom));
+                
+                $timeout(function () {alert("hey");$ionicScrollDelegate.resize()}, 1000);
             };
             
             var coverPhotoUploadedBroadcastFn = $rootScope.$on('cover-photo-uploaded', function (event, data) {
-                console.log('cover-photo: ', data);
                 if (data.currentViewName == 'app.addBusinessItem') {
                     $scope.prepareImageUpload(data);
                 }
@@ -5251,7 +5377,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.profileItemCats = [];
         $scope.profileItems = [];
         $scope.rootScope = $rootScope;
-        console.log($stateParams.itemType);
         $scope.itemType = $stateParams.itemType;
         $scope.specificItemType = $stateParams.specificItemType;
         
@@ -5330,7 +5455,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     if (prop == 'Person') {
                         if (data != 'null' && data != null) {
                             for (a = 0; a < data.length; a++) {
-                                console.log(data[a]);
                                 filteredListingTypes[data[a].listingType].items.push(data[a]);
                                 
                                 if (a == data.length - 1) {
@@ -5354,7 +5478,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         }
                     }
                 }
-                console.log(filteredListingTypes);
                 
             }
             
@@ -5368,7 +5491,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         
                         $scope.getProfileItems = function () {
                             Profile.getSpecificAlbumSummaryForListing($rootScope.user._profileId, $stateParams._albumId, $stateParams.albumType, 'Profile').success(function (successData) {
-                                console.log(successData);
+                                $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getSpecificAlbumSummaryForListing successData', 'data': successData});
+                                
                                 if (successData != 'null') {
                                     var popoverImages = [];
                                     var albumName = '';
@@ -5388,7 +5512,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         successData[a].evenIndex = (relModulus) ? 'even': 'odd';
                                         successData[a].index = a;
                                         
-                                        popoverImages.push({'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/'+albumName+'/' + successData[a].name});
+                                        popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
                                         $scope.currentDefaultPhotoId = (successData[a].isCurrent == '1') ? successData[a]._id: $scope.currentDefaultPhotoId;
                                         
                                         if (a == successData.length - 1) {
@@ -5398,7 +5522,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         }
                                     }
                                 }
-                                console.log($scope.profileItemCats);
                             }).error(function () {
                                 $scope.getProfileItems();
                             });
@@ -5436,14 +5559,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             };
                             
                             Profile.deleteUsersImage(params).success(function (successData) {
-                                console.log(successData);
+                                $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl deleteUsersImage successData', 'data': successData});
+                                
                                 $scope.currentDefaultPhotoId = ($scope.currentDefaultPhotoId == $scope.currentImageSelectedId) ? null : $scope.currentDefaultPhotoId;
                                 $scope.currentImageSelectedId = null;
                                 $scope.currentImageSelectedName = null;
                                 $rootScope.$broadcast('photo-uploaded');
                                 $rootScope.appLoading = false;
                             }).error(function (errorData) {
-                                console.log(errorData);
+                                $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl deleteUsersImage errorData', 'data': errorData});
+                                
                                 $scope.removeImage;
                             });
                         }
@@ -5533,11 +5658,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $scope.pageTitle = $rootScope.pageTitle;
                         $scope.getProfileItems = function () {
                             Profile.getPhotoAlbumsSummaryForProfile($rootScope.user._profileId).success(function (successData) {
-                                console.log(successData);
+                                $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getPhotoAlbumSummaryForProfile successData', 'data': successData});
+                                
                                 if (successData != 'null') {
                                     $scope.profileItemCats = {All: {name: 'All', items: successData}};
                                 }
-                                console.log($scope.profileItemCats);
                             }).error(function () {
                                 $scope.getProfileItems();
                             });
@@ -5558,7 +5683,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.noItemsMessage = ($stateParams.timeScale == 'present') ? 'You are not watching any ': 'You do not have any past watched ';
                     $scope.getProfileItems = function () {
                         Profile.getWatchedListingsForProfile($rootScope.user._profileId, $stateParams.timeScale).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getWatchedListingsForProfile successData', 'data': successData});
+                            
                             $scope.profileItemCats = sortThroughListingCats(successData);
                         }).error(function () {
                             $scope.getProfileItems();
@@ -5580,7 +5706,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.noItemsMessage = 'You are not following any ';
                     $scope.getProfileItems = function () {
                         Profile.getFollowedListingsForProfile($rootScope.user._profileId).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getFollowedListingsForProfile successData', 'data': successData});
+                            
                             $scope.profileItemCats = sortThroughListingCats(successData);
                         }).error(function () {
                             $scope.getProfileItems();
@@ -5599,9 +5726,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     //
                     $scope.getProfileItems = function () {
                         Profile.getFollowingProfilesForProfile($rootScope.user._profileId).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getFollowingProfilesForProfile successData', 'data': successData});
+                            
                             $scope.profileItemCats = sortThroughListingCats(successData);
-                            console.log($scope.profileItemCats);
                             
                         }).error(function () {
                             $scope.getProfileItems();
@@ -5627,9 +5754,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     $scope.getProfileItems = function () {
                         Profile.getLikedListingsForProfile($rootScope.user._profileId, $stateParams.timeScale).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'ProfileItemsCtrl getLikedListingsForProfile successData', 'data': successData});
+                            
                             $scope.profileItemCats = sortThroughListingCats(successData);
-                            console.log($scope.profileItemCats);
                         }).error(function () {
                             $scope.getProfileItems();
                         });
@@ -5651,15 +5778,15 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 case 'Watched':
                     $scope.nextPageFunction = function (item) {
                         if (item.listingType == 'Event' || item.listingType == 'Movie') {
-                            $state.go('app.nlfeed');
+                            $state.go('app.feed');
                             var timer = window.setTimeout(function () {
-                                $state.go('app.nlfeedListing', {'_listingId':item._actionedListingId, 'listingType': item.listingType});
+                                $state.go('app.feed.nlfeedListing', {'_listingId':item._actionedListingId, 'listingType': item.listingType});
                             }, 100);
                         }
                         else if (item.listingType == 'Offer') {
                             $state.go('app.offers');
                             var timer = window.setTimeout(function () {
-                                $state.go('app.offerDetail', {'_id':item._actionedListingId});
+                                $state.go('app.offers.offerDetail', {'_id':item._actionedListingId});
                             }, 100);
                         }
                     }
@@ -5668,15 +5795,15 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 case 'Liked':
                     $scope.nextPageFunction = function (item) {
                         if (item.listingType != 'Offer') {
-                            $state.go('app.nlfeed');
+                            $state.go('app.feed');
                             var timer = window.setTimeout(function () {
-                                $state.go('app.nlfeedListing', {'_listingId':item.relListingId, 'listingType': item.listingType});
+                                $state.go('app.feed.nlfeedListing', {'_listingId':item.relListingId, 'listingType': item.listingType});
                             }, 100);
                         }
                         else if (item.listingType == 'Offer') {
                             $state.go('app.offers');
                             var timer = window.setTimeout(function () {
-                                $state.go('app.offerDetail', {'_id':item.relListingId});
+                                $state.go('app.offers.offerDetail', {'_id':item.relListingId});
                             }, 100);
                         }
                     }
@@ -5685,9 +5812,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 case 'FollowedBusiness':
                 case 'Following':
                     $scope.nextPageFunction = function (item) {
-                        $state.go('app.nlfeed');
+                        $state.go('app.feed');
                         var timer = window.setTimeout(function () {
-                            $state.go('app.nlfeedListing', {'_listingId':item.relListingId, 'listingType':item.listingType});
+                            $state.go('app.feed.nlfeedListing', {'_listingId':item.relListingId, 'listingType':item.listingType});
                         }, 100);
                     }
                     break;
@@ -5703,8 +5830,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.rootScope = $rootScope;
         $scope.itemType = $stateParams.itemType;
         $scope.specificItemType = $stateParams.specificItemType;
-        console.log($stateParams);
-        console.log('scope: ', $scope);
         
         $scope.$on('$ionicView.beforeEnter', function() {
             $rootScope.backButtonFunction = function () {
@@ -5749,8 +5874,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             ]
                         }
                     };
-                    
-                    console.log($scope.select);
             
                     $scope.toggleStyle = function (styleObj) {
                         styleObj.show = !styleObj.show;
@@ -5788,32 +5911,86 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 /* Bring this back in after finding out about fileReader Cancel function */
                 //$rootScope.appLoading = true;
                 document.getElementById('img-upload').multiple = false;
-                document.getElementById('img-upload').click();
+                if (!ionic.Platform.isAndroid()) {
+                    document.getElementById('img-upload').click();
+                }
+                else {
+                    var completeFunc = ($scope.imgEntryType == 'cover_photo') ? function () {}: $scope.uploadImage;
+                    $rootScope.getAndroidImage({imgEntryType: $scope.imgEntryType, onComplete: completeFunc});
+                }
             }
             
             $scope.recalculateIdealImgDimensions = function () {
                 idealImgW = ($scope.imgEntryType == "cover_photo") ? 960: 320;
                 idealImgH = ($scope.imgEntryType == "cover_photo") ? 640: 320;
                 idealImgWPercent = ($scope.imgEntryType == "cover_photo") ? 90: 40;
-                console.log($scope.imgEntryType, idealImgH, idealImgW);
                 
-                $scope.dataWidth = (window.innerWidth/100) * idealImgWPercent;
+                $scope.dataWidth = (window.innerWidth > 830) ? 600 : (window.innerWidth/100) * idealImgWPercent;
                 $scope.dataHeight = (idealImgH/idealImgW) * $scope.dataWidth;
                 $rootScope.dataScale = ($scope.dataWidth/idealImgW);
             }
-            
-            $scope.uploadImage = function (data) {
-                //$rootScope.appLoading = true;
-                
-                if (ionic.Platform.isAndroid()) {
-                    $cordovaFileTransfer.upload(url, filename, options).then(function(result) {
-                        // Success!
-                    }, function(err) {
-                        // Error
-                    }, function (progress) {
-                        // constant progress updates
-                    });
-                } else {
+
+
+            var imageUploadComplete = function (data) {                
+                $rootScope.debugModeLog({'msg': 'AddProfileItemCtrl uploadImage successData/errorData', 'data': data});
+
+                if ((data == 'Successfully uploaded' && !ionic.Platform.isAndroid()) || (data.response == '"Successfully uploaded"' && ionic.Platform.isAndroid())) {
+                    $rootScope.$broadcast('photo-uploaded');
+                    $rootScope.files = [];
+                    $rootScope.imageSrcs = [];
+                    $rootScope.progress = 0;
+                    $rootScope.backButtonFunction();
+                    $rootScope.appLoading = false;
+                }
+            };
+
+            if (ionic.Platform.isAndroid()) {
+                $scope.uploadImage = function (data) {
+
+                    var myImg = $rootScope.file,
+                    options = new FileUploadOptions(),
+                    ft = new FileTransfer(),
+                    params = {},
+                    imgEntryType = ($stateParams.albumType != 'Profile Photo' && $stateParams.albumType != 'Cover Photo') ? $scope.select['ImgEntryType'].chosenStyles[0].coding_name: $scope.imgEntryType;
+                    ;
+                    
+                    options.fileName = $rootScope.file.fileName;
+                    options.fileKey="fileUpload";
+                    options.httpMethod="POST";
+                    options.chunkedMode = false;
+                    options.mimeType = "image/jpeg";
+
+                    params.user_token = localStorage.getItem('auth_token');
+                    params.user_email = localStorage.getItem('email');
+                    params._profileId = $rootScope.user._profileId;
+                    params.imgEntryType = imgEntryType;
+                    if ($stateParams.albumType == 'Profile Photo') {
+                        params.startX = 0;
+                        params.startY = 0;
+                        params.xDist = idealImgW;
+                        params.yDist = idealImgH;
+                    } else {
+                        params.startX = Math.floor((data.imageX*-1) * (1/data.imageZoom));
+                        params.xDist = Math.ceil($scope.dataWidth * (1/data.imageZoom));
+                        params.startY = Math.floor((data.imageY*-1) * (1/data.imageZoom));
+                        params.yDist = Math.ceil($scope.dataHeight * (1/data.imageZoom));
+                    }
+
+                    options.params = params;
+
+                    var onUploadSuccess = function (successData) {
+                        imageUploadComplete(successData);
+                    }
+                    var onUploadFail = function (errorData) {
+                        imageUploadComplete(errorData);
+                    }
+                    
+                    ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
+                }
+            } else {
+                $scope.uploadImage = function (data) {
+                    //$rootScope.appLoading = true;
+
                     var formData = new FormData();
                     
                     var startX = Math.floor((data.imageX*-1) * (1/data.imageZoom));
@@ -5821,7 +5998,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     var startY = Math.floor((data.imageY*-1) * (1/data.imageZoom));
                     var yDist = Math.ceil($scope.dataHeight * (1/data.imageZoom));
                     var imgEntryType = ($stateParams.albumType != 'Profile Photo' && $stateParams.albumType != 'Cover Photo') ? $scope.select['ImgEntryType'].chosenStyles[0].coding_name: $scope.imgEntryType;
-                    
                     
                     formData.append("_profileId", $rootScope.user._profileId);
                     formData.append("imgEntryType", imgEntryType);
@@ -5831,27 +6007,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     formData.append("xDist", xDist);
                     formData.append("yDist", yDist);
                     
-                    console.log(' startX: ' + startX + ' xDist: ' + xDist + ' startY: ' + startY + ' yDist: ' +  yDist);
-                    
-                    var uploadComplete = function () {
-                        $rootScope.$broadcast('photo-uploaded');
-                        $rootScope.files = [];
-                        $rootScope.imageSrcs = [];
-                        $rootScope.progress = 0;
-                        $rootScope.backButtonFunction();
-                        $rootScope.appLoading = false;
-                    };
-                    
                     Images.uploadImage(formData).success(function (successData) {
-                        console.log('ProfileController AddBusinessItemCtrl uploadImage() successData: ', successData);
-                        if (successData == 'Successfully uploaded') {
-                            uploadComplete();
-                        }
+                        imageUploadComplete(successData);
                     }).error(function (errorData) {
-                        console.log('ProfileController AddBusinessItemCtrl uploadImage() errorData: ', errorData);
-                        if (errorData == 'Successfully uploaded') {
-                            uploadComplete();
-                        }
+                        imageUploadComplete(errorData);
                     });
                 }
             }
@@ -5859,7 +6018,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             $scope.recalculateIdealImgDimensions();
             
             var coverPhotoUploadedBroadcastFn = $rootScope.$on('cover-photo-uploaded', function (event, data) {
-                console.log('cover-photo: ', data);
                 if (data.currentViewName == 'app.addProfileItem') {
                     $scope.uploadImage(data);
                 }
@@ -5879,8 +6037,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.settings = {};
         var storedSettings = {};
         $scope.rootScope = $rootScope;
-        console.log($stateParams.settingsType);
-        console.log($stateParams.booBah);
         $scope.settingsType = $stateParams.settingsType;
         $scope.$on('$ionicView.enter', function() {
             $rootScope.topRightButtonShouldBeSettings = false;
@@ -5931,11 +6087,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             withResetCode: 0
                         }
                     }
-                    console.log($scope.updateParams);
                     
                     var updateAllProfileDetails = function () {
                         Profile.updateAllProfileDetails($scope.updateParams).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl updateAllProfileDetails successData', 'data': successData});
+                            
                             $scope.originalDisplayName = $scope.updateParams.displayName;
                             field.editing = false;
                             $scope.editing = false;
@@ -5962,7 +6118,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     var updateProfilePasswordDetails = function () {
                         Profile.updateProfilePasswordDetails($scope.updateParams).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl updateProfilePasswordDetails errorData', 'data': successData});
+                            
                             field.editing = false;
                             $scope.editing = false;
                             $scope.storedSettings = angular.copy($scope.settings);
@@ -5984,18 +6141,21 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     
                     for (a = 0; a < $scope.settings.businessSettings.length; a++) {
-                        var specificSettings = $scope.settings.businessSettings[a].specificSettings;
+                        var specificSettings = $scope.settings.businessSettings[a].specificSettings || [];
                         for (b = 0; b < specificSettings.length; b++) {
-                            $scope.updateParams[specificSettings[b].key] = specificSettings[b].val;
+                            if (specificSettings[b].optionStyle == 'binary') {
+                                $scope.updateParams[specificSettings[b].key] = specificSettings[b].val;
+                            }
+                            else if (specificSettings[b].optionStyle == 'multiple') {
+                                $scope.updateParams[specificSettings[b].key] = specificSettings[b].labels[specificSettings[b].val]._id;
+                            }
                         }
                     }
-
-                    
-                    console.log($scope.updateParams);
                     
                     var updateAllBusinessSettingDetails = function () {
                             Profile.updateAllBusinessSettingDetails($scope.updateParams).success(function (successData) {
-                            console.log(successData);
+                            $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl updateAllBusinessSettingDetails successData', 'data': successData});
+                            
                             field.editing = false;
                             $scope.editing = false;
                             $scope.storedSettings = angular.copy($scope.settings);
@@ -6026,6 +6186,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             ]
                         });
                         */
+                        
                         var completeFillingBusinessSettings = function () {
                             for (a = 0; a < $rootScope.user.listingTypes.length; a++) {
                                 switch($rootScope.user.listingTypes[a]) {
@@ -6085,16 +6246,16 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                             businessType: 'Bar'
                                         });
                                         break;
-                                    case 'Taxi':
+                                    case 'Taxi Firm':
                                         $scope.settings.businessSettings.push({
-                                            businessType: 'Taxi',
+                                            businessType: 'Taxi Firm',
                                             specificSettings: [
-                                                {key: 'isAcceptingTableBookings'
+                                                {key: 'isAcceptingTaxiBookings'
                                                 , label: 'Accept Taxi Bookings'
                                                 , val: (data.isAcceptingTaxiBookings == '0') ? 0: 1
                                                 , optionStyle: 'binary'
-                                                , trueLabel: 'My business accepts Table Bookings through the app'
-                                                , falseLabel: 'My business does not accept Table Bookings through the app'
+                                                , trueLabel: 'My business accepts Taxi Bookings through the app'
+                                                , falseLabel: 'My business does not accept Taxi Bookings through the app'
                                                 , editing: false}
                                             ]
                                         });
@@ -6102,7 +6263,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 }
                                 
                                 if (a == $rootScope.user.listingTypes.length - 1) {
-                                    console.log($scope.settings);
                                     $scope.storedSettings = angular.copy($scope.settings);
                                 }
                             }
@@ -6110,11 +6270,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             
                         $scope.getAllTonightsFeedOptionsForBusiness = function () {
                             Profile.getAllTonightsFeedOptionsForBusiness($rootScope.user._id).success(function (successData) {
-                                console.log(successData, $rootScope.user.listingTypes);
+                                $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl getAllTonightsFeedOptionsForBusiness successData', 'data': successData});
+                                
                                 var relVal = 0;
                                 for (b = 0; b < successData.length; b++) {
                                     successData[b].index = b;
-                                    if (successData[b]._id == data._tonightsFeedButtonId) {
+                                    if (successData[b]._id == data._tonightsFeedButtonOptionId) {
                                         relVal = b;
                                     }
                                     
@@ -6122,7 +6283,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         $scope.settings.businessSettings.push({
                                             businessType: 'General',
                                             specificSettings: [
-                                                { key: '_tonightsFeedButtonId'
+                                                { key: '_tonightsFeedButtonOptionId'
                                                 , label: 'Call to action in the MyNyte feed'
                                                 , val: relVal
                                                 , optionStyle: 'multiple'
@@ -6164,7 +6325,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         if (email.length > 4 && email != $scope.originalEmail) {
                             $scope.formIsValidating = true;
                             Profile.checkIfEmailTaken(email).success(function (result) {
-                                console.log('emailTaken: ', result);
                                 $scope.emailTaken = (parseInt(result["total"]) > 0) ? true: false;
                                 $scope.formIsValidating = false;
                             }).error(function () {
@@ -6207,6 +6367,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
                             removeOneSignalIdForLogOut();
                         }
+                        
                         $rootScope.$broadcast('user-logged-in');
                         $rootScope.$broadcast('savestate');
                         $rootScope.user.userInteractionObject = oldInteractionObject;
@@ -6214,8 +6375,10 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         $ionicHistory.clearCache();
                         
                         setTimeout(function () {
-                            $ionicScrollDelegate.scrollTop();
                             $rootScope.appLoading = false;
+                            $timeout(function() {
+                                $ionicScrollDelegate.scrollTop();
+                            }, 0);
                         }, 200);
                     }
                     
@@ -6256,8 +6419,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             //Alter Number fields so they're not null (for number input)
                             $scope.settings.phone1.value = ($scope.settings.phone1.value == null) ? '': $scope.settings.phone1.value;
                             $scope.storedSettings = angular.copy($scope.settings);
-                                
-                            console.log($scope.settings);
                         }).
                         error(function (errorMessage) {
                             $scope.getAccountSettings();
@@ -6269,7 +6430,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     break;
             };
         
-            console.log($scope.settings);
             var userBusinessTypeChangedFn = $rootScope.$on('user-business-type-changed', function () {
                 getAllBusinessSettingsForBusiness();
             });
@@ -6287,7 +6447,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.settings = {};
         var storedSettings = {};
         $scope.rootScope = $rootScope;
-        console.log($stateParams.settingsType);
         $scope.settingsType = $stateParams.settingsType;
         $scope.setting = $stateParams.setting;
         $scope.editing = false;
@@ -6376,7 +6535,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             
                             $scope.getBusinessOpeningTimesForBusiness = function () {
                                 Profile.getBusinessOpeningTimesForBusiness($rootScope.user._id).success(function (successData) {
-                                    console.log(successData);
+                                    $rootScope.debugModeLog({'msg': 'AccountSettingsAdvancedCtrl getBusinessOpeningTimesForBusiness successData', 'data': successData});
                                     for (a = 0; a < $scope.weekdayModel.length; a++) {
                                         for (b = 0; b < successData.length; b++) {
                                             if ($scope.weekdayModel[a].name == successData[b].name) {
@@ -6464,13 +6623,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             
                             $scope.prepareAllAvailableAndAppliedFoodStyles = function () {
                                 Categories.getAllFoodStyles().success(function (foodStyles) {
-                                    console.log("foodStyles");
-                                    console.log(foodStyles);
+                                    $rootScope.debugModeLog({'msg': 'AccountSettingsAdvancedCtrl prepareAllAvailableAndAppliedFoodStyles successData', 'data': foodStyles});
                                     $scope.foodStyles = foodStyles;
                                     
                                     var getFoodStylesForBusiness = function () {
                                         Profile.getFoodStylesForBusiness($rootScope.user._id).success(function (successData) {
-                                            console.log(successData);
+                                            $rootScope.debugModeLog({'msg': 'AccountSettingsAdvancedCtrl getFoodStylesForBusiness successData', 'data': successData});
                                             for (a = 0; a < successData.length; a++) {
                                                 if (a == 0) {
                                                     $scope.chosenFoodStyleObjects[a].index = a;
@@ -6518,7 +6676,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     
                                     var getBusinessTypesForBusiness = function () {
                                         Profile.getBusinessTypesForBusiness($rootScope.user._id).success(function (successData) {
-                                            console.log(successData);
+                                            $rootScope.debugModeLog({'msg': 'AccountSettingsAdvancedCtrl getBusinessTypesForBusiness successData', 'data': successData});
+                                            
                                             for (a = 0; a < successData.length; a++) {
                                                 if (a == 0) {
                                                     $scope.chosenBusinessTypeObjects[a].index = a;
@@ -6560,7 +6719,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             //User Based Functions
                             $scope.toggleBusinessType = function (businessType) {
                                 $scope.currentBusinessTypeIndexBeingToggled = businessType.index;
-                                console.log("0", $scope.currentBusinessTypeIndexBeingToggled);
+                                
                                 for (a = 0; a < $scope.chosenBusinessTypeObjects.length; a++) {
                                     if ($scope.chosenBusinessTypeObjects[a].index != businessType.index) {
                                         $scope.chosenBusinessTypeObjects[a].showBusinessTypes = false;
@@ -6589,7 +6748,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         }
                                     }
                                 }
-                                console.log($scope.chosenBusinessTypeIds, $scope.currentBusinessTypeIndexBeingToggled);
+                                
                                 $scope.showBusinessTypes = false;
                             }
                             
@@ -6625,13 +6784,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     name: 'Select a Business Type',
                                     showBusinessTypes: false});
                                 $scope.chosenBusinessTypeIds.push(null);
-                                console.log($scope.chosenBusinessTypeObjects, $scope.currentBusinessTypeIndexToAdd);
                             }
                             
                             /*Food Styles*/
                             $scope.toggleFoodStyle = function (foodStyle) {
                                 $scope.currentFoodStyleIndexBeingToggled = foodStyle.index;
-                                console.log("0", $scope.currentFoodStyleIndexBeingToggled);
+                                
                                 for (a = 0; a < $scope.chosenFoodStyleObjects.length; a++) {
                                     if ($scope.chosenFoodStyleObjects[a].index != foodStyle.index) {
                                         $scope.chosenFoodStyleObjects[a].showFoodStyles = false;
@@ -6660,7 +6818,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         }
                                     }
                                 }
-                                console.log($scope.chosenFoodStyleIds, $scope.currentFoodStyleIndexBeingToggled);
+                                
                                 $scope.showFoodStyles = false;
                             }
                             
@@ -6696,19 +6854,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     name: 'Select a Food Style',
                                     showFoodStyles: false});
                                 $scope.chosenFoodStyleIds.push(null);
-                                console.log($scope.chosenFoodStyleObjects, $scope.currentFoodStyleIndexToAdd);
                             }
                             
                             $scope.applyChanges = function () {
-                                console.log($scope.chosenBusinessTypeIds, $scope.chosenFoodStyleIds);
                                 $rootScope.appLoading = true;
                                 $scope.chosenFoodStyleIds = ($scope.chosenBusinessTypeIds.indexOf('4') == -1 && $scope.chosenBusinessTypeIds.indexOf('5') == -1) ? []: $scope.chosenFoodStyleIds;
                                 
                                 Profile.updateBusinessTypesForBusiness($rootScope.user._id, $scope.chosenBusinessTypeIds, $scope.chosenFoodStyleIds).success(function (successData) {
                                     $scope.appliedBusinessTypes = [];
+                                    $scope.appliedFoodStyles = [];
+                                    $rootScope.user.listingTypes = []
                                     $rootScope.user.listingTypes[0] = null;
-                                    $rootScope.user.listingTypes[1] = null;
-                                    $rootScope.user.listingTypes[2] = null;
                                     $rootScope.user.listingType1= null;
                                     $rootScope.user.listingType2 = null;
                                     $rootScope.user.listingType3 = null;
@@ -6728,13 +6884,22 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         }
                                         
                                         if (a == $scope.chosenBusinessTypeObjects.length - 1) {
-                                            userService.model.user = $rootScope.user;
-                                            $rootScope.$broadcast('savestate');
-                                            $rootScope.$broadcast('user-business-type-changed');
+                                            for (b = 0; b < $scope.chosenFoodStyleObjects.length; b++) {
+                                                
+                                                $scope.appliedFoodStyles[b] = {};
+                                                $scope.appliedFoodStyles[b]._id = $scope.chosenFoodStyleObjects[b]._id;
+                                                $scope.appliedFoodStyles[b].name = $scope.chosenFoodStyleObjects[b].name;
+                                        
+                                                if (b == $scope.chosenFoodStyleIds.length - 1) {
+                                                    userService.model.user = $rootScope.user;
+                                                    $rootScope.$broadcast('savestate');
+                                                    $rootScope.$broadcast('user-business-type-changed');
                                 
-                                            $scope.editing = false;
-                                            $rootScope.currentlyEditing = false;
-                                            $rootScope.appLoading = false;
+                                                    $scope.editing = false;
+                                                    $rootScope.currentlyEditing = false;
+                                                    $rootScope.appLoading = false;
+                                                }
+                                            }
                                         }
                                     }
                                 }).error(function () {
@@ -6758,8 +6923,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         }
         
         $rootScope.checkForAppInit($scope);
-        
-        console.log($scope.settings);
     }])
 
     app.controller('ContactMyNyteCtrl', ['$ionicHistory', '$rootScope', '$state','$scope', 'Profile', '$ionicPopup', function($ionicHistory, $rootScope, $state, $scope, Profile, $ionicPopup) {
@@ -6777,10 +6940,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     'message': $scope.form.message
                 };
                 Profile.contactMyNyteTeam(params).success(function (successData) {
-                    var mainTitle = (successData == "MyNyte Contact Success") ? 'Message Sent': 'Message failed to send';
-                    var mainMessage = (successData == "MyNyte Contact Success") ? '<p>Your message to the MyNyte Team has been sent.</p>': '<p>Your message to the MyNyte Team was not sent. Please try again shortly.</p>';
+                
+                    var mainTitle = (successData == '"MyNyte Contact Success"') ? 'Message Sent': 'Message failed to send';
+                    var mainMessage = (successData == '"MyNyte Contact Success"') ? '<p>Your message to the MyNyte Team has been sent.</p>': '<p>Your message to the MyNyte Team was not sent. Please try again shortly.</p>';
                     
-                    $scope.form = (successData == "MyNyte Contact Success") ? {'subject': '', 'message': ''}: $scope.form;
+                    $scope.form = (successData == '"MyNyte Contact Success"') ? {'subject': '', 'message': ''}: $scope.form;
                     
                     $ionicPopup.show({
                         title: mainTitle,
@@ -6799,6 +6963,138 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.submitContactForm();
                 });
             }
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
+
+    app.controller('ArticlesCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'Profile', '$ionicPopup', function($ionicHistory, $rootScope, $state, $stateParams, $scope, Profile, $ionicPopup) {
+        // Set Up Variables
+        $scope.rootScope = $rootScope;
+        
+        $scope.pageLoad = function () {
+            //Prepare Page Load Data
+            $scope.articleType = $stateParams.articleType;
+            $scope.categories = $stateParams.categories;
+            $scope.subCategories = $stateParams.subCategories;
+
+            // Replace this with real Articles / Blog system
+            $rootScope.pageTitle = "Business Help Articles";
+            $scope.pageTitle = $rootScope.pageTitle;
+
+            $scope.businessArticles = {
+                restaurant: {
+                    title: "Managing Table Bookings",
+                    icon: "ion-fork",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Check Table Bookings that have been Requested",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Requested Table Bookings’.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Respond to Table Bookings that have been Requested",
+                            text: "<ul><li>When you’re in the ‘Requested Table Bookings’ page, click on one of the Table Bookings in the option list.</li><li>Once you’re in the Table Booking page, you can see all the details of the booking, and you can go to the bottom to press either ‘Accept Booking’, ‘Reject Booking’ or ‘Reject Booking but suggest a different time’</li><li>If you press ‘Reject Booking but suggest a different time’, then a pop-up will come up and you should enter the time for your suggested booking time, and press set.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check the Current Table Bookings that you've Accepted",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Current Table Bookings’.</li><li>To see full details of a Table Booking, just click on it in the list, and here you can also ‘Cancel’ the Table Booking if you wish to.</li></ul>"
+                        }
+                    ]
+                },
+                nightclub: {
+                    title: "Managing Events / Entry Booking",
+                    icon: "ion-clipboard",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Create a New Event",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Under your ‘Business Tools’ section, click ‘My Current Events’.</li><li>In this page, click the ‘+ Add’ button (or the ‘+’ button if you are on a mobile device).</li><li>Fill in the details of your event into the form, and then press ‘Add Event’ at the bottom.</li></ul>"
+                        }
+                    ]
+
+                },
+                taxi: {
+                    title: "Managing Taxi Bookings",
+                    icon: "ion-android-car",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Check Taxi Bookings that have been Requested",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Requested Taxi Bookings’.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Respond to Taxi Bookings that have been Requested",
+                            text: "<ul><li>When you’re in the ‘Requested Taxi Bookings’ page, click on one of the Taxi Bookings in the option list.</li><li>Once you’re in the Taxi Booking page, you can see all the details of the booking, and you can go to the bottom to enter an amount for your 'Lowest Price' and 'Quickest Time', and then press 'Respond'.</li><li>After you've responded to the Booking Request, you will be notified in the app by MyNyte after a few minutes about whether or not you've won the job.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check the Current Taxi Bookings that you've Won",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Current Taxi Bookings’.</li><li>To see full details of a Taxi Booking, just click on it in the list, and here you can also ‘Cancel’ the Taxi Booking if you wish to.</li></ul>"
+                        }
+                    ]
+
+                }
+            };
+
+            $scope.articleCategories = [
+                {   
+                    title: "General",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Log into your Account",
+                            text: "<ul><li>Go to the ‘MyNyte’ page (left side of the page menu).</li><li>In the boxes, type in your e-mail address and password and press enter.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check your Enquiries & Respond",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Near the top, click on the Enquiries option. You will see a list of all your enquiries, and you can click them to see them, and respond like a normal messaging app.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Create a New Offer",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Under your ‘Business Tools’ section, click ‘My Current Offers’.</li><li>In this page, click the ‘+ Add’ button (or the ‘+’ button if you are on a mobile device).</li><li>Fill in the details of your offer into the form, and then press ‘Add Offer’ at the bottom.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Change Business Settings",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Log out of your Account",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li></ul>"
+                        }
+                    ]
+                }
+            ];
+
+            if ($scope.categories != null) {
+                $scope.categories = $scope.categories.split("&");
+                for (var a = 0; a < $scope.categories.length; a++) {
+                    if ($scope.businessArticles[$scope.categories[a]] != null && $scope.businessArticles[$scope.categories[a]]["articles"].length > 0 ) {
+                        $scope.articleCategories.push($scope.businessArticles[$scope.categories[a]]);
+                    }
+                }
+            }
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
+
+    app.controller('ArticleCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'Profile', '$ionicPopup', function($ionicHistory, $rootScope, $state, $stateParams, $scope, Profile, $ionicPopup) {
+        // Set Up Variables
+        $scope.rootScope = $rootScope;
+        
+        $scope.pageLoad = function () {
+            //Prepare Page Load Data
+            $scope.articleType = $stateParams.articleType;
+            $scope.articleId = $stateParams.articleId;
+            
         }
         
         $rootScope.checkForAppInit($scope);

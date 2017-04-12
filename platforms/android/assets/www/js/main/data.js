@@ -877,6 +877,13 @@ app.factory('Offers', ['$http', 'Config', function($http, Config) {
 		}
 		
 	}
+    data.getTodaysOffersForWideDisplay = function (_townId) {
+        return $http(
+            {
+                method: 'GET', url:Config.OffersUrl + '?action=getTodaysOffersForWideDisplay&_townId=' + _townId
+            }
+        );
+	}
     data.createOffer = function (_businessId, _offerTypeId, _offerSubCategoryId, offerTitle, description, startDateTime, endDateTime, weeksAhead, weekdayIndex, _eventId) {
 		return $http(
             {
@@ -932,6 +939,14 @@ app.factory('Listings', ['$http', 'Config', function($http, Config) {
             {
 				method: 'GET', url:Config.ListingsUrl + '?action=getBarsAndClubsByTown&_townId=' + _townId + '&_profileId=' + _profileId
 			}
+		);
+	}
+    data.getPhoneNumberForListing = function (paramsString) {
+        console.log(paramsString);
+		return $http(
+            {
+				method: 'POST', url:Config.ListingsUrl + '?action=getPhoneNumberForListing&'+paramsString
+            }
 		);
 	}
   	return data;
@@ -1209,10 +1224,10 @@ app.factory('TableBooking', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
-	data.updateTableBooking = function (_tableBookingId, accepted, rejected, completed, alternateDate) {
+	data.updateTableBooking = function (_tableBookingId, accepted, rejected, cancelled, completed, alternateDate) {
 		return $http(
             {
-				method: 'POST', url:Config.TableBookingUrl + '?action=updateTableBooking&_tableBookingId=' + _tableBookingId + '&accepted=' + accepted + '&rejected=' + rejected + '&completed=' + completed + '&alternateDate='+ alternateDate
+				method: 'POST', url:Config.TableBookingUrl + '?action=updateTableBooking&_tableBookingId=' + _tableBookingId + '&accepted=' + accepted + '&rejected=' + rejected + '&cancelled=' + cancelled + '&completed=' + completed + '&alternateDate='+ alternateDate
 			}
 		);
 	}
@@ -1300,6 +1315,13 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+    data.getTodaysMoviesForWideDisplay = function (_townId) {
+        return $http(
+            {
+                method: 'GET', url:Config.MovieUrl + '?action=getTodaysMoviesForWideDisplay&_townId=' + _townId
+            }
+        );
+	}
     data.createMovie = function (name, description, firstShowingDate, lastShowingDate, _movieStyleIds, movieTrailerLink) {
         var movieStyleIdsString = "";
 		if (_movieStyleIds.length > 0) {
@@ -1324,6 +1346,7 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
 app.factory('Images', ['$http', 'Config', function($http, Config) {
 	var data = {};
 	data.uploadImage = function (formData) {
+        console.log(formData);
 		return $.ajax(
             {
 				type: 'POST', url:Config.ImageUploadUrl + '?action=uploadImage',
@@ -1348,6 +1371,7 @@ app.factory('Images', ['$http', 'Config', function($http, Config) {
 		);
 	}
     data.uploadImageForMovieCreation = function (formData) {
+        console.log(formData);
 		return $.ajax(
             {
 				type: 'POST', url:Config.ImageUploadUrl + '?action=uploadImage',
@@ -1399,7 +1423,9 @@ app.factory('userService', ['$rootScope', function ($rootScope) {
     var service = {
 
         model: {
-            user: {}
+            user: {},
+            introTooltipShownCount: 0,
+            adminUserLoggedIn: false
         },
 
         SaveState: function () {

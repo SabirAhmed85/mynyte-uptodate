@@ -1,18 +1,22 @@
-<a class="tile feed-item"
+<a class="tile feed-item {{feature.listingType}}"
     ng-repeat="feature in features"
     ng-click="seeListingDetail(feature);"
     ng-class="{'movie': feature.listingType == 'Movie'}">
 
-    <span ng-show="feature.listingType == 'Update'" class="feed-item-header">
+    <span ng-if="feature.listingType == 'Update'" class="feed-item-header">
       <img src="https://1.bp.blogspot.com/-IMsTheNxIqo/VYGjyM2hLiI/AAAAAAAAA1g/ZQO2uRgQSU4/s800/cappadocia-805624_1280.jpg">
       <span class="header-title">Simon Baker checked-in at Al-Badr Restaurant, Bedford</span>
       <i class="ion-location"></i>
     </span>
     
     <div class="main-img-container">
-        <img class="main-img" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}"
+        <img class="main-img"
+            src="/sneak-preview/img/user_images/cover_photo/default.jpg"
+            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}"
             ng-if="feature.currentCoverPhotoName != null && feature.listingType != 'Offer'"/>
-        <img class="main-img profile-img" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
+        <img class="main-img profile-img"
+            src="/sneak-preview/img/user_images/profile_photo/default.jpg"
+            ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
             ng-if="feature.currentProfilePhotoName != null && feature.listingType == 'Offer'"/>
     </div>
     <div class="offer-description-container"
@@ -44,6 +48,8 @@
         </span>
         <span class="table-booking-note"
             ng-if="feature.isAcceptingTableBookings == '1'"><i class="ion-checkmark"></i>Book Tables</span>
+        <span class="table-booking-note"
+            ng-if="feature.isGuestListAllowed != null && feature.isGuestListAllowed != 'null'"><i class="ion-checkmark"></i>Book Entry</span>
         <!--<span class="followers-label red right bottom">126 Followers</span>-->
     </div>
 

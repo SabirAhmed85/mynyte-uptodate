@@ -1,6 +1,6 @@
-<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg">
+<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="black_bg business-item">
     <ion-content padding="10">
-        <div>
+        <div class="view-wrapper">
             <form ng-if="itemType=='Movies'" class="business-item-form edit-form" ng-class="{'editing': editing}" name="updateOfferForm">
                 
                 <label class="item-header first">
@@ -11,6 +11,9 @@
                 </label>
                 <label class="item">
                     {{businessItem.name}}
+                </label>
+                <label class="item">
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header">
                     First Showing Date
@@ -41,6 +44,10 @@
                 
                 <label class="item-header first">
                     {{businessItem.title}}
+                </label>
+                <label class="item"
+                    ng-if="businessItem.currentOfferCoverPhotoName != null && businessItem.currentOfferCoverPhotoName != 'default-offer.jpg'">
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentOfferCoverPhotoName}}" />
                 </label>
                 <label class="item-header">
                     Offer Type
@@ -246,7 +253,9 @@
             </form>
             
             <form ng-if="itemType=='OwnEvents'" class="business-item-form edit-form event-edit" ng-class="{'editing': editing}" name="updateEventForm">
-                
+                <label class="item">
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
+                </label>
                 <label class="item-header first">
                     Event Details
                 </label>
@@ -1167,6 +1176,10 @@
                 <label class="item-header">
                     Offer Details
                 </label>
+                <label class="item"
+                    ng-if="businessItem.currentCoverPhotoName != null">
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
+                </label>
                 <label class="item-header">Status</label>
                 <label class="item focus-item">
                     <span ng-if="businessItem.isAccepted == '1'">Accepted!</span>
@@ -1200,6 +1213,10 @@
                 ng-if="itemType == 'Event Entry'">
                 <label class="item-header">
                     Event Entry Details
+                </label>
+                <label class="item">
+                    <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}"
+                        ng-if="businessItem.currentCoverPhotoName != null"/>
                 </label>
                 <label class="item-header">Status</label>
                 <label class="item focus-item focus-item-with-icon">

@@ -1,8 +1,8 @@
-<ion-view view-title="Add {{itemLabel}} on MyNyte.co.uk" class="black_bg">
-  	<ion-content>
+<ion-view view-title="Add {{itemLabel}} on MyNyte.co.uk" class="black_bg add-business-item">
+  	<ion-content class="view-wrapper">
       <h2>Please fill in the details for your new {{itemLabel}}</h2>
       <div class="register" style="float: left;">
-        <form ng-if="itemType=='Movies'" class="business-item-form" ng-class="{'editing': editing}">
+        <form ng-if="itemType=='Movies'" name="addMovieForm" class="business-item-form" ng-class="{'editing': editing}">
             
             <label class="item-header">
                 Title
@@ -10,8 +10,6 @@
             <label class="item">
                 <input class="white nightlife-input" type="text" placeholder="Movie Title (Headline)" ng-model="movieTitle" name="movieTitle" ng-max="100" required>
             </label>
-            
-            
             
             <label class="item-header">
                 Add a Cover Photo (optional)
@@ -63,12 +61,12 @@
                     </div>
                 </div>
         	</div>
-            <div class="item-header item-header-short">
+            <label class="item-header item-header-short">
                 <button class="btn button-half btn-white"
                     ng-class="{'disabled': multiSelect['Movies'].chosenStyleIds.indexOf(null) != -1 || multiSelect['Movies'].chosenStyleIds.length > 2}"
                     ng-disabled="multiSelect['Movies'].chosenStyleIds.indexOf(null) != -1 || multiSelect['Movies'].chosenStyleIds.length > 2"
                     ng-click="newStyle('Movies');">Add a new Style</button>
-        	</div>
+        	</label>
             <label class="item-header">
                 First Showing Date
             </label>
@@ -107,9 +105,9 @@
                 Description
             </label>
             <label class="item">
-                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Movie Description" ng-model="description" name="description" ng-max="1000" required></textarea>
+                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Movie Description" ng-model="description" name="description" ng-max="1000"></textarea>
             </label>
-            <button ng-disabled="updateOfferForm.$invalid" class="button button-red button-large"
+            <button ng-disabled="addMovieForm.$invalid" class="button button-red button-large"
                 ng-click="createMovie(movieTitle, movieTrailerLink, description)">
                 Add Movie
             </button>
@@ -213,7 +211,7 @@
             
             
             <label class="item-header"
-                ng-if="$rootScope.user.listingTypes.indexOf('Nightclub') != -1 || $rootScope.user.listingTypes.indexOf('Bar') != -1">
+                ng-if="rootScope.user.listingTypes.indexOf('Nightclub') != -1 || rootScope.user.listingTypes.indexOf('Bar') != -1">
                 Apply this Offer to an Event (optional)
             </label>
             <span class="select-options-container">
@@ -226,7 +224,7 @@
                 </ul>
             </span>
             <div class="item special item-grey-border" style="float: left;"
-                ng-if="$rootScope.user.listingTypes.indexOf('Nightclub') != -1 || $rootScope.user.listingTypes.indexOf('Bar') != -1"
+                ng-if="rootScope.user.listingTypes.indexOf('Nightclub') != -1 || rootScope.user.listingTypes.indexOf('Bar') != -1"
                 ng-class="{'item-with-selects': availableEvents.length > 0, 'item-with-text': availableEvents.length == 0}">
                 <div id="business-type-select-container" class="select-container"
                     ng-if="availableEvents.length > 0">
@@ -308,9 +306,9 @@
                             </button>
                         </span>
                         <span class="text-note"
-                            ng-if="chosenWeekday._id != null">Event will occur: every <span>{{chosenWeekday.name}}</span></span>
+                            ng-if="chosenWeekday._id != null">Offer will occur: every <span>{{chosenWeekday.name}}</span></span>
                         <span class="text-header">
-                            How many weeks into the future do you want this event to go? (Max 7)
+                            How many weeks into the future do you want this offer to go? (Max 7)
                         </span>
                         <div id="weeks-ahead-select-container" class="select-container">
                             <div ng-click="toggleWeeksAheadVisibility();" class="select-main">
@@ -338,7 +336,7 @@
         	</label>
             -->
         	<button class="button button-red button-large"
-                ng-disabled="addOfferForm.$invalid || $rootScope.imageUploadError != null"
+                ng-disabled="addOfferForm.$invalid || rootScope.imageUploadError != null"
                 ng-click="addOffer(offerTitle, description, endDateTime);">
                 Add New Offer
             </button>
@@ -553,7 +551,7 @@
                 <textarea name="dressCode" class="white nightlife-input nightlife-input-square" type="text" placeholder="Extra Info" ng-model="extraInfo"></textarea>
         	</label>
         	<button class="button button-red button-large"
-                ng-disabled="addEventForm.$invalid || !dateChosen || $rootScope.imageUploadError != null || $rootScope.imageSrcs.length == 0 || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
+                ng-disabled="addEventForm.$invalid || !dateChosen || rootScope.imageUploadError != null || rootScope.imageSrcs.length == 0 || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
                 ng-click="addEvent(eventTitle, description, dressCode, dealsOnTheNight, extraInfo);">
                 Add New Event
             </button>
@@ -698,7 +696,7 @@
                     ng-show="existingCatNames.indexOf(catName) != -1 && catName.length > 0">You already have a category with this name.</span>
         	</label>
             <label class="item">
-                <textarea class="white nightlife-input" placeholder="Description" name="description"
+                <textarea class="white nightlife-input nightlife-input-square" placeholder="Description" name="description"
                     ng-model="description"></textarea>
         	</label>
             
@@ -722,7 +720,7 @@
                     ng-show="existingCatNames.indexOf(catName) != -1 && catName.length > 0">You already have a category with this name.</span>
             </label>
             <label class="item">
-                <textarea class="white nightlife-input" placeholder="Description" name="description"
+                <textarea class="white nightlife-input nightlife-input-square" placeholder="Description" name="description"
                     ng-model="description"></textarea>
             </label>
             
@@ -800,7 +798,7 @@
                 </div>
             </div>
             <label class="item-header">Option Choices</label>
-            <div class="item-header item-top-buttons item-header-short">
+            <div class="item-header item-bottom-buttons item-header-short">
                 <button class="btn button-half btn-white"
                     ng-controller="PopupCtrl"
                     ng-click="showPopup('NewMenuExtraOptionOption', null)">Add an Option Choice</button>
@@ -812,7 +810,8 @@
                     <span ng-show="showChangeOrderButtons && businessItem.options.length > 1">Remove Items</span>
                 </button>
             </div>
-            <div class="item item-expander open">
+            <div class="item item-expander"
+                ng-class="{'open': businessItem.options.length > 0}">
                 <div class="extra-options-label trans"
                     ng-repeat="choice in businessItem.options">
                     <input class="white nightlife-input main-input" type="text" placeholder="Option Choice Name" ng-model="choice.name" name="name" ng-max="100" required>

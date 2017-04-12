@@ -1,5 +1,5 @@
-<ion-view view-title="Register on MyNyte.co.uk" class="grey_bg">
-  	<ion-content scroll="false">
+<ion-view view-title="Register on MyNyte.co.uk" class="grey_bg register-form">
+  	<ion-content>
         <h2>{{pageHeader}}</h2>
       <div class="tile register businesses-items-note">
         <div
@@ -11,6 +11,38 @@
         </div>
         <form ng-submit="doRegister(name, displayName, email, password);" name="registrationForm"
             ng-if="profileType != 'business'">
+            
+            <div class="form-note form-note-white" role="alert"
+                ng-class="{'form-note-red-override': registrationForm.name.$viewValue.length > 0 && registrationForm.name.$invalid,
+                    'show': showNameNote && ( registrationForm.name.$viewValue.length < 5 || (registrationForm.name.$viewValue.length >= 5 && registrationForm.name.$invalid))}">
+                <div>Please enter your full name.</div>
+            </div>
+            <div class="form-note form-note-top form-note-white"
+                ng-class="{'form-note-red-override': registrationForm.displayName.$error['pattern'] || (registrationForm.displayName.$invalid && registrationForm.displayName.$viewValue.length > 5),
+                    'show': showDisplayNameNote && (registrationForm.displayName.$viewValue.length < 5 || registrationForm.displayName.$invalid)}" role="alert">
+                <div>Display Names must be at least 5 characters in length, and cannot contain any spaces. They can only contain letters, numbers and the following special characters: - _.</div>
+            </div>
+            <div class="form-note" role="alert"
+                ng-class="{'show': registrationForm.displayName.$viewValue.length > 4 && !registrationForm.displayName.$invalid && showDisplayNameNote}">
+                <div class="form-note-red" ng-show="displayNameTaken">
+                    Display Name unavailable.
+                </div>
+                <div class="form-note-secondary form-note-white" ng-show="!displayNameTaken">
+                    Display Name available!
+                </div>
+            </div>
+            <div class="form-note form-note-white" role="alert"
+                ng-class="{'form-note-red-override': registrationForm.email.$viewValue.length > 5 && (registrationForm.email.$invalid|| emailTaken),
+                    'show': showEmailNote}">
+                <div ng-show="!emailTaken">Please enter a valid email address.</div>
+                <div ng-show="emailTaken">That email address is already taken.</div>
+            </div>
+            <div class="form-note form-note-password-special form-note-white" role="alert"
+                ng-class="{'form-note-red-override': registrationForm.password.$invalid && registrationForm.password.$viewValue.length > 5,
+                    'show': showPasswordNote || (registrationForm.password.$viewValue.length > 0 && registrationForm.password.$invalid)}">
+                <div>Passwords must be between 6 and 20 Characters, and must contain at least one capital letter and one number.</div>
+            </div>
+            
             <label class="item first">
                 <input class="white nightlife-input first" type="text" placeholder="Name" name="name"
                     ng-focus="showNameNote = true"
@@ -21,11 +53,6 @@
                     required>
                 <i class="ion-close input-alert"
                     ng-if="registrationForm.name.$viewValue.length > 0 && registrationForm.name.$invalid"></i>
-                <div class="form-note form-note-white" role="alert"
-                    ng-class="{'form-note-red-override': registrationForm.name.$viewValue.length > 0 && registrationForm.name.$invalid,
-                        'show': showNameNote && ( registrationForm.name.$viewValue.length < 5 || (registrationForm.name.$viewValue.length >= 5 && registrationForm.name.$invalid))}">
-                    <div>Please enter your full name.</div>
-                </div>
         	</label>
             <label class="item">
                 <input ng-keyup="checkIfDisplayNameTaken(registrationForm.displayName.$viewValue)" name="displayName" class="white nightlife-input nightlife-input-square" type="text" placeholder="Display Name"
@@ -38,20 +65,6 @@
                     required>
                 <i class="ion-close input-alert"
                     ng-if="(registrationForm.displayName.$viewValue.length > 0 && registrationForm.displayName.$viewValue.length < 5) || displayNameTaken"></i>
-                <div class="form-note form-note-top form-note-white"
-                    ng-class="{'form-note-red-override': registrationForm.displayName.$error['pattern'] || (registrationForm.displayName.$invalid && registrationForm.displayName.$viewValue.length > 5),
-                        'show': showDisplayNameNote && (registrationForm.displayName.$viewValue.length < 5 || registrationForm.displayName.$invalid)}" role="alert">
-                    <div>Display Names must be at least 5 characters in length, and cannot contain any spaces. They can only contain letters, numbers and the following special characters: - _.</div>
-                </div>
-                <div class="form-note" role="alert" style="position:relative;"
-                    ng-class="{'show': registrationForm.displayName.$viewValue.length > 4 && !registrationForm.displayName.$invalid && showDisplayNameNote}">
-                    <div class="form-note-red" ng-show="displayNameTaken">
-                        Display Name unavailable.
-                    </div>
-                    <div class="form-note-secondary form-note-white" ng-show="!displayNameTaken">
-                        Display Name available!
-                    </div>
-                </div>
         	</label>
             
         	<label class="item">
@@ -64,20 +77,8 @@
                     required>
                 <i class="ion-close input-alert"
                     ng-if="registrationForm.email.$viewValue.length > 0 && (registrationForm.email.$invalid || emailTaken)"></i>
-                <div class="form-note form-note-white" role="alert"
-                    ng-class="{'form-note-red-override': registrationForm.email.$viewValue.length > 5 && (registrationForm.email.$invalid|| emailTaken),
-                        'show': showEmailNote}">
-                    <div ng-show="!emailTaken">Please enter a valid email address.</div>
-                    <div ng-show="emailTaken">That email address is already taken.</div>
-                </div>
         	</label>
         	<label class="item last">
-                <div class="form-note form-note-password-special form-note-white" role="alert"
-                    ng-class="{'form-note-red-override': registrationForm.password.$invalid && registrationForm.password.$viewValue.length > 5,
-                        'show': showPasswordNote || (registrationForm.password.$viewValue.length > 0 && registrationForm.password.$invalid)}">
-                    <div>Passwords must be between 6 and 20 Characters, and must contain at least one capital letter and one number.</div>
-                </div>
-                
                 <input class="white nightlife-input last" name="password" type="password" placeholder="Password"
                     ng-focus="showPasswordNote = true"
                     ng-blur="showPasswordNote = false"

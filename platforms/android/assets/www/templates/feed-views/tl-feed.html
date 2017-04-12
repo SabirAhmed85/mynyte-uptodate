@@ -203,7 +203,7 @@
             <div class="top-header">Currently showing: <span>{{rootScope.currentTown.name}}</span><i class="ion-chevron-down"></i></div>
             <div ng-show="rootScope.searchQuery.length == 0">
                 <ul>
-                    <li ui-sref="app.nlfeedListings({searchType: 'searchBusinessByCategory', _businessTypeId: businessCat._id})" class="search-category-listing" ng-repeat="businessCat in rootScope.searchPanelBusinessCatsToShow" ng-class="{'half': businessCat.name == 'Nightclub' || businessCat.name == 'Bar'|| businessCat.name == 'Events Promoter', 'special': businessCat.name == 'Restaurant' || businessCat.name == 'Takeaway'}">
+                    <li ui-sref="app.feedListings({searchType: 'searchBusinessByCategory', _businessTypeId: businessCat._id})" class="search-category-listing" ng-repeat="businessCat in rootScope.searchPanelBusinessCatsToShow" ng-class="{'half': businessCat.name == 'Nightclub' || businessCat.name == 'Bar'|| businessCat.name == 'Events Promoter', 'special': businessCat.name == 'Restaurant' || businessCat.name == 'Takeaway'}">
                         <div>
                             <span class="main-text" ng-show="businessCat.name !='Restaurant' && businessCat.name != 'Takeaway'">{{businessCat.name}}s</span>
                             <span class="main-text" ng-show="businessCat.name =='Restaurant' || businessCat.name == 'Takeaway'">{{businessCat.name}} Picker</span>
@@ -215,7 +215,7 @@
             </div>
             <div ng-show="rootScope.searchQuery.length > 0">
                 <ul>
-                    <li ui-sref="app.nlfeedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in rootScope.searchPanelResultsToShow">
+                    <li ui-sref="app.feedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in rootScope.searchPanelResultsToShow">
                         <img src="http://3.bp.blogspot.com/-zR75pEKCSSU/VYGjwNogrmI/AAAAAAAAA1Y/xgPrSXra3fE/s200-c/darts-102919_1280.jpg" />
                         <div class="listing-detail-container">
                             <span class="listing-name">{{result.name}}</span>
@@ -278,7 +278,7 @@ var map = L.skobbler.map('map', {
         </div> -->
             <div ng-include="'templates/feed-views/partials/townlife-search.html'"></div>
             <div id="centralContent">
-                <a class="tile feed-item" ng-repeat="feature in features" ui-sref="app.nlfeedListing({id:feature._id, type:feature.featureType})">
+                <a class="tile feed-item" ng-repeat="feature in features" ui-sref="app.feedListing({id:feature._id, type:feature.featureType})">
                     <img src="http://1.bp.blogspot.com/-IMsTheNxIqo/VYGjyM2hLiI/AAAAAAAAA1g/ZQO2uRgQSU4/s800/cappadocia-805624_1280.jpg" />
                     <span class="feature-info-dummy"></span>
                     
@@ -298,7 +298,7 @@ var map = L.skobbler.map('map', {
                     <span class="social-icon-bar-dummy">
                     </span>
                 </a>
-                <a class="tile feed-item" ng-repeat="feature in features" ui-sref="app.nlfeedListing({id:feature._id, type:feature.featureType})">
+                <a class="tile feed-item" ng-repeat="feature in features" ui-sref="app.feedListing({id:feature._id, type:feature.featureType})">
                     <img src="http://1.bp.blogspot.com/-IMsTheNxIqo/VYGjyM2hLiI/AAAAAAAAA1g/ZQO2uRgQSU4/s800/cappadocia-805624_1280.jpg" />
                     <span class="feature-info-dummy"></span>
                     

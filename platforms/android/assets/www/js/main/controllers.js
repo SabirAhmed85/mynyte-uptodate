@@ -4,10 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ionic.service.push', 'ImageCropper']);
+var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper']);
 
 // not necessary for a web based app // needed for cordova/ phonegap application
-app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher) {
+app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables) {
   
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,
@@ -46,7 +46,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       });
       
       socket.on('new-message', function (data) {
-        if ($rootScope.currentViewName != 'app.messageGroup' && $rootScope.currentViewName != 'app.messageGroup') {
+        if ($rootScope.currentViewName != 'app.profile.messageGroups.messageGroup' && $rootScope.currentViewName != 'app.profile.messageGroups.messageGroup') {
             $rootScope.currentUnreadMessage = data.newMessage;
             
             $rootScope.notificationReleaseTimer = window.setTimeout(function () {
@@ -77,6 +77,9 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       window.addEventListener("online", function() {
         $rootScope.$apply(function() {
           $rootScope.online = true;
+          if ($rootScope.userUpdateTimer == null) {
+            $rootScope.user = userObjectService.startUsersMessagesAndNotificationsUpdateTimer($rootScope.user);
+          }
         });
       }, false);
       
@@ -92,6 +95,10 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       
       /* Prepare All details for the user */
       $rootScope.userLoggedIn = false;
+      
+      $rootScope.$watch('userLoggedIn', function (newVal, oldVal, rootScope) {
+        $rootScope.profileSideViewTmp = (newVal == true) ? '/true.html': '/false.html';
+      });
       
       $rootScope.goToUpdate = function () {
         if ($rootScope.currentUnreadUpdate && $rootScope.currentUnreadUpdate != null) {
@@ -116,17 +123,50 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         });
     }
       
-      $rootScope.$broadcast('restorestate');
-      userService.model.user = userService.model.user || {};
-      $rootScope.user = userObjectService.createUserObject(userService.model.user);
+    $rootScope.$broadcast('restorestate');
+    userService.model.user = userService.model.user || {};
+    userService.model.introTooltipShownCount = userService.model.introTooltipShownCount || 0;
+    userService.model.adminUserLoggedIn = userService.model.adminUserLoggedIn || false;
       
-      if (($rootScope._userOneSignalId == 0 || typeof($rootScope._userOneSignalId) === 'undefined') && $rootScope.userLoggedIn) {
-        //Initialise background timers to get notifications and messages
+    $rootScope.showIntroTooltip = function () {
+        $rootScope.tooltips = [
+            {'text': 'Remember: click the icon to get MyNyte assistance whenever you want.'}
+        ];
+        
+        $rootScope.tooltipStage = 1;
+        $rootScope.currentTooltipText = $rootScope.tooltips[$rootScope.tooltipStage - 1].text;
+        $rootScope.tooltipShowing = true;
+    }
+
+    $rootScope.nextTooltipFunction = function  () {
+        $rootScope.tooltipStage += 1;
+        
+        if ($rootScope.tooltipStage > $rootScope.tooltips.length) {
+            $rootScope.closeIntroTooltip();
+        }
+        else {
+            $rootScope.currentTooltipText = $rootScope.tooltips[$rootScope.tooltipStage - 1].text;
+        }
+    }
+
+    $rootScope.closeIntroTooltip = function () {
+        userService.model.introTooltipShownCount += 1;
+        $rootScope.$broadcast('savestate');
+        $rootScope.tooltipShowing = false;
+    }
+    
+    if (userService.model.introTooltipShownCount < 1) {
+        $rootScope.showIntroTooltip();
+    }
+
+    $rootScope.user = userObjectService.createUserObject(userService.model.user);
+
+    if (($rootScope._userOneSignalId == 0 || typeof($rootScope._userOneSignalId) === 'undefined') && $rootScope.userLoggedIn) {
+    //Initialise background timers to get notifications and messages
         $rootScope.user = userObjectService.startUsersMessagesAndNotificationsUpdateTimer($rootScope.user);
-      }
-      
-      
-      
+    }
+
+    $rootScope.adminUserLoggedIn = userService.model.adminUserLoggedIn;
       
       //Initialise View Variables
       $rootScope.initialiseCategories = function () {
@@ -141,6 +181,41 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       }
       
       $rootScope.initialiseCategories();
+
+      $rootScope.getAndroidImage = function (params) {
+        var idealImgW = (params.imgEntryType == "cover_photo") ? 480: 320,
+          idealImgH = (params.imgEntryType == "cover_photo") ? 480: 320;
+        if (params.imgEntryType == 'cover_photo') {
+          navigator.camera.getPicture(onSuccess, onFail, 
+          { 
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            correctOrientation: true
+          });
+        } else {
+          navigator.camera.getPicture(onSuccess, onFail, 
+          { 
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            correctOrientation: true,
+            targetWidth: 320,
+            targetHeight: 320,
+            allowEdit: true
+          });
+        }
+
+        function onSuccess(imageData) {
+          console.log(imageData);
+          $rootScope.file = imageData;
+          $rootScope.files = [$rootScope.file];
+          $rootScope.getFile({onComplete: params.onComplete});
+          // upload image to server code goes here
+        }
+
+        function onFail(message) {
+          console.log('Failed because: ' + message);
+        }
+      }
       
       $rootScope.nightFinderListingTypes = [
           {name: 'Bar/Club', displayIndex: -1, className: 'cluborbar', selected: false},
@@ -151,7 +226,14 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       ];
       $rootScope.currentSelectedListingTypeToFind = 'clubnight';
       
-      $rootScope.debugMode = false;
+      $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
+      $rootScope.underConstruction = (EnvironmentVariables.DebugMode && EnvironmentVariables.IntendedPlatform == 'browser' && EnvironmentVariables.IntendedEnvironment == 'Live') ? true : false;
+      $rootScope.metaContent = EnvironmentVariables.MetaContent;
+      $rootScope.rootUrl = EnvironmentVariables.RootUrl;
+      $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
+      $rootScope.assetsFolderRelUrl = EnvironmentVariables.AssetsFolderRelUrl;
+      $rootScope.debugMode = EnvironmentVariables.DebugMode;
+
       $rootScope.relListing = null;
       $rootScope.nightFindSlideLocked = false;
       $rootScope.messageGroupTimer = null;
@@ -183,6 +265,159 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       $rootScope._userOneSignalId = 0;
       $rootScope.userUpdateTimer = null;
       
+      $rootScope.todaysMovies = [];
+      $rootScope.todaysOffers = [];
+      
+      $rootScope.nlfeedListingsUrl = ($rootScope.intendedPlatform == 'browser') ? 'app.feedListings': 'app.feed.nlfeedListings';
+      $rootScope.nlfeedListingsUrl = ($rootScope.intendedPlatform == 'browser') ? 'app.feedListings': 'app.feed.nlfeedListings';
+      
+      //Load Side Bar Data
+    
+      $rootScope.initiateBottomRightImg = function () {
+        $rootScope.bottomRightImgArray = [
+            {src: "/sneak-preview/img/download-the-mynyte-app.png",
+            show: true,
+            class: "",
+            href: "/sneak-preview/img/download-the-mynyte-app.png"}
+            /*,{src:"/sneak-preview/img/download-the-mynyte-app.png",
+            show: false,
+            class: "absolute",
+            href: "http://theparkbedford.co.uk/garden-room/"}*/
+        ];
+        $timeout($rootScope.switchBottomRightImg, 30000);
+      }
+
+      $rootScope.switchBottomRightImg = function () {
+        for (a = 0; a < $rootScope.bottomRightImgArray.length; a++) {
+            if ($rootScope.bottomRightImgArray[a].show) {
+                var i = (a == $rootScope.bottomRightImgArray.length - 1) ? 0: a+1;
+        
+                $rootScope.bottomRightImgArray[a].show = false;
+                $timeout(function () {
+                    $rootScope.bottomRightImgArray[i].show = true;
+                    if ($rootScope.bottomRightImgArray.length > 1) {
+                        $timeout($rootScope.switchBottomRightImg, 30000);
+                    }
+                }, 400);
+            }
+        }
+      }
+
+      $rootScope.initiateBottomRightImg();
+
+      $rootScope.initiateThisWeeksItemsForWebDisplay = function () {
+        var offerSubCatClassObject = {
+            "Takeaway Deals" : "ion-cube",
+            "Restaurant Deals" : "ion-fork",
+            "Drinks Deals" : "ion-wineglass"
+        };
+        var formatItems = function (items, type) {
+            for (var a = 0; a < items.length; a++) {
+                items[a].show = (a == 0) ? true: false;
+                if (type == 'Offers') {
+                    items[a].offerSubCategoryClass = offerSubCatClassObject[items[a].offerSubCategoryName];
+                }
+                if (a == items.length - 1) {
+                    return items;
+                }
+            }
+        }
+
+        var getTodaysMoviesForWideDisplay = function () {
+            Movies.getTodaysMoviesForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                $rootScope.todaysMovies = formatItems(successData, 'Movies');
+            }).error(function (errorData) {
+                getTodaysMoviesForWideDisplay();
+            });
+        }
+        
+        
+        var getTodaysOffersForWideDisplay = function () {
+            Offers.getTodaysOffersForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                $rootScope.todaysOffers = formatItems(successData, 'Offers');
+            }).error(function (errorData) {
+                getTodaysOffersForWideDisplay();
+            });
+        }
+        
+        getTodaysMoviesForWideDisplay();
+        getTodaysOffersForWideDisplay();
+        
+        $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+            $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+        }, 5000);
+        
+        $rootScope.nextTodayOfferTimer = $timeout(function () {
+            $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+        }, 5000);
+      };
+
+      $rootScope.changeItemsForWideDisplay = function (itemType, itemToShow, items, state) {
+        var i = 0;
+        var itemArray = items;
+        for (a = 0; a < itemArray.length; a++) {
+            var changeItemState = function (i) {
+                itemArray[i].show = false;
+                if (i == itemArray.length - 1 && itemToShow == 'next') {
+                    itemArray[0].show = true;
+                }
+                else if (i == 0 && itemToShow == 'prev') {
+                    itemArray[itemArray.length - 1].show = true;
+                }
+                else if (i > 0 && itemToShow == 'prev') {
+                    itemArray[i - 1].show = true;
+                }
+                else if (i < itemArray.length - 1 && itemToShow == 'next') {
+                    itemArray[i + 1].show = true;
+                }
+        
+                if (itemType == 'Offers') {
+                    $rootScope.todaysOffers = itemArray;
+                    if (state == 'manual') {
+                        $timeout.cancel($rootScope.nextTodayOfferTimer);
+                    }
+                    $rootScope.nextTodayOfferTimer = $timeout(function () {
+                        $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+                    }, 5000);
+                }
+                else if (itemType == 'Movies') {
+                    $rootScope.todaysMovies = itemArray;
+                    if (state == 'manual') {
+                        $timeout.cancel($rootScope.nextThisWeekMovieTimer);
+                    }
+                    $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+                        $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+                    }, 5000);
+                }
+            }
+        
+            if (itemArray[a].show) {
+                i = a;
+            }
+        
+            if (a == itemArray.length - 1) {
+                changeItemState(i);
+            }
+        }
+      };
+      
+      $rootScope.goToTodaysItem = function (type, _id) {
+        if (type == 'Offer') {
+            $state.go('app.offers');
+            $timeout(function () {
+                $state.go('app.offers.offerDetail', {'_id': _id});
+            }, 150);
+        }
+        else if (type == 'Movie') {
+            $state.go('app.feed');
+            $timeout(function () {
+                $state.go('app.feed.nlfeedListing', {'_listingId': _id, 'listingType': 'Movie'});
+            }, 150);
+        }
+      }
+
+      $rootScope.initiateThisWeeksItemsForWebDisplay();
+      
       $scope.pageLoad();
     }
     
@@ -201,18 +436,24 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         
         appInit($scope);
     }
+    
   //$cordovaStatusBar.style = 1; //Light
   $ionicPlatform.ready(function(datesWorkerFS) {
+
+$timeout(function () {
+    //Workaround suggested to get around random no-load error
+    var hideSplash = function () {
+        if (navigator.splashscreen) {
+            setTimeout(function() {
+                navigator.splashscreen.hide();
+            }, 10);
+        };
+    }
+    document.addEventListener("deviceready", hideSplash, false);
+    
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-    
     ngFB.init({appId: '1633788096937299'});
-    
-    if (navigator.splashscreen) {
-        setTimeout(function() {
-            navigator.splashscreen.hide();
-        }, 10);
-    };
     
     var cordovaPluginCheckCounter = 0;
     var checkForCordovaPlugins = function(){
@@ -227,13 +468,14 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
             return false;
         }
         if (cordova.plugins == null) {
-            //console.log("Cordova plugins not Found");
             countAgain();
             return false;
         }
         
         if (cordova.plugins.Keyboard) {
-            cordova.plugins.Keyboard.disableScroll(true);
+            if ($rootScope.intendedPlatform != 'browser') {
+                cordova.plugins.Keyboard.disableScroll(true);
+            }
         }
         else {
             countAgain();
@@ -251,9 +493,9 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
                 navFunction: function () {
                     $state.go('app.profile');
                     window.setTimeout(function () {
-                        $state.go('app.messageGroups', {'groupType': data.msgGroupType});
+                        $state.go('app.profile.messageGroups', {'groupType': data.msgGroupType});
                         window.setTimeout(function () {
-                            $state.go('app.messageGroup', {'_id': data._msgGroupId, 'groupType': data.msgGroupType});
+                            $state.go('app.profile.messageGroups.messageGroup', {'_id': data._msgGroupId, 'groupType': data.msgGroupType});
                         }, 300);
                     }, 500);
                     
@@ -293,14 +535,14 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
             },
             goToFeedListingItem: {
                 navFunction: function () {
-                    $state.go('app.nlfeedListing', {'listingType': data.businessItemType, '_listingId': data._businessItemId});
+                    $state.go('app.feed.nlfeedListing', {'listingType': data.businessItemType, '_listingId': data._businessItemId});
                 }
             },
             goToOffer: {
                 navFunction: function () {
                     $state.go('app.offers');
                     window.setTimeout(function () {
-                        $state.go('app.offerDetail', {'_id': data._businessItemId});
+                        $state.go('app.offers.offerDetail', {'_id': data._businessItemId});
                         
                     }, 500);
                 }
@@ -353,7 +595,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
                 $rootScope._userOneSignalId = successData[0]._oneSignalId;
                 $rootScope.user._oneSignalId = successData[0]._oneSignalId;
                 userService.model._oneSignalId = $rootScope._userOneSignalId;
-                $rootScope.makeUserActive($rootScope.user._profileId, $rootScope._userOneSignalId);
+                //$rootScope.makeUserActive($rootScope.user._profileId, $rootScope._userOneSignalId);
                 $rootScope.$broadcast('savestate');
               }).error(function (errorData) {
                 createOneSignalId(_userProfileId);
@@ -369,7 +611,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       //window.plugins.OneSignal.setLogLevel({logLevel: 6, visualLevel: 6});
     };
     
-    if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
+    if ((ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) && $rootScope.intendedPlatform != 'browser') {
         var oneSignalCheckCounter = 0;
         var checkForOneSignal = function(){
             var countAgain = function () {
@@ -379,13 +621,13 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
                 }
             }
             if (window.plugins == null) {
-                if ($rootScope.debugMode) {console.log("window plugins not Found");}
+                //$rootScope.debugModeLog({'msg': 'window plugins not found', 'data': []});
                 countAgain();
                 return false;
             }
             
             if (window.plugins.OneSignal) {
-                if ($rootScope.debugMode) {alert("onesignal Ready");}
+                //$rootScope.debugModeLog({'msg': 'oneSignal ready', 'data': []});
                 oneSignalReady();
             } else {
                 countAgain();
@@ -468,6 +710,12 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     $rootScope.clearAllExpiredTransactions();
     
     // DEFAULT ROOTSCOPE VARIABLES
+    $rootScope.debugModeLog = function (params) {
+        if ($rootScope.debugMode) {
+            console.log(params.msg + ': ', params.data);
+        }
+    }
+    
     $rootScope.topRightButtonFunction = function () {
         //JUST Temporary until the clock Button becomes the default function
         $rootScope.showHeaderButtonsFunction();
@@ -479,17 +727,17 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
     $rootScope.allTabsObject = [
         {mainView: "app.profile",
-        subViews: ["app.resetPassword", "app.registerIntro", "app.register", "app.notificationsSummary", "app.notification", "app.messageGroups", "app.messageGroup", "app.accountSettings", "app.accountSettingsAdvanced", "app.businessItems", "app.addBusinessItem", "app.businessItem", "app.businessItemSettings", "app.contacts", "app.addContact", "app.contactDetail", "app.profileItems", "app.addProfileItem", "app.contactMyNyte"]},
+        subViews: ["app.resetPassword", "app.registerIntro", "app.register", "app.profile.notificationsSummary", "app.profile.notification", "app.profile.messageGroups", "app.profile.messageGroups.messageGroup", "app.accountSettings", "app.accountSettingsAdvanced", "app.businessItems", "app.addBusinessItem", "app.businessItem", "app.businessItemSettings", "app.contacts", "app.addContact", "app.contactDetail", "app.profile.profileItems", "app.addProfileItem", "app.contactMyNyte"]},
         {mainView: "app.offers",
-        subViews: ["app.offerDetail"]},
-        {mainView: "app.nlfeed",
-        subViews: ["app.nlfeedListing", "app.nlfeedListing", "app.nlfeedListing-photos", "app.nlfeedListing-specific-photos", "bookTable", "app.bookTickets", "app.seeTrailer", "app.seeMenu", "app.seeMenuItems", "app.seeBusinessItems", "app.seeBusinessMenuItems", "app.completeTakeawayOrder"]},
+        subViews: ["app.offers.offerDetail"]},
+        {mainView: "app.feed",
+        subViews: ["app.feed.nlfeedListings", "app.feed.nlfeedListing", "app.feedListing-photos", "app.feedListing-specific-photos", "app.bookTable", "app.bookTickets", "app.seeTrailer", "app.seeMenu", "app.seeMenuItems", "app.seeBusinessesItems", "app.seeBusinessMenuItems", "app.completeTakeawayOrder"]},
         {mainView: "app.taxi",
         subViews: []},
         {mainView: "app.more",
         subViews: []}
     ];
-        
+    
     $rootScope.initialBackButtonFunction = function () {
         if ($ionicHistory.backTitle()) {
             $ionicHistory.goBack();
@@ -510,82 +758,107 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
     $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
     
+    $rootScope.Platform = ionic.Platform;
+
     $rootScope.showGlobalTownSelect = false;
     $rootScope.currentlyEditing = false;
     $rootScope.showSearchPanel = false;
     $rootScope.hideSearchClearButton = true;
     $rootScope.nightSearchOpen = true;
     $rootScope.showTheWhatsOpenFunction = true;
-    $rootScope.hideSearch = false;
     $rootScope.searchInputPlaceholder = 'Search by name';
+    $rootScope.hideSearch = false;
     $rootScope.searchOnRight = false;
     $rootScope.showAssistantButton = true;
     $rootScope.assistantButtonActive = true;
     $rootScope.showAssistantPanel = false;
     $rootScope.previousStateName = "nlfeed";
-    $rootScope.searchQuery = "";
+    $rootScope.searchForm = {searchQuery: ""};
     
     $rootScope.searchPanelBusinessCatsToShow = [];
     $rootScope.searchPanelResultsToShow = [];
+
+    /*Fuctions for Admins*/
+    if ($rootScope.underConstruction && $rootScope.intendedPlatform == 'browser') {
+      $rootScope.adminLoginForm = {email: "", password: ""};
+      $rootScope.showAdminLogInForm = false;
+      $rootScope.adminLogIn = function (email, pword) {
+        $rootScope.appLoading = true;
+        Profile.logIn(email, pword).success(function (successData) {
+          $rootScope.debugModeLog({'msg': 'Controller adminLogIn successData: ', 'data': successData});
+          if (successData != 'null' && successData != undefined && successData != '' && successData != null && successData[0].listingType1 == 'myNyte') {
+              $ionicScrollDelegate.scrollTop();
+              $rootScope.adminUserLoggedIn = true;
+              userService.model.adminUserLoggedIn = true;
+              $rootScope.$broadcast('savestate');
+              $rootScope.appLoading = false;
+          }
+          else {
+              $ionicPopup.show({
+                  title: 'Couldn\'t Log In',
+                  template: '<p>The log-in details you provided did not work or do not belong to an Admin user. Please check them and try again.</p>',
+                  scope: $rootScope,
+                  buttons: [
+                      { 
+                          text: 'Close'
+                      }
+                  ]
+              });
+              $rootScope.appLoading = false;
+          }
+        }).error(function (errorData) {
+          $rootScope.debugModeLog({'msg': 'ProfileCtrl logIn errorData: ', 'data': errorData});
+          $rootScope.adminLogIn(email, pword);
+        });
+      }
+
+      $rootScope.adminLogOut = function () {
+        $rootScope.adminUserLoggedIn = false;
+        userService.model.adminUserLoggedIn = false;
+        $rootScope.$broadcast('savestate');
+      }
+    }
     
     /* Functions for top header bar utility */
     $rootScope.openAssistant = function () {
         if (!$rootScope.assistantButtonActive) {return false};
             //$rootScope.$apply();
-        
+        $rootScope.showingAssistant = true;
+        $timeout(function () {$rootScope.showingAssistant = false;}, 180);
+            
+        var imgRoot = 'sneak-preview/img/assistant_images/';
         var assistantDisplayConfig = {
-            'app.nlfeed': {
-                'header-img': 'bayleaf.jpg',
+            'app.feed': {
                 'detail-img-array': [
-                    {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/bayleaf.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/alamin.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/el-greco.jpg'}]
+                    {'src': imgRoot + 'feed/1.png'}
+                    , {'src': imgRoot + 'feed/2.png'}
+                    , {'src': imgRoot + 'feed/3.png'}]
             },
             'app.profile': {
-                'header-img': 'bayleaf.jpg',
                 'detail-img-array': [
-                    {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/alamin.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/bayleaf.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/el-greco.jpg'}]
+                    {'src': imgRoot + 'mynyte/1.png'}
+                    , {'src': imgRoot + 'mynyte/2.png'}
+                    , {'src': imgRoot + 'mynyte/3.png'}]
             },
             'app.offers': {
-                'header-img': 'bayleaf.jpg',
                 'detail-img-array': [
-                    {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/bayleaf.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/alamin.jpg'}]
+                    {'src': imgRoot + 'offers/1.png'}
+                    , {'src': imgRoot + 'offers/2.png'}
+                    , {'src': imgRoot + 'offers/3.png'}]
             },
             'app.taxi': {
-                'header-img': 'bayleaf.jpg',
                 'detail-img-array': [
-                    {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/bayleaf.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/alamin.jpg'}
-                    , {'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/el-greco.jpg'}]
+                    {'src': imgRoot + 'taxi/1.png'}
+                    , {'src': imgRoot + 'taxi/2.png'}]
             }
         }
         
         $rootScope.allPopoverImages = assistantDisplayConfig[$rootScope.currentViewName]['detail-img-array'];
         $rootScope.showPopoverImages(0);
-        
-        $rootScope.topRightButtonFunction = function () {
-            $rootScope.hideAssistant($rootScope);
-        }
-        
-        $rootScope.searchActive = false;
-    }
-    
-    $rootScope.hideAssistant = function () {
-        $rootScope.showAssistantPanel = ($rootScope.hideSearch) ? false: $rootScope.showAssistantPanel;
-        
-        if ($rootScope.hideSearch && $rootScope.currentViewName == 'app.nlfeed') {
-            $rootScope.searchActive = true;
-        }
-        
-        $rootScope.topRightButtonFunction = ($rootScope.currentViewName != 'app.nlfeed') ? $rootScope.topRightButtonFunction : function () {
-            $rootScope.showHeaderButtonsFunction();
-        };
     }
     
     $rootScope.showSearchPanelFunc = function () {
+        if ($rootScope.showSearchPanel) {return false;}
         var getProfiles = function () {
             Profile.getProfiles($rootScope.currentSearchTown._id).success(function (successData) {
                 var businessCatsToShow = [];
@@ -619,7 +892,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
             $rootScope.hideSearchPanel();
         }
         
-        $rootScope.searchQuery = "";
+        $rootScope.searchForm = {searchQuery: ""};
         $rootScope.searchInputPlaceholder = 'Search all places, people & events...';
         $rootScope.hideSearchClearButton = false;
         $rootScope.showAssistantButton = false;
@@ -631,13 +904,13 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         if (!$rootScope.showSearchPanel) {
             return false;
         }
-        $rootScope.searchPanelResultsToShow = [];
-        $rootScope.searchQuery = searchQuery;
+        //$rootScope.searchForm.searchQuery = searchQuery;
         
         Profile.getListingsByName($rootScope.currentSearchTown._id, searchQuery).success(function (successData) {
             if (successData != 'null' && successData != null) {
                 for (a = 0; a < successData.length; a++) {
                   listingsService.createListingTypesObjForListing(successData[a]);
+                  successData[a].currentPhotoAlbum = (successData[a].listingType == 'Movie') ? 'cover_photo/thumbnail': 'profile_photo';
                 }
                 $rootScope.searchPanelResultsToShow = successData;
             }
@@ -646,12 +919,10 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         });
     };
     $rootScope.clearSearchInput = function () {
-        $rootScope.searchQuery = "";
-        $('#search-input').val("");
+        $rootScope.searchForm = {searchQuery: ""};
     }
     $rootScope.hideSearchPanel = function () {
-        $rootScope.searchQuery = "";
-        $('#search-input').val("");
+        $rootScope.searchForm = {searchQuery: ""};
         $rootScope.searchPanelResultsToShow = [];
         $rootScope.searchInputPlaceholder = 'Search by name';
         $rootScope.showSearchPanel = false;
@@ -682,7 +953,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     };
     
     $rootScope.fillRecipientSearchResults = function (results, $scope, chosenRecipientsArray, possRecipientsArray) {
-        if ($rootScope.debugMode) {console.log(results);};
+        $rootScope.debugModeLog({'msg': 'rootScope fillRecipientSearchResults successData', 'data': results});
         if (results == null || results.length == 0 || results == 'null') {
             results = [];
         }
@@ -709,8 +980,14 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         $rootScope.appLoading = true;
         
         Profile.getAllOpenBusinessAccountsByTown($rootScope.currentSearchTown._id, $rootScope.currentSearchBusinessType._id).success(function (successData) {
-            if (successData != null) {
-                $rootScope.searchPanelResultsToShow = successData;
+            if (successData != null && successData != 'null') {
+                for (a = 0; a < successData.length; a++) {
+                    successData[a].currentPhotoAlbum = 'profile_photo';
+                    
+                    if (a == successData.length - 1) {
+                        $rootScope.searchPanelResultsToShow = successData;
+                    }
+                }
             }
             else {
                 $rootScope.searchPanelResultsToShow = [];
@@ -811,7 +1088,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     $rootScope.handleListingsToUpdateInteractions = function (features, args) {
         for (a = 0; a < features.length; a++) {
             var relId = (features[a].listingType == 'Event' || features[a].listingType == 'Offer' || features[a].listingType == 'Movie') ? features[a].relListingId: features[a]._profileId;
-            
+         
             if (relId == args._listingId && features[a].listingType == args.listingType) {
                 var relIndex = a;
                 
@@ -838,11 +1115,12 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     }
     
     $rootScope.pinListingToMessage = function ($event, listing, listingType, listingSpecItemId, $scope) {
+    
         if ($rootScope.userLoggedIn) {
             $rootScope.backButtonFunction = function () {
-                if ($ionicHistory.currentStateName == "app.messageGroups") {
+                if ($ionicHistory.currentStateName == "app.profile.messageGroups") {
                     $state.go('app.profile');
-                    var timer = window.setTimeout(function () {$state.go('app.nlfeed');}, 320);
+                    var timer = window.setTimeout(function () {$state.go('app.feed');}, 320);
                 }
                 else {
                     $ionicHistory.goBack();
@@ -852,10 +1130,19 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
             listing.relListingTypeAlias = (listingType.indexOf('Businesses') > -1) ? listingType.substr(listingType.indexOf('Businesses')+ 10, listingType.length) : listingType.substr(listingType.indexOf('Events')+ 6, listingType.length);
             listing.relListingTypeAlias = (listing.relListingTypeAlias == "") ? listingType: listing.relListingTypeAlias;
             listing.relListingSpecItemId = listingSpecItemId;
+            if (listing.listingType == 'Offer') {
+                listing.date = listing.endDateTimeString;
+            }
+            else if (listing.date) {
+                listing.date = (!listing.weekday) ?
+                        datesService.convertToDate($scope, new Date(listing.date.split(' ')[0] ) ) :
+                        listing.weekday + ', weekly';
+            }
+            
             $rootScope.relListing = listing;
             $rootScope.currentMessageInputPlaceholder = "Add a caption (optional) ...";
             $state.go('app.profile');
-            var timer = window.setTimeout(function () {$state.go('app.messageGroups', {'relListing': listing, 'groupType': 'Person'});}, 240);
+            var timer = window.setTimeout(function () {$state.go('app.profile.messageGroups', {'relListing': null, 'groupType': 'Person'});}, 240);
             $event.stopPropagation();
             $event.preventDefault();
         } else {
@@ -927,8 +1214,6 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     };
  
 	$rootScope.showPopoverImages = function(index) {
-        window.screen.unlockOrientation();
-        
 		$rootScope.activeSlide = index;
 		$rootScope.showPopoverModal('templates/shared-partials/image-popover.html');
 	}
@@ -948,8 +1233,6 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
         if (window.screen.lockOrientation) { window.screen.lockOrientation('portrait'); }
 		$rootScope.modal.hide();
 		$rootScope.modal.remove();
-        
-        $rootScope.hideAssistant();
 	};
     
     $rootScope.selectExtraOption = function (chosenOptionItem, $event, obj) {
@@ -985,14 +1268,15 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     }
     
     $rootScope.checkIfDisplayNameTaken = function (displayName, $scope) {
-        if (displayName.length > 4) {
-            Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
-                $scope.displayNameTaken = (parseInt(result["total"]) > 0) ? true: false;
-            }).error(function () {
-                $rootScope.checkIfDisplayNameTaken(displayName, $scope);
-            });
-        }
+      if (displayName.length > 4) {
+        Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
+          $scope.displayNameTaken = (parseInt(result["total"]) == 0) ? false: true;
+        }).error(function () {
+          $rootScope.checkIfDisplayNameTaken(displayName, $scope);
+        });
+      }
     }
+}, 100)
     
   });
 });
@@ -1021,9 +1305,15 @@ app.config(function($sceDelegateProvider) {
 
 // config to disable default ionic navbar back button text and setting a new icon
 // logo in back button can be replaced from /templates/sidebar-menu.html file
-app.config(function($ionicConfigProvider) {
+app.config(function($ionicConfigProvider, $compileProvider) {
+    if (!ionic.Platform.isAndroid() && !ionic.Platform.isIOS()) {
+      $ionicConfigProvider.views.transition('fade-in-out');
+    }
+    $ionicConfigProvider.views.maxCache(5);
+    //$ionicConfigProvider.scrolling.jsScrolling(false);
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.backButton.text('').icon('ion-ios-arrow-back').previousTitleText(false);
+    $compileProvider.debugInfoEnabled(false);
 })
 
     /* INTRODUCE WHEN CREATED
@@ -1155,7 +1445,11 @@ app.controller('PopupCtrl',function($scope, $ionicPopup, $timeout) {
                  text: '<b>Save</b>',
                  type: 'button-positive',
                  onTap: function(e) {
-                   $scope.createOptionChoice();
+                    if ($scope.currentOptionBeingAdded.name == '' || $scope.currentOptionBeingAdded.name == null) {
+                        e.preventDefault();
+                    } else {
+                        $scope.createOptionChoice();
+                    }
                  }
                },
              ]

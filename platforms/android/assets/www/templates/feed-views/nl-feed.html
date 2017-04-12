@@ -1,4 +1,4 @@
-<ion-view view-title="MyNyte | Find your night in Bedford; Clubs, bars, restaurants, takeaways &amp; movies." class="black_bg nl-feed">
+<ion-view view-title="MyNyte | Find your night in Bedford; Clubs, bars, restaurants, takeaways &amp; movies." class="black_bg nl-feed no-breadcrumb">
   	<ion-content
         ng-class="{'bg-blur': rootScope.showSearchPanel || rootScope.showAssistantPanel}">
        <!-- <div class="list">
@@ -58,95 +58,6 @@ var map = L.skobbler.map('map', {
                 </h2>
                 
                 <div id="searchBox-toggle open">
-                    <style>
-                        #searchBox h2 {
-                            padding-bottom: 7px;
-                            height: 50px;
-                            overflow: hidden;
-                        }
-                    
-                        #searchBox h2 span.hidden {
-                            width: 0;
-                            padding-left: 0;
-                            padding-right: 0;
-                            overflow: hidden;
-                            border: none;
-                            max-width: 0;
-                        }
-                    
-                        #searchBox h2 span .text {
-                            font-size: 15px;
-                            margin-top: 0;
-                        }
-                    
-                        #searchBox h2 i {
-                            margin-top: 0px;
-                            font-size: 23px;
-                        }
-                    
-                        #searchBox-toggle {
-                            max-height: 0;
-                            overflow: hidden;
-                        }
-                        #searchBox-toggle.open {
-                            max-height: 168px;
-                        }
-                    
-                        #searchbox-categories .ion-arrow-left-b {
-                            float: left;
-                            margin-right: 10px;
-                        }
-                        #searchbox-categories .ion-arrow-right-b {
-                            float: right;
-                            margin-left: 10px;
-                        }
-                    
-                        div#searchbox-categories i {
-                            margin-top: 1px;
-                            color: #565252;
-                            z-index: 1000;
-                            position: relative;
-                        }
-                    
-                        .middle-cat {
-                            color: #fdd;
-                        }
-                    
-                        #triangle {
-                            position: absolute;
-                            bottom: -7px;
-                            width: 0;
-                            height: 0;
-                            border-style: solid;
-                            border-width: 7px 7px 0 8px !important;
-                            border-color: #2b2b2b transparent transparent transparent;
-                            left: calc(50% - 7px);
-                        }
-                    
-                        #searchBox-inner label {
-                            margin-top: 6px;
-                            margin-bottom: 3px;
-                        }
-                    
-                        #feed-triangle {
-                            position: absolute;
-                            bottom: -1px;
-                            width: 0 !important;
-                            height: 0;
-                            border-style: solid;
-                            border-width: 0 10px 10px 10px !important;
-                            border-color: transparent transparent #551111 transparent;
-                            left: calc(50% - 15px);
-                        }
-                    
-                        #updateBox-toggle span.activated i {
-                            width: 53px !important;
-                            height: 53px !important;
-                            font-size: 42px !important;
-                            margin-right: -2px;
-                            margin-top: -1px;
-                        }
-                    </style>
                     <div id="searchbox-categories">
                         <i class="ion-arrow-left-b"></i>
                         <div class="nightfinder-horizontal-slider">
@@ -187,7 +98,7 @@ var map = L.skobbler.map('map', {
             
             <a class="tile dummy-tile feed-item">
                 <div class="main-img-container">
-                    <img class="main-img" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/default.jpg">
+                    <img class="main-img" ng-src="/sneak-preview/img/user_images/cover_photo/default.jpg">
                 </div>
                 <span class="feature-info-dummy">
                     <span class="dummy-label blink"></span>
@@ -198,7 +109,7 @@ var map = L.skobbler.map('map', {
             </a>
             <a class="tile dummy-tile feed-item">
                 <div class="main-img-container">
-                    <img class="main-img" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/default.jpg">
+                    <img class="main-img" ng-src="/sneak-preview/img/user_images/cover_photo/default.jpg">
                 </div>
                 <span class="feature-info-dummy">
                     <span class="dummy-label blink"></span>
@@ -220,7 +131,4 @@ var map = L.skobbler.map('map', {
       
   </ion-content>
   
-  <div class="feed-side side" ng-include="'templates/shared-partials/profile-info-sidebar.html'"></div>
-  <div class="feed-side side" ng-include="'templates/shared-partials/offers-sidebar.html'"></div>
-  <div class="feed-side side" ng-include="'templates/shared-partials/whats-open-sidebar.html'"></div>
 </ion-view>

@@ -60,108 +60,6 @@
         </div>
     </div>
     <div id="searchBox-toggle" class="trans" ng-class="{'open': rootScope.showNightLifeSearch}">
-        <style>
-            #searchBox h2 {
-                padding-bottom: 7px;
-                height: 50px;
-                overflow: hidden;
-            }
-        
-            #searchBox h2 span.hidden {
-                width: 0;
-                padding-left: 0;
-                padding-right: 0;
-                overflow: hidden;
-                border: none;
-                max-width: 0;
-            }
-        
-            #searchBox h2 span .text {
-                font-size: 15px;
-                margin-top: 0;
-            }
-        
-            #searchBox h2 i {
-                margin-top: 0px;
-                font-size: 23px;
-            }
-        
-            #searchBox-toggle {
-                max-height: 0;
-                overflow: hidden;
-                border-top: 1px solid #383737;
-            }
-            #searchBox-toggle.open {
-                max-height: 168px;
-                border-top: 1px solid #111;
-            }
-        
-            #searchbox-categories .ion-arrow-left-b {
-                float: left;
-                margin-right: 10px;
-            }
-            #searchbox-categories .ion-arrow-right-b {
-                float: right;
-                margin-left: 10px;
-            }
-        
-            div#searchbox-categories {
-                width: 100%;
-                float: left;
-                padding: 4px 2.5% 4px;
-                background: #222222;
-                border-bottom: 1px solid #2b2b2b;
-                color: #ccc;
-                position: relative;
-                font-weight: normal;
-                font-size: 13px;
-            }
-        
-            div#searchbox-categories i {
-                margin-top: 1px;
-                color: #565252;
-                z-index: 1000;
-                position: relative;
-            }
-        
-            .middle-cat {
-                color: #fdd;
-            }
-        
-            #triangle {
-                position: absolute;
-                bottom: -7px;
-                width: 0;
-                height: 0;
-                border-style: solid;
-                border-width: 7px 7px 0 8px !important;
-                border-color: #2b2b2b transparent transparent transparent;
-                left: calc(50% - 7px);
-            }
-        
-            #searchBox-inner label {
-                margin-top: 5px;
-            }
-        
-            #feed-triangle {
-                position: absolute;
-                bottom: -1px;
-                width: 0 !important;
-                height: 0;
-                border-style: solid;
-                border-width: 0 10px 10px 10px !important;
-                border-color: transparent transparent #551111 transparent;
-                left: calc(50% - 15px);
-            }
-        
-            #updateBox-toggle span.activated i {
-                width: 53px !important;
-                height: 53px !important;
-                font-size: 42px !important;
-                margin-right: -2px;
-                margin-top: -1px;
-            }
-        </style>
         <div id="searchbox-categories">
             <i class="ion-arrow-left-b"></i>
             <div class="nightfinder-horizontal-slider slow-trans">
@@ -237,153 +135,6 @@
     </div>
 </div>
 
-
-<style>
-    .feed-header {
-        margin-top: 7px;
-        background-color: #121212;
-        border-bottom: 1px solid #1F0202;
-        padding: 5px 7px 5px 9px;
-        float: right;
-    }
-    .feed-header.closed {
-        padding-bottom: 9px;
-        padding-top: 9px;
-        background: none;
-        border-bottom: none;
-        border-top: none;
-        margin-top: 0;
-    }
-    .feed-header.movies,
-    .feed-header.food,
-    .feed-header.events {
-        border-top: 1px solid #403C3C;
-    }
-
-    .feed-header .now-showing-label {
-        float: left;
-        width: 100%;
-        border-bottom: 1px solid #2F2828;
-        margin-bottom: 7px;
-        color: #E8E8E8;
-    }
-
-    .feed-header .main-feed-town-label {
-        float: left;
-        color: #999;
-        height: 15px;
-        margin-top: 15px;
-    }
-
-    .feed-header i {
-        width: 40px;
-        color: #b7b2b2;
-        font-size: 29px;
-        border: 1px solid #464242;
-        border-radius: 17px;
-        width: 33px;
-        height: 33px;
-        padding: 2px 12px;
-        background: #212020;
-        box-shadow: 0px 1px 1px rgba(13, 13, 31, 0.4);
-        float: left;
-        margin-right: 0;
-    }
-    .feed-header .main-feed-town-label i{
-        float: right;
-        background: none;
-        border: none;
-        font-size: 13px;
-        margin-top: -1px;
-        color: #bbb;
-    }
-    .feed-header i.food-icon {
-        margin-right: 10px;
-    }
-    .feed-header i.movies-icon {
-        margin-left: 0;
-        float: left;
-        font-size: 24px;
-        padding: 3px 6px;
-    }
-    .feed-header i.events-icon {
-        font-size: 28px;
-        padding: 2px 8px;
-        margin-right: 10px;
-    }
-
-    .feed-header.movies i.movies-icon {
-        margin-right: 10px;
-    }
-
-    .feed-header .feed-header-title {
-        font-size: 14px;
-        margin-top: -3px;
-        float: left;
-        text-transform: uppercase;
-        width: calc(100% - 43px);
-        font-weight: bold;
-        color: #Fdd;
-    }
-
-    .feed-header.food .feed-header-title {
-        margin-left: 0;
-    }
-
-    .feed-header .hide-button{
-        float: right;
-        border-left: 1px solid #252424;
-        padding-left: 10px;
-        font-weight: normal;
-        font-size: 11px;
-        margin-top: 3px;
-        height: 33px;
-        padding-top: 7px;
-        padding-right: 5px;
-    }
-
-    .feed-header .food-text,
-    .feed-header .movies-text,
-    .feed-header .events-text {
-        width: calc(100% - 65px);
-        float: left;
-        font-size: 11px;
-        text-transform: none;
-        font-weight: normal;
-    }
-
-    .feed-header i.label {
-        float: right;
-    }
-
-    .feed-header span.tonight-label {
-        float: right;
-        margin-right: 10px;
-        margin-top: 7px;
-        color: #bbb;
-    }
-
-    .now-showing-label .town-label {
-        float: right;
-        color: #fff;
-    }
-
-    .now-showing-label .town-label label {
-        font-size: 13px;
-    }
-
-    .now-showing-label .town-label i {
-        background: none;
-        border: none;
-        color: #ddd;
-        font-size: 12px;
-        float: right;
-        height: 21px;
-        width: 15px;
-        margin-top: -1px;
-        color: #fff;
-    }
-</style>
     <div class="add-searchMessage topMessage feed-header trans {{feedHeaderItem}}">
         <span class="now-showing-label"
             ng-show="feedHeaderItem != 'closed'">
@@ -413,7 +164,7 @@
             <span class="food-title"
                 ng-show="feedHeaderItem == 'food'">Tonight's Dinner Rush</span>
             <span class="movies-title"
-                ng-show="feedHeaderItem == 'movies'">Tonight's Movies</span>
+                ng-show="feedHeaderItem == 'movies'">Movies Out Now</span>
             <span class="events-title"
                 ng-show="feedHeaderItem == 'events'">Tonight's Nightlife</span>
             <span class="hide-button"
@@ -421,7 +172,7 @@
             <span class="food-text"
                 ng-show="feedHeaderItem == 'food'">Find somewhere to eat in town tonight</span>
             <span class="movies-text"
-                 ng-show="feedHeaderItem == 'movies'">Movies showing in your town tonight</span>
+                 ng-show="feedHeaderItem == 'movies'">Movies now showing in your town</span>
             <span class="events-text"
                  ng-show="feedHeaderItem == 'events'">Events, clubs &amp; bars to go to in town</span>
         </span>

@@ -11,13 +11,15 @@
                 <p>You cannot make an enquiry about an offer using a MyNyte Business profile.</p>
             </div>
         </div>
-        <div class="list"
+        
+        <div class="list view-wrapper"
             ng-if="pageLoading == false">
+
             <div id="offers-detailedContent" class="detailedContent">
                 <div id="offers-detailedContent-inner" class="detailedContent-inner">
                     <div class="mainImg">
-                        <img class="main-img" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{offer.currentOfferCoverPhotoName}}"
-                            ng-if="offer.currentOfferCoverPhotoName != null"/>
+                        <img class="main-img" ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{offer.currentOfferCoverPhotoName}}"
+                            ng-if="offer.currentOfferCoverPhotoName != 'default-offer.jpg'"/>
                     </div>
                     <div class="offers-items-note"
                         ng-if="pageTitle == 'Invalid Offer'">
@@ -40,7 +42,7 @@
                             </span>
                             <span ng-if="offer._relatedEventId != null">
                                 <img class="event-img"
-                                    ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{offer.relatedEventCoverPhotoName}}" />
+                                    ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{offer.relatedEventCoverPhotoName}}" />
                                 <span class="inline">Event offer:</span> {{offer.relatedEventName}}
                             </span>
                         </h3>

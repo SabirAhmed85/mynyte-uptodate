@@ -1,4 +1,4 @@
-<ion-view view-title="{{rootScope.pageTitle}} on myNyte.co.uk" class="grey_bg">
+<ion-view view-title="{{rootScope.pageTitle}} on myNyte.co.uk" class="grey_bg book-tickets">
   	<ion-content>
         <div class="add-message-container"
             ng-if="rootScope.user.isBusiness == '1'">
@@ -33,7 +33,7 @@
             <label class="item-header">
                 Event Date
             </label>
-            <label class="item special item-with-selects"
+            <div class="item special item-with-selects"
                 ng-if="listing.weekday != null">
                 <div id="weeks-ahead-select-container" class="select-container">
                     <div ng-click="toggleEventDateVisibility();" class="select-main">
@@ -43,7 +43,7 @@
                         </button>
                     </div>
                 </div>
-            </label>
+            </div>
             <label class="item special"
                 ng-if="listing.weekday == null">
                 {{dateDisplay}}
@@ -53,25 +53,31 @@
                     <li ng-click="selectEventDate(date);"
                         ng-repeat="date in eventDates">
                         {{date[3]}}
-                        <span ng-if="date[1] > listing.guestListMax">Fully Booked!</span>
-                        <span ng-if="date[2] != null">Booked</span>
+                        <span class="select-inline-note select-note-red"
+                            ng-if="date[1] >= listing.guestListMax"><i class="ion-alert"></i>Fully Booked!</span>
+                        <span class="select-right-note"
+                            ng-if="date[2] != null"><i class="ion-checkmark"></i>Booked</span>
                     </li>
                 </ul>
             </span>
             <div class="item additionalguests-item">
-                <span class="additionalguests-span">Additional guests:</span>
+                <span class="additionalguests-span">Total guests <span class="inner-span">(max {{maxGuestsPerBooking+1}})</span>:</span>
                 <button class="additional-guests-picker"
                     ng-click="updateAdditionalGuests(1);">
                     <i class="ion-plus-round"></i>
                 </button>
                 <div class="white nightlife-input fake-input fake-additionalguests-input">
-                    {{additionalGuests}}
+                    {{additionalGuests + 1}}
                 </div>
                 <button class="additional-guests-picker"
                     ng-click="updateAdditionalGuests(-1);">
                     <i class="ion-minus-round"></i>
                 </button>
         	</div>
+            <label class="item special"
+                ng-if="additionalGuests == 9">
+                Ask a friend to book entry too, so you can get more guests!
+            </label>
             <label class="item special"
                 ng-if="(additionalGuests+1) == maxGuestListAllowed">
                 Only {{maxGuestListAllowed}} places left on the guestlist.
