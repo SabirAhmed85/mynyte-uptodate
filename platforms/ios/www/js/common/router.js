@@ -9,11 +9,14 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     
     // profile page
     .state('app.profile', {
-      url: "/profile",
+      url: "/profile/:action",
       views: {
         'profile-tab' :{
           	templateUrl: "templates/profile-views/profile.html",
 		  		controller: "ProfileCtrl"
+        },
+        params: {
+          action: null
         }
       }
     })
@@ -81,6 +84,8 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             }
           }
         })
+
+        //Notifications
         .state('app.profile.notificationsSummary', {
           url: "/notificationsSummary/",
           views: {
@@ -283,6 +288,34 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
           },
           params: {
             _id: null
+          }
+        })
+
+        //Article Pages
+        .state('app.articles', {
+          url: "/articles/:articleType/:categories/:subCategories",
+          views: {
+            'profile-tab' :{
+                templateUrl: "templates/article-views/articles.html",
+                    controller: "ArticlesCtrl"
+            }
+          },
+          params : {
+            articleType: null,
+            categories: null,
+            subCategories: null
+          }
+        })
+        .state('app.articles.article', {
+          url: "/:articleId",
+          views: {
+            'profile-tab' :{
+                templateUrl: "templates/article-views/article.html",
+                    controller: "ArticleCtrl"
+            }
+          },
+          params : {
+            articleId: null
           }
         })
     
@@ -508,10 +541,20 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
       }
     })
+      //Download the App
+      .state('app.downloadTheApp', {
+        url: "/downloadTheApp",
+        views: {
+          'more-tab' :{
+              templateUrl: "templates/more-views/download-the-app.html",
+                  controller: "DownloadTheAppCtrl"
+          }
+        }
+      })
 	 
     //  login page
     //Default Page App goes to on Start
-    console.log($urlRouterProvider);
+    
   	$urlRouterProvider.otherwise("/app/feed");
     //$ionicConfigProvider.footerBar.transition('none');
 

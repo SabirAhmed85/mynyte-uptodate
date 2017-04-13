@@ -5,7 +5,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <!--<meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' https://www.google.com/uds/ https://maps.googleapis.com 'unsafe-inline' 'unsafe-eval' *; style-src 'self' https://www.google.com/uds/ 'unsafe-inline' *">
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' https://www.mynyte.co.uk/ https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://maps.googleapis.com/ data:">
+    <meta http-equiv="Content-Security-Policy" content="{{metaContent}}">
     <!--<title>MyNyte | Find your night in Birmingham &amp; Bedford; Clubs, bars, restaurants, takeaways &amp; movies.</title>-->
     <link href="lib/ionic/css/ionic.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
@@ -99,27 +99,29 @@
     
     -->
   
-    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script></head>
-  <body class="platform-ios platform-cordova platform-webview">
+    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+  </head>
+  <body class="intended-browser platform-ios platform-cordova platform-webview">
     <div class="tooltip-screen-cover"
         ng-class="{'open': tooltipShowing}">
-        <span class="tooltip"><span class="tooltip-arrow"></span>
-        <span class="tooltip-text">
-            {{currentTooltipText}}
+        <span class="tooltip">
+            <span class="tooltip-arrow"></span>
+            <span class="tooltip-text">
+                {{currentTooltipText}}
+            </span>
+            <button class="btn-white"
+                ng-click="nextTooltipFunction()">
+                Got it!
+            </button>
+        </div>
+        <div class="full-screen-cover" ng-class="{'open': appLoading}">
+        </div>
+        <span class="full-screen-cover-icon" ng-class="{&apos;open&apos;: appLoading}">
+            <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+            <label>Loading ...</label>
         </span>
-        <button class="btn-white"
-            ng-click="nextTooltipFunction()">
-            Got it!
-        </button>
-    </div>
-    <div class="full-screen-cover" ng-class="{'open': appLoading}">
-    </div>
-    <span class="full-screen-cover-icon" ng-class="{&apos;open&apos;: appLoading}">
-        <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
-        <label>Loading ...</label>
-    </span>
-    <div ng-class="{'open': showFeedUpdateScreenCover}" class="screen-cover trans">
-</div>
+        <div ng-class="{'open': showFeedUpdateScreenCover}" class="screen-cover trans">
+        </div>
     <ion-nav-view></ion-nav-view>
     <ion-nav-bar animation="no-animation">
       <ion-header-bar style="opacity: 0;" id="header-bar" no-tap-scroll="true" align-title="left" class="bar-positive"
@@ -135,7 +137,7 @@
                     <span class="notification-text">{{currentUnreadUpdate.text}}</span>
                 </div>
                 <img
-                    ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"/>
+                    ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"/>
             </div>
             <div
                 ng-if="currentUnreadUpdate.type == 'Notification'">
@@ -145,7 +147,7 @@
                     <span class="notification-text">{{currentUnreadUpdate.text}}</span>
                 </div>
                 <img
-                ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"
+                ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"
                 ng-if="currentUnreadUpdate.relProfilePhotoName != null"/>
             </div>
         </div>
@@ -227,7 +229,7 @@
             <div class="header-logged-in" ui-sref="app.profile()"
                 ng-show="userLoggedIn">
                 <img
-                    ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{user.currentProfilePhotoName}}"
+                    ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{user.currentProfilePhotoName}}"
                     src="/sneak-preview/img/user_images/profile_photo/default.jpg" />
                 <span class="inner-wrapper">
                     <p class="title">Logged in</p>
@@ -293,8 +295,8 @@
             ng-show="searchForm.searchQuery.length > 0 || (showHeaderButtons && searchPanelResultsToShow.length > 0)">
             <ul>
                 <li ui-sref="app.feed.nlfeedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in searchPanelResultsToShow">
-                    <img src="img/user_images/profile_photo/default.jpg"
-                        ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/{{result.currentPhotoAlbum}}/{{result.currentProfilePhotoName}}" />
+                    <img src="sneak-preview/img/user_images/profile_photo/default.jpg"
+                        ng-src="{{assetsFolderUrl}}/img/user_images/{{result.currentPhotoAlbum}}/{{result.currentProfilePhotoName}}" />
 
                     <div class="listing-detail-container">
                         <span class="listing-name span-full">{{result.name}}</span>
@@ -337,16 +339,16 @@
             <div>
                 <span class="social-sharing-icons">
                     <span class="whatsapp-share share first">
-                        <img src="https://www.mynyte.co.uk/sneak-preview/img/sharing-icons/wa-dummy.png">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/wa-dummy.png">
                     </span>
                     <span class="facebook-share share">
-                        <img src="https://www.mynyte.co.uk/sneak-preview/img/sharing-icons/Facebook_logo_(square).png">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Facebook_logo_(square).png">
                     </span>
                     <span class="twitter-share share">
-                        <img src="https://www.mynyte.co.uk/sneak-preview/img/sharing-icons/Twitter_logo_blue.png">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Twitter_logo_blue.png">
                     </span>
                     <span class="message-share share">
-                        <img src="https://www.mynyte.co.uk/sneak-preview/img/sharing-icons/Messages-2-icon.png">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Messages-2-icon.png">
                     </span>
                 </span>
                 <textarea ng-hide="chosenUpdateBusinesses.length &gt; 0" ng-model="selectedUpdateBusiness" ng-keyup="getAllBusinessesByName(selectedUpdateBusiness)"></textarea>
@@ -414,6 +416,25 @@
                 </span></span></button>
             </div>
         </div>
+    </div>
+    <div id="under-construction-cover"
+        ng-if="underConstruction && !adminUserLoggedIn">
+        <h3>Under Construction</h3>
+        <img src="sneak-preview/img/n-logo.png" alt="MyNyte Logo">
+        <p>The MyNyte website is currently under construction, check back soon for the latest updates!</p>
+        <label
+            ng-click="showAdminLogInForm = !showAdminLogInForm">Log in as an Administrator</label>
+        <form name="adminLogInForm" class="trans"
+            ng-class="{'show': showAdminLogInForm}"
+            ng-submit="adminLogIn(adminLogInForm.email, adminLogInForm.password)">
+            <input type="email" placeholder="e-mail"
+                ng-model="adminLogInForm.email" required>
+            <input type="password" placeholder="password"
+                ng-model="adminLogInForm.password" required>
+            <button type="submit" class="button-red button button-large"
+                ng-class="{'disabled': adminLogInForm.$invalid}"
+                ng-disabled="adminLogInForm.$invalid">Log In</button>
+        </form>
     </div>
     
     <!-- BROWSER Only -->

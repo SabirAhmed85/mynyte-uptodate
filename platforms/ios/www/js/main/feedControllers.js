@@ -1078,10 +1078,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             
             $scope.seePhoto = function (photoName) {
                 if (photoName == 'CoverPhoto') {
-                    $scope.popoverImages = [{'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/'+$scope.listing.currentCoverPhotoName}];
+                    $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/cover_photo/'+$scope.listing.currentCoverPhotoName}];
                 }
                 else if (photoName == 'ProfilePhoto') {
-                    $scope.popoverImages = [{'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/'+$scope.listing.currentProfilePhotoName}];
+                    $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/profile_photo/'+$scope.listing.currentProfilePhotoName}];
                 }
                 $rootScope.allPopoverImages = $scope.popoverImages;
                 $rootScope.showPopoverImages(0);
@@ -1226,7 +1226,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                             
                             successData[a].index = a;
                             successData[a].evenIndex = (relModulus) ? 'even': 'odd';
-                            popoverImages.push({'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/'+albumName+'/' + successData[a].name});
+                            popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
                             
                             if (a == successData.length - 1) {
                                 $scope.popoverImages = popoverImages;

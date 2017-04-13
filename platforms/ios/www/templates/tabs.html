@@ -15,28 +15,28 @@
 }
 
 .tabs .tab-item.nightlife-tab i {
-    background-image: url('img/n-icon-inactive.png');
+    background-image: url('sneak-preview/img/n-icon-inactive.png');
 }
 
 .platform-android .tabs .tab-item.nightlife-tab i {
-    background-image: url('img/n-icon-android-inactive.png');
+    background-image: url('sneak-preview/img/n-icon-android-inactive.png');
 }
 
 .tabs .tab-item .icon.nightlife-tab-icon-on {
-    background-image: url('img/n-icon-active.png');
+    background-image: url('sneak-preview/img/n-icon-active.png');
 }
 #hidden-dummy {
-    background-image: url('img/n-icon-active.png');
+    background-image: url('sneak-preview/img/n-icon-active.png');
 }
 .platform-browser #hidden-dummy {
-    background-image: url('img/n-icon-wide-active.png');
+    background-image: url('sneak-preview/img/n-icon-wide-active.png');
 }
 </style>
 <span class="notification-counter"
     ng-if="(user.currentUnreadNotifications.length + user.currentUnreadMsgGroups.length) > 0">{{user.currentUnreadMsgGroups.length + user.currentUnreadNotifications.length}}</span>
 <ion-tabs class="tabs-icon-top"
     ng-class="{'bg-blur-slight': (showSearchPanel || showAssistantPanel) && currentViewName == 'app.feed'}">
-    <ion-tab title="MyNyte" class="first-tab-item nightlife-tab" icon-on="nightlife-tab-icon-on" icon-off="nightlife-tab" href="#/app/profile">
+    <ion-tab title="MyNyte" class="first-tab-item nightlife-tab" icon-on="nightlife-tab-icon-on" icon-off="nightlife-tab" href="#/app/profile/">
         <!-- Tab 1 content -->
         <ion-nav-view name="profile-tab"></ion-nav-view>
     </ion-tab>

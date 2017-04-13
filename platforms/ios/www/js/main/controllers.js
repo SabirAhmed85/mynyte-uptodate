@@ -4,10 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ionic.service.push', 'ImageCropper']);
+var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper']);
 
 // not necessary for a web based app // needed for cordova/ phonegap application
-app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, Movies, Offers) {
+app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables) {
   
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,
@@ -126,6 +126,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     $rootScope.$broadcast('restorestate');
     userService.model.user = userService.model.user || {};
     userService.model.introTooltipShownCount = userService.model.introTooltipShownCount || 0;
+    userService.model.adminUserLoggedIn = userService.model.adminUserLoggedIn || false;
       
     $rootScope.showIntroTooltip = function () {
         $rootScope.tooltips = [
@@ -164,6 +165,8 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     //Initialise background timers to get notifications and messages
         $rootScope.user = userObjectService.startUsersMessagesAndNotificationsUpdateTimer($rootScope.user);
     }
+
+    $rootScope.adminUserLoggedIn = userService.model.adminUserLoggedIn;
       
       //Initialise View Variables
       $rootScope.initialiseCategories = function () {
@@ -223,8 +226,14 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       ];
       $rootScope.currentSelectedListingTypeToFind = 'clubnight';
       
-      $rootScope.intendedPlatform = 'browser';
-      $rootScope.debugMode = true;
+      $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
+      $rootScope.underConstruction = (EnvironmentVariables.DebugMode && EnvironmentVariables.IntendedPlatform == 'browser' && EnvironmentVariables.IntendedEnvironment == 'Live') ? true : false;
+      $rootScope.metaContent = EnvironmentVariables.MetaContent;
+      $rootScope.rootUrl = EnvironmentVariables.RootUrl;
+      $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
+      $rootScope.assetsFolderRelUrl = EnvironmentVariables.AssetsFolderRelUrl;
+      $rootScope.debugMode = EnvironmentVariables.DebugMode;
+
       $rootScope.relListing = null;
       $rootScope.nightFindSlideLocked = false;
       $rootScope.messageGroupTimer = null;
@@ -749,6 +758,8 @@ $timeout(function () {
     
     $rootScope.backButtonFunction = $rootScope.initialBackButtonFunction;
     
+    $rootScope.Platform = ionic.Platform;
+
     $rootScope.showGlobalTownSelect = false;
     $rootScope.currentlyEditing = false;
     $rootScope.showSearchPanel = false;
@@ -766,6 +777,47 @@ $timeout(function () {
     
     $rootScope.searchPanelBusinessCatsToShow = [];
     $rootScope.searchPanelResultsToShow = [];
+
+    /*Fuctions for Admins*/
+    if ($rootScope.underConstruction && $rootScope.intendedPlatform == 'browser') {
+      $rootScope.adminLoginForm = {email: "", password: ""};
+      $rootScope.showAdminLogInForm = false;
+      $rootScope.adminLogIn = function (email, pword) {
+        $rootScope.appLoading = true;
+        Profile.logIn(email, pword).success(function (successData) {
+          $rootScope.debugModeLog({'msg': 'Controller adminLogIn successData: ', 'data': successData});
+          if (successData != 'null' && successData != undefined && successData != '' && successData != null && successData[0].listingType1 == 'myNyte') {
+              $ionicScrollDelegate.scrollTop();
+              $rootScope.adminUserLoggedIn = true;
+              userService.model.adminUserLoggedIn = true;
+              $rootScope.$broadcast('savestate');
+              $rootScope.appLoading = false;
+          }
+          else {
+              $ionicPopup.show({
+                  title: 'Couldn\'t Log In',
+                  template: '<p>The log-in details you provided did not work or do not belong to an Admin user. Please check them and try again.</p>',
+                  scope: $rootScope,
+                  buttons: [
+                      { 
+                          text: 'Close'
+                      }
+                  ]
+              });
+              $rootScope.appLoading = false;
+          }
+        }).error(function (errorData) {
+          $rootScope.debugModeLog({'msg': 'ProfileCtrl logIn errorData: ', 'data': errorData});
+          $rootScope.adminLogIn(email, pword);
+        });
+      }
+
+      $rootScope.adminLogOut = function () {
+        $rootScope.adminUserLoggedIn = false;
+        userService.model.adminUserLoggedIn = false;
+        $rootScope.$broadcast('savestate');
+      }
+    }
     
     /* Functions for top header bar utility */
     $rootScope.openAssistant = function () {
@@ -774,7 +826,7 @@ $timeout(function () {
         $rootScope.showingAssistant = true;
         $timeout(function () {$rootScope.showingAssistant = false;}, 180);
             
-        var imgRoot = 'img/assistant_images/';
+        var imgRoot = 'sneak-preview/img/assistant_images/';
         var assistantDisplayConfig = {
             'app.feed': {
                 'detail-img-array': [
@@ -1216,13 +1268,13 @@ $timeout(function () {
     }
     
     $rootScope.checkIfDisplayNameTaken = function (displayName, $scope) {
-        if (displayName.length > 4) {
-            Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
-                $scope.displayNameTaken = (parseInt(result["total"]) > 0) ? true: false;
-            }).error(function () {
-                $rootScope.checkIfDisplayNameTaken(displayName, $scope);
-            });
-        }
+      if (displayName.length > 4) {
+        Profile.checkIfDisplayNameTaken(displayName).success(function (result) {
+          $scope.displayNameTaken = (parseInt(result["total"]) == 0) ? false: true;
+        }).error(function () {
+          $rootScope.checkIfDisplayNameTaken(displayName, $scope);
+        });
+      }
     }
 }, 100)
     

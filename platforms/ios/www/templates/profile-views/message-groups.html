@@ -27,7 +27,7 @@
                 </div>
             </div>
             <a class="item item-message-summary" ui-sref="app.profile.messageGroups.messageGroup({_id:msgGroup._id, relListing: relListing, groupType: groupType, messageNameString: msgGroup.name})" ng-repeat="msgGroup in messageGroups">
-                <img class="icon ion-notification" ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{msgGroup.mainPhoto}}"
+                <img class="icon ion-notification" ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{msgGroup.mainPhoto}}"
                     ng-if="!msgGroup.multipleNames"/>
                 <i class="icon message-group-icon ion-ios-people"
                     ng-if="msgGroup.multipleNames"></i>

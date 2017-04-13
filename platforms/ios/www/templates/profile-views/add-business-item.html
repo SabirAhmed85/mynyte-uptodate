@@ -2,7 +2,7 @@
   	<ion-content class="view-wrapper">
       <h2>Please fill in the details for your new {{itemLabel}}</h2>
       <div class="register" style="float: left;">
-        <form ng-if="itemType=='Movies'" class="business-item-form" ng-class="{'editing': editing}">
+        <form ng-if="itemType=='Movies'" name="addMovieForm" class="business-item-form" ng-class="{'editing': editing}">
             
             <label class="item-header">
                 Title
@@ -10,8 +10,6 @@
             <label class="item">
                 <input class="white nightlife-input" type="text" placeholder="Movie Title (Headline)" ng-model="movieTitle" name="movieTitle" ng-max="100" required>
             </label>
-            
-            
             
             <label class="item-header">
                 Add a Cover Photo (optional)
@@ -107,9 +105,9 @@
                 Description
             </label>
             <label class="item">
-                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Movie Description" ng-model="description" name="description" ng-max="1000" required></textarea>
+                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Movie Description" ng-model="description" name="description" ng-max="1000"></textarea>
             </label>
-            <button ng-disabled="updateOfferForm.$invalid" class="button button-red button-large"
+            <button ng-disabled="addMovieForm.$invalid" class="button button-red button-large"
                 ng-click="createMovie(movieTitle, movieTrailerLink, description)">
                 Add Movie
             </button>

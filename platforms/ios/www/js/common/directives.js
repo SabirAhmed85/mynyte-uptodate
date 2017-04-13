@@ -67,6 +67,7 @@ app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig,
             , "app.feed"
             , "app.taxi"
             , "app.more"
+            , "app.downloadTheApp"
         ];
         var showTopRightButtonViews = [
             "app.profile.messageGroups"
@@ -494,7 +495,6 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
                 });
                 $($element[0]).addClass("index-1");
                 $rootScope.updateCurrentListingTypeToFind($($element[0]).attr('data-name'), e, 'click');
-                console.log(val);
             }
         }
 

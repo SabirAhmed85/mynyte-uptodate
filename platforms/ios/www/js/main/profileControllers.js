@@ -1,5 +1,5 @@
 /*  Profile page template */
-app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
+app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'Messages', 'Profile', '$cordovaSQLite', 'userService', '$ionicConfig', '$ionicScrollDelegate', 'ngFB', 'Notifications', '$ionicPopup', 'datesService', 'listingsService', 'userObjectService', function($rootScope, $scope, $state, $stateParams, Messages, Profile, $cordovaSQLite, userService, $ionicConfig, $ionicScrollDelegate, ngFB, Notifications, $ionicPopup, datesService, listingsService, userObjectService) {
     //Variables & Constants
     //Cancel relListing in case someone has come back to profile page
     //after trying to attach a listing to a message.
@@ -40,6 +40,14 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
         $scope.$on('$ionicView.beforeEnter', function() {
             if ($rootScope.userLoggedIn) {
                 $scope.getProfileItemCount();
+
+                if ($stateParams.action != null) {
+                    switch ($stateParams.action) {
+                        case 'businessHelpPage':
+                            $state.go('app.articles');
+                        break;
+                    }
+                }
             }
         });
         
@@ -898,7 +906,28 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
     /*  Privacy Policy Control */
     app.controller('PrivacyPolicyCtrl', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        $scope.pageLoad = function () {
+            $rootScope.pageTitle = 'Privacy Policy';
+            $scope.pageTitle = $rootScope.pageTitle;
+        }
+
+        $rootScope.checkForAppInit($scope);
+    }]);
+    /*  Download the App Control */
+    app.controller('DownloadTheAppCtrl', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        $scope.pageLoad = function () {
+            $scope.rootScope = $rootScope;
+            $rootScope.pageTitle = 'Download the MyNyte App';
+            $scope.pageTitle = $rootScope.pageTitle;
+        }
         
+        $rootScope.checkForAppInit($scope);
     }]);
 
     app.controller('NotificationCtrl', ['$rootScope', '$state','$scope', '$stateParams', 'Notifications', 'Profile', 'Followers', function($rootScope, $state, $scope, $stateParams, Notifications, Profile, Followers) {
@@ -1778,6 +1807,9 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 if (businessItemType == 'Table Booking') {
                     successData[i].timeRequested = datesService.getShortenedTimeString(successData[i].dateTimeRequested);
                     successData[i].dateRequested = convertToReadableDate(successData[i].dateTimeRequested);
+                    if (successData[i].dateTimeSuggested != null) {
+                        successData[i].timeSuggested = datesService.getShortenedTimeString(successData[i].dateTimeSuggested);
+                    }
                 }
                 else if (businessItemType == 'Event') {
                     successData[i].DATE = convertToReadableDate(successData[i].DATE);
@@ -3002,14 +3034,20 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                         });
                     }
 
-                    $scope.finishUpdatingTableBooking = function (accepted, rejected, completed, alternateDate) {
-                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, completed, alternateDate).success(function (successData) {
+                    $scope.finishUpdatingTableBooking = function (accepted, rejected, cancelled, completed, alternateDate) {
+                        TableBooking.updateTableBooking($stateParams._id, accepted, rejected, cancelled, completed, alternateDate).success(function (successData) {
                             
                             if (accepted == 1 ||
                                 rejected == 1 ||
-                                (rejected == 0 && accepted == 0 && alternateDate != null)
+                                cancelled == 1 ||
+                                (rejected == 0 && accepted == 0 && cancelled == 0 && alternateDate != null)
                             ) {
-                                var text = (accepted == 1) ? "accepted": "rejected";
+                                var text = "accepted";
+                                if (rejected == 1) {
+                                    text = "rejected";
+                                } else if (cancelled == 1){
+                                    text = "cancelled";
+                                }
                                 if (alternateDate != null) {
                                     text += ", but a different Time was suggested.";
                                 } else {
@@ -3033,7 +3071,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $rootScope.backButtonFunction();
                             $rootScope.appLoading = false;
                         }).error(function () {
-                            $scope.finishUpdatingTableBooking(accepted, rejected, completed, alternateDate);
+                            $scope.finishUpdatingTableBooking(accepted, rejected, cancelled, completed, alternateDate);
                         });
                     }
 
@@ -3066,7 +3104,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                             $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                             var altDateTime = $scope.businessItem.dateTimeRequested.substr(0, $scope.businessItem.dateTimeRequested.indexOf(' ')) + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;
                             
-                            $scope.finishUpdatingTableBooking(0, 0, 0, altDateTime);
+                            $scope.finishUpdatingTableBooking(0, 0, 0, 0, altDateTime);
                           }
                         },
                         inputTime:64800,   //Optional
@@ -3081,14 +3119,17 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
 
                     $scope.updateTableBooking = function (updateType) {
                         $rootScope.appLoading = true;
-                        var accept = 0, reject = 0, alternateDate = null;
+                        var accept = 0, reject = 0, cancel = 0, alternateDate = null;
 
                         if (updateType == 'accept') {
                             accept = 1;
                         } else if (updateType == 'reject') {
                             reject = 1;
+                        } else if (updateType == 'cancel') {
+                            accept = $scope.businessItem.isAccepted;
+                            cancel = 1;
                         }
-                        $scope.finishUpdatingTableBooking(accept, reject, 0, alternateDate);
+                        $scope.finishUpdatingTableBooking(accept, reject, cancel, 0, alternateDate);
                     }
                     break;
                 case 'RequestedTakeawayOrders':
@@ -3919,6 +3960,11 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $rootScope.selectExtraOption(chosenOptionItem, $event, $scope);
             }
             
+            var idealImgW, idealImgH ,idealImgWPercent;
+                idealImgW = 960;
+                idealImgH = 640;
+                idealImgWPercent = 90;
+                
             switch($stateParams.itemType) {
                 case 'Movies':
                     $rootScope.pageTitle = 'Create New Movie';
@@ -4074,6 +4120,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     
                     $scope.createMovie = function (movieTitle, movieTrailerLink, description) {
+                        movieTitle = movieTitle.replace(/'/g, "\'");
+                        description = description.replace(/'/g, "\'");
                         var firstDateTimeString = $scope.selectedDateFirst.getFullYear() + '-' + ($scope.selectedDateFirst.getMonth() + 1) + '-' + $scope.selectedDateFirst.getDate() + ' 00:00';
                         var lastDateTimeString = $scope.selectedDateLast.getFullYear() + '-' + ($scope.selectedDateLast.getMonth() + 1) + '-' + $scope.selectedDateLast.getDate() + ' 00:00';
                         
@@ -4151,8 +4199,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         uploadImage();
                                     }
                                 }
-                                console.log(options);
-                                ft.upload(myImg, encodeURI("https://www.mynyte.co.uk/sneak-preview/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
+                                
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -4166,8 +4214,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 
                                 formData.append("movieTitle", movieTitle);
                                 formData.append("description", description);
-                                formData.append("firstDateTimeString", firstDateTimeString);
-                                formData.append("lastDateTimeString", lastDateTimeString);
+                                formData.append("firstShowingDate", firstDateTimeString);
+                                formData.append("lastShowingDate", lastDateTimeString);
                                 formData.append("movieTrailerLink", movieTrailerLink);
                                 formData.append("movieStyleIdString", movieStyleIdString);
                                 
@@ -4194,11 +4242,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     }
                     break;
                 case 'OwnOffers':
-                    var idealImgW, idealImgH ,idealImgWPercent;
-                    idealImgW = 960;
-                    idealImgH = 640;
-                    idealImgWPercent = 90;
-                    
                     $rootScope.pageTitle = 'Create New Offer';
                     $scope.pageTitle = $rootScope.pageTitle;
                     
@@ -4500,7 +4543,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                 var onUploadSuccess = function (successData) {
                                     $rootScope.debugModeLog({'msg': 'ProfileController AddBusinessItemCtrl uploadImageForOfferCreation() successData', 'data': successData});
                                     successData = successData.response.replace(/"/g, '');
-                                    console.log(successData);
+                                    
                                     if (isInt(successData)) {
                                         uploadComplete(successData);
                                     }
@@ -4515,8 +4558,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         uploadImage();
                                     }
                                 }
-                                console.log(options);
-                                ft.upload(myImg, encodeURI("https://www.mynyte.co.uk/sneak-preview/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
+                                
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -4900,7 +4943,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                     }
                                 }
 
-                                ft.upload(myImg, encodeURI("https://www.mynyte.co.uk/sneak-preview/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
+                                ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                             } else {
                                 var formData = new FormData();
                         
@@ -5293,6 +5336,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                 $scope.xDist = Math.ceil($scope.dataWidth * (1/data.imageZoom));
                 $scope.startY = Math.floor((data.imageY*-1) * (1/data.imageZoom));
                 $scope.yDist = Math.ceil($scope.dataHeight * (1/data.imageZoom));
+                
+                $timeout(function () {alert("hey");$ionicScrollDelegate.resize()}, 1000);
             };
             
             var coverPhotoUploadedBroadcastFn = $rootScope.$on('cover-photo-uploaded', function (event, data) {
@@ -5467,7 +5512,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                                         successData[a].evenIndex = (relModulus) ? 'even': 'odd';
                                         successData[a].index = a;
                                         
-                                        popoverImages.push({'src': 'https://www.mynyte.co.uk/sneak-preview/img/user_images/'+albumName+'/' + successData[a].name});
+                                        popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
                                         $scope.currentDefaultPhotoId = (successData[a].isCurrent == '1') ? successData[a]._id: $scope.currentDefaultPhotoId;
                                         
                                         if (a == successData.length - 1) {
@@ -5889,8 +5934,6 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
             var imageUploadComplete = function (data) {                
                 $rootScope.debugModeLog({'msg': 'AddProfileItemCtrl uploadImage successData/errorData', 'data': data});
 
-                console.log(data);
-                console.log(data.response);
                 if ((data == 'Successfully uploaded' && !ionic.Platform.isAndroid()) || (data.response == '"Successfully uploaded"' && ionic.Platform.isAndroid())) {
                     $rootScope.$broadcast('photo-uploaded');
                     $rootScope.files = [];
@@ -5941,8 +5984,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     var onUploadFail = function (errorData) {
                         imageUploadComplete(errorData);
                     }
-                    console.log(options);
-                    ft.upload(myImg, encodeURI("https://www.mynyte.co.uk/sneak-preview/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
+                    
+                    ft.upload(myImg, encodeURI($rootScope.assetsFolderUrl + "/data/functions/image-upload.php?action=uploadImage&platform=android"), onUploadSuccess, onUploadFail, options);
                 }
             } else {
                 $scope.uploadImage = function (data) {
@@ -6897,7 +6940,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     'message': $scope.form.message
                 };
                 Profile.contactMyNyteTeam(params).success(function (successData) {
-                    console.log(successData);
+                
                     var mainTitle = (successData == '"MyNyte Contact Success"') ? 'Message Sent': 'Message failed to send';
                     var mainMessage = (successData == '"MyNyte Contact Success"') ? '<p>Your message to the MyNyte Team has been sent.</p>': '<p>Your message to the MyNyte Team was not sent. Please try again shortly.</p>';
                     
@@ -6920,6 +6963,138 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', 'Messages', 'Pr
                     $scope.submitContactForm();
                 });
             }
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
+
+    app.controller('ArticlesCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'Profile', '$ionicPopup', function($ionicHistory, $rootScope, $state, $stateParams, $scope, Profile, $ionicPopup) {
+        // Set Up Variables
+        $scope.rootScope = $rootScope;
+        
+        $scope.pageLoad = function () {
+            //Prepare Page Load Data
+            $scope.articleType = $stateParams.articleType;
+            $scope.categories = $stateParams.categories;
+            $scope.subCategories = $stateParams.subCategories;
+
+            // Replace this with real Articles / Blog system
+            $rootScope.pageTitle = "Business Help Articles";
+            $scope.pageTitle = $rootScope.pageTitle;
+
+            $scope.businessArticles = {
+                restaurant: {
+                    title: "Managing Table Bookings",
+                    icon: "ion-fork",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Check Table Bookings that have been Requested",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Requested Table Bookings’.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Respond to Table Bookings that have been Requested",
+                            text: "<ul><li>When you’re in the ‘Requested Table Bookings’ page, click on one of the Table Bookings in the option list.</li><li>Once you’re in the Table Booking page, you can see all the details of the booking, and you can go to the bottom to press either ‘Accept Booking’, ‘Reject Booking’ or ‘Reject Booking but suggest a different time’</li><li>If you press ‘Reject Booking but suggest a different time’, then a pop-up will come up and you should enter the time for your suggested booking time, and press set.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check the Current Table Bookings that you've Accepted",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Current Table Bookings’.</li><li>To see full details of a Table Booking, just click on it in the list, and here you can also ‘Cancel’ the Table Booking if you wish to.</li></ul>"
+                        }
+                    ]
+                },
+                nightclub: {
+                    title: "Managing Events / Entry Booking",
+                    icon: "ion-clipboard",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Create a New Event",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Under your ‘Business Tools’ section, click ‘My Current Events’.</li><li>In this page, click the ‘+ Add’ button (or the ‘+’ button if you are on a mobile device).</li><li>Fill in the details of your event into the form, and then press ‘Add Event’ at the bottom.</li></ul>"
+                        }
+                    ]
+
+                },
+                taxi: {
+                    title: "Managing Taxi Bookings",
+                    icon: "ion-android-car",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Check Taxi Bookings that have been Requested",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Requested Taxi Bookings’.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Respond to Taxi Bookings that have been Requested",
+                            text: "<ul><li>When you’re in the ‘Requested Taxi Bookings’ page, click on one of the Taxi Bookings in the option list.</li><li>Once you’re in the Taxi Booking page, you can see all the details of the booking, and you can go to the bottom to enter an amount for your 'Lowest Price' and 'Quickest Time', and then press 'Respond'.</li><li>After you've responded to the Booking Request, you will be notified in the app by MyNyte after a few minutes about whether or not you've won the job.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check the Current Taxi Bookings that you've Won",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>In your Business Tools section, click ‘Current Taxi Bookings’.</li><li>To see full details of a Taxi Booking, just click on it in the list, and here you can also ‘Cancel’ the Taxi Booking if you wish to.</li></ul>"
+                        }
+                    ]
+
+                }
+            };
+
+            $scope.articleCategories = [
+                {   
+                    title: "General",
+                    articles: [
+                        {
+                            show: false,
+                            title: "How to Log into your Account",
+                            text: "<ul><li>Go to the ‘MyNyte’ page (left side of the page menu).</li><li>In the boxes, type in your e-mail address and password and press enter.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Check your Enquiries & Respond",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Near the top, click on the Enquiries option. You will see a list of all your enquiries, and you can click them to see them, and respond like a normal messaging app.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Create a New Offer",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li><li>Under your ‘Business Tools’ section, click ‘My Current Offers’.</li><li>In this page, click the ‘+ Add’ button (or the ‘+’ button if you are on a mobile device).</li><li>Fill in the details of your offer into the form, and then press ‘Add Offer’ at the bottom.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Change Business Settings",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li></ul>"
+                        },
+                        {
+                            show: false,
+                            title: "How to Log out of your Account",
+                            text: "<ul><li>When you’re logged in, go to the ‘MyNyte’ page.</li></ul>"
+                        }
+                    ]
+                }
+            ];
+
+            if ($scope.categories != null) {
+                $scope.categories = $scope.categories.split("&");
+                for (var a = 0; a < $scope.categories.length; a++) {
+                    if ($scope.businessArticles[$scope.categories[a]] != null && $scope.businessArticles[$scope.categories[a]]["articles"].length > 0 ) {
+                        $scope.articleCategories.push($scope.businessArticles[$scope.categories[a]]);
+                    }
+                }
+            }
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
+
+    app.controller('ArticleCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'Profile', '$ionicPopup', function($ionicHistory, $rootScope, $state, $stateParams, $scope, Profile, $ionicPopup) {
+        // Set Up Variables
+        $scope.rootScope = $rootScope;
+        
+        $scope.pageLoad = function () {
+            //Prepare Page Load Data
+            $scope.articleType = $stateParams.articleType;
+            $scope.articleId = $stateParams.articleId;
+            
         }
         
         $rootScope.checkForAppInit($scope);

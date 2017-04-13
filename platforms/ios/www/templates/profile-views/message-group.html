@@ -19,7 +19,7 @@
             (stateParams.groupType == 'Business' && chosenRecipients.length == 0) || 
             (stateParams.groupType == 'Business' && newMsgGroupRecipientDecided && chosenRecipients.length > 0) ||
             (stateParams.groupType == 'Person'))">
-          <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{chosenRecipients[0].currentProfilePhotoName}}"
+          <img ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{chosenRecipients[0].currentProfilePhotoName}}"
             ng-show="newMsgGroupRecipientDecided && stateParams.groupType == 'Business'" />
           <i ng-class="{'ion-person': chosenRecipients.length == 1, 'ion-ios-people': chosenRecipients.length > 1}"
             ng-show="chosenRecipients.length > 0 && stateParams.groupType == 'Person' && newMsgGroupRecipientDecided"></i>
@@ -43,7 +43,7 @@
           ng-show="newMsgGroup && !newMsgGroupRecipientDecided && currentRecipientSearch.search.length > 0">
           <div class="recipient-item"
             ng-repeat="recipient in possibleRecipients">
-            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}"
+            <img ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}"
                 ng-if="recipient.listingType == 'Business'"/>
             <i class="ion-person" style="float: left;"
                 ng-if="recipient.listingType == 'Person'"></i>
@@ -56,7 +56,7 @@
           ng-show="newMsgGroup && !newMsgGroupRecipientDecided &&currentRecipientSearch.search.length == 0">
           <div class="recipient-item"
             ng-repeat="recipient in chosenRecipients">
-            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}"
+            <img ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}"
                 ng-if="recipient.listingType == 'Business'"/>
             <i class="ion-person" style="float: left;"
                 ng-if="recipient.listingType == 'Person'"></i>
@@ -79,7 +79,7 @@
                         <div lang="en" class="message-detail" ng-class="{'with-attachment': message._relatedItemId != null}">
                             <span class="attachment-span" ng-show="message._relatedItemId != null" ng-click="goToAttachedListing(message);">
                               <span class="message-attachment-arrow ion-chevron-right"></span>
-                              <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/thumbnail/{{message.relatedItemCoverPhotoName}}"
+                              <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{message.relatedItemCoverPhotoName}}"
                                 ng-if="message.relatedItemCoverPhotoName != null && message.relatedItemCoverPhotoName != 'default-offer.jpg'"/>
                               <span class="attachment-type-note"
                                 ng-class="{'left-float': message.relatedItemCoverPhotoName == null || message.relatedItemCoverPhotoName == 'default-offer.jpg'}"
@@ -162,10 +162,10 @@
     </div>
     <div ng-if="rootScope.relListing != null" class="message-attachment">
         <img
-            ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentCoverPhotoName}}"
+            ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentCoverPhotoName}}"
             ng-if="rootScope.relListing.listingType != 'Offer' || (rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName == 'default-offer.jpg')" />
         <img
-            ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentOfferCoverPhotoName}}"
+            ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentOfferCoverPhotoName}}"
             ng-if="rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName != 'default-offer.jpg'" />
         <i class="message-attachment-symbol-icon"
             ng-if="rootScope.relListing.relListingType != 'Business' && rootScope.relListing.relListingType != null"

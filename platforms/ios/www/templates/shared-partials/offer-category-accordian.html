@@ -14,7 +14,7 @@
         <span class="offer-img-container"
             ng-style="{'height': {{windowWidth * (7/16)}}+'px'}"
             ng-if="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != 'default-offer.jpg'">
-            <img ng-src="https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}"
+            <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}"
                 src="img/user_images/cover_photo/default-offer.jpg"
                 ng-if="feature.currentOfferCoverPhotoName != 'default-offer.jpg'"/>
         </span>
