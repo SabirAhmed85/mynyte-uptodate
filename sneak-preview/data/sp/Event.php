@@ -90,6 +90,7 @@
     
     if ($action == 'updateEvent' || $action == 'getEvents' || $action == 'getEventEntryBooking' || $action == 'createEventEntryBooking') {
         //print(json_encode($_usersId));
+        $output = null;
         while($row = mysql_fetch_assoc($result))
         $output[] = $row;
 

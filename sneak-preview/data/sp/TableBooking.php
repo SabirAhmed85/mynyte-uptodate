@@ -43,12 +43,61 @@
       $result = mysql_query("CALL personUpdateTableBooking($_tableBookingId, $accepted, $rejected, $cancelled, $completed, $alternateDate);");
     }
   }
+  else if ($action == 'findOutIfRestaurantBookingPossible') {
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_businessId = $dataJsonDecode->_businessId;
+    $requestedBookingDate = $dataJsonDecode->requestedBookingDate;
+    $requestedBookingTime = $dataJsonDecode->requestedBookingTime;
+
+    $result = mysql_query("CALL findOutIfRestaurantBookingPossible($_businessId, '$requestedBookingDate', '$requestedBookingTime');");
+  }
+  else if ($action == 'createBlockedTableBookingInterval') {
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_businessId = $dataJsonDecode->_businessId;
+    $startDateTime = $dataJsonDecode->startDateTime;
+    $endDateTime = $dataJsonDecode->endDateTime;
+
+    $result1 = mysql_query("CALL createBlockedTableBookingInterval($_businessId, '$startDateTime', '$endDateTime', @existingIntervals);");
+    $result = mysql_query("SELECT @existingIntervals as existingIntervals");
+
+    //need new way to get Users Id $_usersId = mysql_fetch_array($result)["@_usersId"];
+    $existingIntervals = mysql_fetch_object($result);
+    $existingIntervals = $existingIntervals -> existingIntervals;
+
+    //header('Content-Type: application/json');
+    echo json_encode($existingIntervals);
+  }
+  else if ($action == 'deleteBlockedTableBookingInterval') {
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_intervalId = $dataJsonDecode->_intervalId;
+
+    $result = mysql_query("CALL deleteBlockedTableBookingInterval($_intervalId);");
+  }
+  else if ($action == 'getBlockedTableBookingIntervals') {
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_businessId = $dataJsonDecode->_businessId;
+
+    $result = mysql_query("CALL getBlockedTableBookingIntervals($_businessId);");
+
+  }
   //print(json_encode($_usersId));
-  while($row = mysql_fetch_assoc($result))
-    $output[] = $row;
-      
-  header('Content-Type: application/json');
-  echo json_encode($output);
+  if ($action != 'deleteBlockedTableBookingInterval'
+    && $action != 'createBlockedTableBookingInterval') {
+    $output = null;
+    while($row = mysql_fetch_assoc($result))
+      $output[] = $row;
+        
+    header('Content-Type: application/json');
+    echo json_encode($output);
+  }
   
   mysql_close();
 ?>

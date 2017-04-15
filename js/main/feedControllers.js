@@ -1105,7 +1105,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
 
             $scope.goToBookTable = function () {
                 if ($scope.listing.isAcceptingTableBookings && $rootScope.userLoggedIn) {
-                    $state.go('app.bookTable', {searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId, _listingId: $stateParams._listingId, listingType: $stateParams.listingType, _id: $scope.listing.relListingId, listingName: $scope.listing.name});
+                    $state.go('app.bookTable', {searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId, _listingId: $stateParams._listingId, listingType: $stateParams.listingType, _id: $scope.listing.relListingId, listingName: $scope.listing.name, tableForMax: $scope.listing.maxTableBookingGuests});
                 }
                 else if ($scope.listing.isAcceptingTableBookings && !$rootScope.userLoggedIn) {
                     $rootScope.showPopUp($scope, 'BookTable');
@@ -1459,6 +1459,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
         $scope.pageLoad = function () {
             $rootScope.pageTitle = 'Book a Table at ' + $stateParams.listingName;
             $scope.pageTitle = $rootScope.pageTitle;
+
+            $scope.tableForMax = $stateParams.tableForMax;
             
             $scope.convertToDate = function () {
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
@@ -1566,7 +1568,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
               };
 
             $scope.updateTableFor = function (val) {
-                $scope.tableFor = ( ($scope.tableFor == 1 && val == -1) || ($scope.tableFor == 99 && val == 1) ) ? $scope.tableFor: $scope.tableFor += val; 
+                $scope.tableFor = ( ($scope.tableFor == 1 && val == -1) || ($scope.tableFor == 99 && val == 1) || ($scope.tableForMax != 0 && $scope.tableForMax == $scope.tableFor && val == 1) ) ? $scope.tableFor: $scope.tableFor += val; 
             }
 
             $scope.openTimePicker = function(){

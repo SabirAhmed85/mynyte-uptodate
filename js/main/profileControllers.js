@@ -3945,7 +3945,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
         $rootScope.checkForAppInit($scope);
         
     }]);
-    app.controller('AddBusinessItemCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'ionicDatePicker', 'Offers', 'Profile', 'Events', 'MenuItems', 'Categories', 'Listings', 'Movies', '$ionicScrollDelegate', '$ionicPopup', '$ionicViewSwitcher', 'Images', 'datesService', '$timeout', function($ionicHistory, $rootScope, $state, $stateParams, $scope, ionicDatePicker, Offers, Profile, Events, MenuItems, Categories, Listings, Movies, $ionicScrollDelegate, $ionicPopup, $ionicViewSwitcher, Images, datesService, $timeout) {
+    app.controller('AddBusinessItemCtrl', ['$ionicHistory', '$rootScope', '$state', '$stateParams', '$scope', 'ionicDatePicker', 'ionicTimePicker', 'Offers', 'Profile', 'Events', 'MenuItems', 'Categories', 'Listings', 'Movies', 'TableBooking', '$ionicScrollDelegate', '$ionicPopup', '$ionicViewSwitcher', 'Images', 'datesService', '$timeout', function($ionicHistory, $rootScope, $state, $stateParams, $scope, ionicDatePicker, ionicTimePicker, Offers, Profile, Events, MenuItems, Categories, Listings, Movies, TableBooking, $ionicScrollDelegate, $ionicPopup, $ionicViewSwitcher, Images, datesService, $timeout) {
         //Variables & Constants
         $scope.rootScope = $rootScope;
         $scope.itemType = $stateParams.itemType;
@@ -5329,6 +5329,133 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     }
                     
                     break;
+                case 'BlockedTableBookingIntervals':
+                    $scope.showStartTimeSelect = false;
+                    $scope.showEndTimeSelect = false;
+                    $scope.startDateInputString = "Enter Start Date";
+                    $scope.endDateInputString = "Enter End Date";
+                    $scope.startTimeInputString = "00:00";
+                    $scope.endTimeInputString = "11:59";
+                    $scope.selectedStartTime = "00:00";
+                    $scope.selectedEndTime = "11:59";
+
+                    $scope.ipObj1 = {
+                      callback: function (val) {  //Mandatory
+                        $scope.selectedIntervalStartDate = new Date(val);
+                        $scope.startDateInputString = datesService.convertToDate($scope, $scope.selectedIntervalStartDate);
+                        $scope.ipObj1.inputDate = new Date(val);
+                        
+                        $scope.ipObj2.from = angular.copy($scope.selectedIntervalStartDate);
+                      },
+                      disabledDates: [],
+                      from: new Date(), //Optional
+                      inputDate: new Date(),      //Optional
+                      mondayFirst: true,          //Optional
+                      disableWeekdays: [],       //Optional
+                      closeOnSelect: true,       //Optional
+                      templateType: 'popup'       //Optional
+                    };
+                    
+                    $scope.ipObj2 = {
+                      callback: function (val) {  //Mandatory
+                        $scope.selectedIntervalEndDate = new Date(val);
+                        $scope.endDateInputString = datesService.convertToDate($scope, $scope.selectedIntervalEndDate);
+                        $scope.ipObj2.inputDate = new Date(val);
+                        
+                        $scope.ipObj1.to = angular.copy($scope.selectedIntervalEndDate);
+                      },
+                      disabledDates: [],
+                      from: new Date(), //Optional
+                      to: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+                      inputDate: new Date(),      //Optional
+                      mondayFirst: true,          //Optional
+                      disableWeekdays: [],       //Optional
+                      closeOnSelect: true,       //Optional
+                      templateType: 'popup'       //Optional
+                    };
+
+                    $scope.startTimeIpObj = {
+                        callback: function (val) {      //Mandatory
+                            var timeVal = new Date(val * 1000);
+                            var timeValHours = (timeVal.getUTCHours() < 10) ? '0' + timeVal.getUTCHours(): timeVal.getUTCHours();
+                            var timeValMinutes = (timeVal.getUTCMinutes() < 10) ? '0' + timeVal.getUTCMinutes(): timeVal.getUTCMinutes();
+                            
+                            $scope.selectedStartTime = timeValHours + ':' + timeValMinutes;
+                            $scope.startTimeInputString = timeValHours + ':' + timeValMinutes;
+
+                            $scope.startTimeIpObj.inputTime = (timeValMinutes < 30) ? val: val - 3600;
+                        },
+                        inputTime:00000,   //Optional
+                        format: 12,         //Optional
+                        step: 5,           //Optional
+                        setLabel: 'Select'    //Optional
+                    }
+
+                    $scope.endTimeIpObj = {
+                        callback: function (val) {      //Mandatory
+                            var timeVal = new Date(val * 1000);
+                            var timeValHours = (timeVal.getUTCHours() < 10) ? '0' + timeVal.getUTCHours(): timeVal.getUTCHours();
+                            var timeValMinutes = (timeVal.getUTCMinutes() < 10) ? '0' + timeVal.getUTCMinutes(): timeVal.getUTCMinutes();
+                            
+                            $scope.selectedEndTime = timeValHours + ':' + timeValMinutes;
+                            $scope.endTimeInputString = timeValHours + ':' + timeValMinutes;
+
+                            $scope.endTimeIpObj.inputTime = (timeValMinutes < 30) ? val: val - 3600;
+                        },
+                        inputTime:82740,   //Optional
+                        format: 12,         //Optional
+                        step: 5,           //Optional
+                        setLabel: 'Select'    //Optional
+                    }
+                    
+                    //User Action function
+                    $scope.openDatePicker = function (ipObj) {
+                        ionicDatePicker.openDatePicker(ipObj);
+                    }
+                    $scope.openTimePicker = function(ipObj){
+                        ionicTimePicker.openTimePicker(ipObj);
+                    };
+
+                    $scope.showTimeSelect = function (state) {
+                        if (state == 'start') {
+                            $scope.showStartTimeSelect = true;
+                        } else {
+                            $scope.showEndTimeSelect = true;
+                        }
+                    }
+
+                    $scope.addBlockedTableBookingInterval = function () {
+                        var startDateSqlTimeString = $scope.selectedIntervalStartDate.getFullYear() + '-' + ($scope.selectedIntervalStartDate.getMonth() + 1) + '-' + $scope.selectedIntervalStartDate.getDate() + ' ' + $scope.selectedStartTime;
+                        var endDateSqlTimeString = $scope.selectedIntervalEndDate.getFullYear() + '-' + ($scope.selectedIntervalEndDate.getMonth() + 1) + '-' + $scope.selectedIntervalEndDate.getDate() + ' ' + $scope.selectedEndTime;
+ 
+                        var params = {_businessId: $rootScope.user._id, startDateTime: startDateSqlTimeString, endDateTime: endDateSqlTimeString};
+                        TableBooking.createBlockedTableBookingInterval(params).success(function (successData) {
+                            successData = parseInt(successData.replace(/"/g, ''));
+
+                            if (successData == 0) {
+                                $rootScope.backButtonFunction();
+                            }
+                            else {
+                                $ionicPopup.show({
+                                    title: "Error with this Interval",
+                                    template: "<p>It looks like you already have an existing interval which overlaps with some of the dates of this interval. Overlapping intervals are not allowed. Please check the errors, and try again.</p>",
+                                    scope: $scope,
+                                    buttons: [
+                                        { 
+                                            text: 'Close',
+                                            onTap: function(e) {
+                                              
+                                            } 
+                                        }
+                                    ]
+                                });
+                            }
+                        }).error(function (errorData) {
+                            $scope.addBlockedTableBookingInterval();
+                        });
+                    }
+
+                    break;
             };
             
             $scope.prepareImageUpload = function (data) {
@@ -5337,7 +5464,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 $scope.startY = Math.floor((data.imageY*-1) * (1/data.imageZoom));
                 $scope.yDist = Math.ceil($scope.dataHeight * (1/data.imageZoom));
                 
-                $timeout(function () {alert("hey");$ionicScrollDelegate.resize()}, 1000);
+                $timeout(function () {$ionicScrollDelegate.resize()}, 1000);
             };
             
             var coverPhotoUploadedBroadcastFn = $rootScope.$on('cover-photo-uploaded', function (event, data) {
@@ -6442,7 +6569,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
         $rootScope.checkForAppInit($scope);
     }]);
 
-    app.controller('AccountSettingsAdvancedCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 'Profile', 'userService', '$ionicScrollDelegate', 'ionicTimePicker', 'Categories', 'userService', function($rootScope, $state, $stateParams, $scope, Profile, userService, $ionicScrollDelegate, ionicTimePicker, Categories, userService) {
+    app.controller('AccountSettingsAdvancedCtrl', ['$rootScope', '$state', '$stateParams', '$scope', 'Profile', 'userService', 'datesService', '$ionicScrollDelegate', '$ionicPopup', 'ionicTimePicker', 'Categories', 'userService', 'TableBooking', function($rootScope, $state, $stateParams, $scope, Profile, userService, datesService, $ionicScrollDelegate, $ionicPopup, ionicTimePicker, Categories, userService, TableBooking) {
         //Variables & Constants
         $scope.settings = {};
         var storedSettings = {};
@@ -6451,9 +6578,15 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
         $scope.setting = $stateParams.setting;
         $scope.editing = false;
         $scope.pageLoading = true;
+
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.topRightButtonIsPlus = ($stateParams.setting == 'BlockedTableBookingIntervals') ? true: $rootScope.topRightButtonIsPlus;
+            $rootScope.topRightButtonIsEdit = ($stateParams.setting == 'BlockedTableBookingIntervals') ? false: $rootScope.topRightButtonIsPlus;
+        });
         
         $scope.pageLoad = function () {
             $scope.$on('$ionicView.enter', function() {
+
                 $rootScope.topRightButtonFunction = function () {
                     if ($scope.editing) {
                         switch ($stateParams.setting) {
@@ -6477,6 +6610,34 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     
                     if ($scope.editing) {
                         $ionicScrollDelegate.scrollTop();
+                    }
+
+                    if ($stateParams.setting == 'BlockedTableBookingIntervals') {
+                        $state.go('app.addBusinessItem', {itemType: 'BlockedTableBookingIntervals'});
+                        /*
+                        $ionicPopup.show({
+                            title: "Add a Blocked Table Booking Interval",
+                            template: mainMessage,
+                            scope: $scope,
+                            buttons: [
+                                { 
+                                    text: 'Add',
+                                    onTap: function(e) {
+                                        var params = {_businessId: $rootScope.user._id, };
+                                        TableBooking.createBlockedTableBookingInterval(params).
+                                        $scope.editing = !$scope.editing;
+                                        $rootScope.currentlyEditing = !$rootScope.currentlyEditing;
+                                    } 
+                                },
+                                { 
+                                    text: 'Close',
+                                    onTap: function(e) {
+                                      
+                                    } 
+                                }
+                            ]
+                        });
+                        */
                     }
                     
                     $scope.editing = !$scope.editing;
@@ -6904,6 +7065,56 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                     }
                                 }).error(function () {
                                     $scope.applyChanges();
+                                });
+                            }
+                        break;
+                        case 'BlockedTableBookingIntervals':
+                            $scope.getBlockedTableBookingIntervals = function () {
+                                var params = {_businessId: $rootScope.user._id};
+                                TableBooking.getBlockedTableBookingIntervals(params).success(function (successData) {
+                                    $scope.blockedTableBookingIntervals = (successData != null) ? successData: [];
+                                    for (a = 0; a < $scope.blockedTableBookingIntervals.length; a++) {
+                                        $scope.blockedTableBookingIntervals[a].startDate = datesService.convertToReadableDate($scope, $scope.blockedTableBookingIntervals[a].startDateTime);
+                                        $scope.blockedTableBookingIntervals[a].endDate = datesService.convertToReadableDate($scope, $scope.blockedTableBookingIntervals[a].endDateTime);
+                                        $scope.blockedTableBookingIntervals[a].startTime = datesService.getShortenedTimeString($scope.blockedTableBookingIntervals[a].startDateTime);
+                                        $scope.blockedTableBookingIntervals[a].endTime = datesService.getShortenedTimeString($scope.blockedTableBookingIntervals[a].endDateTime);
+                                    }
+                                }).error(function (errorData) {
+                                    $scope.getBlockedTableBookingIntervals();
+                                });
+                            }
+
+                            $scope.getBlockedTableBookingIntervals();
+
+                            $scope.showIntervalDeleteOptions = function (interval) {
+                                $ionicPopup.show({
+                                    title: "Delete Interval",
+                                    template: "<p>Are you sure you want to delete this Blocked Table Booking Interval? You won't be able to undo this action.</p>",
+                                    scope: $scope,
+                                    buttons: [
+                                        { 
+                                            text: 'Cancel',
+                                            onTap: function(e) {
+                                              
+                                            } 
+                                        },
+                                        { 
+                                            text: 'Delete',
+                                            type: 'button-positive',
+                                            onTap: function(e) {
+                                                var params = {_intervalId: interval._id};
+                                                TableBooking.deleteBlockedTableBookingInterval(params).success(function (successData) {
+                                                    for (a = 0; a < $scope.blockedTableBookingIntervals.length; a++) {
+                                                        if ($scope.blockedTableBookingIntervals[a]._id == interval._id) {
+                                                            $scope.blockedTableBookingIntervals.splice(a, 1);
+                                                        }
+                                                    }
+                                                }).error(function (errorData) {
+
+                                                });
+                                            } 
+                                        }
+                                    ]
                                 });
                             }
                         break;

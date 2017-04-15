@@ -42,6 +42,7 @@
 
     $result = mysql_query("CALL getOffers($_profileId, $_townId, $_businessId, $_eventId, $_offerId, '$timeScale');");
     
+    $output = null;
     while($row = mysql_fetch_assoc($result))
         $output[] = $row;
 
@@ -53,6 +54,7 @@
 
     $result = mysql_query("CALL getTodaysOffersForWideDisplay($_townId);");
     
+    $output = null;
     while($row = mysql_fetch_assoc($result))
         $output[] = $row;
     

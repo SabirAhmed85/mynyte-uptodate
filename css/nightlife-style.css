@@ -805,6 +805,7 @@ textarea {
 .web-back-button:hover {
     background: #212121;
     border: 1px solid #373737;
+    color: #ddd;
 }
 
 .web-top-right-button {
@@ -816,6 +817,11 @@ textarea {
     color: #583636;
     padding: 7px;
     font-size: 13px;
+}
+.web-top-right-button:hover {
+    background: #eceaea;
+    border: 1px solid #ffffff;
+    color: #943535;
 }
 
 .web-back-button i,
@@ -3477,6 +3483,9 @@ a.item.small-item {
     float: left;
     border: 1px solid #444;
 }
+a.item.small-item.small-item-bottom {
+    margin-bottom: 15px;
+}
 
 a.item.item-red {
     color: #A07070;
@@ -3491,7 +3500,15 @@ a.item i {
 }
 
 a.item.item-red i {
-    color: #AB6A6A;
+    color: #855f5f;
+}
+
+a.item.item-red i.icon-absolute {
+    position: absolute;
+    top: 22px;
+    display: block;
+    color: #7d4c4c;
+    font-size: 14px;
 }
 
 a.item.item-dark-grey i {
@@ -4105,6 +4122,13 @@ button.button-large {
     background: #313131;
 }
 
+.fake-input-wrapper {
+    position: relative; 
+    width: 100%; 
+    margin-bottom: 5px; 
+    float: left;
+}
+
 .fake-input {
     float: left;
     width: 100%;
@@ -4114,6 +4138,10 @@ button.button-large {
     background-color: #E6E1E1;
     color: #555;
     font-size: 15px;
+    text-align: left;
+}
+.fake-input.fake-input-half {
+    width: 60%;
 }
 
 .fake-input.input-invalid {
@@ -4160,6 +4188,20 @@ button.button-large {
 
 .fake-time-input-s .timepicker {
     width: 45px;
+}
+
+.blocked-booking-interval-time-select {
+    float: left;
+    width: 100%;
+    color: #bba7a7;
+    margin-top: 10px;
+    text-align: center;
+    min-height: 40px;
+}
+
+.blocked-booking-interval-time-select i.ion-clock {
+    margin-right: 10px;
+    font-size: 23px;
 }
 
 .ionic_datepicker_popup .popup-body {
@@ -4360,6 +4402,9 @@ form.edit-form {
     float: left;
     margin-top: 10px;
 }
+.add-business-item form {
+    margin-top: 10px;
+}
 
 label.item-header,
 form div.item-header {
@@ -4541,6 +4586,42 @@ form div.item-header {
 
 .editing .extra-options-label .bottom-note {
     padding-top: 10px;
+}
+
+.blocked-booking-interval-display {
+    float: left;
+    width: 100%;
+    background: #222;
+    margin-bottom: 1px;
+    padding: 10px 10px 0px;
+    border: 1px solid #282828;
+    color: #999;
+    position: relative;
+    font-size: 13px;
+}
+.blocked-booking-interval-display:hover {
+    background: #282828;
+}
+
+.blocked-booking-interval-display .options {
+    float: right;
+    margin-right: 5px;
+    color: #ddd;
+    font-weight: bold;
+}
+.blocked-booking-interval-display .options:hover {
+    cursor: pointer;
+    color: #fff;
+}
+
+.blocked-booking-interval-display div {
+    float: left;
+    clear: left;
+    margin-bottom: 5px;
+}
+
+.blocked-booking-interval-display div span{
+    font-weight: bold;
 }
 
 /* Generic Screen Cover */
@@ -6235,14 +6316,16 @@ button.send i {
 /* Generic Custom Select */
 
 label.special,
-.book-tickets div.special {
+.book-tickets div.special,
+.add-blocked-booking-interval-form div.special{
     padding: 5px 10px !important;
     width: 100%;
     float: left;
     clear: left;
     border: 1px solid #444 !important;
 }
-.book-tickets div.special {
+.book-tickets div.special,
+.add-blocked-booking-interval-form div.special {
     width: 95%;
 }
 
@@ -8144,6 +8227,21 @@ location-lookup ul li span {
         transition: all 0s;
     }
 
+    .fake-input-wrapper.fake-input-wrapper-half {
+        width: 60%;
+    } 
+    .fake-input-wrapper.fake-input-wrapper-third {
+        width: 30%;
+    }
+
+    .blocked-booking-interval-time-select {
+        float: right;
+        width: 37.5%;
+    }
+    .blocked-booking-interval-time-select .fake-input-wrapper {
+        margin-top: -10px;
+    }
+
     /* Header */
     #header-bar {
         padding-left: calc(50% - 443px);
@@ -8249,6 +8347,11 @@ location-lookup ul li span {
         border-right: none;
         padding-top: 7px;
         margin-left: -10px;
+    }
+
+    #header-bar .header-icon-right-span.isVisible {
+        opacity: 0;
+        top: -1000px;
     }
 
     #header-bar .header-log-in-container {

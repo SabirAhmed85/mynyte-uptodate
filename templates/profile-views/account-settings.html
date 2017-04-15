@@ -340,11 +340,19 @@
             Opening Times
         </a>
         
-        <a class="item item-red item-icon-left first small-item"
+        <a class="item item-red item-icon-left small-item"
             ng-if="rootScope.user.isBusiness == '1' && settingsType == 'Business'"
             ui-sref="app.accountSettingsAdvanced({settingsType: settingsType, setting: 'BusinessType'})">
             <i class="icon ion-navicon"></i>
             Business Category Settings
+        </a>
+
+        <a class="item item-red item-icon-left small-item small-item-bottom"
+            ng-if="rootScope.user.isBusiness == '1' && settingsType == 'Business'"
+            ui-sref="app.accountSettingsAdvanced({settingsType: settingsType, setting: 'BlockedTableBookingIntervals'})">
+            <i class="icon ion-calendar"></i>
+            <i class="icon ion-close-round icon-absolute"></i>
+            Blocked Table Booking Days
         </a>
     </ion-content>
 </ion-view>
