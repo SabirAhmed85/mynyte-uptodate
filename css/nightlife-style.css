@@ -8569,7 +8569,8 @@ location-lookup ul li span {
     .book-tickets .scroll,
     .see-menu .scroll,
     .see-menu-items .scroll,
-    .add-profile-item .scroll {
+    .add-profile-item .scroll,
+    .see-business-menu-items .scroll {
         width: 670px;
         margin-top: 60px;
     }
@@ -8679,6 +8680,9 @@ location-lookup ul li span {
     .register-form .tile {
         margin-bottom: 0;
         border: none;   
+    }
+    .reset-password .tile {
+        border-radius: 0;
     }
     .contact-mynyte .tile {
         width: 670px;
@@ -8835,6 +8839,11 @@ location-lookup ul li span {
         bottom: auto;
         margin-left: calc(50% - 440px);
         margin-top: 115px;
+    }
+    .reset-password ion-content {
+        max-width: 670px;
+        margin-left: calc(50% - 440px);
+        margin-top: 60px;
     }
     .see-trailer .tile {
         margin-top: 10px
