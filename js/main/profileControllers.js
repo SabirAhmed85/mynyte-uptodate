@@ -611,6 +611,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                             getAvailableBusinessTypes();
                         });
                     }
+                    getAvailableBusinessTypes();
                 }).error(function () {
                     getAvailableTowns();
                 });
