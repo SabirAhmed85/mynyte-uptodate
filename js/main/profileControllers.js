@@ -517,6 +517,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                         $scope.displayNameTaken = true;
                     }
                     else {
+                        console.log(successData);
                         $state.go('app.registerFinal', {profileType: $scope.profileType, _usersId: successData, usersEMail: $scope.email, usersPWord: $scope.password});
                     }
                 }).error(function (error) {

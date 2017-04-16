@@ -67,9 +67,9 @@
                 $lastName = explode(" ", $name);
                 $lastName = $lastName[count(explode(" ", $name))-1];
 
-                $result1 = mysql_query("CALL createProfileInitial('$profileType', '$hash', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId, '$wordLength');");
+                $result1 = mysql_query("CALL createProfileInitial('$profileType', '$hash', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId, '$wordLength');");
 
-                $result = mysql_query("SELECT _usersId");
+                $result = mysql_query("SELECT @_usersId as _usersId");
 
                 // new way to get Users Id
                 $_usersId = mysql_fetch_object($result);
@@ -102,9 +102,8 @@
     $lastName = explode(" ", $name);
     $lastName = $lastName[count(explode(" ", $name)) - 1];
 
-    $result1 = mysql_query("CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId);");
-    $result1 = "CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', _usersId);";
-    $result = mysql_query("SELECT _usersId");
+    $result1 = mysql_query("CALL createFBUserProfileInitial('$fbId', '$displayName', '$name', '$firstName', '$lastName', '$email', @_usersId);");
+    $result = mysql_query("SELECT @_usersId as _usersId");
 
     //need new way to get Users Id $_usersId = mysql_fetch_array($result)["@_usersId"];
     $_usersId = mysql_fetch_object($result);

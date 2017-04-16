@@ -19,8 +19,8 @@
     $newImageName = NULL;
       
     if ($action == 'createOffer') {
-        $query    = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageName, _offerId);");
-        $result = mysql_query("SELECT _offerId");
+        $query    = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageName, @_offerId);");
+        $result = mysql_query("SELECT @_offerId as _offerId");
         // Need new way to do this 
         $output = mysql_fetch_object($result);
         $output = $output -> _offerId;

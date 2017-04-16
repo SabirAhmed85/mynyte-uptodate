@@ -21,8 +21,8 @@
 
         if ($action == 'createEvent') {
             $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
-            $sqlQuery = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', _eventId)");
-            $sqlQuery2 = mysql_query("SELECT _eventId");
+            $sqlQuery = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', @_eventId)");
+            $sqlQuery2 = mysql_query("SELECT @_eventId as _eventId");
             $output = mysql_fetch_object($sqlQuery2);
             $output = $output -> _eventId;
             echo json_encode($output);
