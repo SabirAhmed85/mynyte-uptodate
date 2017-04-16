@@ -52,7 +52,8 @@
                     ng-click="updateTableFor(1);">
                     <i class="ion-plus-round"></i>
                 </button>
-                <div class="white nightlife-input fake-input fake-tablefor-input">
+                <div class="white nightlife-input fake-input fake-tablefor-input"
+                    ng-class="{'fake-input-maxed': tableForIsMax}">
                     {{tableFor}}
                 </div>
                 <button class="tableforpicker"
@@ -81,8 +82,13 @@
                     <i class="ion-ios-clock"></i>
                 </button>
         	</label>
+            <div class="form-error-note"
+                ng-if="tableBookingDisallowed.length > 0"
+                ng-repeat="reason in tableBookingDisallowed"
+                ng-bind-html="reason.note">
+            </div>
         	<button type="submit" id="submit" class="button button-red button-large"
-                ng-disabled="completeTableBookingForm.$invalid || rootScope.user.isBusiness == '1'"
+                ng-disabled="completeTableBookingForm.$invalid || rootScope.user.isBusiness == '1' || tableBookingDisallowed.length > 0"
                 ng-click="completeTableBooking(name, email);">
                 Book It
             </button>

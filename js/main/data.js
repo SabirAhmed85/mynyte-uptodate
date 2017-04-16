@@ -126,6 +126,7 @@ app.factory('Profile', ['$http', 'Config', function($http, Config) {
 		);
     }
     data.updateAllBusinessSettingDetails = function (params) {
+    	console.log(params);
         return $http(
             {
 				method: 'POST', url:Config.CreateProfileUrl + '?action=updateAllBusinessSettingDetails',

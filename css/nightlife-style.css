@@ -4053,6 +4053,33 @@ button.button-large {
     border-radius: 0 0 5px 5px;
 }
 
+.form-error-note {
+    float: left;
+    width: 95%;
+    position: relative;
+    background: #191919;
+    border-radius: 6px;
+    border: 1px solid #333;
+    margin: 10px 2.5% 0;
+    padding: 5px 10px;
+    color: #b59b9b;
+    font-size: 13px;
+    line-height: 23px;
+}
+
+.form-error-note i.ion-alert-circled {
+    float: left;
+    height: 42px;
+    font-size: 26px;
+    width: 42px;
+    text-align: left;
+    padding-top: 6px;
+    border-right: 1px solid #232828;
+    margin-right: 10px;
+    padding-left: 5px;
+    margin-top: 3px;
+}
+
 .book-tickets .item.special {
     color: #9E8383;
     font-size: 14px;
@@ -4167,6 +4194,11 @@ button.button-large {
     padding-top: 16px;
     border-top: 1px solid #484545;
     border-bottom: 1px solid #484545;
+}
+
+.fake-input-maxed {
+    background: #d6bebe;
+    border: 1px solid #e29292 !important;
 }
 
 .datepicker i,

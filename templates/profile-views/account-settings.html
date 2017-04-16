@@ -26,6 +26,11 @@
                                 <div ng-show="specificSetting.optionStyle == 'multiple'">
                                     <p>{{specificSetting.labels[specificSetting.val].name}}</p>
                                 </div>
+
+                                <div ng-show="specificSetting.optionStyle == 'number'">
+                                    <p ng-if="specificSetting.val == 0">No Maximum set</p>
+                                    <p ng-if="specificSetting.val > 0">{{specificSetting.val}}</p>
+                                </div>
                             </div>
                             <div class="item item-expander open"
                                 ng-show="specificSetting.editing">
@@ -75,6 +80,16 @@
                                             <span ng-hide="!specificSetting.editing">Selected</span>
                                         </span>
                                     </div>
+                                    
+                                    <button type="button" class="button button-white button-large"
+                                        ng-show="editing && specificSetting.editing"
+                                        ng-click="submitFieldEdit(specificSetting)">Apply Change</button>
+                                </div>
+                                <div
+                                    ng-show="specificSetting.optionStyle == 'number'">
+                                    <input name="maxTableBookingGuests" class="white nightlife-input nightlife-input-square" type="number" placeholder="You Must Enter a Display Name"
+                                    ng-model="specificSetting.val"
+                                    required />
                                     
                                     <button type="button" class="button button-white button-large"
                                         ng-show="editing && specificSetting.editing"

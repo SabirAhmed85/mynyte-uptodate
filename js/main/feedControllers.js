@@ -1003,10 +1003,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     if ($rootScope.debugMode) {
                         console.log('getListingById in NLFeedListing results: ', $scope.listing);
                     }
-                    $scope.messageDisabled = ($rootScope.user.isBusiness == '1' || $scope.listing.listingType == 'Movie' ||
+                    $scope.messageDisabled = ($rootScope.user.isBusiness == '1' || $scope.listing.listingType == 'Movie' || ($scope.listing.listingType == 'Business' && $scope.listing.isAcceptingEnquiries == '0') ||
                             ($rootScope.userLoggedIn && $scope.listing.following != '1' && $scope.listing.listingType == 'Person' && $rootScope.user.isBusiness == '0')
                         ) ? true : false;
-                        
                     
                     window.setTimeout(function () { $scope.pageLoading = false;}, 150);
                 }).error(function () {
@@ -1028,7 +1027,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $scope.sendMessage = function () {
                 if ($rootScope.userLoggedIn
                     && $rootScope.user.isBusiness == '0'
-                    && ( ($scope.listing.isBusiness == '1' || $scope.listing.listingType == 'Event') || ($scope.listing.following == '1' && $scope.listing.isBusiness != '1') )
+                    && ( (($scope.listing.isBusiness == '1' && $scope.listing.isAcceptingEnquiries == '1') || $scope.listing.listingType == 'Event') || ($scope.listing.following == '1' && $scope.listing.isBusiness != '1') )
                     ) {
                     //Go to message Screen
                     $state.go('app.profile');
@@ -1461,6 +1460,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $scope.pageTitle = $rootScope.pageTitle;
 
             $scope.tableForMax = $stateParams.tableForMax;
+            $scope.tableBookingDisallowed = [];
             
             $scope.convertToDate = function () {
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
@@ -1511,6 +1511,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 $scope.selectedDate1 = new Date(val);
                 $scope.dateInputHTML = $scope.convertToDate();
                 ipObj1.inputDate = new Date(val);
+
+                $scope.findOutIfRestaurantBookingPossible();
+
                 if ($rootScope.debugMode) {
                     console.log('Return value from the datepicker popup is : ' + new Date(val));
                 }
@@ -1541,12 +1544,11 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     }
                   } else {
                     var d = new Date();
-                    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-                    var diffDays = Math.round(Math.abs((d.getTime() - $scope.selectedDate1.getTime())/(oneDay)));
+                    var bookingIsToday = ($scope.selectedDate1.toDateString() === d.toDateString()); 
+
                     var currentTimeAsEpoch = (d.getHours()*60*60)+(d.getMinutes()*60);
                     
-                    console.log(new Date(val * 1000), new Date(currentTimeAsEpoch*1000));
-                    if (diffDays == 0 && new Date(val * 1000) < new Date(currentTimeAsEpoch*1000)) {
+                    if (bookingIsToday && new Date(val * 1000) < new Date(currentTimeAsEpoch*1000)) {
                         $timeout(function () {
                             showPastTimePopup({callback: 'showTimePicker'});
                         }, 5);
@@ -1555,6 +1557,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                         $scope.selectedTime = new Date(val * 1000);
                         $scope.timeInputHTML = $scope.convertToTime();
                         ipObj2.inputTime = ($scope.selectedTime.getUTCMinutes() < 30) ? val: val - 3600;
+                        $scope.findOutIfRestaurantBookingPossible();
                     }
                     if ($rootScope.debugMode) {
                         console.log('Selected epoch is : ', ipObj2.inputTime, 'and the time is ', $scope.selectedTime.getUTCHours(), 'H :', $scope.selectedTime.getUTCMinutes(), 'M');
@@ -1568,7 +1571,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
               };
 
             $scope.updateTableFor = function (val) {
-                $scope.tableFor = ( ($scope.tableFor == 1 && val == -1) || ($scope.tableFor == 99 && val == 1) || ($scope.tableForMax != 0 && $scope.tableForMax == $scope.tableFor && val == 1) ) ? $scope.tableFor: $scope.tableFor += val; 
+                $scope.tableFor = ( ($scope.tableFor == 1 && val == -1) || ($scope.tableFor == 99 && val == 1) || ($scope.tableForMax != 0 && $scope.tableForMax == $scope.tableFor && val == 1) ) ? $scope.tableFor: $scope.tableFor += val;
+                $scope.tableForIsMax = ($scope.tableForMax != 0 && $scope.tableForMax == $scope.tableFor) || $scope.tableFor == 99;
             }
 
             $scope.openTimePicker = function(){
@@ -1578,6 +1582,30 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $scope.openDatePicker = function(){
               ionicDatePicker.openDatePicker(ipObj1);
             };
+
+            $scope.findOutIfRestaurantBookingPossible = function () {
+                var params = {
+                    _businessId: $stateParams._id
+                    , requestedBookingDate: $scope.selectedDate1.getFullYear() + '-' + ($scope.selectedDate1.getMonth() + 1) + '-' + $scope.selectedDate1.getDate()
+                    , requestedBookingTime: $scope.selectedHour + ':' + $scope.selectedMinutes + ':00'
+                };
+                TableBooking.findOutIfRestaurantBookingPossible(params).success(function (successData) {
+                    $scope.tableBookingDisallowed = [];
+                    if (parseInt(successData[0].blockedCount) > 0) {
+                        var displayNote = '<i class="ion-alert-circled"></i>The restaurant is not accepting table bookings between the dates of <b>' + datesService.convertToReadableDate($scope, successData[0].blockedIntervalStart) + '</b> and <b>' + datesService.convertToReadableDate($scope, successData[0].blockedIntervalEnd) + '</b>.';
+                        $scope.tableBookingDisallowed.push({reason: 'Blocked', note: displayNote});
+                    }
+                    else if (successData[0].openCount == '0') {
+                        var displayNote = (successData[0].openingTime != null && successData[0].closingTime != null) ? 
+                            '<i class="ion-alert-circled"></i>The restaurant is closed at the time selected. On ' + datesService.days[$scope.selectedDate1.getDay()] + '\'s, the restaurant opens at <b>' + successData[0].openingTime.substr(0, successData[0].openingTime.length - 3) + '</b> and closes at <b>' + successData[0].closingTime.substr(0, successData[0].closingTime.length - 3) + '</b>.': 
+                            '<i class="ion-alert-circled"></i>The restaurant is closed on the date selected.';
+
+                        $scope.tableBookingDisallowed.push({reason: 'Closed', note: displayNote});
+                    }
+                }).error(function (errorData) {
+
+                });
+            }
 
             $scope.completeTableBooking = function (name, email) {
                 $scope.dateTimeString = $scope.selectedDate1.getFullYear() + '-' + ($scope.selectedDate1.getMonth() + 1) + '-' + $scope.selectedDate1.getDate() + ' ' + $scope.selectedHour + ':' + $scope.selectedMinutes;

@@ -6262,7 +6262,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     }
                 }
                 else if ($stateParams.settingsType == 'Business') {
-                    var updateParamsArray = ['isAcceptingOnlineOrders', 'showTakeawayMenu', 'isAcceptingTableBookings', 'showCarteMenu', 'isAcceptingTaxiBookings', 'isSearchable'];
+                    var updateParamsArray = ['isAcceptingOnlineOrders', 'showTakeawayMenu', 'isAcceptingTableBookings', 'showCarteMenu', 'maxTableBookingGuests', 'isAcceptingTaxiBookings', 'isSearchable', 'isAcceptingEnquiries'];
                     $scope.updateParams = {
                         _businessId: $rootScope.user._id
                     }
@@ -6270,7 +6270,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     for (a = 0; a < $scope.settings.businessSettings.length; a++) {
                         var specificSettings = $scope.settings.businessSettings[a].specificSettings || [];
                         for (b = 0; b < specificSettings.length; b++) {
-                            if (specificSettings[b].optionStyle == 'binary') {
+                            if (specificSettings[b].optionStyle == 'binary' || specificSettings[b].optionStyle == 'number') {
                                 $scope.updateParams[specificSettings[b].key] = specificSettings[b].val;
                             }
                             else if (specificSettings[b].optionStyle == 'multiple') {
@@ -6313,6 +6313,18 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                             ]
                         });
                         */
+                        $scope.settings.businessSettings.push({
+                            businessType: 'General',
+                            specificSettings: [
+                                { key: 'isAcceptingEnquiries'
+                                , label: 'Accept Enquiries through the App'
+                                , val: (data.isAcceptingEnquiries == '0') ? 0: 1
+                                , optionStyle: 'binary'
+                                , trueLabel: 'I want to accept enquiries through the app'
+                                , falseLabel: 'I do not want to accept enquiries through the app'
+                                , editing: false}
+                            ]
+                        });
                         
                         var completeFillingBusinessSettings = function () {
                             for (a = 0; a < $rootScope.user.listingTypes.length; a++) {
@@ -6334,6 +6346,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                                 , optionStyle: 'binary'
                                                 , trueLabel: 'Show my A la Carte Menu to users'
                                                 , falseLabel: 'Do not show my A la Carte Menu to users'
+                                                , editing: false},
+                                                { key: 'maxTableBookingGuests'
+                                                , label: 'Max Number of Guests per Booking'
+                                                , val: parseInt(data.maxTableBookingGuests)
+                                                , optionStyle: 'number'
+                                                , trueLabel: ''
+                                                , falseLabel: ''
                                                 , editing: false}
                                             ]
                                         });
@@ -6407,18 +6426,19 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                     }
                                     
                                     if (b == successData.length - 1) {
-                                        $scope.settings.businessSettings.push({
-                                            businessType: 'General',
-                                            specificSettings: [
-                                                { key: '_tonightsFeedButtonOptionId'
-                                                , label: 'Call to action in the MyNyte feed'
-                                                , val: relVal
-                                                , optionStyle: 'multiple'
-                                                , labels: successData
-                                                , editing: false}
-                                            ]
-                                        });
-                                        completeFillingBusinessSettings();
+                                        for (a = 0; a < $scope.settings.businessSettings.length; a++) {
+                                            if ($scope.settings.businessSettings[a].businessType == 'General') {
+                                                $scope.settings.businessSettings[a].specificSettings.push({
+                                                    key: '_tonightsFeedButtonOptionId'
+                                                    , label: 'Call to action in the MyNyte feed'
+                                                    , val: relVal
+                                                    , optionStyle: 'multiple'
+                                                    , labels: successData
+                                                    , editing: false
+                                                });
+                                                completeFillingBusinessSettings();
+                                            }
+                                        }
                                     }
                                 }
                             }).error(function (errorData) {
