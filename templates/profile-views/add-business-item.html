@@ -1,7 +1,7 @@
 <ion-view view-title="Add {{itemLabel}} on MyNyte.co.uk" class="black_bg add-business-item">
   	<ion-content class="view-wrapper">
       <h2>Please fill in the details for your new {{itemLabel}}</h2>
-      <div class="register" style="float: left;">
+      <div class="register" style="float: left; width: 100%;">
         <form ng-if="itemType=='Movies'" name="addMovieForm" class="business-item-form" ng-class="{'editing': editing}">
             
             <label class="item-header">
@@ -554,6 +554,81 @@
                 ng-disabled="addEventForm.$invalid || !dateChosen || rootScope.imageUploadError != null || rootScope.imageSrcs.length == 0 || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
                 ng-click="addEvent(eventTitle, description, dressCode, dealsOnTheNight, extraInfo);">
                 Add New Event
+            </button>
+        </form>
+
+        <!-- MENU ITEMS -->
+        <form ng-show="itemType=='BlockedTableBookingIntervals'" class="add-blocked-booking-interval-form" name="addBlockedTableBookingIntervalForm">
+            
+            <label class="item-header">
+                Interval Start Date (&amp; optional Time)
+            </label>
+            <div class="item special">
+                <span class="fake-input-wrapper fake-input-wrapper-half">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{startDateInputString}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(ipObj1);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+                <span class="blocked-booking-interval-time-select">
+                    <span
+                        ng-click="showTimeSelect('start');"
+                        ng-if="!showStartTimeSelect">
+                        <i class="ion-clock"></i>
+                        Select a Time (optional)
+                    </span>
+                    <span class="fake-input-wrapper"
+                        ng-if="showStartTimeSelect">
+                        <div class="white nightlife-input fake-input fake-date-input">
+                            {{startTimeInputString}}
+                        </div>
+                        <button class="timepicker"
+                            ng-click="openTimePicker(startTimeIpObj);">
+                            <i class="ion-ios-clock"></i>
+                        </button>
+                    </span>
+                </span>
+            </div>
+            <label class="item-header">
+                Interval End Date &amp; Time
+            </label>
+            <div class="item special">
+                <span class="fake-input-wrapper fake-input-wrapper-half">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{endDateInputString}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(ipObj2);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+
+                <span class="blocked-booking-interval-time-select">
+                    <span
+                        ng-click="showTimeSelect('end');"
+                        ng-if="!showEndTimeSelect">
+                        <i class="ion-clock"></i>
+                        Select a Time (optional)
+                    </span>
+                    <span class="fake-input-wrapper"
+                        ng-if="showEndTimeSelect">
+                        <div class="white nightlife-input fake-input fake-date-input">
+                            {{endTimeInputString}}
+                        </div>
+                        <button class="timepicker"
+                            ng-click="openTimePicker(endTimeIpObj);">
+                            <i class="ion-ios-clock"></i>
+                        </button>
+                    </span>
+                </span>
+            </div>
+
+            <button ng-disabled="selectedIntervalStartDate == null || selectedIntervalEndDate == null" class="button button-red button-large"
+                ng-click="addBlockedTableBookingInterval()">
+                Add New Blocked Table Booking Interval
             </button>
         </form>
         

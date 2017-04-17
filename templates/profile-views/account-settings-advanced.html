@@ -168,6 +168,18 @@
                         </button>
                     </form>
                 </div>
+                <div ng-if="setting == 'BlockedTableBookingIntervals'">
+                    <h2>Blocked Table Booking Days</h2>
+                    <div class="blocked-booking-interval-display"
+                            ng-repeat="interval in blockedTableBookingIntervals">
+                        <div>
+                            <div>Start: <span>{{interval.startDate}}</span> at <span>{{interval.startTime}}</span></div>
+                            <div>End: <span>{{interval.endDate}}</span> at <span>{{interval.endTime}}</span></div>
+                        </div>
+                        <span class="options"
+                            ng-click="showIntervalDeleteOptions(interval);">Delete</span>
+                    </div>
+                </div>
             </div>
         </div>
     </ion-content>

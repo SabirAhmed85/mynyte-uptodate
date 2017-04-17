@@ -126,6 +126,7 @@ app.factory('Profile', ['$http', 'Config', function($http, Config) {
 		);
     }
     data.updateAllBusinessSettingDetails = function (params) {
+    	console.log(params);
         return $http(
             {
 				method: 'POST', url:Config.CreateProfileUrl + '?action=updateAllBusinessSettingDetails',
@@ -942,7 +943,6 @@ app.factory('Listings', ['$http', 'Config', function($http, Config) {
 		);
 	}
     data.getPhoneNumberForListing = function (paramsString) {
-        console.log(paramsString);
 		return $http(
             {
 				method: 'POST', url:Config.ListingsUrl + '?action=getPhoneNumberForListing&'+paramsString
@@ -1238,6 +1238,38 @@ app.factory('TableBooking', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+	data.findOutIfRestaurantBookingPossible = function (params) {
+		return $http(
+            {
+				method: 'POST', url:Config.TableBookingUrl + '?action=findOutIfRestaurantBookingPossible',
+				data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.createBlockedTableBookingInterval = function (params) {
+		return $http(
+            {
+				method: 'POST', url:Config.TableBookingUrl + '?action=createBlockedTableBookingInterval',
+				data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.deleteBlockedTableBookingInterval = function (params) {
+		return $http(
+            {
+				method: 'POST', url:Config.TableBookingUrl + '?action=deleteBlockedTableBookingInterval',
+				data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.getBlockedTableBookingIntervals = function (params) {
+		return $http(
+            {
+				method: 'POST', url:Config.TableBookingUrl + '?action=getBlockedTableBookingIntervals',
+				data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
 	return data;
 }]);
 
@@ -1346,7 +1378,6 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
 app.factory('Images', ['$http', 'Config', function($http, Config) {
 	var data = {};
 	data.uploadImage = function (formData) {
-        console.log(formData);
 		return $.ajax(
             {
 				type: 'POST', url:Config.ImageUploadUrl + '?action=uploadImage',
@@ -1371,7 +1402,6 @@ app.factory('Images', ['$http', 'Config', function($http, Config) {
 		);
 	}
     data.uploadImageForMovieCreation = function (formData) {
-        console.log(formData);
 		return $.ajax(
             {
 				type: 'POST', url:Config.ImageUploadUrl + '?action=uploadImage',
