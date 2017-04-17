@@ -8381,6 +8381,11 @@ location-lookup ul li span {
         margin-left: -10px;
     }
 
+    .intended-browser .top-right-button.isVisible {
+        opacity: 0 !important;
+        top: -1000px !important;
+    }
+
     #header-bar .header-icon-right-span.isVisible {
         opacity: 0;
         top: -1000px;

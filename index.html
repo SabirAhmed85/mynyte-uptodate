@@ -217,7 +217,7 @@
                 'ion-edit': topRightButtonIsEdit && !currentlyEditing,
                 'ion-close-round': currentlyEditing || showHeaderButtons || showSearchPanel,
                 'ion-gear-a': topRightButtonIsSettings,
-                'isVisible': topRightButtonIsClock || (showHeaderButtons && currentViewName == 'app.feed'),
+                'isVisible': topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings || topRightButtonIsClock || (showHeaderButtons && currentViewName == 'app.feed'),
                 'ion-clock': (topRightButtonIsClock && !showSearchPanel && !showAssistantPanel)}" ng-click="topRightButtonFunction()"></i>
         <span class="header-icon-right-span" ng-class="{'isVisible': topRightButtonIsEdit && !currentlyEditing}" ng-click="topRightButtonFunction()">Edit</span>
 
