@@ -4021,7 +4021,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                             new Date("08-16-2016"),
                             new Date(1439676000000)
                         ];
-                        ipObj[a].from = new Date(), //Optional
+
                         ipObj[a].to = $scope.finalDate.setDate($scope.finalDate.getDate() + 90), //Optional
                         ipObj[a].inputDate = $scope.selectedDateLast,      //Optional
                         ipObj[a].mondayFirst = true,          //Optional
@@ -4123,7 +4123,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     
                     $scope.createMovie = function (movieTitle, movieTrailerLink, description) {
                         movieTitle = movieTitle.replace(/'/g, "\'");
-                        description = description.replace(/'/g, "\'");
+                        description = (description != null) ? description.replace(/'/g, "\'") : "";
                         var firstDateTimeString = $scope.selectedDateFirst.getFullYear() + '-' + ($scope.selectedDateFirst.getMonth() + 1) + '-' + $scope.selectedDateFirst.getDate() + ' 00:00';
                         var lastDateTimeString = $scope.selectedDateLast.getFullYear() + '-' + ($scope.selectedDateLast.getMonth() + 1) + '-' + $scope.selectedDateLast.getDate() + ' 00:00';
                         

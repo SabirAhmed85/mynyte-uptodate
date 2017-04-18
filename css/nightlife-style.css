@@ -6436,6 +6436,9 @@ label.special,
 .add-menu-item-template-option-form .select-options {
     width: 95%;
 }
+.add-movie-form .select-options {
+    top: 53px;
+}
 .select-options.select-options-towns {
     top: 115px;
 }
