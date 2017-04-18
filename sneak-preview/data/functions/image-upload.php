@@ -219,8 +219,8 @@
             }
             else if ($imgEntryType == 'event_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, _eventId)");
-                    $sqlQuery2 = mysql_query("SELECT _eventId");
+                    $result = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, @_eventId)");
+                    $sqlQuery2 = mysql_query("SELECT @_eventId as _eventId");
                     $output = mysql_fetch_object($sqlQuery2);
                     $output = $output -> _eventId;
                     echo json_encode($output);
@@ -230,8 +230,8 @@
             }
             else if ($imgEntryType == 'offer_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageNameQuoted, _offerId);");
-                    $sqlQuery2 = mysql_query("SELECT _offerId");
+                    $result = mysql_query("CALL createOffer('$_offerTypeId', '$_offerSubCategoryId', '$_businessId', '$offerTitle', '$description', 0, '$startDateTime', $endDateTime, $weeksAhead, $weekdayIndex, $_eventId, $newImageNameQuoted, @_offerId);");
+                    $sqlQuery2 = mysql_query("SELECT @_offerId as _offerId");
                     $output = mysql_fetch_object($sqlQuery2);
                     $output = $output -> _offerId;
                     echo json_encode($output);
@@ -241,8 +241,8 @@
             }
             else if ($imgEntryType == 'movie_cover_photo') {
                 if ($result_thumb) {
-                    $result = mysql_query("CALL createMovie('$name', '$description', '$firstShowingDate', '$lastShowingDate', '$movieStyleIdString', '$movieTrailerLink', $newImageNameQuoted, _movieId);");
-                    $sqlQuery2 = mysql_query("SELECT _movieId");
+                    $result = mysql_query("CALL createMovie('$name', '$description', '$firstShowingDate', '$lastShowingDate', '$movieStyleIdString', '$movieTrailerLink', $newImageNameQuoted, @_movieId);");
+                    $sqlQuery2 = mysql_query("SELECT @_movieId as _movieId");
                     $output = mysql_fetch_object($sqlQuery2);
                     $output = $output -> _movieId;
                     echo json_encode($output);

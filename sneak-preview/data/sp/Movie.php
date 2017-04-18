@@ -6,10 +6,9 @@
   
   if ($action == 'getMoviesForMaintenance') {
     $timeScale = (empty($_GET['timeScale'])) ? "": mysql_real_escape_string($_GET['timeScale']);
-    $_movieId = (empty($_GET['_movieId'])) ? "": mysql_real_escape_string($_GET['_movieId']);
+    $_movieId = (empty($_GET['_movieId'])) ? "0": mysql_real_escape_string($_GET['_movieId']);
     
     $result = mysql_query("CALL getMoviesForMaintenance('$timeScale', $_movieId)");
-    
       
     //print(json_encode($_usersId));
     while($row = mysql_fetch_assoc($result))
