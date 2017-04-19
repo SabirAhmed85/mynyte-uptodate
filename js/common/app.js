@@ -6,7 +6,8 @@ var DebugMode = false;
 
 var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";
 var AssetsFolderUrl = RootUrl + "sneak-preview";
-var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://maps.googleapis.com/ data:";
+var AnalyticsScriptSrc = (IntendedPlatform = "browser") ? " https://www.google-analytics.com/ ": "";
+var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://maps.googleapis.com/"+AnalyticsScriptSrc+"data:";
 
 app.constant("EnvironmentVariables", {
               "IntendedPlatform": IntendedPlatform,
