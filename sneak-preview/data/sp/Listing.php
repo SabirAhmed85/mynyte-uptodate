@@ -30,6 +30,7 @@
     }
     
     function prepareOffersOutputObj ($result_offers) {
+        $output_offers = array();
         while($row_offers = mysqli_fetch_assoc($result_offers)) {
             $output_offers[] = $row_offers;
         }
