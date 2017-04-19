@@ -43,7 +43,7 @@
         }
         shuffle($output_listings);
         $output_listings_top = array_slice($output_listings, 0, 2);
-        $output_listings = array_slice($output_listings, 2, count($output_listings) - 3);
+        $output_listings = array_slice($output_listings, 2, count($output_listings) - 2);
         
         return array("listings_top"=> $output_listings_top, "listings"=> $output_listings);
     }
