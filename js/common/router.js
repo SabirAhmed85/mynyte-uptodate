@@ -552,6 +552,16 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
           }
         }
       })
+      //ExternalApi
+      .state('app.externalApi', {
+        url: "/externalApi/:format/:colorScheme/:_businessId/:_liveChatId",
+        views: {
+          'more-tab' :{
+              templateUrl: "templates/more-views/external-api.html",
+                  controller: "ExternalApiCtrl"
+          }
+        }
+      })
 	 
     //  login page
     //Default Page App goes to on Start

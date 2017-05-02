@@ -363,7 +363,7 @@
         </a>
 
         <a class="item item-red item-icon-left small-item small-item-bottom"
-            ng-if="rootScope.user.isBusiness == '1' && settingsType == 'Business'"
+            ng-if="rootScope.user.isBusiness == '1' && settingsType == 'Business' && rootScope.user.listingTypes.indexOf('Restaurant') != -1"
             ui-sref="app.accountSettingsAdvanced({settingsType: settingsType, setting: 'BlockedTableBookingIntervals'})">
             <i class="icon ion-calendar"></i>
             <i class="icon ion-close-round icon-absolute"></i>

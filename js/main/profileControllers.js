@@ -931,6 +931,19 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
         
         $rootScope.checkForAppInit($scope);
     }]);
+    /*  External Api Control */
+    app.controller('ExternalApiCtrl', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        });
+        $scope.pageLoad = function () {
+            $scope.rootScope = $rootScope;
+            $rootScope.pageTitle = 'Download the MyNyte App';
+            $scope.pageTitle = $rootScope.pageTitle;
+        }
+        
+        $rootScope.checkForAppInit($scope);
+    }]);
 
     app.controller('NotificationCtrl', ['$rootScope', '$state','$scope', '$stateParams', 'Notifications', 'Profile', 'Followers', function($rootScope, $state, $scope, $stateParams, Notifications, Profile, Followers) {
         //Variables & Constants
@@ -6268,19 +6281,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     $scope.updateParams = {
                         _businessId: $rootScope.user._id
                     }
-                    
-                    for (a = 0; a < $scope.settings.businessSettings.length; a++) {
-                        var specificSettings = $scope.settings.businessSettings[a].specificSettings || [];
-                        for (b = 0; b < specificSettings.length; b++) {
-                            if (specificSettings[b].optionStyle == 'binary' || specificSettings[b].optionStyle == 'number') {
-                                $scope.updateParams[specificSettings[b].key] = specificSettings[b].val;
-                            }
-                            else if (specificSettings[b].optionStyle == 'multiple') {
-                                $scope.updateParams[specificSettings[b].key] = specificSettings[b].labels[specificSettings[b].val]._id;
-                            }
-                        }
-                    }
-                    
+
                     var updateAllBusinessSettingDetails = function () {
                             Profile.updateAllBusinessSettingDetails($scope.updateParams).success(function (successData) {
                             $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl updateAllBusinessSettingDetails successData', 'data': successData});
@@ -6293,7 +6294,36 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                         });
                     }
                     
-                    updateAllBusinessSettingDetails();
+                    var loopThroughBusinessSettings = function () { 
+                        for (var a = 0; a < $scope.settings.businessSettings.length; a++) {
+                            var specificSettings = $scope.settings.businessSettings[a].specificSettings || [];
+                            for (b = 0; b < specificSettings.length; b++) {
+                                if (specificSettings[b].optionStyle == 'binary' || specificSettings[b].optionStyle == 'number') {
+                                    $scope.updateParams[specificSettings[b].key] = specificSettings[b].val;
+                                }
+                                else if (specificSettings[b].optionStyle == 'multiple') {
+                                    $scope.updateParams[specificSettings[b].key] = specificSettings[b].labels[specificSettings[b].val]._id;
+                                }
+
+                                if (a == $scope.settings.businessSettings.length - 1 && b == specificSettings.length - 1) {
+                                    updateAllBusinessSettingDetails();
+                                }
+                            }
+                        }
+                    }
+
+                    var loopThroughUpdateParamsArray = function () {
+                        $scope.updateParams["_tonightsFeedButtonOptionId"] = 0;
+                        for (var a = 0; a < updateParamsArray.length; a++) {
+                            $scope.updateParams[updateParamsArray[a]] = 0;
+
+                            if (a == updateParamsArray.length - 1) {
+                                loopThroughBusinessSettings();
+                            }
+                        }
+                    }
+
+                    loopThroughUpdateParamsArray();
                 }
             };
 
@@ -6447,7 +6477,12 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                 $scope.getAllTonightsFeedOptionsForBusiness();
                             });
                         }
-                        $scope.getAllTonightsFeedOptionsForBusiness();
+
+                        if ($rootScope.user.listingTypes.indexOf('Taxi Firm') != -1 && $rootScope.user.listingTypes.length == 1) {
+                            completeFillingBusinessSettings();
+                        } else {
+                            $scope.getAllTonightsFeedOptionsForBusiness();
+                        }
                         
                     }
                     

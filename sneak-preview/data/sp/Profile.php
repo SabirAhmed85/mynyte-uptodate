@@ -231,8 +231,7 @@
         $dataJsonDecode     = json_decode($data);
         
         $_businessId = $dataJsonDecode->_businessId;
-        //$isAcceptingOnlineOrders = $dataJsonDecode->isAcceptingOnlineOrders;
-      
+        $isAcceptingOnlineOrders = $dataJsonDecode->isAcceptingOnlineOrders;
         $showTakeawayMenu = $dataJsonDecode->showTakeawayMenu;
         $isAcceptingTableBookings = $dataJsonDecode->isAcceptingTableBookings;
         $showCarteMenu = $dataJsonDecode->showCarteMenu;
@@ -243,15 +242,8 @@
         //$isSearchable = $dataJsonDecode->isSearchable;
         $isSearchable = 1;
       
-        $isAcceptingOnlineOrders = ($isAcceptingOnlineOrders == "") ? 0: $isAcceptingOnlineOrders;
-        $showTakeawayMenu = ($showTakeawayMenu == "") ? 0: $showTakeawayMenu;
-        $isAcceptingTableBookings = ($isAcceptingTableBookings == "") ? 0: $isAcceptingTableBookings;
-        $showCarteMenu = ($showCarteMenu == "") ? 0: $showCarteMenu;
-        $isAcceptingTaxiBookings = ($isAcceptingTaxiBookings == "") ? 0: $isAcceptingTaxiBookings;
-        $_tonightsFeedButtonOptionId = ($_tonightsFeedButtonOptionId == "") ? 0: $_tonightsFeedButtonOptionId;
-      
         $result = mysql_query("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId);");
-        //echo json_encode("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $isAcceptingTaxiBookings, $isSearchable, $_tonightsFeedButtonOptionId);");
+        //echo json_encode("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId);");
   }
   elseif ($action == 'updateBusinessTypesForBusiness') {
     $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
@@ -420,7 +412,6 @@
     if ( hash_equals($hash, crypt($word, $hash)) ) {
       // Ok!
       $result = mysql_query("CALL logIn('$email','$hash');");
-      
         //print(json_encode($_usersId));
         while($row = mysql_fetch_assoc($result))
             $output[] = $row;

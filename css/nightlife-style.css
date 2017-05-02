@@ -4148,6 +4148,9 @@ button.button-large {
     border-color: #403E3E;
     background: #313131;
 }
+.business-item-form.individual-edit-form .datepicker {
+    padding-left: 0;
+}
 
 .fake-input-wrapper {
     position: relative; 
@@ -4443,7 +4446,7 @@ form div.item-header {
     float: left;
     width: 90%;
     color: #ABABAB;
-    padding: 2%;
+    padding: 7px 10px;
     border-top: 2px solid #333;
     border-bottom: 2px solid #333;
     border-left: 1px solid #333;
@@ -8248,7 +8251,7 @@ location-lookup ul li span {
     top: 5px;
 }
 
-@media only screen and (min-width: 52rem) {
+@media only screen and (min-width: 56rem) {
     /* Generic classes */
     .small-screen-trans {
         -webkit-transition: all 0s;

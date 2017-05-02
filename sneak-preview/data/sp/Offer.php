@@ -39,8 +39,9 @@
     $_eventId = (empty($_GET['_eventId'])) ? 0: mysql_real_escape_string($_GET['_eventId']);
     $_offerId = (empty($_GET['_offerId'])) ? 0: mysql_real_escape_string($_GET['_offerId']);
     $timeScale = (empty($_GET['timeScale'])) ? '': mysql_real_escape_string($_GET['timeScale']);
+    $format = $_GET['format'];
 
-    $result = mysql_query("CALL getOffers($_profileId, $_townId, $_businessId, $_eventId, $_offerId, '$timeScale');");
+    $result = mysql_query("CALL getOffers($_profileId, $_townId, $_businessId, $_eventId, $_offerId, '$timeScale', '$format');");
     
     $output = null;
     while($row = mysql_fetch_assoc($result))
