@@ -64,6 +64,7 @@
         $_profileId = 0;
         
         $timeScale = (empty($_GET['timeScale'])) ? "": mysql_real_escape_string($_GET['timeScale']);
+
         if (isset($_GET['_profileId'])) {
             $_profileId = $_GET['_profileId'];
         }
@@ -73,8 +74,7 @@
         elseif ($_GET['_townId']) {
             $_townId = (empty($_GET['_townId'])) ? "": mysql_real_escape_string($_GET['_townId']);
             if (isset($_GET['_musicStyleId'])) {
-                $_musicStyleId = (empty($_GET['_musicStyleId'])) ? "": mysql_real_escape_string($_GET['_musicStyleId']);
-                $result1 = mysql_query("CALL updateAnalyticsClubnightSearch('$_townId','$_musicStyleId');");
+                $_musicStyleId = (empty($_GET['_musicStyleId'])) ? "0": mysql_real_escape_string($_GET['_musicStyleId']);
             }
         }
         elseif (isset($_GET['_eventId']) || isset($_GET['getDates'])) {
@@ -84,12 +84,14 @@
         if (isset($_GET['getDates'])) {
             $result = mysql_query("CALL getEventDateDetails($_eventId, $_profileId)");
         } else {
-            $result = mysql_query("CALL getEvent('$timeScale', $_businessId, $_townId, $_musicStyleId, $_eventId, $_profileId)");
+            $format = $_GET['format'];
+            $result = mysql_query("CALL getEvent('$timeScale', $_businessId, $_townId, $_musicStyleId, $_eventId, $_profileId, '$format')");
         }
     }
     
     if ($action == 'updateEvent' || $action == 'getEvents' || $action == 'getEventEntryBooking' || $action == 'createEventEntryBooking') {
         //print(json_encode($_usersId));
+        $result = ($result === null) ? array() : $result;
         $output = null;
         while($row = mysql_fetch_assoc($result))
         $output[] = $row;

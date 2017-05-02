@@ -154,6 +154,7 @@
                                   ng-show="listing.showTakeawayMenu && rootScope.userLoggedIn && rootScope.user.isBusiness == 0"
                                   ng-click="rootScope.pinListingToMessage($event, listing, 'BusinessesTakeaway Menu', 2); $event.stopPropagation();"></i>
                               </a>
+                              <!--
                               <span class="option-panel"
                                 ng-show="listing.listingTypes.indexOf('Taxi Firm') != -1"
                                 ng-click="goToBookTaxi();"
@@ -167,6 +168,7 @@
                                     ng-show="!listing.isAcceptingTaxiBookings">Currently not accepting taxi bookings.</span>
                                 </span>
                               </span>
+                            -->
                               <a class="option-panel"
                                 ui-sref="app.seeBusinessesItems({searchType: searchType, _businessTypeId: _businessTypeId, _listingId: _listingId, listingType: listingType, _businessId: listing.relListingId, itemType: 'UpcomingEvents', listingName: listing.name})"
                                 ng-show="listing.listingTypes.indexOf('Nightclub') != -1 || listing.listingTypes.indexOf('Bar') != -1">

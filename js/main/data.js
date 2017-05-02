@@ -742,9 +742,10 @@ app.factory('Places', ['$http', 'Config', function($http, Config) {
 app.factory('Events', ['$http', 'Config', function($http, Config) {
 	var data = {};
     data.getEvent = function (_eventId) {
+		var format = 'getEvent';
 		return $http(
             {
-				method: 'GET', url:Config.EventsUrl + '?action=getEvents&_eventId=' + _eventId,
+				method: 'GET', url:Config.EventsUrl + '?action=getEvents&format=' + format + '&_eventId=' + _eventId,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
@@ -758,10 +759,11 @@ app.factory('Events', ['$http', 'Config', function($http, Config) {
 		);
 	}
 	data.getEventsByBusiness = function (_businessId, timeScale, _profileId) {
+		var format = 'getEventsByBusiness';
 		return $http(
             {
 				method: 'GET', 
-				url:Config.EventsUrl + '?action=getEvents&_businessId=' + _businessId + '&timeScale=' + timeScale + '&_profileId=' + _profileId,
+				url:Config.EventsUrl + '?action=getEvents&format=' + format + '&_businessId=' + _businessId + '&timeScale=' + timeScale + '&_profileId=' + _profileId,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
@@ -774,7 +776,7 @@ app.factory('Events', ['$http', 'Config', function($http, Config) {
         stringAppend += '&_profileId=' + _profileId;
 		return $http(
             {
-				method: 'GET', url:Config.EventsUrl + '?action=getEvents&timeScale=present&_townId=' + stringAppend,
+				method: 'GET', url:Config.EventsUrl + '?action=getEvents&format=getEventsByTown&timeScale=present&_townId=' + stringAppend,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
@@ -841,37 +843,41 @@ app.factory('Events', ['$http', 'Config', function($http, Config) {
 app.factory('Offers', ['$http', 'Config', function($http, Config) {
 	var data = {};
     data.getOffer = function (_offerId, _profileId) {
+    	var format = 'getOffer';
 		return $http(
             {
-				method: 'GET', url:Config.OffersUrl + '?action=getOffers&_offerId=' + _offerId + '&_profileId=' + _profileId
+				method: 'GET', url:Config.OffersUrl + '?action=getOffers&format=' + format + '&_offerId=' + _offerId + '&_profileId=' + _profileId
 			}
 		);
 	}
 	data.getOffersByTownId = function (_townId, _profileId, timeScale) {
 		return $http(
             {
-				method: 'GET', url:Config.OffersUrl + '?action=getOffers&timeScale='+ timeScale +'&_townId=' + _townId + '&_profileId=' + _profileId
+				method: 'GET', url:Config.OffersUrl + '?action=getOffers&format=getOffersByTownId&timeScale='+ timeScale +'&_townId=' + _townId + '&_profileId=' + _profileId
 			}
 		);
 	}
     data.getOffersByBusinessId = function (_businessId, _profileId, timeScale) {
+    	var format = 'getOffersByBusinessId';
 		return $http(
             {
-				method: 'GET', url:Config.OffersUrl + '?action=getOffers&timeScale='+ timeScale +'&_businessId=' + _businessId + '&_profileId=' + _profileId
+				method: 'GET', url:Config.OffersUrl + '?action=getOffers&format=' + format + '&timeScale='+ timeScale +'&_businessId=' + _businessId + '&_profileId=' + _profileId
 			}
 		);
 	}
 	data.getOffers = function (_listingId, listingType, _profileId) {
 		if (listingType == 'Event') {
+			var format = 'getOffersForEvent';
 			return $http(
 		        {
-					method: 'GET', url:Config.OffersUrl + '?action=getOffers&_eventId=' + _listingId + '&_profileId=' + _profileId
+					method: 'GET', url:Config.OffersUrl + '?action=getOffers&format=' + format + '&_eventId=' + _listingId + '&_profileId=' + _profileId
 				}
 			);
 		} else {
+			var format = 'getOffers';
 			return $http(
 		        {
-					method: 'GET', url:Config.OffersUrl + '?action=getOffers&timeScale=present&_businessId=' + _listingId + '&_profileId=' + _profileId
+					method: 'GET', url:Config.OffersUrl + '?action=getOffers&format=' + format + '&timeScale=present&_businessId=' + _listingId + '&_profileId=' + _profileId
 				}
 			);
 		}
