@@ -1,5 +1,5 @@
 <?php
-  $intended_environment = 'Live';
+  $intended_environment = 'Staging';
 
   $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk";
 

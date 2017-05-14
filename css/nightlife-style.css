@@ -8252,6 +8252,23 @@ location-lookup ul li span {
     top: 5px;
 }
 
+/* External View Widgets */
+.external-api-view ion-header-bar#header-bar {
+    display: none;
+}
+
+.external-api-view .tabs-standard>.tabs, .external-api-view .tabs.tabs-standard {
+    display: none;
+}
+
+.external-api-view span.notification-counter {
+    display: none;
+}
+
+.external-api-view .has-header {
+    top: 5px;
+}
+
 /*Light Widget Frame Manipulation */
 
 .light-widget.grey_bg {

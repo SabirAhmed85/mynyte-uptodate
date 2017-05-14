@@ -232,7 +232,7 @@
 					var tableBookingImgAlt = 'Log into MyNyte to book tables and make your evening plans',
 					tableBookingImgSrc = 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',
 					tableBookingTranscriptNote = '<b>Book Tables with ease</b>, and find out what\'s going on in town...',
-					tableBookingFrameSrc = 'https://www.mynyte.co.uk/#/app/externalApi/bookTable/light/87/0',
+					tableBookingFrameSrc = 'https://www.mynyte.co.uk/staging/#/app/externalApi/bookTable/light/87/0',
 					tableBookingFrameBg = ($('div.mynyte-table-booking').hasClass("mn-dark")) ? '#212121': '#f7f7f7',
 					tableBookingFrameStyle = 'height: calc(100%); background: '+tableBookingFrameBg+';';
 

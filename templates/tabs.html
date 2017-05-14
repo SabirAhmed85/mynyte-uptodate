@@ -39,7 +39,7 @@
 <span class="notification-counter"
     ng-if="(user.currentUnreadNotifications.length + user.currentUnreadMsgGroups.length) > 0">{{user.currentUnreadMsgGroups.length + user.currentUnreadNotifications.length}}</span>
 <ion-tabs class="tabs-icon-top"
-    ng-class="{'bg-blur-slight': (showSearchPanel || showAssistantPanel) && currentViewName == 'app.feed'}">
+    ng-class="{'bg-blur-slight': (showSearchPanel || showAssistantPanel) && currentViewName == 'app.feed', 'external-view': externalView}">
     <ion-tab title="MyNyte" class="first-tab-item nightlife-tab" icon-on="nightlife-tab-icon-on" icon-off="nightlife-tab" href="#/app/profile/">
         <!-- Tab 1 content -->
         <ion-nav-view name="profile-tab"></ion-nav-view>

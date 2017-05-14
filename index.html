@@ -101,7 +101,8 @@
   
     <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
   </head>
-  <body class="intended-browser">
+  <body class="intended-browser"
+    ng-class="{'external-api-view': externalView}">
     <div class="tooltip-screen-cover"
         ng-class="{'open': tooltipShowing}">
         <span class="tooltip">

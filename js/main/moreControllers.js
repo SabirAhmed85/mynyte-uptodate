@@ -13,6 +13,7 @@ app.controller('MoreCtrl', ['$rootScope', '$state', '$scope', '$ionicConfig', '$
 app.controller('ExternalApiCtrl', ['$rootScope', '$state', '$scope', '$stateParams', '$ionicConfig', '$ionicPopup', '$ionicScrollDelegate', function($rootScope, $state, $scope, $stateParams, $ionicConfig, $ionicPopup, $ionicScrollDelegate) {
 	// Set Up Variables & Constants
     $rootScope.hideSearch = true;
+    $rootScope.externalView = true;
     $scope.rootScope = $rootScope;
     
     $scope.pageLoad = function () {
