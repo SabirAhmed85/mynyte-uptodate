@@ -560,6 +560,12 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
               templateUrl: "templates/more-views/external-api.html",
                   controller: "ExternalApiCtrl"
           }
+        },
+        params: {
+          format: null,
+          colorScheme: null,
+          _businessId: null,
+          _liveChatId: null
         }
       })
 	 

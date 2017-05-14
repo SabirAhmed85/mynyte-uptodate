@@ -43,8 +43,13 @@
             $output_listings[] = $row_listings;
         }
         shuffle($output_listings);
-        $output_listings_top = array_slice($output_listings, 0, 2);
-        $output_listings = array_slice($output_listings, 2, count($output_listings) - 2);
+        if (count($output_listings) > 2) {
+            $output_listings_top = array_slice($output_listings, 0, 2);
+            $output_listings = array_slice($output_listings, 2, count($output_listings) - 2);
+        } else {
+            $output_listings_top = array_slice($output_listings, 0, count($output_listings));
+            $output_listings = array();
+        }
         
         return array("listings_top"=> $output_listings_top, "listings"=> $output_listings);
     }
@@ -67,10 +72,11 @@
   else if ($action == 'getListingsForFoodFeed') {
     $result_listings = mysqli_query($db_con, "CALL getListingsForFoodFeed($_townId);");
     $output = prepareListingsOutputObj($result_listings);
-    $_analyticsRecordId = $output["listings"][0]["_analyticsRecordId"];
+    $_analyticsRecordId = $output["listings_top"][0]["_analyticsRecordId"];
     mysqli_next_result($db_con);
 
     $result_prep = mysqli_query($db_con, "CALL getOfferIdsForFoodFeed($_townId, $_analyticsRecordId);");
+    
     $_offerIdsString = prepareOfferIdString($result_prep, 8);
     mysqli_next_result($db_con);
     
@@ -81,7 +87,7 @@
     $result_listings = mysqli_query($db_con, "CALL getListingsForNightlifeFeed($_townId);");
     echo mysqli_error($db_con);
     $output = prepareListingsOutputObj($result_listings);
-    $_analyticsRecordId = $output["listings"][0]["_analyticsRecordId"];
+    $_analyticsRecordId = $output["listings_top"][0]["_analyticsRecordId"];
     mysqli_next_result($db_con);
 
     $result_prep = mysqli_query($db_con, "CALL getOfferIdsForNightlifeFeed($_townId, $_analyticsRecordId);");

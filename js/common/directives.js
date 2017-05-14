@@ -738,3 +738,13 @@ app.directive("ngFileSelect",function(){
     }
   }        
 });
+
+app.directive('externalApiTemplate', function () {
+  return {
+    template:'<ng-include src="template"/>',
+    restrict: 'E',
+    link: function postLink(scope) {
+      scope.template = '/templates/more-views/external-api-templates/'+scope.format+'.html';
+    }
+  };
+})

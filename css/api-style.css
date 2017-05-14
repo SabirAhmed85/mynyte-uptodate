@@ -267,7 +267,7 @@ body.mn-modal--opened {
     display: block;
     max-width: calc(100% - 10px);
     margin: 5px;
-    border: 1px solid #d0cfcf;
+    border: 1px solid #bfaeae;
     border-radius: 6px 6px 7px 7px;
     position: relative;
     font-family: 'Source Sans Pro', sans-serif;
@@ -286,15 +286,20 @@ body.mn-modal--opened {
     border-bottom: 1px solid #eae4e4;
     line-height: 22px;
     font-size: 15px;
+    position: relative;
+    z-index: 9000;
 }
 
 .mynyte-frame-container .container-dummy {
     float: left;
     width: 100%;
-    height: calc(100% - 112px);
+    height: calc(100% - 68px);
     min-height: 170px;
     position: relative;
     background: #f8f8f8;
+    z-index: 8000;
+    padding-bottom: 0;
+    margin-top: -45px;
 }
 .mynyte-frame-container.mynyte-menu-display .container-dummy {
     height: auto;
@@ -333,7 +338,7 @@ body.mn-modal--opened {
     width: 100%;
     height: 100%;
     border: none;
-    margin-top: 0px;
+    /* margin-top: -45px; */
     border-top: 1px solid #f7f4f4;
 }
 
@@ -400,6 +405,7 @@ body.mn-modal--opened {
     padding: 14px 10px 13px;
     font-size: 14px;
     border-bottom: 1px solid #e3e3e3;
+    background: #1c1c1c;
 }
 
 .mynyte-frame-container .listing-menu-item .text-container .title {
@@ -469,8 +475,8 @@ body.mn-modal--opened {
     /* Menu Items */
 .mynyte-frame-container.mn-dark .listing-menu-item .header {
     background: #212121;
-    border-bottom: 1px solid #484646;
-    border-top: 1px solid #101010;
+    border-bottom: 1px solid #3c3a3a;
+    border-top: 1px solid #060606;
     color: #8a7777;
 }
 .mynyte-frame-container.mn-dark .listing-menu-item .header:hover {
@@ -483,7 +489,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-frame-container.mn-dark .listing-menu-item .text-container {
-    border-bottom-color: #333;
+    border-bottom-color: #252525;
 }
 
 .mynyte-frame-container.mn-dark .listing-menu-item .text-container .title {
@@ -727,4 +733,87 @@ body.mn-modal--opened {
     width: calc(100% - 70px);
     margin-top: 7px;
     line-height: 20px;
+}
+
+/*Light Widget Frame Manipulation */
+
+.light-widget .grey_bg {
+    background: #ddd;
+}
+
+.light-widget h2 {
+    background: #ddd;
+    border-color: #e8e7e7 !important;
+    color: #655;
+}
+
+.light-widget #header-bar {
+    background: #b39999;
+    border-bottom-color: #6b3535;
+}
+
+.light-widget .tile {
+    background-color: #eee;
+    border-color: #b5b1b1;
+}
+
+.light-widget .book-table .tablefor-item,
+.light-widget .book-tickets .additionalguests-item {
+    background-color: #f5f1f1;
+    border-color: #a7a2a2;
+}
+
+.light-widget .register .item {
+    border-color: #bfbdbd;
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker,
+.light-widget .datepicker,
+.light-widget .timepicker,
+.light-widget .black-square-button {
+    background: #bda1a1;
+    border-color: #9c6969;
+    color: #774f4f;
+    height: 52px;
+}
+
+.light-widget .datepicker i,
+.light-widget .timepicker i {
+    color: #7b4c4c;
+}
+
+.light-widget form label.item-header,
+.light-widget form div.item-header {
+    border-color: #aaa;
+}
+
+.light-widget .book-table .fake-tablefor-input,
+.light-widget .book-tickets .fake-additionalguests-input,
+.light-widget .fake-square-input {
+    border-top-color: #b96d6d;
+    border-bottom-color: #9a5858;
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker {
+    border-top: 1px solid #9c6969;
+    height: 50px;
+    border-right: 1px solid #9c6969;
+}
+
+.light-widget .book-table .tablefor-span,
+.light-widget .book-tickets .additionalguests-span {
+    color: #533;
+}
+
+.light-widget label.item-header,
+.light-widget form div.item-header {
+    color: #636363;
+}
+
+.light-widget button.button-red {
+    background: #909090 !important;
+    border-color: #565656 !important;
+    color: #fff !important;
 }

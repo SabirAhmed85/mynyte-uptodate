@@ -232,11 +232,11 @@
 					var tableBookingImgAlt = 'Log into MyNyte to book tables and make your evening plans',
 					tableBookingImgSrc = 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',
 					tableBookingTranscriptNote = '<b>Book Tables with ease</b>, and find out what\'s going on in town...',
-					tableBookingFrameSrc = 'https://www.mynyte.co.uk/#/app/nl-feedListings///nl-feedListing/18/Business/book-table/18/Alamin%20Indian%20Restaurant%20Bedford/0',
+					tableBookingFrameSrc = 'https://www.mynyte.co.uk/#/app/externalApi/bookTable/light/87/0',
 					tableBookingFrameBg = ($('div.mynyte-table-booking').hasClass("mn-dark")) ? '#212121': '#f7f7f7',
 					tableBookingFrameStyle = 'height: calc(100%); background: '+tableBookingFrameBg+';';
 
-					var tableBookingHtml = "<div class='container-header'>Book a Table with us</div>";
+					var tableBookingHtml = "<div class='container-header'>Book a Table with us through MyNyte</div>";
 					tableBookingHtml += "<div class='container-dummy'><iframe allowtransparency='true' style='"+tableBookingFrameStyle+"' src='"+tableBookingFrameSrc+"'></iframe></div>";
 					tableBookingHtml += "<div class='container-footer'><span class='footer-transcript-note'>"+tableBookingTranscriptNote+"</span><img class='mynyte-chat-logo' alt='"+tableBookingImgAlt+"' src='"+tableBookingImgSrc+"'/></div>";
 					$('div.mynyte-table-booking')

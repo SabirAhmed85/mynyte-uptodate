@@ -409,6 +409,7 @@ ion-content.scroll-content {
 }
 .light-widget ion-content.scroll-content {
     border-bottom: 1px solid #fff;
+    bottom: 0;
 }
 
 .no-breadcrumb ion-content {
@@ -4099,7 +4100,7 @@ button.button-large {
     float: left;
     color: #aaa;
     margin-top: 15px;
-    margin-left: 7px;
+    margin-left: 10px;
     font-size: 14px;
 }
 
@@ -6996,8 +6997,8 @@ ion-header-bar input {
 }
 
 #header-bar .header-icon-right.isVisible {
-    opacity: 1;
-    top: 0;
+    opacity: 1 !important;
+    top: 0 !important;
 }
 #header-bar .header-icon-right.second.isVisible {
     top: 5px;
@@ -8249,6 +8250,144 @@ location-lookup ul li span {
     position: absolute;
     right: 10px;
     top: 5px;
+}
+
+/*Light Widget Frame Manipulation */
+
+.light-widget.grey_bg {
+    background: #ddd;
+}
+
+.light-widget h2 {
+    background: #ddd;
+    border-color: #e8e7e7 !important;
+    color: #655;
+}
+
+.light-widget #header-bar {
+    background: #b39999;
+    border-bottom-color: #6b3535;
+}
+
+.light-widget .external-view-message .add-searchMessage {
+    margin: 7px 12px;
+    width: calc(100% - 24px);
+    background: #ccc6c6;
+    border: none;
+    padding: 0 15px;
+    text-align: right;
+    font-size: 13px;
+}
+
+.light-widget .external-view-message .add-searchMessage p {
+    color: #505050;
+}
+
+.light-widget .external-view-message .add-searchMessage p.top-message-title {
+    font-size: 14px;
+    width: 100%;
+    border-bottom: 1px solid #a99393;
+    padding-bottom: 8px;
+    padding-top: 6px;
+    color: #222;
+    text-align: left;
+}
+
+.light-widget .external-view-message .add-searchMessage p.top-message-footer {
+    font-size: 13px;
+    width: 100%;
+    border-top: 1px solid #a99393;
+    padding-bottom: 5px;
+    padding-top: 9px;
+    color: #222;
+}
+
+.light-widget .external-view-message .add-searchMessage p.top-message-text {
+    text-align: left;
+    line-height: 23px;
+}
+
+.light-widget .external-view-message .add-searchMessage p.top-message-text.full-note {
+    min-height: 60px;
+}
+
+.light-widget .external-view-message .add-searchMessage p a {
+    color: #111;
+}
+
+.light-widget .tile {
+    background-color: #eee;
+    border-color: #b5b1b1;
+}
+
+.light-widget .register .item {
+    border-color: #bfbdbd;
+    border-left-color: #bb9e9e;
+    border-right-color: #bb9e9e;
+}
+
+.light-widget .book-table .tablefor-item,
+.light-widget .book-tickets .additionalguests-item {
+    background-color: #fbfbfb;
+    border-color: #a99797;
+    border-bottom-color: #c1bebe;
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker,
+.light-widget .datepicker,
+.light-widget .timepicker,
+.light-widget .black-square-button {
+    background: #bda1a1;
+    border-color: #9c6969;
+    color: #774f4f;
+    height: 52px;
+}
+
+.light-widget .datepicker i,
+.light-widget .timepicker i {
+    color: #7b4c4c;
+}
+
+.light-widget form label.item-header,
+.light-widget form div.item-header {
+    border-color: #b3b0b0;
+    border-left-color: #a99797;
+    border-right-color: #a99797;
+    background: #fbfbfb;
+    border-top-color: #bb9e9e;
+}
+
+.light-widget .book-table .fake-tablefor-input,
+.light-widget .book-tickets .fake-additionalguests-input,
+.light-widget .fake-square-input {
+    border-top-color: #c7a7a7;
+    border-bottom-color: #9c8181;
+    /* border-left: 1px solid #9c6969; */
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker {
+    border-top: 1px solid #b97b7b;
+    height: 50px;
+    border-right: 1px solid #9c6969;
+}
+
+.light-widget .book-table .tablefor-span,
+.light-widget .book-tickets .additionalguests-span {
+    color: #665656;
+    font-weight: bold;
+}
+
+.light-widget label.item-header,
+.light-widget form div.item-header {
+    color: #564444;
+}
+
+.light-widget button.button-red {
+    background: #909090 !important;
+    border-color: #565656 !important;
+    color: #fff !important;
 }
 
 @media only screen and (min-width: 56rem) {
