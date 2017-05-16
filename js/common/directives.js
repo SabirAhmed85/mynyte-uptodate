@@ -744,7 +744,8 @@ app.directive('externalApiTemplate', function () {
     template:'<ng-include src="template"/>',
     restrict: 'E',
     link: function postLink(scope) {
-      scope.template = '/templates/more-views/external-api-templates/'+scope.format+'.html';
+      var root = (scope.rootScope.intendedEnvironment == 'Staging') ? '/staging': '';
+      scope.template = root + '/templates/more-views/external-api-templates/' + scope.format + '.html';
     }
   };
 })

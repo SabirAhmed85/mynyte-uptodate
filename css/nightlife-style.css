@@ -8269,6 +8269,56 @@ location-lookup ul li span {
     top: 5px;
 }
 
+.external-api-view ion-content.scroll-content {
+    bottom: 0;
+}
+
+.external-view-message .add-searchMessage {
+    margin: 7px 12px;
+    width: calc(100% - 24px);
+    background: #464444;
+    border: none;
+    padding: 0 15px;
+    text-align: right;
+    font-size: 13px;
+}
+
+.external-view-message .add-searchMessage p {
+    color: #b1aeae;
+}
+
+.external-view-message .add-searchMessage p.top-message-title {
+    font-size: 14px;
+    width: 100%;
+    border-bottom: 1px solid #5f5d5d;
+    padding-bottom: 8px;
+    padding-top: 6px;
+    color: #f7f4f4;
+    text-align: left;
+}
+
+.external-view-message .add-searchMessage p.top-message-footer {
+    font-size: 13px;
+    width: 100%;
+    border-top: 1px solid #5f5d5d;
+    padding-bottom: 5px;
+    padding-top: 9px;
+    color: #222;
+}
+
+.external-view-message .add-searchMessage p.top-message-text {
+    text-align: left;
+    line-height: 23px;
+}
+
+.external-view-message .add-searchMessage p.top-message-text.full-note {
+    min-height: 60px;
+}
+
+.external-view-message .add-searchMessage p a {
+    color: #fbfbfb;
+}
+
 /*Light Widget Frame Manipulation */
 
 .light-widget.grey_bg {
@@ -8287,13 +8337,7 @@ location-lookup ul li span {
 }
 
 .light-widget .external-view-message .add-searchMessage {
-    margin: 7px 12px;
-    width: calc(100% - 24px);
     background: #ccc6c6;
-    border: none;
-    padding: 0 15px;
-    text-align: right;
-    font-size: 13px;
 }
 
 .light-widget .external-view-message .add-searchMessage p {
@@ -8301,31 +8345,13 @@ location-lookup ul li span {
 }
 
 .light-widget .external-view-message .add-searchMessage p.top-message-title {
-    font-size: 14px;
-    width: 100%;
-    border-bottom: 1px solid #a99393;
-    padding-bottom: 8px;
-    padding-top: 6px;
+    border-bottom-color: #a99393;
     color: #222;
-    text-align: left;
 }
 
 .light-widget .external-view-message .add-searchMessage p.top-message-footer {
-    font-size: 13px;
-    width: 100%;
-    border-top: 1px solid #a99393;
-    padding-bottom: 5px;
-    padding-top: 9px;
+    border-top-color: #a99393;
     color: #222;
-}
-
-.light-widget .external-view-message .add-searchMessage p.top-message-text {
-    text-align: left;
-    line-height: 23px;
-}
-
-.light-widget .external-view-message .add-searchMessage p.top-message-text.full-note {
-    min-height: 60px;
 }
 
 .light-widget .external-view-message .add-searchMessage p a {

@@ -228,6 +228,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       
       $rootScope.intendedPlatform = EnvironmentVariables.IntendedPlatform;
       $rootScope.underConstruction = (EnvironmentVariables.DebugMode && EnvironmentVariables.IntendedPlatform == 'browser' && EnvironmentVariables.IntendedEnvironment == 'Live') ? true : false;
+      $rootScope.intendedEnvironment = EnvironmentVariables.IntendedEnvironment;
       $rootScope.metaContent = EnvironmentVariables.MetaContent;
       $rootScope.rootUrl = EnvironmentVariables.RootUrl;
       $rootScope.assetsFolderUrl = EnvironmentVariables.AssetsFolderUrl;
