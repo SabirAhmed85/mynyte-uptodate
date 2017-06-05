@@ -1,11 +1,25 @@
 <?php
     $action = $_GET['action'];
+    $actionFound = false;
 
     $recipients_array = array();
-    array_push($recipients_array, (object)array('name' => 'Sabir Ahmed', 'email' => 'sabir.ahmed@hotmail.co.uk'));
+    //array_push($recipients_array, (object)array('name' => 'Sabir Ahmed', 'email' => 'sabir.ahmed@hotmail.co.uk'));
     //array_push($recipients_array, (object)array('name' => 'Habiba Khatoon', 'email' => 'hkhatoon20@yahoo.com'));
-    array_push($recipients_array, (object)array('name' => 'Sabzy Ahmed', 'email' => 'sabir.ahmed.web@gmail.com'));
     //array_push($recipients_array, (object)array('name' => 'Qaudir Ahmed', 'email' => 'qaudir@jav.org.uk'));
+
+
+    //Compile Subject And Message Details based on Context
+
+    if ($action == 'sendMyNyteWelcomeEmail') {
+        $subject = 'Welcome to MyNyte';
+        $htmlEmail = file_get_contents('../../../templates/email-views/welcome-to-mynyte.html');
+        $actionFound = true;
+    }
+    else if ($action == 'sendMynyteAppOutNowToBusinesses') {
+        $subject = 'The MyNyte App - Out Now!';
+        $htmlEmail = file_get_contents('../../../templates/email-views/mynyte-app-out-now.html');
+        $actionFound = true;
+    }
 
     //Process Varables where needed
     foreach ($recipients_array as $obj) {
@@ -15,21 +29,12 @@
         $nameArr = explode(' ', $name);
         $FirstName = $nameArr[0];
 
-
-        //Compile Subject And Message Details based on Context
-
         if ($action == 'sendMyNyteWelcomeEmail') {
-            $subject = 'Welcome to MyNyte';
-            $htmlEmail = file_get_contents('../../../templates/email-views/welcome-to-mynyte.html');
             $htmlEmail = str_replace('{{$FirstName}}', $FirstName, $htmlEmail);
-        }
-        else if ($action == 'sendPromoEmailToBusinesses') {
-            $subject = 'Welcome to MyNyte';
-            $htmlEmail = file_get_contents('../../../templates/email-views/welcome-to-mynyte.html');
         }
 
         
-        if (isset($_GET['action'])) {
+        if (isset($_GET['action']) && $actionFound) {
             $message = $htmlEmail;
 
             // To send HTML mail, the Content-type header must be set
@@ -49,5 +54,12 @@
                 echo "Couldn't send email to ".$name." at ".$email."<br>";
             }
         }
+    }
+
+    if (!$actionFound) {
+        echo "Action not recognised.";
+    }
+    else if (count($recipients_array) == 0) {
+        echo "No e-mail addresses supplied to Recipients Array.";
     }
 ?>

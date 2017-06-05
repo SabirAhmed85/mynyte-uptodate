@@ -1,3 +1,10 @@
+.mynyte-fast-trans {
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
 body.fixfixed {
     position: absolute !important;
 }
@@ -503,6 +510,156 @@ body.mn-modal--opened {
     color: #8a7777;
 }
 
+  /* NEW BUSINESS ITEM FORM */
+
+.mynyte-new-business-item.mn-dark {
+    float: left;
+    clear: left;
+    margin: 5px;
+    max-width: calc(100% - 10px);
+}
+
+.mynyte-new-business-item form {
+    float: left;
+    width: calc(100% - 20px);
+}
+
+.mynyte-form-field-container {
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+label.mynyte-form-field-label {
+    float: left;
+    clear: left;
+    width: 100%;
+    height: 25px;
+    padding: 10px 0 5px;
+    border-bottom: 1px solid #cfcfcf;
+}
+
+.mynyte-form-input-container {
+    float: left;
+    clear: left;
+    width: 100%;
+    position: relative;
+}
+
+input.mynyte-form-input.mynyte-form-text-input {
+    float: left;
+    clear: left;
+    width: calc(100% - 15px);
+    height: 35px;
+    font-size: 18px;
+    padding-left: 10px;
+    margin-top: 5px;
+    color: #888;
+}
+
+.mynyte-form-input.mynyte-form-fake-input {
+    float: left;
+    clear: left;
+    width: calc(100% - 21px);
+    background: #fff;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    height: 20px;
+    position: relative;
+    padding: 10px 10px;
+    font-size: 18px;
+    color: #888;
+}
+
+ul.mynyte-form-select.mynyte-form-fake-select {
+    width: 100%;
+    position: relative;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    top: -4px;
+    border-top: 1px solid #d6c9c9;
+    opacity: 0;
+}
+
+ul.mynyte-form-select.mynyte-form-fake-select.open {
+    max-height: 10000px;
+    opacity: 1;
+}
+
+.mynyte-form-fake-select li {
+    float: left;
+    clear: left;
+    width: calc(100% - 22px);
+    background: #f9fafd;
+    height: 25px;
+    border: 1px solid #babbbf;
+    padding: 15px 10px 10px;
+    border-top: none;
+}
+
+button.mynyte-form-datepicker,
+button.mynyte-form-timepicker,
+button.mynyte-form-selecttoggler {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 41px;
+    margin: 0;
+    width: 60px;
+    border-radius: 0;
+}
+
+.mynyte-form-input.mynyte-input-error {
+    border: 1px solid #9a5e5e;
+    background: #f7e3e3;
+}
+
+  /* BUSINESS ITEM DETAIL & SUMMARY ELEMENTS */
+
+.mynyte-business-items-summary,
+.mynyte-business-item-detail {
+    float: left;
+    clear: left;
+    max-width: calc(100% - 61px);
+    margin: 5px;
+    background: #f5f4f4;
+    border: 1px solid #9d9ec1;
+    border-radius: 6px;
+    line-height: 30px;
+}
+
+label.mynyte-label {
+    width: 200px;
+    float: left;
+    clear: left;
+    font-size: 15px;
+}
+
+span.mynyte-label-detail {
+    float: left;
+}
+
+  /* BUSINESS ITEM SUMMARY */
+.mynyte-business-items-summary {
+    padding: 10px 10px 10px 10px;
+}
+
+.mynyte-business-items-summary-item {
+    float: left;
+    max-width: calc(100% - 22px);
+    border: 1px solid #d0cfcf;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+  /* BUSINESS ITEM DETAIL */
+.mynyte-business-item-detail {
+    padding: 10px 30px 10px 20px;
+}
+
+  
+
 /* ------------- */
 /* MYNYTE POPUP */
 .mynyte-popup-cover {
@@ -815,4 +972,4 @@ body.mn-modal--opened {
     background: #909090 !important;
     border-color: #565656 !important;
     color: #fff !important;
-}
+}}}}
