@@ -4,7 +4,7 @@ var IntendedPlatform = "browser";
 var DebugMode = false;
 /* */
 
-var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/";
+var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/live/";
 var AssetsFolderUrl = RootUrl + "sneak-preview";
 var AnalyticsScriptSrc = (IntendedPlatform = "browser") ? " https://www.google-analytics.com/ ": "";
 var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://stats.g.doubleclick.net/ https://maps.googleapis.com/"+AnalyticsScriptSrc+"data:";

@@ -1,7 +1,7 @@
 <?php
   $intended_environment = 'Staging';
 
-  $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk";
+  $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk/live";
 
   header("Access-Control-Allow-Origin: $httpUrl");
   if ($intended_environment != 'Staging') {
