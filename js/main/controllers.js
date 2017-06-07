@@ -581,7 +581,7 @@ $timeout(function () {
       
       window.plugins.OneSignal.registerForPushNotifications();
       window.plugins.OneSignal.getIds(function(ids) {
-          var newIds = ids;
+          var newIds = JSON.parse(ids);
           var _userProfileId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
           
           var createOneSignalId = function (_userProfileId) {
