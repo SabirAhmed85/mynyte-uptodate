@@ -98,7 +98,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                 
                                 //All Objects which are attached to the old object and now need to be reattached should be dealt with
                                 var oldUserInteractionObject = $rootScope.user.userInteractionObject || {};
-                                userService.model.user._userOneSignalId = $rootScope._userOneSignalId;
+                                userService.model.user._oneSignalId = $rootScope._userOneSignalId;
+                                userService.model.user._oneSignalDeviceToken = $rootScope._userOneSignalDeviceToken;
                                 $rootScope.user = userObjectService.createUserObject(userService.model.user);
                                 listingsService.createListingTypesObjForListing($rootScope.user);
                                 $rootScope.user.userInteractionObject = oldUserInteractionObject;
@@ -169,7 +170,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     
                     //All Objects which are attached to the old object and now need to be reattached should be dealt with
                     var oldUserInteractionObject = $rootScope.user.userInteractionObject;
-                    userService.model.user._userOneSignalId = $rootScope._userOneSignalId;
+                    userService.model.user._oneSignalId = $rootScope._userOneSignalId;
+                    userService.model.user._oneSignalDeviceToken = $rootScope._userOneSignalDeviceToken;
                     $rootScope.user = userObjectService.createUserObject(userService.model.user);
                     listingsService.createListingTypesObjForListing($rootScope.user);
                     $rootScope.user.userInteractionObject = oldUserInteractionObject;
