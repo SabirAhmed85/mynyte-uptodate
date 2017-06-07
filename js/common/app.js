@@ -1,6 +1,6 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
 var IntendedEnvironment = "Live";
-var IntendedPlatform = "browser";
+var IntendedPlatform = "ios";
 var DebugMode = false;
 /* */
 

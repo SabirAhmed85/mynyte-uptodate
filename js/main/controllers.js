@@ -264,6 +264,7 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       $rootScope.oneSignalAppId = "5d38e847-c406-4e2e-85d6-27a76ce657f3";
       $rootScope.gcnProjectNumber = "357832123193";
       $rootScope._userOneSignalId = 0;
+      $rootScope._userOneSignalDeviceToken = 0;
       $rootScope.userUpdateTimer = null;
       
       $rootScope.todaysMovies = [];
@@ -580,10 +581,11 @@ $timeout(function () {
       
       window.plugins.OneSignal.registerForPushNotifications();
       window.plugins.OneSignal.getIds(function(ids) {
+          var newIds = JSON.parse(ids);
           var _userProfileId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
           
           var createOneSignalId = function (_userProfileId) {
-              Notifications.createOneSignalId(_userProfileId, $rootScope._userOneSignalId, ids.userId).success(function (successData) {
+              Notifications.createOneSignalId(_userProfileId, $rootScope._userOneSignalId, newIds.userId).success(function (successData) {
                 
                 if (successData[0]._oneSignalId == 0) {
                     $rootScope.user = userObjectService.startUsersMessagesAndNotificationsUpdateTimer($rootScope.user);
@@ -594,8 +596,13 @@ $timeout(function () {
                 }
                 
                 $rootScope._userOneSignalId = successData[0]._oneSignalId;
-                $rootScope.user._oneSignalId = successData[0]._oneSignalId;
-                userService.model._oneSignalId = $rootScope._userOneSignalId;
+                $rootScope._userOneSignalDeviceToken = newIds.userId;
+                if ($rootScope.user) {
+                    $rootScope.user._oneSignalId = successData[0]._oneSignalId;
+                    $rootScope.user._oneSignalDeviceToken = newIds.userId;
+                }
+                userService.model._userOneSignalId = $rootScope._userOneSignalId;
+                userService.model._userOneSignalDeviceToken = $rootScope._userOneSignalDeviceToken;
                 //$rootScope.makeUserActive($rootScope.user._profileId, $rootScope._userOneSignalId);
                 $rootScope.$broadcast('savestate');
               }).error(function (errorData) {
