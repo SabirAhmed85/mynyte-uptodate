@@ -580,8 +580,9 @@ $timeout(function () {
       .endInit();
       
       window.plugins.OneSignal.registerForPushNotifications();
+      
       window.plugins.OneSignal.getIds(function(ids) {
-          var newIds = JSON.parse(ids);
+          var newIds = (ionic.Platform.isAndroid()) ? JSON.parse(ids) : ids;
           var _userProfileId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: 0;
           
           var createOneSignalId = function (_userProfileId) {
@@ -620,6 +621,7 @@ $timeout(function () {
     };
     
     if ((ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) && $rootScope.intendedPlatform != 'browser') {
+    
         var oneSignalCheckCounter = 0;
         var checkForOneSignal = function(){
             var countAgain = function () {
