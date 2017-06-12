@@ -129,17 +129,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
         $scope.nightFindSlideLocked = false;
         
         $scope.getListingsFunction = function (newItem, stateToChange) {
-            Profile.getListingsForFeed($rootScope.currentSearchTown._id, $rootScope.user._profileId || 0, $scope.feedType).success(function (successData) {
-                if (newItem == 'movies') {
-                    for (a = 0; a < successData.length; a++) {
-                        successData[a].cinemas = [
-                            {'name': "Aspects Cinema",
-                            'showingTimes': [{'time': "6:30", 'active':false}, {'time': "7:30", 'active':false}, {'time': "8:30", 'active':false}]},
-                            {'name': "Another Cinema",
-                            'showingTimes': [{'time': "5:30", 'active':false}, {'time': "8:25", 'active':false}]}
-                        ];
-                    }
-                }
+            var completeListingsCompilation = function (successData) {
                 if (successData != null) {
                     listingsService.sortThroughListingsResults($scope, successData, 0, 'features');
                 } else {
@@ -153,9 +143,18 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 if (stateToChange == 'globalTownSelect') {
                     $rootScope.showGlobalTownSelect = false;
                 }
-            }).error(function () {
-                $scope.getListingsFunction(newItem, stateToChange);
-            });
+            }
+            
+            if (newItem == 'movies') {
+                var data = $rootScope.movies;
+                completeListingsCompilation(data);
+            } else {
+                Profile.getListingsForFeed($rootScope.currentSearchTown._id, $rootScope.user._profileId || 0, $scope.feedType).success(function (successData) {
+                    completeListingsCompilation(successData);
+                }).error(function () {
+                    $scope.getListingsFunction(newItem, stateToChange);
+                });
+            }
         }
 
         $scope.arrangeGlobalTownSelectFunction  = function (state) {

@@ -45,6 +45,17 @@
       header('Content-Type: application/json');
       echo json_encode($output);
   }
+  else if ($action == 'getExistingCineworldMovies') {
+    
+    $result = mysql_query("CALL getExistingCineworldMovies()");
+    
+    //print(json_encode($_usersId));
+    while($row = mysql_fetch_assoc($result))
+        $output[] = $row;
+        
+      header('Content-Type: application/json');
+      echo json_encode($output);
+  }
   else if ($action == 'createMovie') {
     $_movieStyleIds = $_GET['_movieStyleIds'];
     $_movieStyleIdsString = implode(', ', $_movieStyleIds);
@@ -59,6 +70,19 @@
     $movieTrailerLink = $dataJsonDecode->movieTrailerLink;
       
     $result = mysql_query("CALL createMovie('$name', '$description', '$firstShowingDate', '$lastShowingDate', '$_movieStyleIdsString', '$movieTrailerLink');");
+  }
+  else if ($action == 'createMovieFromCineworldFile') {
+    $movieStyles = $_GET['movieStyles'];
+    $movieStylesString = implode(', ', $movieStyles);
+      
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $name = $dataJsonDecode->name;
+    $trailerLink = $dataJsonDecode->trailerLink;
+    $edi = $dataJsonDecode->edi;
+      
+    $result = mysql_query("CALL createMovieFromCineworldFile('$name', '$trailerLink', '$edi', '$movieStylesString');");
   }
   
   mysql_close();

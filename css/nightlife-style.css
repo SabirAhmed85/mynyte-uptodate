@@ -4424,6 +4424,42 @@ h2 {
     border-right: none;
 }
 
+.article-page h3 {
+    width: 100%;
+    margin-top: 15px;
+    float: left;
+    clear: both;
+    background: #333232;
+    padding: 10px;
+    border-bottom: 1px solid #735959;
+}
+
+.article-page p.large {
+    float: left;
+    width: 100%;
+    clear: both;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.article-page i.standalone-icon {
+    clear: left;
+    float: none;
+    display: block;
+    margin: 10px auto;
+    border: 1px solid #B39C9C;
+    background: #111;
+    box-shadow: 1px 2px 1px #000;
+    position: relative;
+    border-radius: 41px;
+    width: 75px;
+    height: 75px;
+    font-size: 50px;
+    padding-top: 13px;
+    padding-left: 15px;
+    color: #9c8484;
+}
+
 form {
     margin-top: 25px;
     width: 100%;
@@ -5697,6 +5733,7 @@ div#searchbox-categories i {
 .feed-item .main-img-container {
     float: left;
     width: 100%;
+    overflow: hidden;
 }
 .Offer.feed-item .main-img-container {
     width: auto;
@@ -5780,6 +5817,26 @@ div#searchbox-categories i {
 .social-icon-bar-dummy.to-right,
 .social-icon-bar.to-right {
     right: 14px;
+}
+
+.feed-item.movie .main-img-container {
+    max-height: 400px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.feed-item.movie .main-img-container .main-img-inner-container {
+    overflow: hidden;
+    float: left;
+    width: 95%;
+    border-radius: 5px;
+    margin-top: 5px;
+    border: 1px solid #666;
+    margin-left: 2.5%;
+}
+
+.feed-item.movie .icon-bar-container {
+    margin-top: 20px;
 }
 
 .feed-item button,
@@ -5888,24 +5945,19 @@ div#searchbox-categories i {
 }
 
 .feed-item.movie .main-img {
-    width: 95%;
-    margin-left: 2.5%;
-    border-radius: 5px;
-    margin-top: 5px;
-    border: 1px solid #666;
     margin-bottom: 5px;
+    margin-top: -100px;
 }
 
 .feed-item.movie .feature-info-dummy {
     width: 95%;
     height: 50px;
-    margin-top: -61px;
+    margin-top: -60px;
     margin-left: 2.5%;
-    border-radius: 0 0 7px 7px;
 }
 
 .feed-item.movie .add {
-    margin-top: -58px;
+    margin-top: -55px;
     padding: 0 8px;
     border-bottom: none;
 }

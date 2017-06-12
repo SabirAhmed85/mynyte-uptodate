@@ -1359,6 +1359,22 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
             }
         );
 	}
+    data.getExistingCineworldMovies = function () {
+        return $http(
+            {
+                method: 'GET', url:Config.MovieUrl + '?action=getExistingCineworldMovies'
+            }
+        );
+    }
+    data.getImdbMovieDetails = function (title, year) {
+        var thisYear = (new Date()).getFullYear();
+        if (year != 'thisYear') {thisYear = thisYear - 1};
+        return $http(
+            {
+                method: 'GET', url:Config.ImdbApiUrl + 't=' + title + '&y=' + thisYear
+            }
+        );
+    }
     data.createMovie = function (name, description, firstShowingDate, lastShowingDate, _movieStyleIds, movieTrailerLink) {
         var movieStyleIdsString = "";
 		if (_movieStyleIds.length > 0) {
@@ -1376,6 +1392,28 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+    data.createMovieFromCineworldFile = function (name, genre, trailerLink, edi) {
+        var movieStylesString = "";
+		if (genre.length > 0) {
+			for (a = 0; a < genre.length; a++) {
+                movieStylesString += '&movieStyles[]=' + genre[a];
+			}
+		} else {
+			movieStylesString = '&movieStyles[]=undefined';
+		}
+        return $http(
+            {
+				method: 'POST', url:Config.MovieUrl + '?action=createMovieFromCineworldFile' + movieStylesString,
+                data: {'name': name, 'trailerLink': trailerLink, 'edi': edi},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    /*
+    data.getCineworldMoviesFile = function () {
+        
+    }
+    */
   	return data;
 }]);
 

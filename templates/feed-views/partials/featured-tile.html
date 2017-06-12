@@ -13,7 +13,14 @@
         <img class="main-img"
             src="/sneak-preview/img/user_images/cover_photo/default.jpg"
             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}"
-            ng-if="feature.currentCoverPhotoName != null && feature.listingType != 'Offer'"/>
+            ng-if="feature.currentCoverPhotoName != null && feature.listingType != 'Offer' && feature.listingType != 'Movie'"/>
+        <span class="main-img-inner-container"
+            ng-if="feature.currentCoverPhotoName != null && feature.listingType == 'Movie'">
+            <img class="main-img"
+                src="/sneak-preview/img/user_images/cover_photo/default.jpg"
+                ng-src="{{feature.currentCoverPhotoName}}"
+                ng-if="feature.currentCoverPhotoName != null && feature.listingType == 'Movie'"/>
+        </span>
         <img class="main-img profile-img"
             src="/sneak-preview/img/user_images/profile_photo/default.jpg"
             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
@@ -31,7 +38,10 @@
     <span class="feature-info-dummy"></span>
     
     <div class="add feature" ng-style="{'background-color': feature.bgColor}">
-        <span class="name-label red left top">{{feature.name}}</span>
+        <span class="name-label red left top">
+            {{feature.name}}
+            <span ng-if="feature.classification">({{feature.classification}})</span>
+        </span>
         <span class="offers-label white right top"
             ng-if="feature.totalOffers > 0">
             <i class="ion-social-usd"></i>{{feature.totalOffers}} Offer<span ng-if="feature.totalOffers > 1">s</span>
