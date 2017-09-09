@@ -35,9 +35,12 @@
                         <div>
                             <div class="main-visual-image-display"
                                 ng-show="itemType == 'Watched' || itemType == 'Following' || itemType == 'Followed' || itemType == 'FollowedBusiness' || itemType == 'Likes' || itemType == 'Liked'">
+                                <img ng-src="{{item.currentCoverPhotoName}}"
+                                    src="/sneak-preview/img/user_images/cover_photo/default.jpg"
+                                    ng-if="(itemType == 'Watched' || itemType == 'Likes' || itemType == 'Liked') && profileItemCat.name == 'Movies'"/>
                                 <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{item.currentCoverPhotoName}}"
                                     src="/sneak-preview/img/user_images/cover_photo/default.jpg"
-                                    ng-if="itemType == 'Watched' || itemType == 'Likes' || itemType == 'Liked'"/>
+                                    ng-if="(itemType == 'Watched' || itemType == 'Likes' || itemType == 'Liked') && profileItemCat.name != 'Movies'"/>
                                 <span style="float: left; overflow: hidden;" class="main-visual-image-display"
                                     ng-style="{height: windowWidth+'px'};"
                                     ng-if="itemType == 'Following' || itemType == 'Followed' || itemType == 'FollowedBusiness'">
@@ -46,7 +49,7 @@
                                         ng-style="{'margin-top': ((windowWidth/3)*-1)+'px'};"/>
                                 </span>
                                 <p ng-show="itemType == 'Watched' || itemType == 'Likes'">{{item.name}}</p>
-                                <p ng-show="itemType != 'Likes'">{{item.displayName}}</p>
+                                <p ng-show="itemType != 'Likes' && profileItemCat.name != 'Movies'">{{item.displayName}}</p>
                             </div>
                             
                             <div ng-show="itemType == 'PhotosSummary' && specificItemType != 'SpecificPhotoFolderSummary'">

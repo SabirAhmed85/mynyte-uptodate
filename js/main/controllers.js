@@ -4,10 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper']);
+var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper', 'cmGoogleApi']);
 
 // not necessary for a web based app // needed for cordova/ phonegap application
-app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables, Config) {
+app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables, Config, $sce) {
   
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,
@@ -95,231 +95,6 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       
       /* Prepare External APIs */
       
-      /* Prep Cineworld API */
-      var parseMovies = function (cineworldMovies, existingMovies) {
-        console.log(cineworldMovies);
-        console.log(existingMovies);
-        var existingMoviesEdi = [];
-        var cineworldMoviesEdi = [];
-        var existingMoviesObj = {};
-        var cineworldMoviesObj = {};
-        $rootScope.movieTitles = [];
-        $rootScope.movies = [];
-        
-        var finalLoopCineworldMoviesToCreateObj = function () {
-            for (var a = 0; a < response["films"].length; a++) {
-                var thisMovie = response["films"][a];
-                var thisMovieEntered = false;
-            
-                thisMovie.formattedTitle = thisMovie.title.replace("(2D)", "").replace("(3D)", "").replace("M4J", "");
-            
-                var addMovie = function () {
-                    $rootScope.movieTitles.push(thisMovie.formattedTitle);
-                    thisMovie.name = thisMovie.formattedTitle;
-                    thisMovie.currentCoverPhotoName = "https://www.cineworld.co.uk" + thisMovie.poster;
-                    thisMovie.listingType = 'Movie';
-                    thisMovie.town = 'Bedford';
-                    thisMovie.tonightsFeedButtonIconClass = 'ion-navicon';
-                    thisMovie.tonightsFeedButtonOption = 'See Details';
-                    $rootScope.movies.push(thisMovie);
-                }
-            
-                if ($rootScope.movieTitles.length > 0) {
-                    for (var b = 0; b < $rootScope.movieTitles.length; b++) {
-                        if (thisMovie.title.indexOf($rootScope.movieTitles[b]) > -1) {
-                            thisMovieEntered = true;
-                        }
-                
-                        if (b == $rootScope.movieTitles.length - 1 && !thisMovieEntered) {
-                            addMovie();
-                        }
-                    }
-                } else {
-                    addMovie();
-                }
-            }
-        }
-        
-        var addMoviesNotAlreadyInDb = function (ind) {
-            var z = ind;
-        
-            var addMovieToDbAndGenresToMovieObj = function (movie) {
-        
-                var finalAddMovieToDb = function () {
-                    console.log(movie.name, movie.genre, movie.edi);
-                    /*
-                    Movie.createMovieFromCineworldFile(movie.name, movie.genre, '').success(function (successData) {
-                        console.log(movie.name, movie.genre);
-                    }).error(function (errorData) {
-                    
-                    });
-                    */
-                    cineworldMoviesObj[movie.edi]["genre"] = movie.genre;
-                            
-                    if (z < cineworldMoviesEdi.length - 1){
-                        addMoviesNotAlreadyInDb(z + 1);
-                    }
-                    else {
-                        console.log(cineworldMoviesObj);
-                    }
-                }
-        
-                if (movie.formattedTitle.indexOf("NT+Live+-") == 0 || movie.formattedTitle.indexOf("NT+Live:") == 0 || movie.formattedTitle.indexOf("RSC+Live:") == 0 || movie.formattedTitle.indexOf("ROH+Live:") == 0) {
-                    finalAddMovieToDb();
-                }
-                else {
-                    Movies.getImdbMovieDetails(movie.formattedTitle, 'thisYear').success(function (successData) {
-                        console.log(successData);
-                        
-                        if (successData.Response == 'True') {
-                            movie.genre = successData.Genre.split(", ");
-                            finalAddMovieToDb();
-                        }
-                        else {
-                            Movies.getImdbMovieDetails(movie.name, 'lastYear').success(function (successData2) {
-                                if (successData2.Response == 'True') {
-                                    movie.genre = successData2.Genre.split(", ");
-                                }
-                                finalAddMovieToDb();
-                            }).error(function (errorData) {
-                            
-                            });
-                        }
-                    }).error(function (errorData) {
-                    
-                    });
-                }
-            }
-        
-            if (existingMoviesEdi.indexOf(cineworldMoviesEdi[z]) == -1) {
-                addMovieToDbAndGenresToMovieObj(cineworldMoviesObj[cineworldMoviesEdi[z]]);
-            }
-            else if (z < cineworldMoviesEdi.length - 1){
-                addMoviesNotAlreadyInDb(z + 1);
-            }
-        }
-        
-        var loopCineworldMoviesToCreateObj = function (ind) {
-            var b = ind;
-            var thisMovie = cineworldMovies[b];
-            var thisMovieEntered = false;
-        
-            thisMovie.formattedTitle = thisMovie._title.replace(/ /g, "+").replace("+Unlimited+Card+Screening", "").replace("(2D)+", "").replace("(3D)+", "").replace("M4J+", "").replace("Autism+Friendly+Screening:+", "");
-        
-            var addMovie = function () {
-                var reverseFormattedTitle = thisMovie.formattedTitle.replace(/\+/g, " ").replace(/&#39;/g, "'");
-                $rootScope.movieTitles.push(reverseFormattedTitle);
-                
-                if (thisMovie.formattedTitle.indexOf("NT+Live+-") == 0 || thisMovie.formattedTitle.indexOf("NT+Live:") == 0 || thisMovie.formattedTitle.indexOf("RSC+Live:") == 0 || thisMovie.formattedTitle.indexOf("ROH+Live:") == 0) {
-                    thisMovie.genre = ["Theatre"];
-                }
-                else {
-                    thisMovie.genre = [];
-                }
-    
-                cineworldMoviesObj[thisMovie._edi] = {
-                    name: reverseFormattedTitle,
-                    genre: thisMovie.genre,
-                    edi: thisMovie._edi,
-                    formattedTitle: thisMovie.formattedTitle,
-                    currentCoverPhotoName: "https://www.cineworld.co.uk" + thisMovie.poster
-                };
-                cineworldMoviesEdi.push(thisMovie._edi);
-
-                thisMovie.name = reverseFormattedTitle;
-                thisMovie.currentCoverPhotoName = "https://www.cineworld.co.uk" + thisMovie.poster;
-                thisMovie.listingType = 'Movie';
-                thisMovie.town = 'Bedford';
-                thisMovie.tonightsFeedButtonIconClass = 'ion-navicon';
-                thisMovie.tonightsFeedButtonOption = 'See Details';
-                $rootScope.movies.push(thisMovie);
-    
-                if (b < cineworldMovies.length - 1) {
-                    loopCineworldMoviesToCreateObj(b + 1);
-                } else {
-                    addMoviesNotAlreadyInDb(0);
-                }
-            }
-            
-            var length = $rootScope.movieTitles.length;
-            
-            if (length > 0) {
-                for (var c = 0; c < length; c++) {
-                    if (thisMovie._title.indexOf($rootScope.movieTitles[c]) > -1) {
-                        thisMovieEntered = true;
-                    }
-            
-                    if (c == length - 1) {
-                        if (!thisMovieEntered) {
-                            addMovie();
-                        }
-                        else if (ind < cineworldMovies.length - 1) {
-                            loopCineworldMoviesToCreateObj(b + 1);
-                        }
-                        else {
-                            addMoviesNotAlreadyInDb(0);
-                        }
-                    }
-                }
-            } else {
-                addMovie();
-            }
-        }
-        
-        var loopExistingMoviesToCreateObj = function () {
-            if (existingMovies.length > 0) {
-                for (var a = 0; a < existingMovies.length; a++) {
-                    if (existingMovies[a].edi != null) {
-                        existingMoviesObj[existingMovies[a].edi] = {
-                            name: existingMovies[a].name,
-                            trailerLink: existingMovies[a].trailerLink
-                        };
-                        existingMoviesEdi.push(existingMovies[a]["edi"]);
-                    }
-                    
-                    if (a == existingMovies.length - 1) {
-                        loopCineworldMoviesToCreateObj(0);
-                    }
-                }
-            }
-            else {
-                loopCineworldMoviesToCreateObj();
-            }
-        }
-        
-        loopExistingMoviesToCreateObj();
-      }
-      
-      var getExistingCineworldMovies = function (cineworldMovies, status) {
-        Movies.getExistingCineworldMovies().success(function (successData) {
-            console.log(successData);
-            parseMovies(cineworldMovies["films"], successData);
-        }).error(function (errorData) {
-            getExistingCineworldMovies(cineworldMovies, status);
-        });
-      }
-      
-      var getCineworldFile = function (existingMovies) {
-        $.ajax({
-          type: 'GET', url:Config.CineworldApiUrl,
-          data: {key: 'qUnEyRXt', full: true, cinema: 34},
-          dataType: 'jsonp', // Setting this data type will add the callback parameter for you
-          success: getExistingCineworldMovies
-        });
-      }
-      
-      var getCineworldFile2 = function () {
-        $http.get("https://crossorigin.me/https://www.cineworld.co.uk/syndication/film_times_ie.xml").success(function (data) {
-                var x2js = new X2JS();
-                var jsonData = x2js.xml_str2json(data);
-                console.log(jsonData);
-                cineworldMovies = {films: jsonData["cinemas"]["cinema"]["listing"]["film"]};
-                getExistingCineworldMovies(cineworldMovies, '');
-            }
-        );
-      }
-      
-      getCineworldFile2();
       
       /* Prepare All details for the user */
       $rootScope.userLoggedIn = false;
@@ -535,118 +310,121 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
 
       $rootScope.initiateBottomRightImg();
 
-      $rootScope.initiateThisWeeksItemsForWebDisplay = function () {
-        var offerSubCatClassObject = {
-            "Takeaway Deals" : "ion-cube",
-            "Restaurant Deals" : "ion-fork",
-            "Drinks Deals" : "ion-wineglass"
-        };
-        var formatItems = function (items, type) {
-            for (var a = 0; a < items.length; a++) {
-                items[a].show = (a == 0) ? true: false;
-                if (type == 'Offers') {
-                    items[a].offerSubCategoryClass = offerSubCatClassObject[items[a].offerSubCategoryName];
-                }
-                if (a == items.length - 1) {
-                    return items;
-                }
-            }
-        }
-
-        var getTodaysMoviesForWideDisplay = function () {
-            Movies.getTodaysMoviesForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
-                $rootScope.todaysMovies = formatItems(successData, 'Movies');
-            }).error(function (errorData) {
-                getTodaysMoviesForWideDisplay();
-            });
-        }
-        
-        
-        var getTodaysOffersForWideDisplay = function () {
-            Offers.getTodaysOffersForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
-                $rootScope.todaysOffers = formatItems(successData, 'Offers');
-            }).error(function (errorData) {
-                getTodaysOffersForWideDisplay();
-            });
-        }
-        
-        getTodaysMoviesForWideDisplay();
-        getTodaysOffersForWideDisplay();
-        
-        $rootScope.nextThisWeekMovieTimer = $timeout(function () {
-            $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
-        }, 5000);
-        
-        $rootScope.nextTodayOfferTimer = $timeout(function () {
-            $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
-        }, 5000);
-      };
-
-      $rootScope.changeItemsForWideDisplay = function (itemType, itemToShow, items, state) {
-        var i = 0;
-        var itemArray = items;
-        for (a = 0; a < itemArray.length; a++) {
-            var changeItemState = function (i) {
-                itemArray[i].show = false;
-                if (i == itemArray.length - 1 && itemToShow == 'next') {
-                    itemArray[0].show = true;
-                }
-                else if (i == 0 && itemToShow == 'prev') {
-                    itemArray[itemArray.length - 1].show = true;
-                }
-                else if (i > 0 && itemToShow == 'prev') {
-                    itemArray[i - 1].show = true;
-                }
-                else if (i < itemArray.length - 1 && itemToShow == 'next') {
-                    itemArray[i + 1].show = true;
-                }
-        
-                if (itemType == 'Offers') {
-                    $rootScope.todaysOffers = itemArray;
-                    if (state == 'manual') {
-                        $timeout.cancel($rootScope.nextTodayOfferTimer);
+      if ($rootScope.intendedPlatform == 'browser') {
+          $rootScope.initiateThisWeeksItemsForWebDisplay = function () {
+            var offerSubCatClassObject = {
+                "Takeaway Deals" : "ion-cube",
+                "Restaurant Deals" : "ion-fork",
+                "Drinks Deals" : "ion-wineglass"
+            };
+            var formatItems = function (items, type) {
+                for (var a = 0; a < items.length; a++) {
+                    items[a].show = (a == 0) ? true: false;
+                    if (type == 'Offers') {
+                        items[a].offerSubCategoryClass = offerSubCatClassObject[items[a].offerSubCategoryName];
                     }
-                    $rootScope.nextTodayOfferTimer = $timeout(function () {
-                        $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
-                    }, 5000);
-                }
-                else if (itemType == 'Movies') {
-                    $rootScope.todaysMovies = itemArray;
-                    if (state == 'manual') {
-                        $timeout.cancel($rootScope.nextThisWeekMovieTimer);
+                    if (a == items.length - 1) {
+                        return items;
                     }
-                    $rootScope.nextThisWeekMovieTimer = $timeout(function () {
-                        $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
-                    }, 5000);
                 }
             }
-        
-            if (itemArray[a].show) {
-                i = a;
+
+            var getTodaysMoviesForWideDisplay = function () {
+                Movies.getTodaysMoviesForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                    //$rootScope.todaysMovies = formatItems(successData, 'Movies');
+                }).error(function (errorData) {
+                    getTodaysMoviesForWideDisplay();
+                });
             }
-        
-            if (a == itemArray.length - 1) {
-                changeItemState(i);
+            
+            
+            var getTodaysOffersForWideDisplay = function () {
+                Offers.getTodaysOffersForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                    $rootScope.todaysOffers = formatItems(successData, 'Offers');
+                }).error(function (errorData) {
+                    getTodaysOffersForWideDisplay();
+                });
             }
-        }
-      };
+            
+            getTodaysMoviesForWideDisplay();
+            getTodaysOffersForWideDisplay();
+            
+            $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+                $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+            }, 5000);
+            
+            $rootScope.nextTodayOfferTimer = $timeout(function () {
+                $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+            }, 5000);
+          };
+
+          $rootScope.changeItemsForWideDisplay = function (itemType, itemToShow, items, state) {
+            var i = 0;
+            var itemArray = items;
+            for (a = 0; a < itemArray.length; a++) {
+                var changeItemState = function (i) {
+                    itemArray[i].show = false;
+                    if (i == itemArray.length - 1 && itemToShow == 'next') {
+                        itemArray[0].show = true;
+                    }
+                    else if (i == 0 && itemToShow == 'prev') {
+                        itemArray[itemArray.length - 1].show = true;
+                    }
+                    else if (i > 0 && itemToShow == 'prev') {
+                        itemArray[i - 1].show = true;
+                    }
+                    else if (i < itemArray.length - 1 && itemToShow == 'next') {
+                        itemArray[i + 1].show = true;
+                    }
+            
+                    if (itemType == 'Offers') {
+                        $rootScope.todaysOffers = itemArray;
+                        if (state == 'manual') {
+                            $timeout.cancel($rootScope.nextTodayOfferTimer);
+                        }
+                        $rootScope.nextTodayOfferTimer = $timeout(function () {
+                            $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+                        }, 5000);
+                    }
+                    else if (itemType == 'Movies') {
+                        $rootScope.todaysMovies = itemArray;
+                        if (state == 'manual') {
+                            $timeout.cancel($rootScope.nextThisWeekMovieTimer);
+                        }
+                        $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+                            $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+                        }, 5000);
+                    }
+                }
+            
+                if (itemArray[a].show) {
+                    i = a;
+                }
+            
+                if (a == itemArray.length - 1) {
+                    changeItemState(i);
+                }
+            }
+          };
+          
+          $rootScope.goToTodaysItem = function (type, _id) {
+            if (type == 'Offer') {
+                $state.go('app.offers');
+                $timeout(function () {
+                    $state.go('app.offers.offerDetail', {'_id': _id});
+                }, 150);
+            }
+            else if (type == 'Movie') {
+                $state.go('app.feed');
+                $timeout(function () {
+                    $state.go('app.feed.nlfeedListing', {'_listingId': _id, 'listingType': 'Movie'});
+                }, 150);
+            }
+          }
+
+          $rootScope.initiateThisWeeksItemsForWebDisplay();
       
-      $rootScope.goToTodaysItem = function (type, _id) {
-        if (type == 'Offer') {
-            $state.go('app.offers');
-            $timeout(function () {
-                $state.go('app.offers.offerDetail', {'_id': _id});
-            }, 150);
-        }
-        else if (type == 'Movie') {
-            $state.go('app.feed');
-            $timeout(function () {
-                $state.go('app.feed.nlfeedListing', {'_listingId': _id, 'listingType': 'Movie'});
-            }, 150);
-        }
       }
-
-      $rootScope.initiateThisWeeksItemsForWebDisplay();
       
       $scope.pageLoad();
     }
@@ -669,7 +447,6 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
   //$cordovaStatusBar.style = 1; //Light
   $ionicPlatform.ready(function(datesWorkerFS) {
-
 $timeout(function () {
     //Workaround suggested to get around random no-load error
     var hideSplash = function () {
@@ -1005,7 +782,6 @@ $timeout(function () {
     $rootScope.nightSearchOpen = true;
     $rootScope.showTheWhatsOpenFunction = true;
     $rootScope.searchInputPlaceholder = 'Search by name';
-    $rootScope.hideSearch = false;
     $rootScope.searchOnRight = false;
     $rootScope.showAssistantButton = true;
     $rootScope.assistantButtonActive = true;
@@ -1517,6 +1293,32 @@ $timeout(function () {
 }, 100)
     
   });
+  
+    /* I-Frame Functions */
+    $rootScope.trustSrc = function (src) {
+        return $sce.trustAsResourceUrl(src);
+    }
+    
+    $rootScope.openFrame = function (params) {
+        var frameContentArray = {
+            'User Messages MyNyte': 'https://www.mynyte.co.uk/#/app/profile//messageGroups//Business'
+        }
+        var frameClass = "";
+        if (params.frameContent) {
+            $rootScope.frameUrl = frameContentArray[params.frameContent];
+        } else {
+            $rootScope.frameUrl = params.frameUrl;
+        }
+        if (params.frameClass) {
+            frameClass = params.frameClass;
+        }
+        $rootScope.frameOpen = true;
+        $rootScope.frameClass = frameClass;
+    }
+    
+    $rootScope.closeFrame = function () {
+        $rootScope.frameOpen = false;
+    }
 });
 
 
@@ -1532,18 +1334,32 @@ app.controller('MainCtrl', ['$scope', '$ionicSideMenuDelegate', '$ionicHistory',
 	}
 }])
 
-app.config(function($sceDelegateProvider) {
+app.config(function($sceDelegateProvider, googleClientProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
     // Allow same origin resource loads.
     'self',
     // Allow loading from our assets domain.  Notice the difference between * and **.
     'http://www.youtube.com/**'
   ]);
+  
+  googleClientProvider
+    .loadPickerLibrary()
+    .loadGoogleAuth({
+      cookie_policy: 'single_host_origin',
+      hosted_domain: 'mynyte.co.uk',
+      fetch_basic_profile: true
+    })
+    .setClientId('357832123193-uuo04ahs9djm736m3k16b6j29pua669l.apps.googleusercontent.com')
+    .addApi('oauth2', 'v2');
+    
 })
 
 // config to disable default ionic navbar back button text and setting a new icon
 // logo in back button can be replaced from /templates/sidebar-menu.html file
-app.config(function($ionicConfigProvider, $compileProvider) {
+app.config(function($ionicConfigProvider, $compileProvider, $cordovaInAppBrowserProvider) {
+    console.log($cordovaInAppBrowserProvider);
+    console.log(ionic.Platform);
+    
     if (!ionic.Platform.isAndroid() && !ionic.Platform.isIOS()) {
       $ionicConfigProvider.views.transition('fade-in-out');
     }
@@ -1552,6 +1368,14 @@ app.config(function($ionicConfigProvider, $compileProvider) {
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.backButton.text('').icon('ion-ios-arrow-back').previousTitleText(false);
     $compileProvider.debugInfoEnabled(false);
+    
+    var defaultOptions = {
+        location: 'no',
+        clearcache: 'yes',
+        toolbar: 'yes'
+    };
+    
+    $cordovaInAppBrowserProvider.setDefaultOptions(defaultOptions);
 })
 
     /* INTRODUCE WHEN CREATED

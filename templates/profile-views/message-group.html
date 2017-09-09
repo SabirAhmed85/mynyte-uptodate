@@ -80,7 +80,9 @@
                             <span class="attachment-span" ng-show="message._relatedItemId != null" ng-click="goToAttachedListing(message);">
                               <span class="message-attachment-arrow ion-chevron-right"></span>
                               <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{message.relatedItemCoverPhotoName}}"
-                                ng-if="message.relatedItemCoverPhotoName != null && message.relatedItemCoverPhotoName != 'default-offer.jpg'"/>
+                                ng-if="message.relatedItemCoverPhotoName != null && message.relatedItemCoverPhotoName != 'default-offer.jpg' && message.relatedItemType != 'Movie'"/>
+                              <img ng-src="{{message.relatedItemCoverPhotoName}}"
+                                ng-if="message.relatedItemCoverPhotoName != null && message.relatedItemType == 'Movie'"/>
                               <span class="attachment-type-note"
                                 ng-class="{'left-float': message.relatedItemCoverPhotoName == null || message.relatedItemCoverPhotoName == 'default-offer.jpg'}"
                                 ng-show="message.relatedItemType == 'BusinessesA la Carte Menu'
@@ -163,10 +165,13 @@
     <div ng-if="rootScope.relListing != null" class="message-attachment">
         <img
             ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentCoverPhotoName}}"
-            ng-if="rootScope.relListing.listingType != 'Offer' || (rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName == 'default-offer.jpg')" />
+            ng-if="rootScope.relListing.listingType != 'Movie' && (rootScope.relListing.listingType != 'Offer' || (rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName == 'default-offer.jpg'))" />
         <img
             ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/thumbnail/{{rootScope.relListing.currentOfferCoverPhotoName}}"
-            ng-if="rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName != 'default-offer.jpg'" />
+            ng-if="rootScope.relListing.listingType == 'Offer' && rootScope.relListing.currentOfferCoverPhotoName != 'default-offer.jpg' && " />
+        <img
+            ng-src="{{rootScope.relListing.currentCoverPhotoName}}"
+            ng-if="rootScope.relListing.listingType == 'Movie'" />
         <i class="message-attachment-symbol-icon"
             ng-if="rootScope.relListing.relListingType != 'Business' && rootScope.relListing.relListingType != null"
             ng-class="{'ion-social-usd': rootScope.relListing.relListingType == 'BusinessesOffers' || rootScope.relListing.relListingType == 'Offer' || rootScope.relListing.relListingType == 'EventsOffers',

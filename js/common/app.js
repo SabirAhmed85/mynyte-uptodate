@@ -1,6 +1,7 @@
 /* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
+/* UNIQUE TO PLATFORM (Options are: 'ios' and 'android' and 'browser')*/
 var IntendedEnvironment = "Staging";
-var IntendedPlatform = "browser";
+var IntendedPlatform = "ios";
 var DebugMode = false;
 /* */
 
@@ -33,6 +34,8 @@ app.constant("Config", {
              "TableBookingUrl": AssetsFolderUrl + "/data/sp/TableBooking.php",
              "MovieUrl": AssetsFolderUrl + "/data/sp/Movie.php",
              "CineworldApiUrl": "https://www.cineworld.co.uk/api/quickbook/films",
-             "ImdbApiUrl": "https://www.omdbapi.com/?apikey=18ccd4b0&",
-             "ImageUploadUrl": AssetsFolderUrl + "/data/functions/image-upload.php"
+             "ImageUploadUrl": AssetsFolderUrl + "/data/functions/image-upload.php",
+             "FilesUrl": AssetsFolderUrl + "/data/functions/files.php",
+             
+             "MovieDBApiKey": "bad6907fbc0593ecf082f5022a24804c"
             })

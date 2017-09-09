@@ -124,6 +124,18 @@
       
       $result = mysql_query("CALL makeUserInactive($_profileId,$_oneSignalId)");
   }
+  else if ($action == 'checkHowManyEmailInvitesSent') {
+      $senderEmail = ($_POST['senderEmail']) ? $_POST['senderEmail']: $_REQUEST['senderEmail'];
+      
+      $result1 = mysql_query("CALL checkHowManyEmailInvitesSent('$senderEmail', @emailSentCount);");
+      $result = mysql_query("SELECT @emailSentCount as emailSentCount");
+
+      // new way to get Users Id
+      $emailSentCount = mysql_fetch_object($result);
+      $emailSentCount = $emailSentCount -> emailSentCount;
+      //echo json_encode("CALL checkHowManyEmailInvitesSent('$senderEmail', @emailSentCount);");
+      echo json_encode($emailSentCount);
+  }
   elseif ($action == 'getProfileItemCountForProfile') {
       $_profileId = (empty($_GET['_profileId'])) ? "": mysql_real_escape_string($_GET['_profileId']);
       
@@ -159,6 +171,26 @@
       $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
       $result = mysql_query("CALL getAllTonightsFeedOptionsForBusiness($_businessId)");
+  }
+  elseif ($action == 'getMyNyteExternalContacts') {
+      $data               = file_get_contents("php://input");
+        $dataJsonDecode     = json_decode($data);
+
+        $format = $dataJsonDecode->format;
+        $_profileId = $dataJsonDecode->_profileId;
+      
+      $result = mysql_query("CALL getMyNyteExternalContacts($_profileId, '$format')");
+  }
+  elseif ($action == 'getTimeSheetToFill') {
+        $data               = file_get_contents("php://input");
+        $dataJsonDecode     = json_decode($data);
+        
+        $_profileId = $dataJsonDecode->_profileId;
+        $relDate = $dataJsonDecode->relDate;
+        $relDate = (isset($relDate)) ? "'".$relDate."'": 'NULL';
+      echo "CALL getTimeSheetToFill($_profileId, $relDate)";
+        $result = mysql_query("CALL getTimeSheetToFill($_profileId, $relDate)");
+      
   }
   elseif ($action == 'updateAllProfileDetails') {
         $data               = file_get_contents("php://input");
@@ -861,6 +893,130 @@
         echo json_encode("MyNyte Contact Failed");
     }
   }
+  
+  /*CREATE SEPARATE FILE FOR MYNYTEENTITY*/
+  else if ($action == 'addMyNyteItem') {
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_parentId = $_POST['_parentId'];
+    $itemName = $_POST['itemName'];
+    $itemNameValueString = $_POST['itemNameValueString'];
+    
+    /*
+    addMyNyteEntityItem Method Parameters:
+      - _Parent Id (_id of business which owns the item Model)
+      - MyNyte Item Name (VARCHAR(1000))
+      - Stringified Object of Properties to filter by (VARCHAR(1000000)) | NULL if n/a
+
+      Example: CALL addMyNyteItem(1, "Apppointment Booking", "[['Related Business Entity Item Appointment Type':='Process Serving Job']],[['_Related User Account Id':='19']]");
+
+    */
+    
+    $result = mysql_query('CALL addMyNyteItem('.$_parentId.', "'.$itemName.'", "'.$itemNameValueString.'");');
+    
+    if ($result) {
+        echo json_encode(mysql_fetch_assoc($result));
+    } else {
+        echo "CALL addMyNyteItem($_parentId, '".$itemName."', '".$itemNameValueString."');";
+        echo json_encode("Failed addMyNyteEntityItem");
+    }
+  }
+  else if ($action == 'getMyNyteItemCountForProfile') {
+    $_profileId = $_POST['_profileId'];
+    
+    $result = mysql_query('CALL getMyNyteItemCountForProfile('.$_profileId.')');
+  }
+  else if ($action == 'getMyNyteItems') {
+    $_parentId = (!isset($_POST['_parentId'])) ? 'NULL' : '"'.$_POST['_parentId'].'"';
+    $myNyteItemType = $_POST['myNyteItemType'];
+    $myNyteItemPropertyString = (!isset($_POST['myNyteItemPropertyString'])) ? 'NULL' : '"'.$_POST['myNyteItemPropertyString'].'"';
+    $_relatedViewModelId = (!isset($_POST['_relatedViewModelId'])) ? 'NULL' : $_POST['_relatedViewModelId'];
+    $extraFiltersString = (!isset($_POST['extraFiltersString'])) ? 'NULL' : '"'.$_POST['extraFiltersString'].'"';
+
+    /*
+    getMyNyteItems Method Parameters:
+      - _parentId (_id of business which owns the item Model)
+      - MyNyte Item Name (VARCHAR(1000))
+      - Stringified Object of Properties to return (VARCHAR(1000000)) | NULL if n/a
+      - _Related View Model Id (INT(11)) | NULL if n/a
+      - Stringified Object of Properties to filter by (VARCHAR(1000000)) | NULL if n/a
+
+      Example: CALL getMyNyteItems(1, "Apppointment Booking", NULL, NULL, "[['Status':='Incomplete']],[['Date Created':>'2017-05-01']]");
+
+    */
+    
+    $result = mysql_query('CALL getMyNyteItems('.$_parentId.', "'.$myNyteItemType.'", '.$myNyteItemPropertyString.', '.$_relatedViewModelId.', '.$extraFiltersString.')');
+  }
+
+  else if ($action == 'getMyNyteItem') {
+    $_parentId = $_POST['_parentId'];
+    $_myNyteItemId = $_POST['_myNyteItemId'];
+    $_relatedViewModelId = (!isset($_POST['_relatedViewModelId'])) ? 'NULL' : $_GET['_relatedViewModelId'];
+    
+    /*
+    getMyNyteItemsMeta Method Parameters:
+      - _Parent Id (_id of business which owns the item)
+      - _MyNyte Item Id (VARCHAR(1000))
+      - _Related View Model Id (INT(11)) | NULL if n/a
+
+      Example: CALL getMyNyteItemsMeta(1, 2, 12);
+
+    */
+    
+    $result = mysql_query('CALL getMyNyteItem('.$_parentId.', '.$_myNyteItemId.', '.$_relatedViewModelId.')');
+  }
+
+  else if ($action == 'getMyNyteItemModel') {
+    $_parentId = $_GET['_parentId'];
+    $myNyteItemType = $_GET['myNyteItemType'];
+    $extraFiltersString = (isset($_GET['extraFiltersString'])) ? ('"'.$_GET['extraFiltersString'].'"'): 'NULL';
+    $_relatedViewModelId = (isset($_GET['_relatedViewModelId'])) ? ('"'.$_GET['_relatedViewModelId'].'"'): 'NULL';
+    /*
+    getMyNyteItemModel Method Parameters:
+      - _Parent Id (_id of business which owns the item)
+      - _MyNyte Item Type (VARCHAR(1000))
+      - Stringified Object of Properties to filter by (VARCHAR(100000)) | NULL if n/a
+      - _Related View Model Id (INT(11)) | NULL if n/a
+
+      Example: CALL getMyNyteItemModel(1, "Appointment Booking", "[['Related Business Entity Item Appointment Type':='Process Serving Job']]", NULL);
+
+    */
+    
+    $result = mysql_query('CALL getMyNyteItemModel('.$_parentId.', "'.$myNyteItemType.'", '.$extraFiltersString.', '.$_relatedViewModelId.');');
+  }
+
+  else if ($action == 'updateMyNyteItem') {
+    $_myNyteItemId = $_POST['_myNyteItemId'];
+    $updateString = $_POST['updateString'];
+    
+    /*
+    updateMyNyteItem Method Parameters:
+      - _Parent Id (_id of business which owns the item)
+      - _MyNyte Item Id (VARCHAR(1000))
+      - Stringified Object of Properties to update (VARCHAR(100000))
+
+      Example: CALL updateBusinessEntityItem(1, 2, "[['Status':'Complete']],[['Date Completed':NOW()]]");
+
+    */
+    $result = mysql_query('CALL updateMyNyteItem("'.$_myNyteItemId.'", "'.$updateString.'");');
+  }
+
+  else if ($action == 'deleteMyNyteItem') {
+    $_parentId = $_GET['_parentId'];
+    $_myNyteItemId = $_GET['_myNyteItemId'];
+    
+    /*
+    deleteMyNyteItem Method Parameters:
+      - _Parent Id (_id of business which owns the item)
+      - _MyNyte Item Id (VARCHAR(1000))
+
+      Example: CALL deleteMyNyteItem(1, 2);
+
+    */
+
+    $result = mysql_query("CALL deleteMyNyteItem($_parentId, $_myNyteItemId");
+  }
   //print(json_encode($_usersId)); 
 
   if ($action == 'getAllProfileDetails'
@@ -882,8 +1038,14 @@
     || $action == 'getBusinessOpeningTimesForBusiness'
     || $action == 'getAllTonightsFeedOptionsForBusiness'
     || $action == 'getProfileItemCountForProfile'
+    || $action == 'getMyNyteExternalContacts'
+    || $action == 'getTimeSheetToFill'
     || $action == 'updateAllProfileDetails'
-    || $action == 'updateProfilePasswordDetails') {
+    || $action == 'updateProfilePasswordDetails'
+    || $action == 'getMyNyteItemCountForProfile'
+    || $action == 'getMyNyteItems'
+    || $action == 'getMyNyteItem'
+    || $action == 'getMyNyteItemModel') {
       $result = ($result === null) ? array() : $result;
       $output = null;
       while($row = mysql_fetch_assoc($result))

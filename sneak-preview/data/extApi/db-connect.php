@@ -1,18 +1,5 @@
 <?php
-
-  header("Access-Control-Allow-Origin: http://legalservebedford.co.uk");
-  header("Access-Control-Allow-Origin: http://www.legalservebedford.co.uk");
-  
-  //Debug
-  //ini_set('display_errors', 1);
-
-  $db_host = "localhost";
-
-  $db_uid = "qxiryynz_mynyteuser";
-
-  $db_pass = "wM)Ln8-Q2o6g";
-
-  $db_name = "qxiryynz_MyNyte";
+  require_once('main-connect-external.php');
   
   header('content-type: application/json; charset=utf-8');
   header('Access-Control-Allow-Methods: GET, SET, POST');

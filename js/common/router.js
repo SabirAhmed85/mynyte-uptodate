@@ -74,6 +74,22 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             usersPWord: null
           }
         })
+        //Complete Registration
+        .state('app.inviteContacts', {
+          url: "/inviteContacts",
+          views: {
+            'profile-tab' :{
+                templateUrl: "templates/profile-views/invite-contacts.html",
+                    controller: "InviteContactsCtrl"
+            }
+          },
+          params: {
+            profileType: null,
+            _usersId: null,
+            usersEMail: null,
+            usersPWord: null
+          }
+        })
         //Privacy
         .state('app.privacyPolicy', {
           url: "/privacyPolicy",
@@ -256,17 +272,6 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
           }
         })
         
-        //** NL ADMIN **//
-        // contacts page
-        .state('app.contacts', {
-          url: "/contacts",
-          views: {
-            'profile-tab' :{
-                templateUrl: "templates/profile-views/contacts.html",
-                    controller: "ContactsCtrl"
-            }
-          }
-        })
         // add contacts page
         .state('app.addContact', {
           url: "/contacts/addContact",
@@ -568,6 +573,102 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
           _liveChatId: null
         }
       })
+    .state('app.admin', {
+      url: "/admin/:action",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/admin.html",
+		  		controller: "AdminCtrl"
+        },
+        params: {
+          action: null
+        }
+      }
+    })
+    .state('app.myNyteItems', {
+      url: "/admin//myNyteItems/:_parentId/:itemType/:extraFiltersString/:timeScale",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/mynyte-items.html",
+		  		controller: "MyNyteItemsCtrl"
+        },
+        params: {
+          _parentId: null,
+          itemType: null,
+          extraFiltersString: null,
+          timeScale: null
+        }
+      }
+    })
+    .state('app.myNyteItem', {
+      url: "/admin//myNyteItems/:_parentId/:itemType/:timeScale/myNyteItem/:_itemId/:format/:specificAction",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/mynyte-item.html",
+		  		controller: "MyNyteItemCtrl"
+        },
+        params: {
+          _parentId: null, itemType: null, timeScale: null,
+          _itemId: null,
+          format: null,
+          specificAction: null
+        }
+      }
+    })
+    .state('app.movieMaintenance', {
+      url: "/admin//movieMaintenance/:_movieId",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/movie-maintenance.html",
+		  		controller: "MovieMaintenanceCtrl"
+        }
+      },
+      params: {
+          _movieId: null
+      }
+    })
+    .state('app.fillTimeSheet', {
+      url: "/admin//fillTimeSheet/:relDate",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/fill-timesheet.html",
+		  		controller: "FillTimeSheetCtrl"
+        }
+      },
+      params: {
+        relDate: null
+      }
+    })
+    .state('app.contacts', {
+      url: "/admin//contacts",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/contacts.html",
+		  		controller: "ContactsCtrl"
+        }
+      }
+    })
+    .state('app.marketingEmails', {
+      url: "/admin//marketingEmails",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/marketing-emails.html",
+		  		controller: "MarketingEmailsCtrl"
+        }
+      }
+    })
+    .state('app.helpDocumentation', {
+      url: "/admin//helpDocumentation/:docType",
+      views: {
+        'more-tab' :{
+          	templateUrl: "templates/admin-views/help-documentation.html",
+		  		controller: "HelpDocumentationCtrl"
+        }
+      },
+      params: {
+          docType: null
+      }
+    })
 	 
     //  login page
     //Default Page App goes to on Start

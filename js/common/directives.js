@@ -30,6 +30,16 @@ app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig,
             "app.feed",
             "app.taxi"
         ];
+        var adminViews = [
+            "app.admin",
+            "app.movieMaintenance",
+            "app.fillTimeSheet",
+            "app.contacts",
+            "app.marketingEmails",
+            "app.helpDocumentation",
+            "app.myNyteItems",
+            "app.myNyteItem"
+        ];
         var showSearchViews = [
             "app.feed"
         ];
@@ -196,6 +206,7 @@ app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig,
         }
         */
         
+        $rootScope.currentViewType = (adminViews.indexOf(currentViewName) > -1) ? 'admin': 'non-admin';
         $rootScope.pageTitle = (typeof(allViewsObject[currentViewName]) !== 'undefined') ? allViewsObject[currentViewName]['title']: $rootScope.pageTitle;
         if (typeof(allViewsObject[currentViewName]) !== 'undefined') {
           $rootScope.$broadcast('view.enter', {viewName: currentViewName});
@@ -225,6 +236,8 @@ app.run(function ($state, $ionicHistory, $rootScope, $stateParams, $ionicConfig,
                 $rootScope.searchActive = true;
             }, 500);
         }
+        
+        console.log("search", $rootScope.hideSearch);
         
         $rootScope.showStatsButton = false; /* This is only needed in one specific view, and so it is overwritten in that view*/
         
@@ -397,7 +410,7 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
     link: function(scope, $element, attr) {
         $element.currentLeft = 0;
         var width;
-        $element.isMainSearchSlider = $element.hasClass('nightfinder-horizontal-slider');
+        $element.isMainSearchSlider = $element.parent('nightfinder-horizontal-slider').length;
         $element.gestureRequired = 15;
         $element.negativeGestureRequired = -15;
         $element[0].slideLocked = false;
@@ -501,7 +514,7 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
         var handleClickDrag = function (e) {
             scope.ionicScrollDelegate.getScrollView().options.scrollingY = false;
             
-            if (
+            if ($element.isMainSearchSlider &&
                 (
                     e.gesture.deltaX > 5 || e.gesture.deltaX < -5
                 )
@@ -521,41 +534,20 @@ app.directive('horizontalSlider', function ($ionicGesture, $rootScope) {
                     autoDragClickFn(e, val);
                 }
             }
+            else if (((e.gesture.deltaX > 15 || e.gesture.deltaX < -15 ) || (e.gesture.deltaY == 0)) && !$element.isMainSearchSlider) {
+              
+                $element[0].style[ionic.CSS.TRANSFORM] = 'translate3d(' + ($element.currentLeft + Math.round(e.gesture.deltaX)) +'px, 0, 0)'
+              
+                if ($element.hasClass('slider-bounce')) { $element.removeClass('slider-bounce'); }
+                scope.ionicScrollDelegate.getScrollView().options.scrollingY = false;
+            }
         }
         
         var releaseFn = function(e) {
           scope.ionicScrollDelegate.getScrollView().options.scrollingY = true;
         };
 
-        /* These Functions may be needed for the movie showing times slider, not sure
-        var handleDrag = function(e) {
-          if ( (e.gesture.deltaX > 15 || e.gesture.deltaX < -15 ) || (e.gesture.deltaY == 0)) {
-            if ( (e.gesture.deltaX > -40 || e.gesture.deltaX < 40) || !$element.isMainSearchSlider ) {
-              $element[0].style[ionic.CSS.TRANSFORM] = 'translate3d(' + ($element.currentLeft + Math.round(e.gesture.deltaX)) +'px, 0, 0)'
-            }
-            if ($element.hasClass('slider-bounce')) { $element.removeClass('slider-bounce'); }
-            scope.ionicScrollDelegate.getScrollView().options.scrollingY = false;
-
-            if ($element.isMainSearchSlider && $element[0].slideLocked == false) {
-              if (e.gesture.deltaX > 40) {
-                $element.currentLeft += ( (window.screen.availWidth / 100) * 33.33);
-                $element[0].slideLocked = true;
-              }
-              else if (e.gesture.deltaX < -40) {
-                $element.currentLeft -= ( (window.screen.availWidth / 100) * 33.33);
-                $element[0].slideLocked = true;
-              }
-
-              if (e.gesture.deltaX > 40 || e.gesture.deltaX < -40) {console.log("nho");
-                $element[0].style[ionic.CSS.TRANSFORM] = 'translate3d('+$element.currentLeft+'px, 0, 0)'
-                var Timer = window.setTimeout(function () {
-                  $element[0].slideLocked = false;
-                }, 500);
-              }
-            }
-          }
-        };
-
+/*
         var releaseFn = function(e) {
           scope.ionicScrollDelegate.getScrollView().options.scrollingY = true;
           var pattern = new RegExp('translate3d\\((-?[0-9]*)px, 0px, 0px\\)');
@@ -722,6 +714,63 @@ app.directive('imgSlider', function ($ionicGesture, $rootScope) {
     }
   }
 });
+
+app.directive('verticalSlider', function ($ionicGesture, $rootScope) {
+    
+  return {
+    require: "^ngController",
+    link: function(scope, $element, attr, ngCtrl) {
+        var element = $('.movie-poster-slider')[0];
+        var height, currentY = 0;
+        $('#movie-poster').load(function(){
+            //scope.posterHeight = $(this).height();
+            height = $(this).height();
+            console.log("f", height);
+        });
+
+        var handleClickDrag = function (e) {
+            var currentTop = $(this).css('transform');
+            var currentHeight = $(this).css('height');
+            topArr = currentTop.split(", ");
+            topArr = topArr[topArr.length - 1].replace(")", "");
+            currentY = 0;
+            
+            var bottomArr = parseInt(topArr) || 0;
+            bottomArr = bottomArr + parseInt(currentHeight.replace("px", ""));
+            console.log(e.gesture.deltaY);
+            if ((e.gesture.deltaY < -5 && parseInt(topArr) > 8) || (e.gesture.deltaY > 5 && bottomArr < height)) {
+                currentY = e.gesture.deltaY;
+                element.style[ionic.CSS.TRANSFORM] = 'translate3d(0, ' + (Math.round(currentY)) +'px, 0)';
+            }
+        }
+        
+        var releaseFn = function (e) {
+            e.gesture.deltaY = 0;
+        }
+        
+        var dragGesture = $ionicGesture.on('drag', handleClickDrag, $element);
+        var releaseGesture = $ionicGesture.on('release', releaseFn, $element);
+        
+        scope.$on('$destroy', function() {
+          $ionicGesture.off(dragGesture, 'drag', handleClickDrag);
+          $ionicGesture.off(releaseGesture, 'release', releaseFn);
+        });
+    }
+  }
+});
+
+//Stop Event Propogation on a click//
+app.directive('stopEvent', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if(attr && attr.stopEvent)
+                element.bind(attr.stopEvent, function (e) {
+                    e.stopPropagation();
+                });
+        }
+    };
+ });
 
 app.directive("ngFileSelect",function(){    
   return {

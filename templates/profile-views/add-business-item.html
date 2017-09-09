@@ -781,7 +781,7 @@
         </form>
 
         <!-- MENU ITEMS SUB CATEGORIES -->
-        <form ng-show="itemType=='MenuItemSubCategories'" class="add-menu-item-form" ng-submit="addItemToMenuItemCategories(catName, description);" name="addMenuItemCategoryForm">
+        <form ng-show="itemType=='MenuItemSubCategories'" class="add-menu-item-form" ng-submit="addItemToMenuItemSubCategories(catName, description);" name="addMenuItemSubCategoryForm">
             
             <label class="item-header first">
                 New Menu Sub-Category
@@ -799,7 +799,7 @@
                     ng-model="description"></textarea>
             </label>
             
-            <button ng-disabled="addMenuItemCategoryForm.$invalid && existingCatNames.indexOf(catName) == -1" class="button button-red button-large">
+            <button ng-disabled="addMenuItemSubCategoryForm.$invalid && existingCatNames.indexOf(catName) == -1" class="button button-red button-large">
                 Add New Menu Sub-Category
             </button>
         </form>

@@ -145,16 +145,281 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 }
             }
             
-            if (newItem == 'movies') {
-                var data = $rootScope.movies;
-                completeListingsCompilation(data);
-            } else {
-                Profile.getListingsForFeed($rootScope.currentSearchTown._id, $rootScope.user._profileId || 0, $scope.feedType).success(function (successData) {
+            Profile.getListingsForFeed($rootScope.currentSearchTown._id, $rootScope.user._profileId || 0, $scope.feedType).success(function (successData) {
+                if (newItem != 'movies') {
                     completeListingsCompilation(successData);
-                }).error(function () {
-                    $scope.getListingsFunction(newItem, stateToChange);
-                });
-            }
+                } else {
+                    var moviesObj = {};
+                    var movieTitlesObj = {};
+                    
+                    var insertMoviesObjIntoPageObj = function () {
+                        var finalMoviesArray = [];
+                        var len5 = Object.keys(moviesObj);
+                        var movie2;
+                        
+                        for (movie2 = 0; movie2 < len5.length; movie2++) {
+                            var movieItem = len5[movie2];
+                            
+                            var len6 = Object.keys(moviesObj[movieItem]["finalMovieShowing"]);
+                            var showingType;
+                            for (showingType = 0; showingType < len6.length; showingType++) {
+                                var showingTypeItem = len6[showingType];
+                                console.log("blsh");
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["name"] = movieTitlesObj[movieItem]["title"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["classification"] = movieTitlesObj[movieItem]["rating"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["currentCoverPhotoName"] = "https://www.cineworld.co.uk" + movieTitlesObj[movieItem]["currentCoverPhotoName"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["releaseYear"] = movieTitlesObj[movieItem]["releaseYear"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["_tonightsFeedButtonOptionId"] = movieTitlesObj[movieItem]["_tonightsFeedButtonOptionId"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["tonightsFeedButtonOption"] = movieTitlesObj[movieItem]["tonightsFeedButtonOption"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["tonightsFeedButtonIconClass"] = movieTitlesObj[movieItem]["tonightsFeedButtonIconClass"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingType"] = "Movie";
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingType1"] = "Movie";
+                                
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingTypeCat1"] = movieTitlesObj[movieItem]["listingTypeCat1"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingTypeCat2"] = movieTitlesObj[movieItem]["listingTypeCat2"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingTypeCat3"] = movieTitlesObj[movieItem]["listingTypeCat3"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["listingTypeCat4"] = movieTitlesObj[movieItem]["listingTypeCat4"];
+                                
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["relListingId"] = movieTitlesObj[movieItem]["relListingId"];
+                                moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]["isFeatured"] = movieTitlesObj[movieItem]["isFeatured"];
+                                
+                                
+                                finalMoviesArray.push(moviesObj[movieItem]["finalMovieShowing"][showingTypeItem]);
+                                
+                                if (showingType == len6.length - 1 && movie2 == len5.length - 1) {
+                                    console.log(finalMoviesArray);
+                                    completeListingsCompilation(finalMoviesArray);
+                                }
+                            }
+                        }
+                    }
+                    
+                    var finalCreateShowingTimesArray = function () {
+                        var len3 = Object.keys(moviesObj);
+                        var mov;
+                        for (mov = 0; mov < len3.length; mov++) {
+                            var movie = len3[mov];
+                            var len4 = Object.keys(moviesObj[movie]["finalMovieShowing"]);
+                            var movieS;
+                            for (movieS = 0; movieS < len4.length; movieS++) {
+                                var movieShowing = len4[movieS];
+                                var jsDatesLabelsArray = [];
+                                moviesObj[movie]["finalMovieShowing"][movieShowing]["showingTimesArray"] = moviesObj[movie]["finalMovieShowing"][movieShowing]["showingTimesArray"] || [];
+                                for (var y = 0; y < moviesObj[movie]["finalMovieShowing"][movieShowing]["Showing Dates Labels Array"].length; y++) {
+                                    jsDatesLabelsArray.push(new Date(moviesObj[movie]["finalMovieShowing"][movieShowing]["Showing Dates Labels Array"][y].replace(/-/g, "/")));
+                                    
+                                    if (y == moviesObj[movie]["finalMovieShowing"][movieShowing]["Showing Dates Labels Array"].length - 1) {
+                                        var date_sort_asc = function (date1, date2) {
+                                          // This is a comparison function that will result in dates being sorted in ASC order
+                                          if (date1 > date2) return 1;
+                                          if (date1 < date2) return -1;
+                                          return 0;
+                                        };
+                                        
+                                        var jsDatesLabelsArraySorted = jsDatesLabelsArray.sort(date_sort_asc);
+                                        
+                                        for (var x = 0; x < jsDatesLabelsArraySorted.length; x++) {
+                                            var monthConvertedBack = jsDatesLabelsArraySorted[x].getMonth() + 1;
+                                            monthConvertedBack = (monthConvertedBack < 10) ? '0' + monthConvertedBack: monthConvertedBack;
+                                            var dateConvertedBack = jsDatesLabelsArraySorted[x].getFullYear() + '-' + monthConvertedBack + '-' + jsDatesLabelsArraySorted[x].getDate();
+                                            var timesArr = moviesObj[movie]["finalMovieShowing"][movieShowing][dateConvertedBack].split(" ");
+                                            var newTimesArr = [];
+                                            
+                                            for (var timesI = 0; timesI < timesArr.length; timesI++) {
+                                                var timeConv = timesArr[timesI].replace(":", "");
+                                                if (parseInt(timeConv) > 1600) {
+                                                    newTimesArr.push(timesArr[timesI]);
+                                                }
+                                                
+                                                if (timesI == timesArr.length - 1) {
+                                                    
+                                                    if (newTimesArr.length > 7) {
+                                                        newTimesArr = newTimesArr.slice(0, 7);
+                                                    }
+                                            
+                                                    moviesObj[movie]["finalMovieShowing"][movieShowing]["showingTimesArray"].push({date: dateConvertedBack, times: newTimesArr});
+                                            
+                                                    if (x == jsDatesLabelsArraySorted.length - 1 && movieS == len4.length - 1 && mov == len3.length - 1) {
+                                                        insertMoviesObjIntoPageObj();
+                                                    }
+                                                }
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    var finalLoopThroughMoviesToCombineShowingTimes = function () {
+                        var len1 = Object.keys(moviesObj);
+                        var mov;
+                        for(mov = 0; mov < len1.length; mov++) {
+                            var movie = len1[mov];
+                            var len = Object.keys(moviesObj[movie]);
+                            
+                            moviesObj[movie]["finalMovieShowing"] = {};
+                            
+                            var loopMovieShowings = function (movieShowing, len) {
+                                var movieShowingItem = len[movieShowing];
+                                
+                                if (movieShowingItem != 'finalMovieShowing') {
+                                    var movieShowingType = moviesObj[movie][movieShowingItem]["Showing Type"];
+                                    var movieShowingTypeJustAdded = false;
+                                    moviesObj[movie][movieShowingItem]["Showing Dates Labels Array"] = moviesObj[movie][movieShowingItem]["Showing Dates Labels Array"] || [];
+                                    
+                                    if (!moviesObj[movie]["finalMovieShowing"][movieShowingType]) {
+                                        moviesObj[movie]["finalMovieShowing"][movieShowingType] = moviesObj[movie][movieShowingItem];
+                                        moviesObj[movie]["finalMovieShowing"][movieShowingType]["Showing Dates Labels Array"] = [];
+                                        movieShowingTypeJustAdded = true;
+                                        }
+                                    
+                                    var loopShowingTimes = function (z) {
+                                        console.log(z, moviesObj);
+                                        var thisShowingLabel = moviesObj[movie][movieShowingItem]["Showing Labels Array"][z];
+                                        var thisShowingDate = moviesObj[movie][movieShowingItem][thisShowingLabel]["ShowingDate"];
+                                        var thisShowingDateJSFormat = new Date(thisShowingDate.replace(/-/g, ", "));
+                                        
+                                        if (!moviesObj[movie][movieShowingItem][thisShowingDate]) {
+                                            moviesObj[movie][movieShowingItem][thisShowingDate] = moviesObj[movie][movieShowingItem][thisShowingLabel]["ShowingTime"];
+                                            moviesObj[movie][movieShowingItem]["Showing Dates Labels Array"].push(thisShowingDate);
+                                        }
+                                        else {
+                                            moviesObj[movie][movieShowingItem][thisShowingDate] += moviesObj[movie][movieShowingItem][thisShowingLabel]["ShowingTime"];
+                                        }
+                                        
+                                        if (!moviesObj[movie]["finalMovieShowing"][movieShowingType][thisShowingDate]) {
+                                            moviesObj[movie]["finalMovieShowing"][movieShowingType][thisShowingDate] = moviesObj[movie][movieShowingItem][thisShowingLabel]["ShowingTime"];
+                                        }
+                                        else if(!movieShowingTypeJustAdded) {
+                                            moviesObj[movie]["finalMovieShowing"][movieShowingType][thisShowingDate] += " " + moviesObj[movie][movieShowingItem][thisShowingLabel]["ShowingTime"];
+                                            
+                                            var makeShowingDateTimesSequential = function (currentString) {
+                                                var string = "";
+                                                var stringArr = currentString.split(" ");
+                                                
+                                                var time_sort_asc = function (time1, time2) {
+                                                // This is a comparison function that will result in dates being sorted in
+                                                    if (time1 > time2) return 1;
+                                                    if (time1 < time2) return -1;
+                                                    return 0;
+                                                };
+                                                
+                                                var arrSorted = JSON.stringify(stringArr.sort(time_sort_asc));
+                                                arrSorted = arrSorted.replace('[', '');
+                                                arrSorted = arrSorted.replace(']', '');
+                                                arrSorted = arrSorted.replace(/,/g, ' ');
+                                                arrSorted = arrSorted.replace(/"/g, '');
+
+                                                return arrSorted;
+                                            }
+                                            
+                                            moviesObj[movie]["finalMovieShowing"][movieShowingType][thisShowingDate] = makeShowingDateTimesSequential(moviesObj[movie]["finalMovieShowing"][movieShowingType][thisShowingDate]);
+                                        }
+                                        
+                                        if (moviesObj[movie]["finalMovieShowing"][movieShowingType]["Showing Dates Labels Array"].indexOf(thisShowingDate) == -1) {
+                                            moviesObj[movie]["finalMovieShowing"][movieShowingType]["Showing Dates Labels Array"].push(thisShowingDate)
+                                        };
+                                            
+                                        if (z == moviesObj[movie][movieShowingItem]["Showing Labels Array"].length - 1 && movieShowing == len.length - 1 && mov == len1.length - 1) {
+                                            finalCreateShowingTimesArray();
+                                        }
+                                        else if (z == moviesObj[movie][movieShowingItem]["Showing Labels Array"].length - 1 && movieShowing < len.length - 1) {
+                                            loopMovieShowings(movieShowing + 1, len);
+                                        }
+                                        else if (z < moviesObj[movie][movieShowingItem]["Showing Labels Array"].length - 1) {
+                                            loopShowingTimes(z + 1);
+                                        }
+                                    }
+                                    
+                                    if (moviesObj[movie][movieShowingItem]["Showing Labels Array"]) {
+                                        loopShowingTimes(0);
+                                    }
+                                    else if (movieShowing == len.length - 1 && mov == len1.length - 1) {
+                                        finalCreateShowingTimesArray();
+                                        }
+                                    else if (movieShowing < len.length - 1) {
+                                        loopMovieShowings(movieShowing + 1, len);
+                                    }
+                                }
+                                else if (movieShowing < len.length - 1) {
+                                    loopMovieShowings(movieShowing + 1)
+                                }
+                                else if (movieShowing == len.length - 1) {
+                                    finalCreateShowingTimesArray();
+                                }
+                            }
+                            
+                            loopMovieShowings(0, len);
+                        }
+                    }
+                    
+                    var addMoviePropertiesToMovies = function () {
+                        for (var b = 0; b < successData.length; b++) {
+                            var len = Object.keys(moviesObj);
+                            var movie;
+                            
+                            for(movie = 0; movie < len.length; movie++) {
+                                var movieItem = len[movie];
+                                if (moviesObj[movieItem][successData[b]._businessEntityItemId] && successData[b].metaName.indexOf('ShowingDate') == -1 && successData[b].metaName.indexOf('ShowingTime') == -1) {
+                                    moviesObj[movieItem][successData[b]._businessEntityItemId][successData[b].metaName] = successData[b].metaValue;
+                                }
+                                else if (moviesObj[movieItem][successData[b]._businessEntityItemId] && (successData[b].metaName.indexOf('ShowingDate') > -1 || successData[b].metaName.indexOf('ShowingTime') > -1)) {
+                                    moviesObj[movieItem][successData[b]._businessEntityItemId]["Showing Labels Array"] = moviesObj[movieItem][successData[b]._businessEntityItemId]["Showing Labels Array"] || [];
+                                    var showingIndex = successData[b].metaName.substr(11, successData[b].metaName.length - 11);
+                                    if (!moviesObj[movieItem][successData[b]._businessEntityItemId]['Showing'+showingIndex]) {
+                                        moviesObj[movieItem][successData[b]._businessEntityItemId]['Showing'+showingIndex] = {};
+                                        moviesObj[movieItem][successData[b]._businessEntityItemId]["Showing Labels Array"].push('Showing'+showingIndex);
+                                    }
+                                    moviesObj[movieItem][successData[b]._businessEntityItemId]['Showing'+showingIndex][successData[b].metaName.substr(0, 11)] = successData[b].metaValue;
+                                }
+                                
+                                if (b == successData.length - 1 && movie == len.length - 1) {
+                                    console.log("finalLoopThroughMoviesToCombineShowingTimes");
+                                    finalLoopThroughMoviesToCombineShowingTimes();
+                                }
+                            }
+                        }
+                    }
+                    for (var a = 0; a < successData.length; a++) {
+                    
+                                console.log("blsh");
+                        if (successData[a].metaName == '_Movie Id' && !moviesObj[successData[a].metaValue]) {
+                            console.log(successData[a]);
+                            moviesObj[successData[a].metaValue] = {};
+                            movieTitlesObj[successData[a].metaValue] = {
+                                title: successData[a].movieTitle
+                                ,rating: successData[a].rating
+                                ,releaseYear: successData[a].releaseYear
+                                ,currentCoverPhotoName: successData[a].currentCoverPhotoName
+                                ,_tonightsFeedButtonOptionId: successData[a]._tonightsFeedButtonOptionId
+                                ,tonightsFeedButtonOption: successData[a].tonightsFeedButtonOption
+                                ,tonightsFeedButtonIconClass: successData[a].tonightsFeedButtonIconClass
+                                ,listingType: successData[a].listingType
+                                ,listingType1: successData[a].listingType1
+                                ,listingTypeCat1: successData[a].listingTypeCat1
+                                ,listingTypeCat2: successData[a].listingTypeCat2
+                                ,listingTypeCat3: successData[a].listingTypeCat3
+                                ,listingTypeCat4: successData[a].listingTypeCat4
+                                ,relListingId: successData[a].relListingId
+                                ,isFeatured: successData[a].isFeatured
+                            };
+                        }
+                        
+                        if (successData[a].metaName == '_Movie Id' && !moviesObj[successData[a].metaValue][successData[a]._businessEntityItemId]) {
+                            moviesObj[successData[a].metaValue][successData[a]._businessEntityItemId] = {};
+                        }
+                        
+                        if (a == successData.length - 1) {
+                            addMoviePropertiesToMovies();
+                        }
+                    }
+                    
+                }
+            }).error(function () {
+                $scope.getListingsFunction(newItem, stateToChange);
+            });
         }
 
         $scope.arrangeGlobalTownSelectFunction  = function (state) {
@@ -982,6 +1247,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     $scope.listing.isAcceptingOnlineOrders = ($scope.listing.isAcceptingOnlineOrders == '1') ? true : false;
                     $scope.listing.showTakeawayMenu = ($scope.listing.showTakeawayMenu == '1' && $scope.listing.hasTakeawayMenuItem) ? true: false;
                     $scope.listing.showCarteMenu = ($scope.listing.showCarteMenu == '1' && $scope.listing.hasCarteMenuItem) ? true: false;
+                    $scope.listing.currentCoverPhotoName = ($scope.listing.listingType == 'Movie') ? 'https://www.cineworld.co.uk' + $scope.listing.currentCoverPhotoName: $scope.listing.currentCoverPhotoName;
 
                     if ($scope.listing.listingType == 'Event' && $scope.listing.weekday == null) {
                         $scope.listing.dateString = $scope.listing.date.split(' ');
@@ -1075,8 +1341,11 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             }
             
             $scope.seePhoto = function (photoName) {
-                if (photoName == 'CoverPhoto') {
+                if (photoName == 'CoverPhoto' && $scope.listing.listingType != 'Movie') {
                     $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/cover_photo/'+$scope.listing.currentCoverPhotoName}];
+                }
+                else if (photoName == 'CoverPhoto' && $scope.listing.listingType == 'Movie') {
+                    $scope.popoverImages = [{'src': $scope.listing.currentCoverPhotoName}];
                 }
                 else if (photoName == 'ProfilePhoto') {
                     $scope.popoverImages = [{'src': $rootScope.assetsFolderUrl + '/img/user_images/profile_photo/'+$scope.listing.currentProfilePhotoName}];
@@ -1198,6 +1467,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $rootScope.pageTitle = $stateParams.listingName;
             $rootScope.pageTitle += ($stateParams.albumType == 'Cover Photo') ? ' Cover Photos': ' Profile Photos';
             $scope.pageTitle = $rootScope.pageTitle;
+            $scope.listingType = $stateParams.listingType;
             //Prepare Page Load Data
             var getSpecificAlbumSummaryForListing = function () {
                 var listingType = ($stateParams.listingType == 'Business' || $stateParams.listingType == 'Person') ? 'Profile' : $stateParams.listingType;
@@ -1224,7 +1494,12 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                             
                             successData[a].index = a;
                             successData[a].evenIndex = (relModulus) ? 'even': 'odd';
-                            popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
+                            if ($stateParams.listingType == 'Movie') {
+                                popoverImages.push({'src': successData[a].name});
+                            }
+                            else {
+                                popoverImages.push({'src': $rootScope.assetsFolderUrl + '/img/user_images/'+albumName+'/' + successData[a].name});
+                            }
                             
                             if (a == successData.length - 1) {
                                 $scope.popoverImages = popoverImages;

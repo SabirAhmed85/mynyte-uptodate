@@ -2,13 +2,6 @@
 // profile
 app.factory('Profile', ['$http', 'Config', function($http, Config) {
 	var data = {};
-	data.details = function () {
-		return $http(
-            {
-				method: 'GET', url:Config.ProfileUrl
-			}
-		);
-	}
 	data.getAllUserEngagementTypes = function () {
 		return $http(
             {
@@ -95,6 +88,24 @@ app.factory('Profile', ['$http', 'Config', function($http, Config) {
         return $http(
             {
 				method: 'GET', url:Config.CreateProfileUrl + '?action=getBusinessOpeningTimesForBusiness&_businessId=' + _businessId
+			}
+		);
+    }
+    data.getMyNyteExternalContacts = function (params) {
+        return $http(
+            {
+				method: 'POST', url:Config.CreateProfileUrl + '?action=getMyNyteExternalContacts',
+                data: params,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.getTimeSheetToFill = function (params) {
+        return $http(
+            {
+				method: 'POST', url:Config.CreateProfileUrl + '?action=getTimeSheetToFill',
+                data: params,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
     }
@@ -1124,6 +1135,8 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
         var newOptions = {};
         newOptions.appliedOptions = appliedOptions;
         newOptions.appliedTags = appliedTags;
+        name = name.replace(/&/g, "%26");
+        if (description != null) {description = description.replace(/&/g, "%26");}
         
 		return $http(
             {
@@ -1138,6 +1151,8 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
         var newOptions = {};
         newOptions.appliedOptions = appliedOptions;
         newOptions.appliedTags = appliedTags;
+        name = name.replace(/&/g, "%26");
+        if (description != null) {description = description.replace(/&/g, "%26");}
         
 		return $http(
             {
@@ -1366,48 +1381,29 @@ app.factory('Movies', ['$http', 'Config', function($http, Config) {
             }
         );
     }
-    data.getImdbMovieDetails = function (title, year) {
-        var thisYear = (new Date()).getFullYear();
-        if (year != 'thisYear') {thisYear = thisYear - 1};
+    data.getMoviesToUpdate = function (params) {
         return $http(
             {
-                method: 'GET', url:Config.ImdbApiUrl + 't=' + title + '&y=' + thisYear
+                method: 'POST', url:Config.MovieUrl + '?action=getMoviesToUpdate',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }
         );
     }
-    data.createMovie = function (name, description, firstShowingDate, lastShowingDate, _movieStyleIds, movieTrailerLink) {
-        var movieStyleIdsString = "";
-		if (_movieStyleIds.length > 0) {
-			for (a = 0; a < _movieStyleIds.length; a++) {
-                movieStyleIdsString += '&_movieStyleIds[]=' + _movieStyleIds[a];
-			}
-		} else {
-			movieStyleIdsString = '&_movieStyleIds[]=undefined';
-		}
-		return $http(
-            {
-				method: 'POST', url:Config.MovieUrl + '?action=createMovie' + movieStyleIdsString,
-                data: {'name': name, 'description': description, 'firstShowingDate': firstShowingDate, 'lastShowingDate': lastShowingDate, 'movieTrailerLink': movieTrailerLink},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-			}
-		);
-	}
-    data.createMovieFromCineworldFile = function (name, genre, trailerLink, edi) {
-        var movieStylesString = "";
-		if (genre.length > 0) {
-			for (a = 0; a < genre.length; a++) {
-                movieStylesString += '&movieStyles[]=' + genre[a];
-			}
-		} else {
-			movieStylesString = '&movieStyles[]=undefined';
-		}
+    data.getMovieToUpdatePhotoPos = function (params) {
         return $http(
             {
-				method: 'POST', url:Config.MovieUrl + '?action=createMovieFromCineworldFile' + movieStylesString,
-                data: {'name': name, 'trailerLink': trailerLink, 'edi': edi},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-			}
-		);
+                method: 'POST', url:Config.MovieUrl + '?action=getMovieToUpdatePhotoPos',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }
+        );
+    }
+    data.applyMoviePosterPos = function (params) {
+        return $http(
+            {
+                method: 'POST', url:Config.MovieUrl + '?action=applyMoviePosterPos',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }
+        );
     }
     /*
     data.getCineworldMoviesFile = function () {
@@ -1453,6 +1449,75 @@ app.factory('Images', ['$http', 'Config', function($http, Config) {
 		);
 	}
   	return data;
+}]);
+
+app.factory('Admin', ['$http', 'Config', function($http, Config) {
+	var data = {};
+	data.scanFilesInDirectory = function (filePath) {
+		return $.ajax(
+            {
+				type: 'GET', url:Config.FilesUrl + '?action=scanFilesInDirectory&filePath=' + filePath
+			}
+		);
+	}
+    data.addMyNyteItem = function (params) {
+        console.log(params);
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=addMyNyteItem',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.getMyNyteItemCountForProfile = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=getMyNyteItemCountForProfile',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.getMyNyteItems = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=getMyNyteItems',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.getMyNyteItem = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=getMyNyteItem',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.getMyNyteItemModel = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=getMyNyteItemModel',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.updateMyNyteItem = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=updateMyNyteItem',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    data.deleteMyNyteItem = function (params) {
+        return $.ajax(
+            {
+				type: 'POST', url:Config.CreateProfileUrl + '?action=deleteMyNyteItem',
+                data: params, headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+    }
+    return data;
 }]);
 
 app.factory('myPushNotification', ['$http', 'PushNoti', function ($http, PushNoti) {
