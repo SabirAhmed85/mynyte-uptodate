@@ -119,7 +119,7 @@
         $_menuItemSubCategoryId = (empty($_GET['_menuItemSubCategoryId'])) ? NULL: mysql_real_escape_string($_GET['_menuItemSubCategoryId']);
         $name = (empty($_GET['name'])) ? "": mysql_real_escape_string($_GET['name']);
         $price = (empty($_GET['price'])) ? "": mysql_real_escape_string($_GET['price']);
-        $description = (empty($_GET['description'])) ? "": mysql_real_escape_string($_GET['description']);
+        $description = (empty($_GET['description']) || $_GET['description'] == undefined) ? "": mysql_real_escape_string($_GET['description']);
         
         $data = file_get_contents("php://input");
         $dataJsonDecode = json_decode($data);
@@ -146,7 +146,7 @@
         $_menuItemSubCatId = (empty($_GET['_menuItemSubCatId'])) ? "NULL": mysql_real_escape_string($_GET['_menuItemSubCatId']);
         $name = (empty($_GET['name'])) ? "": mysql_real_escape_string($_GET['name']);
         $price = (empty($_GET['price'])) ? "": mysql_real_escape_string($_GET['price']);
-        $description = (empty($_GET['description'])) ? "": mysql_real_escape_string($_GET['description']);
+        $description = (empty($_GET['description']) || $_GET['description'] == undefined) ? "": mysql_real_escape_string($_GET['description']);
         
         $data = file_get_contents("php://input");
         $dataJsonDecode = json_decode($data);

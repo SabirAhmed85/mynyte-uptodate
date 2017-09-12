@@ -512,11 +512,11 @@ body.mn-modal--opened {
 
   /* NEW BUSINESS ITEM FORM */
 
-.mynyte-new-business-item.mn-dark {
+.mynyte-new-business-item {
     float: left;
     clear: left;
     margin: 5px;
-    max-width: calc(100% - 10px);
+    max-width: calc(100% - 30px);
 }
 
 .mynyte-new-business-item form {
@@ -555,6 +555,13 @@ input.mynyte-form-input.mynyte-form-text-input {
     padding-left: 10px;
     margin-top: 5px;
     color: #888;
+}
+
+span.input-maxlength-note {
+    float: right;
+    margin-top: 5px;
+    color: #999;
+    margin-right: 5px;
 }
 
 .mynyte-form-input.mynyte-form-fake-input {

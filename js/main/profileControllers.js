@@ -166,6 +166,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 if (successData != 'null' && successData != undefined && successData != '' && successData != null) {
                     $ionicScrollDelegate.scrollTop();
                     userService.model.user = successData[0];
+                                console.log(userService.model.user);
                     $rootScope.$broadcast('savestate');
                     
                     //All Objects which are attached to the old object and now need to be reattached should be dealt with
@@ -864,6 +865,77 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
         }
         
         $rootScope.checkForAppInit($scope);
+    }])
+
+    app.controller('InviteContactsCtrl', ['$rootScope', '$state','$scope', 'googleClient', '$cordovaOauth', '$cordovaInAppBrowser', function($rootScope, $state, $scope, googleClient, $cordovaOauth, $cordovaInAppBrowser) {
+    
+    
+    /*
+        ATTEMPT TO USE CORDOVA OAUTH BUT DOESN'T ALLOW EMBEDDED WEBVIEW
+        $cordovaOauth.google("357832123193-ae2ac07u4ctsn1frhnsks4p7becc5euf.apps.googleusercontent.com", ["https://www.googleapis.com/auth/urlshortener", "https://www.googleapis.com/auth/contacts.readonly"]).then(function(result) {
+            alert("result: " + result);
+        }, function(error) {
+            alert("error: " + error);
+        });
+        */
+     
+        //cordova.InAppBrowser.open('https://www.mynyte.co.uk/staging/#/app/inviteGmailContacts');
+      var options = {
+        location: 'yes',
+        clearcache: 'yes',
+        toolbar: 'yes'
+      };
+      
+      $scope.inviteHotmail = function () {
+          $cordovaInAppBrowser.open('https://login.live.com/oauth20_authorize.srf?client_id=00000000401DD32D&scope=wl.signin%20wl.basic%20wl.emails%20wl.contacts_emails&response_type=code&redirect_uri=https://www.mynyte.co.uk/live/oauth-hotmail.php', '_blank', options).then(function(event) {
+            // success
+            alert(event);
+          })
+          .catch(function(event) {
+            // error
+            alert(event);
+          });
+      }
+      
+      $scope.inviteGmail = function () {
+          $cordovaInAppBrowser.open('https://www.mynyte.co.uk/staging/templates/profile-views/invite-gmail-contacts.html', '_blank', options).then(function(event) {
+            // success
+            alert(event);
+          })
+          .catch(function(event) {
+            // error
+            alert(event);
+          });
+      }
+      
+      $scope.inviteYahoo = function () {
+        $.ajax({
+            url: 'https://api.login.yahoo.com/oauth2/get_request_token?oauth_nonce=123456789&oauth_timestamp=1257965367&oauth_consumer_key=dj0yJmk9S2RwQ01ZbFVhaUdyJmQ9WVdrOVNIbHBObmhOTTJVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1hNA--&oauth_signature_method=plaintext&oauth_signature=9347fbba92a8d014349102a66e863c8d6915e409&oauth_version=1.0&xoauth_lang_pref=en-us&oauth_callback=https://www.mynyte.co.uk',
+            type: 'GET',
+            /*
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Bearer " + btoa(username + ":" + password));
+            },*/
+            success: function(successData){
+                console.log(successData);
+                //$(thisButton).attr('disabled', true).addClass('email-sent').html('Invite Sent');
+
+                //checkTopHeaderNote(successData);
+            }
+        });
+        
+        /*
+          $cordovaInAppBrowser.open('https://www.mynyte.co.uk/staging/templates/profile-views/invite-gmail-contacts.html', '_blank', options).then(function(event) {
+            // success
+            alert(event);
+          })
+          .catch(function(event) {
+            // error
+            alert(event);
+          });
+          */
+      }
+        
     }])
 
     app.controller('NotificationsSummaryCtrl', ['$rootScope', '$state','$scope', 'Notifications', 'Profile', 'datesService', '$ionicViewSwitcher', 'userObjectService', function($rootScope, $state, $scope, Notifications, Profile, datesService, $ionicViewSwitcher, userObjectService) {
@@ -5225,13 +5297,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     $scope.existingCatNames = [];
                     var getMenuItemSubCategoriesForBusiness = function () {
                         MenuItems.getMenuItemSubCategoriesForBusiness($rootScope.user._id).success(function (successData) {
-                            if (successData != 'null') {
+                            if (successData != 'null' && successData != null) {
                                 for (a = 0; a < successData.length; a++) {
                                     $scope.existingCatNames.push(successData[a].name);
                                 }
                             }
                             
-                            $scope.addItemToMenuItemCategories = function (itemName, description) {
+                            $scope.addItemToMenuItemSubCategories = function (itemName, description) {
                                 $rootScope.appLoading = true;
                                 MenuItems.createMenuItemSubCategory(itemName, description, $rootScope.user._id).success(function (successData) {
                                     $rootScope.$broadcast('menu-item-sub-categories-changed');
@@ -5245,6 +5317,8 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                             getMenuItemSubCategoriesForBusiness();
                         });
                     }
+                    
+                    getMenuItemSubCategoriesForBusiness();
                     
                     break;
                 case 'MenuItemTemplateOptions':

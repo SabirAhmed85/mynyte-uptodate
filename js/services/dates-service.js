@@ -32,12 +32,20 @@ app.factory('datesService', ['$q', function($q) {
         scope.chosenWeekday = {index: date.getDay(), name: days[date.getDay()]};
         return days[date.getDay()] + ', ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
     };
+    var convertToSQLDate = function (date) {
+        var dateVal = (date.getDate() < 10) ? '0' + date.getDate(): date.getDate();
+        var monthVal = ((date.getMonth()+1) < 10) ? '0' + (date.getMonth()+1): (date.getMonth()+1);
+        return date.getFullYear() + '-' + monthVal + '-' + dateVal;
+    };
     var convertToDateWithoutComma = function (scope, date) {
         scope.chosenWeekday = {index: date.getDay(), name: days[date.getDay()]};
         return days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
     };
     var getShortenedDateString = function (dateTimeString) {
-        return dateTimeString.substr(0, dateTimeString.indexOf(' '));
+        var ret = (dateTimeString.indexOf(' ') == -1) ?
+            dateTimeString:
+            dateTimeString.substr(0, dateTimeString.indexOf(' '));
+        return ret;
     };
     
     return {
@@ -70,6 +78,7 @@ app.factory('datesService', ['$q', function($q) {
 
         //Functions
         convertToDate: convertToDate,
+        convertToSQLDate: convertToSQLDate,
         convertToDateWithoutComma: convertToDateWithoutComma,
         convertToReadableDate: function (scope, dateProp) {
             var string = getShortenedDateString(dateProp);

@@ -101,6 +101,10 @@
                         }
                     </style>
                     <div class="list">
+                        <a ng-if="rootScope.user.listingTypes.indexOf('myNyte') != -1" class="item item-icon-left" href="#/app/admin/" target="_blank">
+                            <i class="icon ion-film-marker"></i>
+                            MyNyte Admin
+                        </a>
                         <a class="item item-red item-icon-left first" ui-sref="app.profile.notificationsSummary()">
                             <i class="icon ion-android-notifications"></i>
                             Notifications

@@ -9,10 +9,15 @@
             <div id="detailedContent" class="trans"
                 ng-class="{'isVisible': !pageLoading}">
                 <div id="detailedContent-inner" class="detailedContent-inner">
-                    <div id="listing-info">
+                    <div id="listing-info" ng-class="{'movie-listing': listing.listingType == 'Movie'}">
                         
                         <img id="listing-cover-image" src="/sneak-preview/img/user_images/cover_photo/default.jpg"
                             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{listing.currentCoverPhotoName}}"
+                            ng-if="listing.listingType != 'Movie'"
+                            ng-click="seePhoto('CoverPhoto')"></img>
+                        <img id="listing-cover-image" class="movie-image" src="/sneak-preview/img/user_images/cover_photo/default.jpg" style="margin-top: {{(listing.photoUrlTopPos * -1)}}px;"
+                            ng-src="{{listing.currentCoverPhotoName}}"
+                            ng-if="listing.listingType == 'Movie'"
                             ng-click="seePhoto('CoverPhoto')"></img>
                         <img id="listing-image" class="profile-listing-image" src="/sneak-preview/img/user_images/profile_photo/default.jpg"
                             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{listing.currentProfilePhotoName}}"

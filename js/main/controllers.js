@@ -4,10 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper']);
+var app = angular.module('NightLife', ['ionic','ngSanitize'/*,'btford.socket-io'*/ ,'ngCordova', 'ionic-datepicker', 'ionic-timepicker', 'ngIOS9UIWebViewPatch', 'ngMap', 'locator', 'ngOpenFB', 'ionic.service.core', 'ImageCropper', 'cmGoogleApi']);
 
 // not necessary for a web based app // needed for cordova/ phonegap application
-app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables) {
+app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $cordovaStatusbar, $ionicPopup, $ionicScrollDelegate, Listings, $cordovaSQLite, Categories, userService, ngFB, Messages, Notifications, $http, /*socket,*/ listingsService, categoriesService, userObjectService, datesService, pushNotificationsService, $timeout, $ionicModal, $ionicViewSwitcher, $location, Movies, Offers, EnvironmentVariables, Config, $sce) {
   
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,
@@ -92,6 +92,9 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
       categoriesService.addUserEngagementTypes().then(function () {
         $rootScope.userEngagementTypes = categoriesService.userEngagementTypes();
       });
+      
+      /* Prepare External APIs */
+      
       
       /* Prepare All details for the user */
       $rootScope.userLoggedIn = false;
@@ -307,118 +310,121 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
 
       $rootScope.initiateBottomRightImg();
 
-      $rootScope.initiateThisWeeksItemsForWebDisplay = function () {
-        var offerSubCatClassObject = {
-            "Takeaway Deals" : "ion-cube",
-            "Restaurant Deals" : "ion-fork",
-            "Drinks Deals" : "ion-wineglass"
-        };
-        var formatItems = function (items, type) {
-            for (var a = 0; a < items.length; a++) {
-                items[a].show = (a == 0) ? true: false;
-                if (type == 'Offers') {
-                    items[a].offerSubCategoryClass = offerSubCatClassObject[items[a].offerSubCategoryName];
-                }
-                if (a == items.length - 1) {
-                    return items;
-                }
-            }
-        }
-
-        var getTodaysMoviesForWideDisplay = function () {
-            Movies.getTodaysMoviesForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
-                $rootScope.todaysMovies = formatItems(successData, 'Movies');
-            }).error(function (errorData) {
-                getTodaysMoviesForWideDisplay();
-            });
-        }
-        
-        
-        var getTodaysOffersForWideDisplay = function () {
-            Offers.getTodaysOffersForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
-                $rootScope.todaysOffers = formatItems(successData, 'Offers');
-            }).error(function (errorData) {
-                getTodaysOffersForWideDisplay();
-            });
-        }
-        
-        getTodaysMoviesForWideDisplay();
-        getTodaysOffersForWideDisplay();
-        
-        $rootScope.nextThisWeekMovieTimer = $timeout(function () {
-            $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
-        }, 5000);
-        
-        $rootScope.nextTodayOfferTimer = $timeout(function () {
-            $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
-        }, 5000);
-      };
-
-      $rootScope.changeItemsForWideDisplay = function (itemType, itemToShow, items, state) {
-        var i = 0;
-        var itemArray = items;
-        for (a = 0; a < itemArray.length; a++) {
-            var changeItemState = function (i) {
-                itemArray[i].show = false;
-                if (i == itemArray.length - 1 && itemToShow == 'next') {
-                    itemArray[0].show = true;
-                }
-                else if (i == 0 && itemToShow == 'prev') {
-                    itemArray[itemArray.length - 1].show = true;
-                }
-                else if (i > 0 && itemToShow == 'prev') {
-                    itemArray[i - 1].show = true;
-                }
-                else if (i < itemArray.length - 1 && itemToShow == 'next') {
-                    itemArray[i + 1].show = true;
-                }
-        
-                if (itemType == 'Offers') {
-                    $rootScope.todaysOffers = itemArray;
-                    if (state == 'manual') {
-                        $timeout.cancel($rootScope.nextTodayOfferTimer);
+      if ($rootScope.intendedPlatform == 'browser') {
+          $rootScope.initiateThisWeeksItemsForWebDisplay = function () {
+            var offerSubCatClassObject = {
+                "Takeaway Deals" : "ion-cube",
+                "Restaurant Deals" : "ion-fork",
+                "Drinks Deals" : "ion-wineglass"
+            };
+            var formatItems = function (items, type) {
+                for (var a = 0; a < items.length; a++) {
+                    items[a].show = (a == 0) ? true: false;
+                    if (type == 'Offers') {
+                        items[a].offerSubCategoryClass = offerSubCatClassObject[items[a].offerSubCategoryName];
                     }
-                    $rootScope.nextTodayOfferTimer = $timeout(function () {
-                        $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
-                    }, 5000);
-                }
-                else if (itemType == 'Movies') {
-                    $rootScope.todaysMovies = itemArray;
-                    if (state == 'manual') {
-                        $timeout.cancel($rootScope.nextThisWeekMovieTimer);
+                    if (a == items.length - 1) {
+                        return items;
                     }
-                    $rootScope.nextThisWeekMovieTimer = $timeout(function () {
-                        $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
-                    }, 5000);
                 }
             }
-        
-            if (itemArray[a].show) {
-                i = a;
+
+            var getTodaysMoviesForWideDisplay = function () {
+                Movies.getTodaysMoviesForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                    //$rootScope.todaysMovies = formatItems(successData, 'Movies');
+                }).error(function (errorData) {
+                    getTodaysMoviesForWideDisplay();
+                });
             }
-        
-            if (a == itemArray.length - 1) {
-                changeItemState(i);
+            
+            
+            var getTodaysOffersForWideDisplay = function () {
+                Offers.getTodaysOffersForWideDisplay($rootScope.currentSearchTown._id).success(function (successData) {
+                    $rootScope.todaysOffers = formatItems(successData, 'Offers');
+                }).error(function (errorData) {
+                    getTodaysOffersForWideDisplay();
+                });
             }
-        }
-      };
+            
+            getTodaysMoviesForWideDisplay();
+            getTodaysOffersForWideDisplay();
+            
+            $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+                $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+            }, 5000);
+            
+            $rootScope.nextTodayOfferTimer = $timeout(function () {
+                $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+            }, 5000);
+          };
+
+          $rootScope.changeItemsForWideDisplay = function (itemType, itemToShow, items, state) {
+            var i = 0;
+            var itemArray = items;
+            for (a = 0; a < itemArray.length; a++) {
+                var changeItemState = function (i) {
+                    itemArray[i].show = false;
+                    if (i == itemArray.length - 1 && itemToShow == 'next') {
+                        itemArray[0].show = true;
+                    }
+                    else if (i == 0 && itemToShow == 'prev') {
+                        itemArray[itemArray.length - 1].show = true;
+                    }
+                    else if (i > 0 && itemToShow == 'prev') {
+                        itemArray[i - 1].show = true;
+                    }
+                    else if (i < itemArray.length - 1 && itemToShow == 'next') {
+                        itemArray[i + 1].show = true;
+                    }
+            
+                    if (itemType == 'Offers') {
+                        $rootScope.todaysOffers = itemArray;
+                        if (state == 'manual') {
+                            $timeout.cancel($rootScope.nextTodayOfferTimer);
+                        }
+                        $rootScope.nextTodayOfferTimer = $timeout(function () {
+                            $rootScope.changeItemsForWideDisplay('Offers', 'next', $rootScope.todaysOffers, 'auto');
+                        }, 5000);
+                    }
+                    else if (itemType == 'Movies') {
+                        $rootScope.todaysMovies = itemArray;
+                        if (state == 'manual') {
+                            $timeout.cancel($rootScope.nextThisWeekMovieTimer);
+                        }
+                        $rootScope.nextThisWeekMovieTimer = $timeout(function () {
+                            $rootScope.changeItemsForWideDisplay('Movies', 'next', $rootScope.todaysMovies, 'auto');
+                        }, 5000);
+                    }
+                }
+            
+                if (itemArray[a].show) {
+                    i = a;
+                }
+            
+                if (a == itemArray.length - 1) {
+                    changeItemState(i);
+                }
+            }
+          };
+          
+          $rootScope.goToTodaysItem = function (type, _id) {
+            if (type == 'Offer') {
+                $state.go('app.offers');
+                $timeout(function () {
+                    $state.go('app.offers.offerDetail', {'_id': _id});
+                }, 150);
+            }
+            else if (type == 'Movie') {
+                $state.go('app.feed');
+                $timeout(function () {
+                    $state.go('app.feed.nlfeedListing', {'_listingId': _id, 'listingType': 'Movie'});
+                }, 150);
+            }
+          }
+
+          $rootScope.initiateThisWeeksItemsForWebDisplay();
       
-      $rootScope.goToTodaysItem = function (type, _id) {
-        if (type == 'Offer') {
-            $state.go('app.offers');
-            $timeout(function () {
-                $state.go('app.offers.offerDetail', {'_id': _id});
-            }, 150);
-        }
-        else if (type == 'Movie') {
-            $state.go('app.feed');
-            $timeout(function () {
-                $state.go('app.feed.nlfeedListing', {'_listingId': _id, 'listingType': 'Movie'});
-            }, 150);
-        }
       }
-
-      $rootScope.initiateThisWeeksItemsForWebDisplay();
       
       $scope.pageLoad();
     }
@@ -441,7 +447,6 @@ app.run(function($ionicPlatform, $rootScope, $state, Profile, $ionicHistory, $co
     
   //$cordovaStatusBar.style = 1; //Light
   $ionicPlatform.ready(function(datesWorkerFS) {
-
 $timeout(function () {
     //Workaround suggested to get around random no-load error
     var hideSplash = function () {
@@ -777,7 +782,6 @@ $timeout(function () {
     $rootScope.nightSearchOpen = true;
     $rootScope.showTheWhatsOpenFunction = true;
     $rootScope.searchInputPlaceholder = 'Search by name';
-    $rootScope.hideSearch = false;
     $rootScope.searchOnRight = false;
     $rootScope.showAssistantButton = true;
     $rootScope.assistantButtonActive = true;
@@ -1289,6 +1293,32 @@ $timeout(function () {
 }, 100)
     
   });
+  
+    /* I-Frame Functions */
+    $rootScope.trustSrc = function (src) {
+        return $sce.trustAsResourceUrl(src);
+    }
+    
+    $rootScope.openFrame = function (params) {
+        var frameContentArray = {
+            'User Messages MyNyte': 'https://www.mynyte.co.uk/#/app/profile//messageGroups//Business'
+        }
+        var frameClass = "";
+        if (params.frameContent) {
+            $rootScope.frameUrl = frameContentArray[params.frameContent];
+        } else {
+            $rootScope.frameUrl = params.frameUrl;
+        }
+        if (params.frameClass) {
+            frameClass = params.frameClass;
+        }
+        $rootScope.frameOpen = true;
+        $rootScope.frameClass = frameClass;
+    }
+    
+    $rootScope.closeFrame = function () {
+        $rootScope.frameOpen = false;
+    }
 });
 
 
@@ -1304,18 +1334,32 @@ app.controller('MainCtrl', ['$scope', '$ionicSideMenuDelegate', '$ionicHistory',
 	}
 }])
 
-app.config(function($sceDelegateProvider) {
+app.config(function($sceDelegateProvider, googleClientProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
     // Allow same origin resource loads.
     'self',
     // Allow loading from our assets domain.  Notice the difference between * and **.
     'http://www.youtube.com/**'
   ]);
+  
+  googleClientProvider
+    .loadPickerLibrary()
+    .loadGoogleAuth({
+      cookie_policy: 'single_host_origin',
+      hosted_domain: 'mynyte.co.uk',
+      fetch_basic_profile: true
+    })
+    .setClientId('357832123193-uuo04ahs9djm736m3k16b6j29pua669l.apps.googleusercontent.com')
+    .addApi('oauth2', 'v2');
+    
 })
 
 // config to disable default ionic navbar back button text and setting a new icon
 // logo in back button can be replaced from /templates/sidebar-menu.html file
-app.config(function($ionicConfigProvider, $compileProvider) {
+app.config(function($ionicConfigProvider, $compileProvider, $cordovaInAppBrowserProvider) {
+    console.log($cordovaInAppBrowserProvider);
+    console.log(ionic.Platform);
+    
     if (!ionic.Platform.isAndroid() && !ionic.Platform.isIOS()) {
       $ionicConfigProvider.views.transition('fade-in-out');
     }
@@ -1324,6 +1368,14 @@ app.config(function($ionicConfigProvider, $compileProvider) {
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.backButton.text('').icon('ion-ios-arrow-back').previousTitleText(false);
     $compileProvider.debugInfoEnabled(false);
+    
+    var defaultOptions = {
+        location: 'no',
+        clearcache: 'yes',
+        toolbar: 'yes'
+    };
+    
+    $cordovaInAppBrowserProvider.setDefaultOptions(defaultOptions);
 })
 
     /* INTRODUCE WHEN CREATED

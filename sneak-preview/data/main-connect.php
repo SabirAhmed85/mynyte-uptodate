@@ -1,5 +1,5 @@
 <?php
-  $intended_environment = 'Live';
+  include_once('globals.php');
 
   $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk/live";
 
@@ -16,8 +16,16 @@
   $db_uid = "qxiryynz_mynyteuser";
 
   $db_pass = "wM)Ln8-Q2o6g";
-
-  $db_name = ($intended_environment == 'Staging') ? "qxiryynz_MyNyte_Staging": "qxiryynz_MyNyte";
+  
+  if ($intended_environment == 'Staging') {
+    $db_name = "qxiryynz_MyNyte_Staging";
+  }
+  else if ($intended_environment == 'Live') {
+    $db_name = "qxiryynz_MyNyte";
+  }
+  else {
+    print("Error: please check configuration of environment.");
+  }
 
   //Global Functions
   if(!function_exists('hash_equals')) {

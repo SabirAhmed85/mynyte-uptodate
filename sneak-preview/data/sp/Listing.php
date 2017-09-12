@@ -98,7 +98,7 @@
     $output_offers = prepareOffersOutputObj($result_offers);
   }
   else if ($action == 'getListingsForMoviesFeed') {
-    $result = mysql_query("CALL getListingsForMoviesFeed()");
+    $result = mysql_query("CALL getListingsForMoviesFeed_new()");
   } 
 
   else if ($action == 'getRestaurantsOrTakeawaysByTownAndFoodStyle') {
