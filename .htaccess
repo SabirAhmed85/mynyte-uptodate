@@ -5,9 +5,9 @@ RewriteRule ^(.*)$ https://www.mynyte.co.uk/$1 [R,L]
 
 RewriteEngine On
 RewriteBase /
-RewriteCond %{REQUEST_URI} !staging/
-RewriteCond %{REQUEST_URI} !business-staging/
-RewriteCond %{REQUEST_URI} !business/
+RewriteCond %{REQUEST_URI} !staging
+RewriteCond %{REQUEST_URI} !business-staging
+RewriteCond %{REQUEST_URI} !.co.uk/business
 RewriteRule ^(?!live/)(.*)$ /live/$1
 
 #RewriteCond %{HTTP_HOST} ^mynyte.co.uk$ [NC,OR]
