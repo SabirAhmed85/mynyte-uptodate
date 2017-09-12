@@ -504,7 +504,9 @@
         ng-class="{'show': currentViewName != 'app.feed.nlfeedListing'}"
         ng-include="'templates/shared-partials/whats-open-sidebar.html'"></div>-->
     <div class="feed-side side trans"
-        ng-class="{'show': currentViewName != 'app.feed.nlfeedListing' && currentViewType != 'admin'}"
+        ng-class="{
+        	'show': currentViewName != 'app.feed.nlfeedListing' && currentViewType != 'admin', 
+            'below-movie-display': (currentViewName == 'app.offers' || currentViewName == 'app.offers.offerDetail' || currentViewName == 'app.taxi') && currentViewType != 'admin'}"
         ng-include="'templates/shared-partials/kickstarter-sidebar.html'"></div>
     
     <div class="feed-side side trans outer-side"

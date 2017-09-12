@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -7039,7 +7040,6 @@ ion-header-bar input {
     left: 30px;
     border: 1px solid rgb(154, 1, 1);
     background: rgb(84, 1, 1);
-    line-height: 19px;
 }
 #header-bar #search-input.isVisible {
     top: 5px;
@@ -9895,6 +9895,10 @@ location-lookup ul li span {
         margin-top: 0;
         opacity: 0;
     }
+    .movies-side-display {
+        max-height: none;
+        height: 250px;
+    }
     .platform-ios .events-side-display,
     .platform-ios .movies-side-display,
     .platform-android .events-side-display,
@@ -9913,12 +9917,15 @@ location-lookup ul li span {
         background: #292929;
         border: 1px solid #4e4c4c;
         margin-top: 0;
-        top: 310px;
+        top: 320px;
         color: #888;
         padding: 5px 10px;
         height: auto;
         max-height: calc(100% - 315px);
         overflow-y: scroll;
+    }
+    .below-movie-display .kickstarter-side-display {
+        top: 370px;
     }
     .platform-ios .kickstarter-side-display,
     .platform-android .kickstarter-side-display {
@@ -10108,6 +10115,7 @@ location-lookup ul li span {
         padding-bottom: 3px;
         padding-left: 4%;
         font-size: 13px;
+        -webkit-font-smoothing: auto;
     }
     .side-display .display-top-note i,
     .movies-side-display i {
@@ -10353,7 +10361,7 @@ location-lookup ul li span {
         padding-top: 10px !important;
     }
     .movies-side-display span.last-display-item {
-        top: 186px;
+        top: 243px;
         border-top: 1px solid #322;
         padding-top: 10px;
     }
@@ -10378,7 +10386,7 @@ location-lookup ul li span {
         float: none;
         margin: auto;
         width: 96px;
-        height: 64px;
+        height: auto;
         display: block;
         margin-bottom: 4px;
     }
