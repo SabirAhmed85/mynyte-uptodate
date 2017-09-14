@@ -10083,9 +10083,9 @@ location-lookup ul li span {
         margin-bottom: 0;
         border-bottom: 1px solid #2f2b2b;
         padding-bottom: 5px;
-        margin-left: -6%;
-        padding-left: 6%;
-        width: 112%;
+        margin-left: -10px;
+        padding-left: 10px;
+        width: calc(100% + 20px);
         font-size: 14px;
         font-weight: bold;
         color: #866363;
