@@ -8994,6 +8994,10 @@ location-lookup ul li span {
         opacity: 0 !important;
         top: -1000px !important;
     }
+    .intended-browser #header-bar .top-right-button.feed-page.isVisible.ion-close-round {
+        opacity: 1 !important;
+        top: 0px !important;
+    }
 
     #header-bar .header-icon-right-span.isVisible {
         opacity: 0;
