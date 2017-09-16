@@ -334,6 +334,11 @@
 		
 				nextItem();
 			}
+			else if (thisItem["metaName"].indexOf("Arr[]") == -1 && thisItem["metaName"].indexOf("_Related") == 0 && viewType == 'Dropdown Selection') {
+				businessItems[thisItem["_id"]][thisItem["metaName"]] = thisItem["metaValue"];
+				
+				nextItem();
+			}
 			else if (thisItem["metaName"].indexOf("Arr[]") == -1 && thisItem["metaName"].indexOf("_Related") == 0 && viewType != 'Dropdown Selection') {
 				function getPosition(string, subString, index) {
 					return string.split(subString, index).join(subString).length;
@@ -398,20 +403,23 @@
 		}
 		
 		function prepareBusinessItemsView (viewType, successData, htmlString, htmlElem) {
+			console.log(viewType);
+			console.log(successData);
 			if (successData["items"] != null) {
 				var businessItems = MynyteApi.pageVars['Page Object']["Business Items"];
+				var dropdownClass = (viewType == 'Dropdown Selection') ? "": " dropdown-selection-option";
 				for (var keys = Object.keys(businessItems), i = 0, end = keys.length; i < end; i++) {
 					var ind = keys[i];
 						console.log( businessItems[ind]);
-					htmlString += "<div class='mynyte-business-items-summary-item'>";
+					htmlString += "<div class='mynyte-business-items-summary-item"+dropdownClass+"'>";
 
 					for (var prop in businessItems[ind]) {
 						if (prop != "Arrays") {
-							htmlString += "<div class='mynyte-label-container'><label class='mynyte-label'>" + prop + "</label>";
+							htmlString += "<div class='mynyte-label-container "+prop+"-label-container'><label class='mynyte-label'>" + prop + "</label>";
 							htmlString += "<span class='mynyte-label-detail'>" + businessItems[ind][prop] + "</span></div>";
 						} else {
 							for (var prop2 in businessItems[ind][prop]) {
-								htmlString += "<div class='mynyte-label-container'><label class='mynyte-label'>" + prop2 + "</label>";
+								htmlString += "<div class='mynyte-label-container "+prop+"-label-container'><label class='mynyte-label'>" + prop2 + "</label>";
 								htmlString += "<span class='mynyte-label-detail'><ul>";
 								for (var a = 0; a < businessItems[ind][prop][prop2].length; a++) {
 									htmlString += "<li>" + businessItems[ind][prop][prop2][a] + "</li>";
@@ -420,16 +428,26 @@
 							}
 						}
 					}
+					
+					
+					if (viewType == 'Item Summary') {
+						htmlString += "<a href='" + htmlElem.data('link') + ind + "' class='view-detail-button'>View Detail</a>";
+						htmlString += "</div>";
+					}
+					else if (viewType == 'Dropdown Selection') {
+						htmlString += "<a onclick='' class='dropdown-option-select-button'>Select</a>";
+						console.log(htmlString);
+						htmlString += "</div>";
+					}
 
 
 					if (i == end - 1 && viewType == 'Item Summary') {
-						htmlString += "<a href='" + htmlElem.data('link') + ind + "' class='view-detail-button'>View Detail</a>";
-						htmlString += "</div>";
 						console.log(MynyteApi.pageVars);
 						htmlElem.append(htmlString).css({'display': 'block'});
 					}
 					else if (i == end - 1 && viewType == 'Dropdown Selection') {
 						console.log(htmlString);
+						htmlElem.append(htmlString);
 					}
 				}
 			}
@@ -437,10 +455,11 @@
 				htmlString = "<div>" + MynyteApi.pageVars['Business Item Summary Displays'][0]["noItemsNote"] + "</div>";
 				
 				if (viewType == 'Item Summary') {
-					$( "div.mynyte-business-items-summary").append(htmlString).css({'display': 'block'});
+					htmlElem.append(htmlString).css({'display': 'block'});
 				}
 				else if (viewType == 'Dropdown Selection') {
 					console.log(htmlString);
+					htmlElem.append(htmlString);
 				}
 			}
 		}
@@ -785,8 +804,12 @@
 																businessItems = {}, 
 																htmlString = "", 
 																htmlElem = null;
+																
+															MynyteApi.pageVars['Page Object']["Business Items"] = {};
+																
+															$('body').append('<div class="dropdown"></div>');
 															
-															loopObjPropsToCompileObj (viewType, _businessId, ind, successData, {}, "", htmlElem);
+															loopObjPropsToCompileObj (viewType, _businessId, ind, successData, {}, "", $('.dropdown'));
 															console.log(successData);
 															MynyteApi.selectToggle = function (elem) {
 																if ($(elem).siblings('ul.mynyte-form-fake-select').eq(0).hasClass("open")) {
