@@ -329,6 +329,9 @@
 			if (!businessItems[thisItem["_id"]]) {
 				businessItems[thisItem["_id"]] = {}
 			}
+			
+			businessItems[thisItem["_id"]]["_id"] = thisItem["_id"];
+			
 			if (thisItem["metaName"].indexOf("Arr[]") == -1 && thisItem["metaName"].indexOf("_") != 0) {
 				businessItems[thisItem["_id"]][thisItem["metaName"]] = thisItem["metaValue"];
 		
@@ -411,7 +414,8 @@
 				for (var keys = Object.keys(businessItems), i = 0, end = keys.length; i < end; i++) {
 					var ind = keys[i];
 						console.log( businessItems[ind]);
-					htmlString += "<div class='mynyte-business-items-summary-item"+dropdownClass+"'>";
+					var elemType = (viewType == 'Dropdown Selection') ? 'li': 'div';
+					htmlString += "<"+elemType+" class='mynyte-business-items-summary-item"+dropdownClass+"' data-item-ref='"+businessItems[ind]["_id"]+"'>";
 
 					for (var prop in businessItems[ind]) {
 						if (prop != "Arrays") {
@@ -435,11 +439,11 @@
 						htmlString += "</div>";
 					}
 					else if (viewType == 'Dropdown Selection') {
-						htmlString += "<a onclick='' class='dropdown-option-select-button'>Select</a>";
+						htmlString += "<a onclick='MynyteApi.addItemToFormFromDropdown(this);' class='dropdown-option-select-button'>Select</a>";
 						console.log(htmlString);
-						htmlString += "</div>";
 					}
-
+					
+					htmlString += "</"+elemType+">";
 
 					if (i == end - 1 && viewType == 'Item Summary') {
 						console.log(MynyteApi.pageVars);
@@ -462,6 +466,13 @@
 					htmlElem.append(htmlString);
 				}
 			}
+		}
+		
+		function addItemToFormFromDropdown (button) {
+			console.log(button);
+			var item = $(button).parents('li').data('item-ref');
+			$(button).parents('.mynyte-popup-open').removeClass('mynyte-popup-open');
+			console.log(item);
 		}
 
 		include('//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', function() {
@@ -781,6 +792,7 @@
 															propSubType = 'Property';
 															propLabel = 'Business Entity Item';
 															propSubLabel = "'Related Business Entity Specific Item Type'";
+															
 													var itemTypeObj = {
 														'Business Entity Item': {
 															class: 'BusinessEntity', action: 'getBusinessEntityItems',
@@ -807,7 +819,7 @@
 																
 															MynyteApi.pageVars['Page Object']["Business Items"] = {};
 																
-															$('body').append('<div class="dropdown"></div>');
+															$('body').append('<div class="mynyte-popup-cover dropdown-wrapper price-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+name.replace(/ /g, '-').toLowerCase()+'-dropdown-wrapper"><ul class="dropdown '+name.replace(/ /g, '-').toLowerCase()+'-dropdown"></ul></div></div></div>');
 															
 															loopObjPropsToCompileObj (viewType, _businessId, ind, successData, {}, "", $('.dropdown'));
 															console.log(successData);
@@ -994,6 +1006,10 @@
 		MynyteApi.createPortal = function (params) {
 			createPortal(params);	
 		}
+		
+		MynyteApi.addItemToFormFromDropdown = function (button) {
+			addItemToFormFromDropdown(button);
+		};
 		
 	}
 
