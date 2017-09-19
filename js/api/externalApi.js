@@ -435,11 +435,11 @@
 					
 					
 					if (viewType == 'Item Summary') {
-						htmlString += "<a href='" + htmlElem.data('link') + ind + "' class='view-detail-button'>View Detail</a>";
+						htmlString += "<a href='" + htmlElem.data('link') + ind + "' class='action-button view-detail-button'>View Detail</a>";
 						htmlString += "</div>";
 					}
 					else if (viewType == 'Dropdown Selection') {
-						htmlString += "<a onclick='MynyteApi.addItemToFormFromDropdown(this);' class='dropdown-option-select-button'>Select</a>";
+						htmlString += "<a onclick='MynyteApi.addItemToFormFromDropdown(this);' class='action-button dropdown-option-select-button'>Select</a>";
 						console.log(htmlString);
 					}
 					
