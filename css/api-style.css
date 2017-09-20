@@ -566,6 +566,8 @@ span.input-maxlength-note {
 }
 
 
+
+
 .mynyte-form-input.mynyte-form-fake-input {
     float: left;
     clear: left;
@@ -578,6 +580,19 @@ span.input-maxlength-note {
     padding: 10px 10px;
     font-size: 18px;
     color: #888;
+    display: inline-table;
+}
+
+.mynyte-form-input.mynyte-form-fake-input .mynyte-form-select-toggler {
+    float: right;
+    margin-top: -11px;
+    margin-right: -11px;
+    position: relative;
+    height: 42px;
+    width: 40px;
+    margin-bottom: -11px;
+    background: #eee;
+    border: 1px solid #bbb;
 }
 
 ul.mynyte-form-select.mynyte-form-fake-select {
@@ -901,12 +916,34 @@ span.mynyte-label-detail {
 }
 
 /*Business Items Summary in Dropdown*/
+.dropdown-wrapper h4 {
+    float: left;
+    width: calc(100% - 50px);
+    margin: 0 0 15px 10px;
+    color: #555;
+}
+
+.dropdown-wrapper i.fa-times {
+    width: 22px;
+    float: left;
+    font-size: 25px;
+    margin-top: -4px;
+    margin-right: 5px;
+    color: #888;
+}
+
+.dropdown-wrapper i.fa-times:hover {
+    cursor: pointer;
+    color: #bbb;
+}
+
 .dropdown-wrapper ul {
     padding: 10px;
 }
 
 .dropdown-wrapper .mynyte-business-items-summary-item {
     margin-bottom: 10px;
+    line-height: 22px;
 }
 
 /*Light Widget Frame Manipulation */

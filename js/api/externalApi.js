@@ -468,10 +468,35 @@
 			}
 		}
 		
+		function toggleRelatedItemSelect(e, elem) {
+			e.preventDefault();
+			var propLabel = $(elem).data('name'),
+				popupCover = $('body').find('.dropdown-wrapper.'+propLabel+'-dropdown-wrapper').parents('.mynyte-popup-cover');
+			console.log(propLabel);
+			if (popupCover.hasClass('mynyte-popup-open')) {
+				popupCover.removeClass('mynyte-popup-open');
+			} else {
+				popupCover.addClass('mynyte-popup-open');
+			}
+		}
+		
 		function addItemToFormFromDropdown (button) {
 			console.log(button);
-			var item = $(button).parents('li').data('item-ref');
+			var input, propLabel,
+				item = $(button).parents('li').data('item-ref'),
+				parUl = $(button).parents('li').parents('ul.dropdown'),
+				classList = parUl.attr('class').split(/\s+/);
+				
 			$(button).parents('.mynyte-popup-open').removeClass('mynyte-popup-open');
+			$.each(classList, function(index, i) {
+    			if (i.indexOf('-dropdown') > -1) {
+        			//do something
+					console.log(i.substr(0, i.indexOf('-dropdown')));
+					propLabel = i.substr(0, i.indexOf('-dropdown'));
+					input = $('.mynyte-form-input.mynyte-form-fake-input[data-name="'+propLabel+'"]');
+					$(input).find('.selected-option-label').html('Hello');
+    			}
+			});
 			console.log(item);
 		}
 
@@ -479,6 +504,9 @@
 			$(document).ready(function() {
 				//General css files
 				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/css/api-style.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://webfonts.creativecloud.com/c/69721a/1w;quicksand,2,WXp:W:n4,WXn:W:n7/l" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />');
+				
 		   		//If Offers Feed Exists in Page
 		   		if ($( "a.mynyte-table-book" ).length) {
 					createFeed({'elem': $('.mynyte-listings'), 'feedType': 'offersFeed' });
@@ -815,32 +843,19 @@
 																successData = params.successData, 
 																businessItems = {}, 
 																htmlString = "", 
-																htmlElem = null;
+																htmlElem = null,
+																propNameToDisplay = modelProperties[prop]["Name"].substr((modelProperties[prop]["Name"].indexOf('_') == 0) ? 1: 0, modelProperties[prop]["Name"].length).replace(" Id", ""),
+																propNameCssFormat = modelProperties[prop]["Name"].replace(/ /g, '-').toLowerCase(),
+																popupHtml = '<div class="mynyte-popup-cover dropdown-wrapper price-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+name.replace(/ /g, '-').toLowerCase()+'-dropdown-wrapper"><h4>Select a '+propNameToDisplay+'</h4><i data-name="' + propNameCssFormat + '" class="fa fa-times" onclick="return MynyteApi.toggleRelatedItemSelect(event, this)"></i><ul class="dropdown '+name.replace(/ /g, '-').toLowerCase()+'-dropdown"></ul></div></div></div>';
 																
 															MynyteApi.pageVars['Page Object']["Business Items"] = {};
 																
-															$('body').append('<div class="mynyte-popup-cover dropdown-wrapper price-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+name.replace(/ /g, '-').toLowerCase()+'-dropdown-wrapper"><ul class="dropdown '+name.replace(/ /g, '-').toLowerCase()+'-dropdown"></ul></div></div></div>');
+															$('body').append(popupHtml);
 															
 															loopObjPropsToCompileObj (viewType, _businessId, ind, successData, {}, "", $('.dropdown'));
 															console.log(successData);
-															MynyteApi.selectToggle = function (elem) {
-																if ($(elem).siblings('ul.mynyte-form-fake-select').eq(0).hasClass("open")) {
-																	$(elem).siblings('ul.mynyte-form-fake-select').eq(0).removeClass("open");
-																} else {
-																	$(elem).siblings('ul.mynyte-form-fake-select').eq(0).addClass("open");
-																}
-		
-																return false;
-															}
-															MynyteApi.selectOptionSelect = function (propName, option) {
-																console.log(propName, option);
-																//MynyteApi.pageVars["Page Object"][propName] = $(option).data("value");
-																$(option).parents('ul').eq(0).siblings('.mynyte-form-fake-input').eq(0).attr("data-value", $(option).data("value"));
-																$(option).parents('ul').eq(0).siblings('.mynyte-form-fake-input').eq(0).find('.selected-option-label').html($(option).html());
-																$(option).parents('ul').eq(0).removeClass("open");
-																console.log(MynyteApi.pageVars);
-															}
-															inputString = "<div data-name='" +  modelProperties[prop]["Name"] + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.selectToggle(this)'><span class='selected-option-label'></span><button class='mynyte-form-select-toggler'></button></div>";
+															
+															inputString = "<div data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'></span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 															inputString += "";
 															
 															addPropFinal(i, isReqLabel, inputString);
@@ -1006,6 +1021,10 @@
 		MynyteApi.createPortal = function (params) {
 			createPortal(params);	
 		}
+		
+		MynyteApi.toggleRelatedItemSelect = function (event, elem) {
+			toggleRelatedItemSelect(event, elem);
+		};
 		
 		MynyteApi.addItemToFormFromDropdown = function (button) {
 			addItemToFormFromDropdown(button);
