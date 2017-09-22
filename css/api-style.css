@@ -719,6 +719,8 @@ span.mynyte-label-detail {
     -webkit-align-items: center;
     -moz-align-items: center;
     align-items: center;
+    top: 0;
+    left: 0;
 }
 
 .mynyte-popup-cover.mynyte-popup-open {
@@ -726,8 +728,6 @@ span.mynyte-label-detail {
     opacity: 1;
     transform: scale(1);
     pointer-events: auto;
-    top: 0;
-    left: 0;
 }
 
 .mynyte-popup {
