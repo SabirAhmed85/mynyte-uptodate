@@ -489,7 +489,8 @@
         LEFT JOIN BusinessPlace ON BusinessPlace._businessId = Business._id
         LEFT JOIN BusinessType ON BusinessType._id = Business._businessTypeId
         WHERE (Business.isActive = 1 OR Person.isActive = 1)
-        AND (Business._townId = '$_townId' OR Person._townId = '$_townId')");
+        AND (Business._townId = '$_townId' OR Person._townId = '$_townId')
+		AND Profile.isHidden = 0");
       
     //print(json_encode($_usersId));
     while($row = mysql_fetch_assoc($result))
@@ -538,6 +539,7 @@
             OR Profile.displayName LIKE  'The $name%'
             OR Profile.displayName LIKE  'A $name%')
             AND Business._townId = '$_townId'
+			AND Profile.isHidden = 0
             GROUP BY Business._id
             UNION ALL
             SELECT Profile.displayName as name,
@@ -583,6 +585,7 @@
             LEFT JOIN Town ON Business._townId = Town._id
             WHERE Event.name LIKE  '$name%'
             AND Business._townId ='$_townId'
+			AND Profile.isHidden = 0
             GROUP BY Event._id
             UNION ALL
             SELECT m.name as name,
@@ -615,6 +618,7 @@
             OR m.name LIKE  'The $name%'
             OR m.name LIKE  'A $name%'
             AND Business._townId ='$_townId'
+			AND Profile.isHidden = 0
             GROUP BY m._id");
     }
     elseif (isset($_GET['_businessTypeId'])) {
