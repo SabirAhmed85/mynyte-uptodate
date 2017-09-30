@@ -5819,7 +5819,7 @@ div#searchbox-categories i {
     overflow: hidden;
     height: calc(101.5vw * (2/3));
 }
-.Offer.feed-item .main-img-container {
+.feed-item .main-img-container.small-container {
     width: auto;
     height: auto;
 }
@@ -6532,6 +6532,8 @@ label.special,
 .item-with-selects .select-container {
     margin-bottom: 5px;
 }
+
+
 
 .select-main span {
     float: left;
@@ -9176,7 +9178,7 @@ location-lookup ul li span {
         max-width: 830px;
         float: left;
         margin: 50px auto 0 0;
-        margin-left: calc(50% - 440px);
+        margin-left: calc(50% - 443px);
         width: calc(100% - 38px);
     }
     .scroll.padding {
@@ -9194,6 +9196,7 @@ location-lookup ul li span {
     .see-business-menu-items .scroll {
         width: 670px;
         margin-top: 60px;
+        margin-left: calc(50% - 440px);
     }
     .admin-view .scroll {
         margin-left: 0;
@@ -9419,7 +9422,7 @@ location-lookup ul li span {
     .more-page .item,
     .see-trailer .tile {
         width: 670px;
-        margin-left: calc(50% - 420px);
+        margin-left: calc(50% - 415px);
         border: 1px solid #483535;
         border-radius: 6px 6px 0 0;
         padding-top: 10px;
@@ -9460,6 +9463,10 @@ location-lookup ul li span {
         border: none;
         width: 100%;
         margin-left: 0;
+    }
+    .UpcomingEvents.view-wrapper,
+    .Offers.view-wrapper {
+        padding: 0 10px;
     }
     .register-intro .item,
     .register-form ion-content,
@@ -9839,7 +9846,7 @@ location-lookup ul li span {
     .left-side-display {
         width: calc(30% - 30px);
         max-width: 180px;
-        margin: 65px 10px 10px;
+        margin: 65px 15px 10px 20px;
         padding: 5px 10px;
         border-radius: 6px;
         top: 105px;
@@ -9848,7 +9855,7 @@ location-lookup ul li span {
     }
     .side-display {
         float: left;
-        left: calc(50% + 240px);
+        left: calc(50% + 231px);
         height: 196px;
         overflow: hidden;
     }
@@ -9861,7 +9868,7 @@ location-lookup ul li span {
         border-radius: 6px 0 0 6px;
         color: #8d8d8d;
         top: 40px;
-        width: calc((100% - 930px)/2);
+        width: calc((100% - 960px)/2);
         display: flex;
         max-width: none;
     }
