@@ -599,7 +599,6 @@
             <form class="business-item-form menu-item-category-summary edit-form"
                 ng-if="itemType == 'MenuItemCategories'"
                 name="editMenuItemCategoryForm"
-                ng-submit="updateMenuCategory(businessItem.name, businessItem.description);"
                 ng-class="{'editing': editing}">
                 <label class="item-header first">
                     {{businessItem.name}}
@@ -644,9 +643,15 @@
                 
                 <span>
                     <button class="button button-red button-large"
+                		 ng-click="updateMenuCategory(businessItem.name, businessItem.description);"
                          ng-disabled="editMenuItemCategoryForm.$invalid || !editing || (catName != originalCatName && existingCatNames.indexOf(catName) != -1)"
                          ng-show="editing">
                         Edit Category
+                    </button>
+                    <button class="button button-red button-large"
+                		 ng-click="requestMenuCategoryDelete();"
+                         ng-show="editing && businessItem.isUniversal == '0'">
+                        Delete Category
                     </button>
                 </span>
             </form>
@@ -655,7 +660,6 @@
             <form class="business-item-form menu-item-sub-category-summary edit-form"
                 ng-if="itemType == 'MenuItemSubCategories'"
                 name="editMenuItemSubCategoryForm"
-                ng-submit="updateMenuSubCategory(businessItem.name, businessItem.description);"
                 ng-class="{'editing': editing}">
                 <label class="item-header first">
                     {{businessItem.name}}
@@ -694,9 +698,15 @@
                 
                 <span>
                     <button class="button button-red button-large"
+                		 ng-click="updateMenuSubCategory(businessItem.name, businessItem.description);"
                          ng-disabled="editMenuItemSubCategoryForm.$invalid || !editing || (catName != originalCatName && existingCatNames.indexOf(catName) != -1)"
                          ng-show="editing">
                         Edit Sub-Category
+                    </button>
+                    <button class="button button-red button-large"
+                		 ng-click="requestMenuSubCategoryDelete();"
+                         ng-show="editing">
+                        Delete Sub-Category
                     </button>
                 </span>
             </form>
@@ -854,6 +864,11 @@
                     ng-show="editing"
                     ng-click="updateMenuItem(businessItem.Name, businessItem.Price, businessItem.Description);">
                     Apply Changes
+                </button>
+                <button ng-disabled="!editing" class="button button-red button-large"
+                    ng-show="editing"
+                    ng-click="requestMenuItemArchive();">
+                    Delete Item
                 </button>
             </form>
             

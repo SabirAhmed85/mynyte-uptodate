@@ -1010,6 +1010,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+	data.deleteMenuCategory = function (_categoryId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=deleteMenuCategory&_businessId=' + _businessId,
+                data: {'_categoryId': _categoryId},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
 
 	data.createMenuItemSubCategory = function (catName, catDescription, _businessId) {
 		return $http(
@@ -1046,6 +1055,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
             {
 				method: 'POST', url:Config.MenuItemUrl + '?action=updateMenuItemSubCategoryDetailsForBusiness&_businessId=' + _businessId,
                 data: {'_menuItemSubCategoryId': _menuItemSubCategoryId, 'description': description, 'catName': catName},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.deleteMenuSubCategory = function (_subcategoryId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=deleteMenuSubCategory&_businessId=' + _businessId,
+                data: {'_subcategoryId': _subcategoryId},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
@@ -1159,6 +1177,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 				method: 'POST',
                 url: Config.MenuItemUrl + '?action=updateMenuItem&_businessId=' + _businessId + '&_menuItemId=' + _menuItemId + '&_menuItemCatId=' + _menuItemCatId  + '&_menuItemSubCatId=' + _menuItemSubCatId  + '&name=' + name + '&price=' + price + '&description=' + description,
                 data: newOptions,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.archiveMenuItem = function (_itemId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=archiveMenuItem&_businessId=' + _businessId,
+                data: {'_itemId': _itemId},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);

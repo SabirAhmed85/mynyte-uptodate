@@ -61,6 +61,13 @@
         
         $result = mysql_query("CALL updateMenuItemCategory('$_businessId', '$_menuItemCategoryId', '$catName', '$description')");
     }
+	elseif ($action == 'deleteMenuCategory') {
+		$data = file_get_contents("php://input");
+        $dataJsonDecode = json_decode($data);
+		$_categoryId = $dataJsonDecode->_categoryId;
+        
+		$result = mysql_query("CALL deleteMenuCategory($_categoryId, $_businessId)");
+	}
     elseif ($action == 'getMenuItemSubCategoriesForBusiness') {
         $result = mysql_query("CALL getMenuItemSubCategoriesForBusiness('$_businessId');");
     }
@@ -80,6 +87,13 @@
         
         $result = mysql_query("CALL updateMenuItemSubCategory('$_businessId', '$_menuItemSubCategoryId', '$catName', '$description')");
     }
+	elseif ($action == 'deleteMenuSubCategory') {
+		$data = file_get_contents("php://input");
+        $dataJsonDecode = json_decode($data);
+		$_subcategoryId = $dataJsonDecode->_subcategoryId;
+        
+		$result = mysql_query("CALL deleteMenuSubCategory($_subcategoryId, $_businessId)");
+	}
     elseif ($action == 'getMenuTemplateOptionCategories') {
         $result = mysql_query("SELECT * FROM MenuExtraOptionCategory");
     }
@@ -167,6 +181,13 @@
             $result = mysql_query("INSERT INTO MenuItemMenuItemTag (_menuItemId, _menuItemTagId) VALUES ('$_menuItemId','$_tagId')");
         }
     }
+	elseif ($action == 'archiveMenuItem') {
+		$data = file_get_contents("php://input");
+        $dataJsonDecode = json_decode($data);
+		$_itemId = $dataJsonDecode->_itemId;
+        
+		$result = mysql_query("CALL archiveMenuItem($_itemId, $_businessId)");
+	}
     elseif ($action == 'deleteMenuItemTemplateOptionOption') {
         $_optionId = (empty($_GET['_optionId'])) ? "": mysql_real_escape_string($_GET['_optionId']);
         
