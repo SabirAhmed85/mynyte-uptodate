@@ -3319,6 +3319,74 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                             $scope.updateMenuCategory(catName, description);
                                         });
                                     }
+									
+									$scope.deleteMenuCategory = function () {
+										$rootScope.appLoading = true;
+                                        MenuItems.deleteMenuCategory($scope.businessItem._id, $rootScope.user._id).success(function (successData2) {
+                                            $rootScope.debugModeLog({'msg': 'BusinessItemCtrl deleteMenuCategory successData', 'data': successData2});
+                                            
+                                            $rootScope.appLoading = false;
+                                            $rootScope.editing = false;
+                                            $rootScope.currentlyEditing = false;
+                                            $scope.editing = false;
+											$rootScope.backButtonFunction();
+                                        }).error(function () {
+                                            $scope.deleteMenuItemCategory();
+                                        });
+									}
+									
+									$scope.requestMenuCategoryDelete = function () {
+										$ionicPopup.show({
+											title: "Delete Menu Category",
+											template: "<p>This action cannot be undone. Are you sure you want to delete this Menu Category?</p>",
+											scope: $scope,
+											buttons: [
+												{ 
+													text: 'Cancel',
+													onTap: function(e) {
+													  
+													} 
+												},
+												{ 
+													text: 'Delete',
+													type: 'button-positive',
+													onTap: function(e) {
+														$rootScope.appLoading = true;
+														MenuItems.deleteMenuCategory($scope.businessItem._id, $rootScope.user._id).success(function (successData2) {
+															$rootScope.debugModeLog({'msg': 'BusinessItemCtrl deleteMenuCategory successData', 'data': successData2});
+															console.log(successData2);
+															
+															if (successData2[0]['return'] == 'false') {
+																$rootScope.appLoading = false;
+																$ionicPopup.show({
+																	title: "Cannot Delete Menu Category",
+																	template: "<p>This Menu Category cannot be deleted, as it is currently applied to items which exist in your Menu. Please check these Menu Items, and try again.</p>",
+																	scope: $scope,
+																	buttons: [
+																		{ 
+																			text: 'Close',
+																			onTap: function(e) {
+																			  
+																			} 
+																		}
+																	]
+																});
+															}
+															else {
+																$rootScope.appLoading = false;
+																$rootScope.editing = false;
+																$rootScope.currentlyEditing = false;
+																$scope.editing = false;
+																$rootScope.backButtonFunction();
+															}
+														}).error(function () {
+															$scope.deleteMenuCategory();
+														});
+													} 
+												}
+											]
+										});
+									}
                                     
                                 }).error(function () {
                                     getMenuItemCategoryDetailsForBusiness();
@@ -3361,6 +3429,40 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                             $scope.updateMenuSubCategory(catName, description);
                                         });
                                     }
+									
+									$scope.requestMenuSubCategoryDelete = function () {
+										$ionicPopup.show({
+											title: "Delete Menu Sub-Category",
+											template: "<p>This action cannot be undone. Are you sure you want to delete this Menu Item?</p><p>Additional Note: All your menu items which currently have this sub-category applied to them will no longer have a sub-category applied to them.</p>",
+											scope: $scope,
+											buttons: [
+												{ 
+													text: 'Cancel',
+													onTap: function(e) {
+													  
+													} 
+												},
+												{ 
+													text: 'Delete',
+													type: 'button-positive',
+													onTap: function(e) {
+														$rootScope.appLoading = true;
+														MenuItems.deleteMenuSubCategory($scope.businessItem._id, $rootScope.user._id).success(function (successData2) {
+															$rootScope.debugModeLog({'msg': 'BusinessItemCtrl deleteMenuSubCategory successData', 'data': successData2});
+															
+															$rootScope.appLoading = false;
+															$rootScope.editing = false;
+															$rootScope.currentlyEditing = false;
+															$scope.editing = false;
+															$rootScope.backButtonFunction();
+														}).error(function () {
+															$scope.deleteMenuSubCategory();
+														});
+													} 
+												}
+											]
+										});
+									}
                                     
                                 }).error(function () {
                                     getMenuItemSubCategoryDetailsForBusiness();
@@ -3568,6 +3670,41 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                 $scope.updateMenuItem(itemName, price, description);
                             });
                         }
+						
+						$scope.requestMenuItemArchive = function () {
+							$ionicPopup.show({
+								title: "Delete Menu Item",
+								template: "<p>This action cannot be undone without MyNyte's assistance. Are you sure you want to delete this Menu Item?</p>",
+								scope: $scope,
+								buttons: [
+									{ 
+										text: 'Cancel',
+										onTap: function(e) {
+										  
+										} 
+									},
+									{ 
+										text: 'Delete',
+										type: 'button-positive',
+										onTap: function(e) {
+											$rootScope.appLoading = true;
+										MenuItems.archiveMenuItem($scope.businessItem._id, $rootScope.user._id).success(function (successData2) {
+											$rootScope.debugModeLog({'msg': 'BusinessItemCtrl archiveMenuItem successData', 'data': successData2});
+											
+											$rootScope.appLoading = false;
+											$rootScope.editing = false;
+											$rootScope.currentlyEditing = false;
+											$scope.editing = false;
+											$rootScope.$broadcast('menu-items-changed');
+											$rootScope.backButtonFunction();
+										}).error(function () {
+											$scope.deleteMenuItemCategory();
+										});
+										} 
+									}
+								]
+							});
+						}
                     }
                     
                     break;
