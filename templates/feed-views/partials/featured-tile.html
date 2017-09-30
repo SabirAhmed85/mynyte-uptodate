@@ -9,7 +9,7 @@
       <i class="ion-location"></i>
     </span>
     
-    <div class="main-img-container">
+    <div class="main-img-container" ng-class="{'small-container': feature.listingType == 'Offer' || (feature.listingType == 'Event' && feature.currentCoverPhotoName == null)}">
         <img class="main-img"
             src="/sneak-preview/img/user_images/cover_photo/default.jpg"
             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/cover_photo/{{feature.currentCoverPhotoName}}"
@@ -25,15 +25,16 @@
         <img class="main-img profile-img"
             src="/sneak-preview/img/user_images/profile_photo/default.jpg"
             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
-            ng-if="feature.currentProfilePhotoName != null && feature.listingType == 'Offer'"/>
+            ng-if="feature.currentProfilePhotoName != null && (feature.listingType == 'Offer' || feature.listingType == 'Event' && feature.currentCoverPhotoName == null)"/>
     </div>
     <div class="offer-description-container"
-        ng-if="feature.listingType == 'Offer'">
+        ng-if="feature.listingType == 'Offer' || (feature.listingType == 'Event' && feature.currentCoverPhotoName == null)">
         <span class="description">{{feature.description}}</span>
         <span class="business-place"><span>at&nbsp;</span><span class="bold">{{feature.businessName}}</span></span>
         <span class="description">
             <span ng-if="feature.weekdayName != null">Every {{feature.weekdayName}}</span>
-            <span ng-if="feature.weekdayName == null">Ends {{feature.lastDate_readable}}</span>
+            <span ng-if="feature.weekdayName == null && feature.listingType == 'Offer'">Ends {{feature.lastDate_readable}}</span>
+            <span ng-if="feature.weekdayName == null && feature.listingType == 'Event'">On {{feature.lastDate_readable}}</span>
         </span>
     </div>
     <span class="feature-info-dummy"></span>

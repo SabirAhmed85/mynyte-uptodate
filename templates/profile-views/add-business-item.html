@@ -419,7 +419,7 @@
                     ></image-crop>
             </div>
             <label class="item-header">
-                Description
+                Description (required)
             </label>
             <label class="item">
                 <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Event Description" ng-model="description" name="description" ng-max="1000" required></textarea>
@@ -551,7 +551,7 @@
                 <textarea name="dressCode" class="white nightlife-input nightlife-input-square" type="text" placeholder="Extra Info" ng-model="extraInfo"></textarea>
         	</label>
         	<button class="button button-red button-large"
-                ng-disabled="addEventForm.$invalid || !dateChosen || rootScope.imageUploadError != null || rootScope.imageSrcs.length == 0 || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
+                ng-disabled="addEventForm.$invalid || !dateChosen || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
                 ng-click="addEvent(eventTitle, description, dressCode, dealsOnTheNight, extraInfo);">
                 Add New Event
             </button>

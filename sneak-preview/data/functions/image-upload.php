@@ -24,16 +24,16 @@
             $_businessPlaceId = $_POST["_businessPlaceId"];
             $eventTitle = $_POST["eventTitle"];
             $eventTitle = str_replace("'", "\'", $eventTitle);
-            $description = (empty($_POST["description"])) ? '': $_POST["description"];
+            $description = $_POST["description"];
             $description = str_replace("'", "\'", $description);
             $eventDateTime = $_POST["eventDateTime"];
-            $dressCode = (empty($_POST["dressCode"])) ? '': $_POST["dressCode"];
+            $dressCode = (empty($_POST["dressCode"]) || $_POST["dressCode"] == 'undefined') ? '': $_POST["dressCode"];
             $dressCode = str_replace("'", "\'", $dressCode);
-            $eventHasGuestList = (empty($_POST["eventHasGuestList"])) ? '': $_POST["eventHasGuestList"];
+            $eventHasGuestList = (empty($_POST["eventHasGuestList"])) ? '0': $_POST["eventHasGuestList"];
             $guestListMax = $_POST["guestListMax"];
-            $dealsOnTheNight = (empty($_POST["dealsOnTheNight"])) ? '': $_POST["dealsOnTheNight"];
+            $dealsOnTheNight = (empty($_POST["dealsOnTheNight"]) || $_POST["dealsOnTheNight"] == 'undefined') ? '': $_POST["dealsOnTheNight"];
             $dealsOnTheNight = str_replace("'", "\'", $dealsOnTheNight);
-            $extraInfo = (empty($_POST["extraInfo"])) ? '': $_POST["extraInfo"];
+            $extraInfo = (empty($_POST["extraInfo"]) || $_POST["extraInfo"] == 'undefined') ? '': $_POST["extraInfo"];
             $extraInfo = str_replace("'", "\'", $extraInfo);
             $weekdayIndex = $_POST["weekdayIndex"];
             $weeksAhead = $_POST["weeksAhead"];
@@ -87,7 +87,7 @@
         $_imageId = $_imageId -> _id;
         $_imageId = $_imageId + 1;
 
-        if ($imgEntryType == 'cover_photo' || $imgEntryType == 'profile_photo' || $imgEntryType == 'event_cover_photo' || $imgEntryType == 'movie_cover_photo' || ($imgEntryType == 'offer_cover_photo' && !empty($imageName))) {
+        if ($imgEntryType == 'cover_photo' || $imgEntryType == 'profile_photo' || $imgEntryType == 'movie_cover_photo' || ($imgEntryType == 'offer_cover_photo' && !empty($imageName)) || ($imgEntryType == 'event_cover_photo' && !empty($imageName))) {
             $data = getimagesize($imageTmpName);
             $imgName = $imageName;
             $newImageName = $_profileId."_".$_imageId."_".$imgName;
@@ -177,7 +177,7 @@
                 }
             }
         }
-        else if ($imgEntryType == 'offer_cover_photo' && empty($imageName)) {
+        else if (($imgEntryType == 'offer_cover_photo' || $imgEntryType == 'event_cover_photo') && empty($imageName)) {
             $newImageNameQuoted = "''";
             $result = 1;
             $result_thumb = true;
@@ -220,6 +220,7 @@
             else if ($imgEntryType == 'event_cover_photo') {
                 if ($result_thumb) {
                     $result = mysql_query("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, @_eventId)");
+					//echo json_encode("CALL createEvent($_businessId, $_businessPlaceId, '$eventTitle', '$description', '$eventDateTime', '$dressCode', '$dealsOnTheNight', '$extraInfo', $eventHasGuestList, $guestListMax, 0, $weekdayIndex, $weeksAhead, '$musicStyleIdString', $newImageNameQuoted, @_eventId)");
                     $sqlQuery2 = mysql_query("SELECT @_eventId as _eventId");
                     $output = mysql_fetch_object($sqlQuery2);
                     $output = $output -> _eventId;

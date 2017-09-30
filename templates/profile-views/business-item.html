@@ -253,7 +253,8 @@
             </form>
             
             <form ng-if="itemType=='OwnEvents'" class="business-item-form edit-form event-edit" ng-class="{'editing': editing}" name="updateEventForm">
-                <label class="item">
+                <label class="item"
+                	ng-if="businessItem.currentCoverPhotoName != null && businessItem.currentCoverPhotoName != ''">
                     <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header first">
