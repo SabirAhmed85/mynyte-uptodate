@@ -1022,8 +1022,15 @@
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested == null">Action required! The customer is waiting for your response...</span>
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested != null">Waiting for a response on your suggested time from the customer.</span>
                 </label>
-                <label class="item-header">Customer Name</label>
-                <label class="item">{{businessItem.name}}</label>
+                <label class="item-header">Customer Name<span ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse"> &amp; Details</span></label>
+                <label class="item"
+                    ng-if="!rootScope.user.showUsersEmailAndPhoneInTableBookingResponse">{{businessItem.name}}</label>
+                <label class="item"
+                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse">
+                    <span class="line">{{businessItem.name}}</span>
+                    <span class="line">{{businessItem.email}}</span>
+                    <span class="line">{{businessItem.phone}}</span>
+                </label>
                 <label class="item-header">Party Of</label>
                 <label class="item">{{businessItem.tableFor}}</label>
                 <label class="item-header">Date</label>
@@ -1047,7 +1054,8 @@
                         </span>
                     </button>
                     <button class="button button-red button-large"
-                         ng-click="updateTableBooking('reject');">
+                         ng-click="updateTableBooking('reject');"
+                         ng-if="rootScope.user.hideRejectButtonInTableBookingResponse == '0'">
                         <span class="button-outer-label reject-booking-label">
                             <i class="ion-close"></i>
                             <span class="button-inner-label">Reject Booking</span>

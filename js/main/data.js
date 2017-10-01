@@ -70,6 +70,13 @@ app.factory('Profile', ['$http', 'Config', function($http, Config) {
 			}
 		);
     }
+    data.getRestaurantBusinessSettingsForBusiness = function (_businessId) {
+        return $http(
+            {
+				method: 'GET', url:Config.CreateProfileUrl + '?action=getRestaurantBusinessSettingsForBusiness&_businessId=' + _businessId
+			}
+		);
+    }
     data.getBusinessTypesForBusiness = function (_businessId) {
         return $http(
             {

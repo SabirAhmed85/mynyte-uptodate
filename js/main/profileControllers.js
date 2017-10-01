@@ -3105,6 +3105,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                     break;
                 case 'RequestedTableBookings':
                 case 'OwnTableBookings':
+                    $rootScope.pageLoading = true;
                     $rootScope.topRightButtonIsEdit = false;
                     $scope.getBusinessItem = function () {
                         $rootScope.pageTitle = ($stateParams.itemType) ? 'Accepted Table Booking': 'Requested Table Booking';
@@ -3119,6 +3120,22 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                             if (ipObj2 != null) {
                                 ipObj2.inputTime = successData[0].timeIntegerString;
                             }
+
+                            if ($rootScope.user.hideRejectButtonInTableBookingResponse != null) {
+                                $rootScope.pageLoading = false;
+                            } else {
+                                Profile.getRestaurantBusinessSettingsForBusiness($rootScope.user._id).success(function (successData) {
+                                    $rootScope.debugModeLog({'msg': 'AccountSettingsCtrl getAllTonightsFeedOptionsForBusiness successData', 'data': successData});
+                                    
+                                    $rootScope.user.hideRejectButtonInTableBookingResponse = successData[0]['hideRejectButtonInTableBookingResponse'];
+                                    $rootScope.user.showUsersEmailAndPhoneInTableBookingResponse = successData[0]['showUsersEmailAndPhoneInTableBookingResponse'];
+
+                                    $rootScope.pageLoading = false;
+                                }).error(function (errorData) {
+                                    console.log(errorData);
+                                });
+                            }
+                            //$rootScope.pageLoading = false;
                         }).error(function () {
                             $scope.getBusinessItem();
                         });

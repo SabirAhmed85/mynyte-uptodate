@@ -4646,6 +4646,7 @@ form div.item-header {
 .edit-form.event-edit .item .line {
     float: left;
     clear: left;
+    margin-bottom: 5px;
 }
 
 .extra-options-label {

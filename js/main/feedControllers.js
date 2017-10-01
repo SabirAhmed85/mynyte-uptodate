@@ -1245,6 +1245,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     $scope.listing.isAcceptingTaxiBookings = ($scope.listing.isAcceptingTaxiBookings == '1') ? true : false;
                     $scope.listing.isAcceptingTableBookings = ($scope.listing.isAcceptingTableBookings == '1') ? true : false;
                     $scope.listing.isAcceptingOnlineOrders = ($scope.listing.isAcceptingOnlineOrders == '1') ? true : false;
+                    $scope.listing.phoneIsRequiredForBooking = ($scope.listing.showUsersEmailAndPhoneInTableBookingResponse == '1') ? true : false;
                     $scope.listing.showTakeawayMenu = ($scope.listing.showTakeawayMenu == '1' && $scope.listing.hasTakeawayMenuItem) ? true: false;
                     $scope.listing.showCarteMenu = ($scope.listing.showCarteMenu == '1' && $scope.listing.hasCarteMenuItem) ? true: false;
                     $scope.listing.currentCoverPhotoName = ($scope.listing.listingType == 'Movie') ? 'https://www.cineworld.co.uk' + $scope.listing.currentCoverPhotoName: $scope.listing.currentCoverPhotoName;
@@ -1372,7 +1373,15 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
 
             $scope.goToBookTable = function () {
                 if ($scope.listing.isAcceptingTableBookings && $rootScope.userLoggedIn) {
-                    $state.go('app.bookTable', {searchType: $stateParams.searchType, _businessTypeId: $stateParams._businessTypeId, _listingId: $stateParams._listingId, listingType: $stateParams.listingType, _id: $scope.listing.relListingId, listingName: $scope.listing.name, tableForMax: $scope.listing.maxTableBookingGuests});
+                    $state.go('app.bookTable', {
+                        searchType: $stateParams.searchType
+                        , _businessTypeId: $stateParams._businessTypeId
+                        , _listingId: $stateParams._listingId
+                        , listingType: $stateParams.listingType
+                        , _id: $scope.listing.relListingId
+                        , listingName: $scope.listing.name
+                        , tableForMax: $scope.listing.maxTableBookingGuests
+                        , phoneIsRequiredForBooking: $scope.listing.phoneIsRequiredForBooking});
                 }
                 else if ($scope.listing.isAcceptingTableBookings && !$rootScope.userLoggedIn) {
                     $rootScope.showPopUp($scope, 'BookTable');
@@ -1734,7 +1743,13 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $scope.pageTitle = $rootScope.pageTitle;
 
             $scope.tableForMax = $stateParams.tableForMax;
+            $scope.phoneIsRequiredForBooking = $stateParams.phoneIsRequiredForBooking;
             $scope.tableBookingDisallowed = [];
+
+            if ($scope.phoneIsRequiredForBooking && ($rootScope.user.phone1 == null || $rootScope.user.phone1 == '') ) {
+                var displayNote = '<i class="ion-alert-circled"></i>The restaurant required you to provide a phone number to make a booking. Please add a phone number to your Account Details.</b>.';
+                $scope.tableBookingDisallowed.push({reason: 'Phone Number Required', note: displayNote});
+            }
             
             $scope.convertToDate = function () {
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
