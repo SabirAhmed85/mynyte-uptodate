@@ -152,6 +152,11 @@
       
       $result = mysql_query("CALL getAllBusinessSettingsForBusiness($_businessId)");
   }
+  elseif ($action == 'getRestaurantBusinessSettingsForBusiness') {
+      $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
+      
+      $result = mysql_query("CALL getRestaurantBusinessSettingsForBusiness($_businessId)");
+  }
   elseif ($action == 'getBusinessTypesForBusiness') {
       $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
       
@@ -1037,6 +1042,7 @@
     || $action == 'getLikedListingsForProfile'
     || $action == 'getMyNyteActivityForPerson'
     || $action == 'getAllBusinessSettingsForBusiness'
+    || $action == 'getRestaurantBusinessSettingsForBusiness'
     || $action == 'getBusinessTypesForBusiness'
     || $action == 'getFoodStylesForBusiness'
     || $action == 'getBusinessOpeningTimesForBusiness'
