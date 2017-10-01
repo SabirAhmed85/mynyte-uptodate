@@ -1,0 +1,476 @@
+/* importing fonts */
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("../font/SourceSansPro-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("../font/SourceSansPro-Italic.ttf");
+  font-style:italic;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("../font/SourceSansPro-Light.ttf");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("../font/SourceSansPro-LightItalic.ttf");
+  font-weight: 300;
+  font-style:italic;
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("../font/SourceSansPro-Bold.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("../font/SourceSansPro-BoldItalic.ttf");
+  font-weight: 600;
+  font-style:italic;
+}
+/* basic css reset */
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .button, input, textarea { 
+	font-family: 'Source Sans Pro', sans-serif;
+    padding: 0;
+}
+a { 
+	text-decoration: none; 
+}
+img { 
+	width: 100%; height:auto; 
+}
+.card { 
+	/*margin:10px !important;*/
+}
+.view-container {
+  background-color: #111;
+  max-width: 100%;
+  overflow: hidden;
+}
+.screen{
+   position:relative;
+ }
+ .screen img{
+   display: inherit;
+ }
+ .screen .item{
+   position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  border: 0;
+  background: rgba(255,255,255, 0.6);
+ }
+ .item-home{
+ 	/*padding:10px !important;*/
+ }
+ .screen h1{
+ 	color:#222;
+	text-align:center;
+ }
+ /* Home feed page style */
+ .item-home{
+	 background-color: #f8f8f8;
+    background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);
+    background-size: 0 auto;
+    border-color: #b2b2b2;
+    border-style: solid;
+    border-top: 1px solid #b2b2b2;
+	  background-color: #ef473a;
+    background-image: linear-gradient(0deg, #e42012, #e42012 50%, transparent 50%);
+    border-color: #e42012;
+    color: #fff;
+ }
+ .item-home .icon{
+	 color:#fff;
+ }
+ .item-home h2{
+	 color:#fff;
+ }
+ .black_bg{
+ 	/*background:#0e0e0e;*/
+    background: #171818;
+ }
+ .dark-grey_bg{
+ 	background:#111;
+ }
+ .grey_bg{
+ 	background:#222;
+ }
+ .white_bg{
+ 	background:#DBD8DC;
+ }
+ /* logo styles */
+.form_logo {
+    margin: 30px 0;
+    opacity: 0.5;
+    text-align: center;
+    width: 100%;
+}
+.form_logo img {
+    display: inline-block;
+    margin: auto;
+    max-width: 50%;
+}
+.nav-logo{
+	height:32px;
+}
+/* gallery styles */
+.gallery-small{
+	padding:0 !important;
+	border:none !important;
+}
+.gallery-top{
+	padding-top:5px !important;
+}
+/*full screen images*/
+.transparent {
+  background: #222 !important;
+}
+.image-modal {
+  width: 100% !important;
+  height: 100%;
+  top: 0 !important;
+  left: 0 !important;
+}
+.fullscreen-image {
+  max-width: 100%;
+  max-height: 100%;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  overflow: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+/* video container */
+
+.video-container {
+	 height: 0;
+    overflow: hidden;
+    padding-bottom: 56.25%;
+    padding-top: 30px;
+    position: relative;
+}
+.video-container iframe {
+	height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+.post-content-home{
+	margin-bottom:44px;
+}
+/* profile page */
+#content {
+   background-color: #fff;
+   box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.4);
+   position: relative;
+}
+
+#listing-info,
+#profile-info {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 2;
+    background-repeat: no-repeat;
+    background-size: 102%;
+    background-position: 0px 0px;
+}
+
+#listing-name,
+#profile-name {
+    color: #d99;
+    font-size: 20px;
+    float: right;
+    margin-top: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+#listing-description,
+#profile-description {
+    font-size: 12px;
+    color: #ddd;
+    float: left;
+    clear: right;
+    width: 100%;
+    text-align: center;
+}
+
+#listing-description,
+#profile-description a {
+  color: #fff;
+}
+
+#listing-image,
+#profile-image {
+    display: block;
+    border-radius: 10px;
+    border: 1px solid #350101;
+    width: 100px;
+    height: 100px;
+    margin: 151px 0 0 8px;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.6);
+    float: left;
+    position: absolute;
+    bottom: -31px;
+}
+
+#listing-cover-image {
+    display: block;
+    margin: 151px 0 0 8px;
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    border: 1px solid #3c0202;
+    border-radius: 0;
+}
+/* sidebar profile and image */
+.main-sidebar-profile {
+   background-color: #fff;
+   box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.4);
+   position: relative;
+	height:200px;
+}
+
+.profile-info {
+ 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+    padding-bottom: 20px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 2;
+	 background-image:url(http://1.bp.blogspot.com/-IMsTheNxIqo/VYGjyM2hLiI/AAAAAAAAA1g/ZQO2uRgQSU4/s350-h300-c/cappadocia-805624_1280.jpg);
+	 background-repeat:no-repeat;
+	
+}
+.profile-name {
+  color: #fff;
+  font-size: 26px;
+  margin-top:20px;
+}
+.profile-image {
+  display: block;
+  border-radius: 100px;
+  border: 1px solid #fff;
+  width: 100px;
+  height: 100px;
+  margin: 30px auto 0;
+  box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+}
+/* style slider */
+.slider {
+  height: 100%;
+}
+.slider-slide {
+  padding-top: 80px;
+  color: #fff;
+  text-align: center;
+  font-weight: 300;
+}
+
+#logo {
+  margin: 30px 0px;
+}
+.slider p{
+	margin-bottom:60px;
+}
+c
+.message {
+  font-size: 14px;
+  
+}
+
+.message-wrapper {
+  position: relative;
+}
+.disable-user-behavior {
+    -moz-user-select: none;
+}
+.message-wrapper:last-child {
+  margin-bottom: 10px;
+}
+
+.chat-bubble {
+  border-radius: 5px;
+  display: inline-block;
+  padding: 4px 8px;
+  position: relative;
+  margin: 10px;
+  max-width: 65%;
+  min-width: 35%;
+  clear: both;
+  padding-bottom: 23px;
+}
+
+.chat-bubble.with-attachment {
+    width: 65%;
+}
+
+.chat-bubble.left {
+    background-color: #E7E7E2;
+    float: left;
+    text-align: left;
+    border: 1px solid #FFFFFF;
+    color: #737373;
+}
+.chat-bubble a{
+	text-decoration:underline;
+}
+.chat-bubble.right a{
+	text-decoration:underline;
+	color:#fff !important;
+}
+.chat-bubble.right {
+    background-color: #990000;
+    color: #fff;
+    float: right;
+    margin-right: 10px;
+    text-align: right;
+    border: 1px solid #ee0000;
+}
+
+.message-detail {
+  /*white-space: nowrap;*/
+  font-size: 14px;
+}
+.message-detail p {
+    margin-bottom: 0;
+}
+
+.chat-bubble .message-detail {
+    width: 100%;
+}
+.chat-bubble.left .message-detail {
+    float: left;
+    max-width: 100%;
+}
+.chat-bubble.right .message-detail {
+    float: right;
+}
+
+.time-label {
+    width: 90px !important;
+    position: absolute;
+    bottom: 1px;
+}
+
+.chat-bubble.left .time-label {
+    color: #444;
+}
+
+.chat-bubble.right .time-label {
+    color: #f1b8b8;
+    right: 9px;
+    text-align: right;
+}
+
+.chat-bubble.left i {
+    float: right;
+    margin-left: 1px;
+}
+
+.chat-bubble.right i {
+    float: left;
+    margin-right: 1px;
+}
+
+.chat-bubble.right a.autolinker {
+  color: #fff;
+  font-weight: bold;
+}
+
+.chat-bubble .message-sender {
+    font-weight: bold;
+    color: #ffaaaa;
+}
+.chat-bubble .message-sender p{
+    margin-bottom: 1px;
+}
+
+img.profile-pic.left {
+    left: -45px;
+}
+img.profile-pic {
+    bottom: 10px;
+    height: 40px;
+    position: absolute;
+    width: 40px;
+}
+.post-content-message{
+	margin-bottom:46px;
+    padding-bottom: 15px;
+}
+.post-content-message.with-attachment {
+	margin-bottom:144px;
+}
+.comment-stable-main {
+    height: 48px;
+}
+.comment-form-main {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.row-comment {
+    margin: 0;
+    padding: 0;
+}
+.small-font {
+    font-size: 13px;
+}
+.comment-div-label {
+    margin: 0 10px 0 0;
+}
+.comment-main-text {
+    height: 45px;
+    min-height: 45px;
+}
+.button-comment {
+    margin-bottom: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0;
+    margin-top: 0 !important;
+    width: 100% !important;
+}
+.post-wp img{
+	max-width:100%;
+	height:auto;
+	margin:0px !important;
+}
+.post-wp iframe{
+	width:100%;
+	height:350px;
+}
+/* style products */
+.product-section{
+  margin:0 !important;
+  width: 50%;
+  float: left;
+  padding: 10px;
+}
+.product-section .item-body{
+  padding: 10px 0;
+}
+.product-section .item-body h2{
+  margin-top:0px;
+}
+.big-price{
+  font-size: 16px !important;
+  font-weight: bold;
+}

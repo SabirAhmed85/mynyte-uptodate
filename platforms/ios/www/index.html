@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html ng-app="NightLife">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' https://www.google.com/uds/ https://maps.googleapis.com 'unsafe-inline' 'unsafe-eval' *; style-src 'self' https://www.google.com/uds/ 'unsafe-inline' *">
+    -->
+    <meta http-equiv="Content-Security-Policy" content="{{metaContent}}">
+    <!--<title>MyNyte | Find your night in Birmingham &amp; Bedford; Clubs, bars, restaurants, takeaways &amp; movies.</title>-->
+    <link href="lib/ionic/css/ionic.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    
+    <link href="css/image-crop.css" rel="stylesheet">
+    <link href="css/nightlife-style.css" rel="stylesheet">
+     <!--<link href="css/townlife-style.css" rel="stylesheet">-->
+     
+    <link href="https://fonts.googleapis.com/css?family=Quicksand|Titillium+Web" rel="stylesheet">
+    <script src="https://webfonts.creativecloud.com/quicksand:n4,n7:default.js" type="text/javascript"></script>
+    
+    <script type="text/javascript" src="js/plugins/jsapi.js"></script>
+    
+    <!-- CAN'T REMEMBER WHY THIS WAS NECESSARY??? -------
+        <script>
+            google.load("feeds", "1");
+        </script>
+     -->
+    
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.min.js"></script>
+    <!-- cordova app's js -->
+    <script src="js/common/ng-cordova.min.js"></script>
+    <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
+    <!-- main app js -->
+    <script src="js/modules/angular-ios9-uiwebview.patch.js"></script>
+    
+    <!-- Root controller -->
+    <script src="js/main/controllers.js"></script>
+    
+    <!-- Controllers -->
+    <script src="js/main/feedControllers.js"></script>
+    <script src="js/main/profileControllers.js"></script>
+    <script src="js/main/taxiControllers.js"></script>
+    <script src="js/main/offersControllers.js"></script>
+    <script src="js/main/moreControllers.js"></script>
+    <script src="js/main/adminControllers.js"></script>
+    <script src="js/main/data.js"></script>
+    
+    <!-- common js -->
+    <!-- FB needed before app.js -->
+    <script src="js/plugins/openfb.js"></script>
+    <script src="js/plugins/ngopenfb.js"></script>
+    
+    <script src="js/common/push.js"></script>
+    <script src="js/common/app.js"></script>
+    <script src="js/common/router.js"></script>
+    <script src="js/common/filters.js"></script>
+    <script src="js/common/directives.js"></script>
+    <script src="js/plugins/sq-lite-plugin.js"></script>
+    <script src="js/plugins/file-upload.js"></script>
+    <script src="js/plugins/image-crop.js"></script>
+    <script src="js/plugins/xml2json.min.js"></script>
+    <script src="js/plugins/angular-google-client.min.js"></script>
+    
+    <!-- Services / Workers -->
+    <script src="js/services/dates-worker.js"></script>
+    <script src="js/services/dates-service.js"></script>
+    <script src="js/services/categories-service.js"></script>
+    <script src="js/services/user-object-service.js"></script>
+    <script src="js/services/push-notifications-service.js"></script>
+    <script src="js/services/listings-service.js"></script>
+    <script src="js/services/messages-worker.js"></script>
+    <script src="js/services/messages-service.js"></script>
+    
+    <script src="js/api/ng-map.min.js"></script>
+    <!-- <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
+    
+    <!-- LEAFLET JS
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+    -->
+    <!--<script src="http://05d8a146b342b9a11c42049ef213144e.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/05d8a146b342b9a11c42049ef213144e?start=46.5472,24.5615&dest=46.5447,24.5607&profile=carFastest&advice=yes"></script>-->
+    
+    <script src="js/plugins/ui-grid.js" type="text/javascript"></script>
+    <script src="js/plugins/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="js/plugins/jquery.postcodes.min.js" type="text/javascript"></script>
+    
+    <!-- Google Maps API -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRG5Y4MTpo_WmnkL4Ht0crAnYtRd8idWQ&libraries=places"></script>
+    
+    <script src="js/plugins/locator.min.js"></script>
+    <script src="js/plugins/locator-tpl.js"></script>
+
+    <script src="js/plugins/ionic-datepicker.bundle.min.js"></script>
+    <script src="js/plugins/ionic-timepicker.bundle.min.js"></script>
+    
+    
+    <!--socket io client library-->
+    <!-- BRING BACK WHEN SOCKET IS WORKING
+    
+    <script src="lib/angular-socket-io/socket.js"></script>
+    <script src="js/plugins/socket.io.js"></script>
+    <script src="js/services/socket.js"></script>
+    //<script src="lib/angular-socket-io/mock/socket-io.js"></script>
+    
+    -->
+  
+    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+  </head>
+  <body class="intended-browser"
+    ng-class="{'external-api-view': externalView, 'admin-view': currentViewType == 'admin'}">
+    <div class="tooltip-screen-cover"
+        ng-class="{'open': tooltipShowing}">
+        <span class="tooltip">
+            <span class="tooltip-arrow"></span>
+            <span class="tooltip-text">
+                {{currentTooltipText}}
+            </span>
+            <button class="btn-white"
+                ng-click="nextTooltipFunction()">
+                Got it!
+            </button>
+        </div>
+        <div class="full-screen-cover" ng-class="{'open': appLoading}">
+        </div>
+        <span class="full-screen-cover-icon" ng-class="{&apos;open&apos;: appLoading}">
+            <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+            <label>Loading ...</label>
+        </span>
+        <div ng-class="{'open': showFeedUpdateScreenCover}" class="screen-cover trans">
+        </div>
+    <ion-nav-view></ion-nav-view>
+    <ion-nav-bar animation="no-animation">
+      <ion-header-bar style="opacity: 0;" id="header-bar" no-tap-scroll="true" align-title="left" class="bar-positive"
+        ng-class="{'with-update': currentUnreadUpdate != null}">
+        <div class="notification-panel trans"
+            ng-class="{'visible': showUserUpdate}"
+            ng-click="goToUpdate()">
+            <div
+                ng-if="currentUnreadUpdate.type == 'Message'">
+                <i class="ion-email"></i>
+                <div class="notification-text">
+                    <span class="notification-title">{{currentUnreadUpdate.msgSenderName}}</span>
+                    <span class="notification-text">{{currentUnreadUpdate.text}}</span>
+                </div>
+                <img
+                    ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"/>
+            </div>
+            <div
+                ng-if="currentUnreadUpdate.type == 'Notification'">
+                <i class="ion-email"></i>
+                <div class="notification-text">
+                    <span class="notification-title">{{currentUnreadUpdate.notificationHeader}}</span>
+                    <span class="notification-text">{{currentUnreadUpdate.text}}</span>
+                </div>
+                <img
+                ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{currentUnreadUpdate.relProfilePhotoName}}"
+                ng-if="currentUnreadUpdate.relProfilePhotoName != null"/>
+            </div>
+        </div>
+        <h1 class="title"
+            ng-class="{'isVisible': hideSearch}">{{pageTitle}}</h1>
+        <!--<h1 class="title" ng-class="{&apos;isVisible&apos;: hideSearch, 'higher': pageSubtitle != null}">{{pageTitle}}</h1>-->
+        
+        <i class="icon ion-ios-arrow-back header-back-arrow trans"
+            ng-class="{
+                'isHidden': !showBackButton, 
+                'isVisible': showBackButton,
+                'activated': goingBackOne}"
+            ng-click="goBackOne()"></i>
+        <i class="icon ion-android-happy header-star trans"
+            ng-class="{
+                'isHidden': showBackButton || !showAssistantButton || currentViewType == 'admin', 
+                'isVisible': !showBackButton && showAssistantButton,
+                'tooltip': tooltipShowing,
+                'activated': showingAssistant}"
+            ng-click="openAssistant()"></i>
+
+        <i class="ion-ios-search-strong search-icon fast-trans"
+            ng-class="{
+                'isVisible': !hideSearch, 
+                'to-right': searchToRight, 
+                'in-use': showSearchPanel}"></i>
+
+        <input style="width: calc(100% - 73px);" type="text" class="small-screen-trans header-search" id="search-input" placeholder="{{searchInputPlaceholder}}"
+            ng-model="searchForm.searchQuery"
+            ng-keyup="conductSearch(searchForm.searchQuery)"
+            ng-focus="showSearchPanelFunc()"
+            ng-disabled="!searchActive"
+            ng-class="{
+                'search-right': searchToRight, 
+                'isVisible': !hideSearch, 
+                'noDisplay': hideSearch && showHeaderButtons, 
+                'search-active': searchActive, 
+                'in-use': showSearchPanel}">
+        <i class="ion-close-circled"
+            ng-class="{'isHidden': hideSearchClearButton, 'isVisible': !hideSearch && !hideSearchClearButton && searchForm.searchQuery.length > 0 && showSearchPanel}"
+            ng-click="clearSearchInput(searchForm.searchQuery)"></i>
+        
+        <div class="header-buttons"
+            ng-class="{
+                'isHidden': !hideSearch || !showHeaderButtons || currentViewName != 'app.feed',
+                'noDisplay': !hideSearch || !showHeaderButtons,
+                'isVisible': hideSearch && showHeaderButtons && currentViewName == 'app.feed'}">
+            <button class="whats-open active">
+                <i class="ion-clock"></i>
+                See What&apos;s Open
+            </button>
+            <!--
+            <button class="whats-around"><i class="ion-location"></i>What's Around</button>
+            <button class="whos-online"><i class="ion-person-stalker"></i>Who's Online</button>
+            -->
+        </div>
+
+        <i class="top-right-button header-icon-right second ion-pie-graph trans"
+            ng-class="{'isVisible': showStatsButton}"
+            ng-click="topRightButtonFunction()"></i>
+        <span class="header-icon-right-span second"
+            ng-class="{'isVisible': showStatsButton}"
+            ng-click="topRightButtonFunction()">Stats</span>
+        
+        <i class="top-right-button header-icon-right trans" ng-class="{
+                'ion-plus-round': topRightButtonIsPlus,
+                'ion-edit': topRightButtonIsEdit && !currentlyEditing,
+                'ion-close-round': currentlyEditing || showHeaderButtons || showSearchPanel,
+                'ion-gear-a': topRightButtonIsSettings,
+                'isVisible': topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings || topRightButtonIsClock || (showHeaderButtons && currentViewName == 'app.feed'),
+                'ion-clock': (topRightButtonIsClock && !showSearchPanel && !showAssistantPanel)}" ng-click="topRightButtonFunction()"></i>
+        <span class="header-icon-right-span" ng-class="{'isVisible': topRightButtonIsEdit && !currentlyEditing}" ng-click="topRightButtonFunction()">Edit</span>
+
+        <div class="header-log-in-container">
+            <a class="header-log-in" ui-sref="app.profile()"
+                ng-show="!userLoggedIn && currentViewName != 'app.profile'">
+                Log In
+            </a>
+            <div class="header-logged-in" ui-sref="app.profile()"
+                ng-show="userLoggedIn">
+                <img
+                    ng-src="{{assetsFolderUrl}}/img/user_images/profile_photo/{{user.currentProfilePhotoName}}"
+                    src="/sneak-preview/img/user_images/profile_photo/default.jpg" />
+                <span class="inner-wrapper">
+                    <p class="title">Logged in</p>
+                    <p class="name">{{user.displayName}}</p>
+                </span>
+            </div>
+        </div>
+        
+        <!-- ORDER TRAY FOR V2
+        <span class="top-right-order-tray"
+            ng-class="{'isVisible': showTopRightMenuOrderTray}"
+            ng-click="topRightTrayFunction()">
+            <i class="ion-cube"></i>
+            <span>£ {{currentOrderTrayTotal}}</span>
+        </span>
+        -->
+        
+    </ion-header-bar>
+    <div style="opacity: 0;" class="top-message-container slow-trans"
+        ng-class="{'show': !online && !offlineNoteHide}">
+        <div class="add-searchMessage topMessage">
+            <p>You're currently not connected to the internet.</p>
+            <i class="ion-close"
+                ng-click="offlineNoteHide = true"></i>
+        </div>
+    </div>
+    </ion-nav-bar>
+    
+    <div class="search-panel"
+        ng-class="{
+            'open': showSearchPanel && currentViewName == 'app.feed',
+            'tall': !hideSearch}">
+        <div class="top-header">
+            Currently showing:
+            <span ng-click="arrangeGlobalTownSelectFunction('feedSearch');">{{currentSearchTown.name}}<!--<i class="ion-arrow-down-b"></i>--></span>
+        </div>
+        <div class="top-header top-header-secondary"
+            ng-show="showHeaderButtons">
+            <span
+                ng-class="{'selected': currentSearchBusinessType.name == 'Bar'}"
+                ng-click="changeCurrentSearchBusinessType('Bar')">Bar</span>
+            <span
+                ng-class="{'selected': currentSearchBusinessType.name == 'Club'}"
+                ng-click="changeCurrentSearchBusinessType('Club')">Club</span>
+            <span
+                ng-class="{'selected': currentSearchBusinessType.name == 'Restaurant'}"
+                ng-click="changeCurrentSearchBusinessType('Restaurant')">Restaurant</span>
+            <span
+                ng-class="{'selected': currentSearchBusinessType.name == 'Takeaway'}"
+                ng-click="changeCurrentSearchBusinessType('Takeaway')">Takeaway</span>
+        </div>
+        <div class="ul-container"
+            ng-show="(searchForm.searchQuery.length == 0 && !hideSearch) || (showHeaderButtons && searchPanelResultsToShow.length == 0)">
+            <ul>
+                <li ui-sref="app.feed.nlfeedListings({searchType: 'searchBusinessByCategory', _businessTypeId: businessCat._id})" class="search-category-listing half" ng-repeat="businessCat in searchPanelBusinessCatsToShow">
+                    <div class="main-text-container">
+                        <span class="main-text">All {{businessCat.name}}s</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="ul-container scroll"
+            ng-show="searchForm.searchQuery.length > 0 || (showHeaderButtons && searchPanelResultsToShow.length > 0)">
+            <ul>
+                <li ui-sref="app.feed.nlfeedListing({_listingId: result.relListingId, listingType: result.listingType})" class="search-result-listing" ng-repeat="result in searchPanelResultsToShow">
+                    <img src="sneak-preview/img/user_images/profile_photo/default.jpg"
+                        ng-src="{{assetsFolderUrl}}/img/user_images/{{result.currentPhotoAlbum}}/{{result.currentProfilePhotoName}}" />
+
+                    <div class="listing-detail-container">
+                        <span class="listing-name span-full">{{result.name}}</span>
+                        <span class="listing-description span-full"
+                             ng-show="result.otherName != result.name">{{result.otherName}}</span>
+                        <span class="listing-description span-full"
+                             ng-show="result.otherName == result.name">{{result.description}}</span>
+                        <span class="listing-type span-full">
+                            <span ng-if="showHeaderButtons">
+                                <span ng-if="result.bpName != ''">{{result.bpName}} -&nbsp;</span>
+                                <span ng-if="result.bpAddressLine1 != ''">{{result.bpAddressLine1}},&nbsp;</span>
+                                <span ng-if="result.bpAddressLine2 != ''">{{result.bpAddressLine2}},&nbsp;</span>
+                                <span ng-if="result.bpPostCode != ''">{{result.bpPostCode}}</span>
+                            </span>
+                            <span ng-if="result.listingType != 'Business'">{{result.listingType}}</span>
+                            <span ng-if="result.listingType == 'Business'"
+                                ng-repeat="listingType in result.listingTypes">
+                                    <label ng-if="listingType != result.listingTypes[0]">&nbsp;|&nbsp;</label>{{listingType}}</span>
+                        </span>
+                    </div>
+                    <i class="ion-chevron-right"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="global-select-container" ng-class="{'animate-show': showGlobalTownSelect}">
+        <div class="global-select-list" ng-class="{'animate-show': showGlobalTownSelect}">
+            <div class="select-header">Select City/Town <i class="ion-close" ng-click="showGlobalTownSelect = false"></i></div>
+            <div ng-repeat="cat in townCategories" ng-click="activateTown(cat)" class="town-select cat-select-option ng-binding" ng-class="{'active': cat.active}">{{cat.name}}<i class="ion-checkmark" ng-show="cat.active"></i></div>
+        </div>
+    </div>
+
+    <div class="front-screen-cover trans" ng-class="{'open': showFrontScreenCover}">
+        <div class="header">
+            <span>{{frontScreenCoverNote}}</span>
+            <i class="ion-close" ng-click="closeUpdatePanel();"></i>
+        </div>
+        <div class="update-item" ng-show="showFrontScreenType == 'Share Listing'">
+            <div>
+                <span class="social-sharing-icons">
+                    <span class="whatsapp-share share first">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/wa-dummy.png">
+                    </span>
+                    <span class="facebook-share share">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Facebook_logo_(square).png">
+                    </span>
+                    <span class="twitter-share share">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Twitter_logo_blue.png">
+                    </span>
+                    <span class="message-share share">
+                        <img ng-src="{{assetsFolderUrl}}/img/sharing-icons/Messages-2-icon.png">
+                    </span>
+                </span>
+                <textarea ng-hide="chosenUpdateBusinesses.length &gt; 0" ng-model="selectedUpdateBusiness" ng-keyup="getAllBusinessesByName(selectedUpdateBusiness)"></textarea>
+            </div>
+        </div>
+        <div class="update-item" ng-show="showFrontScreenType == &apos;Update&apos;">
+            <div>
+                <span ng-show="updateType == &apos;Night&apos; || updateType == &apos;Meal&apos;">
+                    <span>Select business</span> 
+                    <span class="business-type" ng-show="updateType == &apos;Night&apos;"> (Nightclub/Bar)</span>
+                    <span class="business-type" ng-show="updateType == &apos;Meal&apos;"> (Restaurant/Takeaway)</span>
+                </span>
+                <span ng-show="updateType == &apos;Approval&apos;">Select business</span>
+                <span ng-show="updateType == &apos;CheckIn&apos;">Where are you</span>
+                <input type="text" ng-hide="chosenUpdateBusinesses.length &gt; 0" ng-model="selectedUpdateBusiness" ng-keyup="getAllBusinessesByName(selectedUpdateBusiness)">
+                <div class="message-possible-recipients-summary" ng-show="selectedUpdateBusiness.search.length &gt; 0">
+                  <div class="recipient-item" ng-repeat="recipient in possibleUpdateBusinesses">
+                    <img ng-src="img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}">
+                    <span>{{recipient.name}}</span>
+                    <i class="ion-plus-round" ng-click="addPossibleUpdateBusiness(recipient);"></i>
+                  </div>
+                </div>
+                <div class="message-chosen-recipients-summary" ng-show="selectedUpdateBusiness.length == 0">
+                  <div class="recipient-item" ng-repeat="recipient in chosenUpdateBusinesses">
+                    <img ng-src="img/user_images/profile_photo/{{recipient.currentProfilePhotoName}}">
+                    <span>{{recipient.name}}</span>
+                    <i class="ion-minus-round" ng-click="chosenUpdateBusinesses.splice(recipient, 1);"></i>
+                  </div>
+                </div>
+            </div>
+            <div class="section-two" ng-show="updateType == &apos;CheckIn&apos;">
+                <div>
+                    <span>Who are you with</span>
+                    <input type="text" ng-class="{&apos;disabled&apos;: chosenUpdateBusinesses.length == 0}" ng-disabled="chosenUpdateBusinesses.length == 0" ng-model="selectedUpdateFollower" ng-keyup="getAllFollowersByName(selectedUpdateFollower)">
+                </div>
+                <div class="message-possible-recipients-summary second-summary" ng-show="selectedUpdateFollower.search.length &gt; 0">
+                  <div class="recipient-item" ng-repeat="follower in possibleUpdateFollowers">
+                    <img ng-src="img/user_images/profile_photo/{{follower.currentProfilePhotoName}}">
+                    <span>{{follower.name}}</span>
+                    <i class="ion-plus-round" ng-click="addPossibleUpdateFollower(follower);"></i>
+                  </div>
+                </div>
+                <div class="message-chosen-recipients-summary" ng-show="selectedUpdateFollower.length == 0">
+                  <div class="recipient-item" ng-repeat="follower in chosenUpdateFollowers">
+                    <img ng-src="img/user_images/profile_photo/{{follower.currentProfilePhotoName}}">
+                    <span>{{follower.name}}</span>
+                    <i class="ion-minus-round" ng-click="chosenUpdateFollowers.splice(follower, 1);"></i>
+                  </div>
+                </div>
+            </div>
+            <div class="section-two" ng-show="updateType == 'Night' || updateType == 'Meal'">
+                <div>
+                    <button class="btn-red button-full" ng-click="imgUploadPrepare();">Choose Photos</button>
+                </div>
+                <img class="uploaded-img" ng-src="{{image.imageSrc}}" ng-repeat="image in imageSrcs"><br>
+                <b>Progress:</b>
+                <progress value="{{progress}}"></progress>
+                <input id="img-upload" ngf-pattern="'image/*'" type="file" ng-file-select="onFileSelect($files)" ngf-max-size="2M" multiple>
+            </div>
+            <div class="final-section">
+                <button class="btn-white button-full trans" ng-class="{'disabled': updateButtonDisabled}" ng-click="finishPostingUpdate();">
+                    <span>
+                        <i class="{{updateIcon}}"></i>{{updateMessage}}
+                    <span>
+                </span></span></button>
+            </div>
+        </div>
+    </div>
+    <div id="under-construction-cover"
+        ng-if="underConstruction && !adminUserLoggedIn">
+        <h3>Under Construction</h3>
+        <img src="sneak-preview/img/n-logo.png" alt="MyNyte Logo">
+        <p>The MyNyte website is currently under construction, check back soon for the latest updates!</p>
+        <label
+            ng-click="showAdminLogInForm = !showAdminLogInForm">Log in as an Administrator</label>
+        <form name="adminLogInForm" class="trans"
+            ng-class="{'show': showAdminLogInForm}"
+            ng-submit="adminLogIn(adminLogInForm.email, adminLogInForm.password)">
+            <input type="email" placeholder="e-mail"
+                ng-model="adminLogInForm.email" required>
+            <input type="password" placeholder="password"
+                ng-model="adminLogInForm.password" required>
+            <button type="submit" class="button-red button button-large"
+                ng-class="{'disabled': adminLogInForm.$invalid}"
+                ng-disabled="adminLogInForm.$invalid">Log In</button>
+        </form>
+    </div>
+    
+    <!-- BROWSER Only -->
+    <div id="breadcrumb-bar"
+        ng-if="showBackButton || topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings"
+        ng-class="{'full': currentViewName == 'app.feed.nlfeedListing', 'admin-view': currentViewType == 'admin'}">
+        <button class="web-back-button"
+            ng-if="showBackButton"
+            ng-click="goBackOne();">
+            <span class="inner-span">
+                <i class="ion-chevron-left"></i>
+                <span>Go Back</span>
+            </span>
+        </button>
+        <button class="web-top-right-button"
+            ng-if="topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings"
+            ng-click="topRightButtonFunction()">
+            <span class="inner-span">
+                <i ng-class="{'ion-plus-round': topRightButtonIsPlus,
+                    'ion-edit': topRightButtonIsEdit && !currentlyEditing,
+                    'ion-close-round': topRightButtonIsEdit && currentlyEditing,
+                    'ion-gear-a': topRightButtonIsSettings,
+                    'isVisible': currentlyEditing || topRightButtonIsClock || (showHeaderButtons && currentViewName == 'app.feed') || topRightButtonIsPlus || topRightButtonIsSettings || (topRightButtonIsEdit && !currentlyEditing)}"></i>
+                <span ng-if="topRightButtonIsPlus">Add</span>
+                <span ng-if="topRightButtonIsEdit && !currentlyEditing">Edit</span>
+                <span ng-if="topRightButtonIsEdit && currentlyEditing">Cancel</span>
+                <span ng-if="topRightButtonIsSettings">Settings</span>
+            </span>
+        </button>
+    </div>
+    
+    <div class="iframe-container trans {{frameClass}}"
+        ng-class="{'open': frameOpen}">
+        <iframe height="100%" class="x-slow-trans"
+            ng-src="{{trustSrc(frameUrl)}}">
+        </iframe>
+        <i class="ion-close-round"
+            ng-click="closeFrame()"></i>
+    </div>
+    
+    <div class="feed-side side trans outer-side"
+        ng-class="{'show': currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/profile-info-sidebar.html'"></div>
+    <!--<div class="feed-side side trans outer-side"
+        ng-class="{'show': currentViewType == 'admin'}"
+        ng-include="'templates/shared-partials/profile-info-sidebar-admin.html'"></div>-->
+    <!--
+    <div class="feed-side side"
+        ng-class="{'show': currentViewName == 'app.offers' || currentViewName == 'app.offerDetail' || currentViewName == 'app.taxi'}"
+        ng-include="'templates/shared-partials/events-sidebar.html'"></div>
+    -->
+    <div class="feed-side side"
+        ng-class="{'show': (currentViewName == 'app.offers' || currentViewName == 'app.offers.offerDetail' || currentViewName == 'app.taxi') && currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/movies-sidebar.html'"></div>
+    
+    <div class="feed-side side"
+        ng-class="{'show': (currentViewName != 'app.feed.nlfeedListing' && currentViewName != 'app.offers' && currentViewName != 'app.offers.offerDetail' && currentViewName != 'app.taxi') && currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/offers-sidebar.html'"></div>
+    <!--<div class="feed-side side trans"
+        ng-class="{'show': currentViewName != 'app.feed.nlfeedListing'}"
+        ng-include="'templates/shared-partials/whats-open-sidebar.html'"></div>-->
+    <div class="feed-side side trans"
+        ng-class="{'show': currentViewName != 'app.feed.nlfeedListing' && currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/kickstarter-sidebar.html'"></div>
+    
+    <div class="feed-side side trans outer-side"
+        ng-class="{'show': currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/social-sidebar.html'"></div>
+    <div class="feed-side side trans outer-side"
+        ng-class="{'show': currentViewType != 'admin'}"
+        ng-include="'templates/shared-partials/bottom-right-sidebar.html'"></div>
+    
+    <div class="feed-side side trans"
+        ng-class="{'show': currentViewType == 'admin'}"
+        ng-include="'templates/shared-partials/right-sidebar-admin.html'"></div>
+
+
+    <script id="popup-template.html" type="text/ng-template">
+      <input ng-model="data.wifi" type="text" placeholder="Password">
+    </script>
+    
+  </body>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-76662538-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+</html>

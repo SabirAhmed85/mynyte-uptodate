@@ -1,0 +1,22 @@
+<div class="side-display right-side-display-admin">
+    {{pageObj}}
+    <div class="admin-items">
+        <h3>Outstanding Tasks</h3>
+        <span class="outstanding"
+            ng-if="outstandingMyNyteItemObj['outstandingTimeSheetCount'] == 0 && outstandingMyNyteItemObj['moviesToUpdateCount'] == 0 && outstandingMyNyteItemObj['rejectedExpensesCount'] == 0">
+            No Tasks Outstanding
+        </span>
+        <a class="outstanding"
+            ng-if="outstandingMyNyteItemObj['moviesToUpdateCount'] > 0">
+            Movies to Update: {{outstandingMyNyteItemObj['moviesToUpdateCount']}}
+        </span>
+        <a class="outstanding"
+            ng-if="outstandingMyNyteItemObj['outstandingTimeSheetCount'] > 0">
+            Outstanding Timesheets: {{outstandingMyNyteItemObj['outstandingTimeSheetCount']}}
+        </span>
+        <a class="outstanding"
+            ng-if="outstandingMyNyteItemObj['rejectedExpenseClaimCount'] > 0">
+            Rejected Expense Claims: {{outstandingMyNyteItemObj['rejectedExpenseClaimCount']}}
+        </span>
+    </div>
+</div>

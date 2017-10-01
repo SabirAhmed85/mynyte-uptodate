@@ -1,0 +1,24 @@
+<ion-view view-title="Contacts" class="black_bg">
+    <ion-content>
+        <div class="list summary-display">
+            <a class="item item-message-summary profile-item-summary"
+                ui-sref="app.nlfeedListing-specific-photos({_listingProfileId: item._photoOwnerProfileId, _listingId: _listingId, listingType: listingType, _albumId: item._albumId, albumType: item.picType})"
+                ng-repeat="item in photoAlbums">
+                <div>
+                    <div style="width: 100%; overflow: hidden; border-bottom: 1px solid #444; margin-bottom: 5px;"
+                        ng-style="{height: windowWidth+'px'};">
+                        <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                            ng-show="item.picType == 'Cover Photo' || item.picType == 'Profile Photo'">
+                        <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{item._photoOwnerProfileId}}_{{item._albumId}}_{{item.name}}"
+                            ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">
+                    </div>
+                    
+                    <p ng-show="item.picType == 'Cover Photo'">Cover Photos</p>
+                    <p ng-show="item.picType == 'Profile Photo'">Profile Photos</p>
+                    <p ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">{{item.picType}}</p>
+                    <span class="counter">{{item.photoCount}}</span>
+                </div>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

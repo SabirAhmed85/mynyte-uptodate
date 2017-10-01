@@ -1,0 +1,21 @@
+<ion-view view-title="News">
+   <ion-content class="post-content">
+   	<ion-refresher
+       	pulling-text="Pull to refresh..."
+       	on-refresh="doRefresh()">
+     	</ion-refresher>
+      <div class="list">
+          <a href="#/app/post" class="item item-thumbnail-left" ng-repeat="item in items">
+            <img ng-src="{{item.image_thumb}}"></img>
+            <h2>Pretty Hate Machine</h2>
+            <p>{{item.title}}</p>
+            <p>2 hours ago</p>
+          </a>
+      </div>
+      <ion-infinite-scroll
+       	ng-if="postsCompleted == false"
+       	on-infinite="getPosts()"
+       	distance="10%">
+     	</ion-infinite-scroll>
+   </ion-content>
+</ion-view>

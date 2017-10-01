@@ -1,0 +1,34 @@
+[
+  {
+    "_id": 1,
+    "Name": "Big R&B Night in Bedford",
+	 "placeId": 1,
+     "Music": "R&B",
+     "Description": null,
+     "bgColor": "#880000"
+  },
+  {
+    "_id": 2,
+    "Name": "Pop Night in Luton",
+	 "placeId": 2,
+     "Music": "Pop",
+     "Description": "Blah Blah",
+     "bgColor": "#000088"
+  },
+  {
+    "_id": 3,
+	 "Name": "Rock Night in Bedford",
+	 "placeId": 1,
+     "Music": "Rock",
+     "Description": "Bo Bo Po",
+     "bgColor": "#008800"
+  },
+  {
+    "_id": 4,
+	 "Name": "Pop Night Luton",
+	 "placeId": 2,
+     "Music": "Pop",
+     "Description": "Hello",
+     "bgColor": "#220666"
+  }
+]

@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	<div id="outer-wrapper">
+		<form id="property-search-form" class="main-product-search-form">
+			<div class="form-row form-sale-letting">
+				<label>
+					Sales / Letting
+				</label>
+				<select class="sale-letting-changer" id="sale-or-letting">
+					<option value="S">
+						Sale
+					</option>
+					<option value="L">
+						Rent
+					</option>
+				</select>
+			</div>
+			<div class="form-row form-propert-type">
+				<label>
+					Property Type
+				</label>
+				<select id="property-type">
+					<option value="any">
+						Any
+					</option>
+					<script src="https://www2.housescape.org.uk/cgi-bin/ptype.pl?opp8" type="text/javascript"></script>
+				</select>
+			</div>
+			<div class="form-row form-price-minimum">
+				<label class="label-narrow">
+					Price (Min)
+				</label>
+				<select id="price-min">
+					<option value="noMax">
+						Not Set
+					</option>
+				</select>
+			</div>
+			<div class="form-row form-price-maximum">
+				<label class="label-narrow">
+					Price (Max)
+				</label>
+				<select id="price-max">
+					<option value="noMax">
+						Not Set
+					</option>
+				</select>
+			</div>
+			<div class="form-row form-bedrooms-minimum">
+				<label>
+					Bedrooms (Min)
+				</label>
+				<select id="bedrooms-min">
+					<option value="noMin">
+						Not Set
+					</option>
+					<option value="1">
+						1
+					</option>
+					<option value="2">
+						2
+					</option>
+					<option value="3">
+						3
+					</option>
+					<option value="4">
+						4
+					</option>
+					<option value="5">
+						5
+					</option>
+					<option value="6">
+						6
+					</option>
+				</select>
+			</div>
+			<div class="form-row form-submit-buttons">
+				<button id="list-search-submit">List Search</button>
+				<button>Map Search</button>
+			</div>
+		</form>
+	</div>
+<script type="text/javascript" src="test.js"></script>
+</body>
+</html>

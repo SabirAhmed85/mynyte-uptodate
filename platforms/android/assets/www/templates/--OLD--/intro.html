@@ -1,0 +1,33 @@
+<ion-view view-title="Slider" class="grey_bg">
+	<ion-content has-header="true">
+  		<ion-slide-box on-slide-changed="slideChanged(index)">
+    		<ion-slide>
+            <div id="logo">
+              <img src="img/logomain.png">
+            </div>
+            <p>
+              Intro slider
+            </p>
+    		</ion-slide>
+    		<ion-slide>
+            <div id="logo">
+              <img src="img/logomain.png">
+            </div>
+            <p>
+              Another slide
+            </p>
+    		</ion-slide>
+       	<ion-slide>
+            <div id="logo">
+              <img src="img/logomain.png">
+            </div>
+            <p>
+              Last slide
+            </p>
+            <p>
+            	<button ng-click="discardIntroPage();" class="button button-assertive">Continue to app</button>
+         	</p>
+    		</ion-slide>
+  		</ion-slide-box>
+  	</ion-content>
+</ion-view>

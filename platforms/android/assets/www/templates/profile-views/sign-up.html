@@ -1,0 +1,99 @@
+<ion-view view-title="Register on MyNyte.co.uk" class="grey_bg">
+  	<ion-content scroll="false">
+        <h2>{{pageHeader}}</h2>
+      <div class="tile register businesses-items-note">
+        <div
+            ng-if="profileType == 'business'">
+            <span class="listing-detail-container">
+                <i class="ion-ios-telephone main"></i>
+                <span class="text text-large">To sign your business up to MyNyte, call us on 0121 255 5551.</span>
+            </span>
+        </div>
+        <form ng-submit="doRegister(name, displayName, email, password);" name="registrationForm"
+            ng-if="profileType != 'business'">
+            <label class="item first">
+                <input class="white nightlife-input first" type="text" placeholder="Name" name="name"
+                    ng-focus="showNameNote = true"
+                    ng-blur="showNameNote = false"
+                    ng-model="name"
+                    ng-maxlength="100"
+                    ng-pattern="/^([a-zA-Z-]{2,}\s{1,}\b){1,}([a-zA-Z-]{2,}\s?\b){1,}$/"
+                    required>
+                <i class="ion-close input-alert"
+                    ng-if="registrationForm.name.$viewValue.length > 0 && registrationForm.name.$invalid"></i>
+                <div class="form-note form-note-white" role="alert"
+                    ng-class="{'form-note-red-override': registrationForm.name.$viewValue.length > 0 && registrationForm.name.$invalid,
+                        'show': showNameNote && ( registrationForm.name.$viewValue.length < 5 || (registrationForm.name.$viewValue.length >= 5 && registrationForm.name.$invalid))}">
+                    <div>Please enter your full name.</div>
+                </div>
+        	</label>
+            <label class="item">
+                <input ng-keyup="checkIfDisplayNameTaken(registrationForm.displayName.$viewValue)" name="displayName" class="white nightlife-input nightlife-input-square" type="text" placeholder="Display Name"
+                    ng-focus="showDisplayNameNote = true"
+                    ng-maxlength="100"
+                    ng-minlength="5"
+                    ng-blur="showDisplayNameNote = false"
+                    ng-model="displayName"
+                    ng-pattern="/^([a-zA-Z0-9-_]+)$/"
+                    required>
+                <i class="ion-close input-alert"
+                    ng-if="(registrationForm.displayName.$viewValue.length > 0 && registrationForm.displayName.$viewValue.length < 5) || displayNameTaken"></i>
+                <div class="form-note form-note-top form-note-white"
+                    ng-class="{'form-note-red-override': registrationForm.displayName.$error['pattern'] || (registrationForm.displayName.$invalid && registrationForm.displayName.$viewValue.length > 5),
+                        'show': showDisplayNameNote && (registrationForm.displayName.$viewValue.length < 5 || registrationForm.displayName.$invalid)}" role="alert">
+                    <div>Display Names must be at least 5 characters in length, and cannot contain any spaces. They can only contain letters, numbers and the following special characters: - _.</div>
+                </div>
+                <div class="form-note" role="alert" style="position:relative;"
+                    ng-class="{'show': registrationForm.displayName.$viewValue.length > 4 && !registrationForm.displayName.$invalid && showDisplayNameNote}">
+                    <div class="form-note-red" ng-show="displayNameTaken">
+                        Display Name unavailable.
+                    </div>
+                    <div class="form-note-secondary form-note-white" ng-show="!displayNameTaken">
+                        Display Name available!
+                    </div>
+                </div>
+        	</label>
+            
+        	<label class="item">
+                <input class="white nightlife-input nightlife-input-square" type="text" placeholder="email" name="email"
+                    ng-focus="showEmailNote = true"
+                    ng-blur="showEmailNote = false"
+                    ng-keyup="checkIfEmailTaken(registrationForm.email.$viewValue)"
+                    ng-model="email"
+                    ng-pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
+                    required>
+                <i class="ion-close input-alert"
+                    ng-if="registrationForm.email.$viewValue.length > 0 && (registrationForm.email.$invalid || emailTaken)"></i>
+                <div class="form-note form-note-white" role="alert"
+                    ng-class="{'form-note-red-override': registrationForm.email.$viewValue.length > 5 && (registrationForm.email.$invalid|| emailTaken),
+                        'show': showEmailNote}">
+                    <div ng-show="!emailTaken">Please enter a valid email address.</div>
+                    <div ng-show="emailTaken">That email address is already taken.</div>
+                </div>
+        	</label>
+        	<label class="item last">
+                <div class="form-note form-note-password-special form-note-white" role="alert"
+                    ng-class="{'form-note-red-override': registrationForm.password.$invalid && registrationForm.password.$viewValue.length > 5,
+                        'show': showPasswordNote || (registrationForm.password.$viewValue.length > 0 && registrationForm.password.$invalid)}">
+                    <div>Passwords must be between 6 and 20 Characters, and must contain at least one capital letter and one number.</div>
+                </div>
+                
+                <input class="white nightlife-input last" name="password" type="password" placeholder="Password"
+                    ng-focus="showPasswordNote = true"
+                    ng-blur="showPasswordNote = false"
+                    ng-pattern="/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/"
+                    ng-maxlength="20"
+                    ng-minlength="6"
+                    ng-model="password"
+                    required />
+                <i class="ion-close input-alert"
+                    ng-if="registrationForm.password.$viewValue.length > 0 && registrationForm.password.$invalid"></i>
+        	</label>
+        	<button ng-disabled="registrationForm.$invalid || displayNameTaken || emailTaken || formIsValidating" class="button button-red button-large">
+                SIGN UP
+            </button>
+        </form>
+      </div>
+      
+  </ion-content>
+</ion-view>

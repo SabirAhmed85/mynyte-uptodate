@@ -1,0 +1,11 @@
+<div class="modal image-modal transparent" ng-click="closePopoverModal('main')">
+    <ion-slide-box
+        on-slide-changed="slideChanged(index)"
+        show-pager="true"
+        does-continue="true"
+        active-slide="activeSlide">
+        <ion-slide ng-repeat="image in allPopoverImages">
+            <img ng-src="{{image.src}}" class="fullscreen-image"/>
+        </ion-slide>
+    </ion-slide-box>
+</div>

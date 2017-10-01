@@ -1,0 +1,925 @@
+<ion-view view-title="Add {{itemLabel}} on MyNyte.co.uk" class="black_bg add-business-item">
+  	<ion-content class="view-wrapper">
+      <h2>Please fill in the details for your new {{itemLabel}}</h2>
+      <div class="register" style="float: left; width: 100%;">
+        <form ng-if="itemType=='Movies'" name="addMovieForm" class="business-item-form add-movie-form" ng-class="{'editing': editing}">
+            
+            <label class="item-header">
+                Title
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Movie Title (Headline)" ng-model="movieTitle" name="movieTitle" ng-max="100" required>
+            </label>
+            
+            <label class="item-header">
+                Add a Cover Photo (optional)
+            </label>
+            <label class="item item-grey-border item-with-button">
+                <button class="btn-red button-full button-large" ng-click="imgUploadPrepare();">Choose Photo</button>
+            </label>
+            <div class="item item-grey-border"
+                ng-if="rootScope.progress > 0 || rootScope.imageSrcs.length > 0">
+                <progress value="{{rootScope.progress}}"></progress>
+                <image-crop          
+                     data-height="{{dataHeight}}"
+                     data-width="{{dataWidth}}"
+                     data-shape="square"
+                     data-step="imageCropStep"
+                     src="rootScope.imageSrcs[0].imageSrc"
+                     data-result="result"
+                     data-result-blob="resultBlob"
+                     crop="initCrop"
+                     padding="10"
+                     ng-show="rootScope.imageSrcs.length > 0"
+                     data-image-type="{{imgEntryType}}"
+                    ></image-crop>
+            </div>
+            
+            <label class="item-header">
+                Movie Genre
+            </label>
+            <!-- Put this INTO DIRECTIVE AND TEMPLATE WHEN POSSIBLE -->
+            <span class="select-options-container">
+                <ul class="select-options select-event-music-{{multiSelect['Movies'].currentStyleIndexBeingToggled}}"
+                    ng-class="{'open': multiSelect['Movies'].showStyles}">
+                    <li ng-click="selectStyle(style, 'Movies');"
+                        ng-repeat="style in multiSelect['Movies'].styles">
+                        {{style.name}}
+                    </li>
+                </ul>
+            </span>
+            <div class="item special item-with-selects item-grey-border" style="float: left;">
+                <div id="business-type-select-container" class="select-container"
+                    ng-repeat="style in multiSelect['Movies'].chosenStyleObjects"
+                    ng-class="{'select-with-remove': style.index > 0}">
+                    <div ng-click="toggleStyle(style, 'Movies');" class="select-main">
+                        <span>{{style.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !style.showStyles, 'ion-chevron-up': style.showStyles}"></i></button>
+                        <button class="remove"
+                            ng-if="style.index > 0"
+                            ng-click="removeStyle(style, 'Movies');">Remove</button>
+                    </div>
+                </div>
+        	</div>
+            <label class="item-header item-header-short">
+                <button class="btn button-half btn-white"
+                    ng-class="{'disabled': multiSelect['Movies'].chosenStyleIds.indexOf(null) != -1 || multiSelect['Movies'].chosenStyleIds.length > 2}"
+                    ng-disabled="multiSelect['Movies'].chosenStyleIds.indexOf(null) != -1 || multiSelect['Movies'].chosenStyleIds.length > 2"
+                    ng-click="newStyle('Movies');">Add a new Style</button>
+        	</label>
+            <label class="item-header">
+                First Showing Date
+            </label>
+            <label class="item">
+                <span style="position: relative; width: 100%; float: left;">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{firstShowingDateInputHTML}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(0);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+            </label>
+            <label class="item-header">
+                Last Showing Date
+            </label>
+            <label class="item">
+                <span style="position: relative; width: 100%; float: left;">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{lastShowingDateInputHTML}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(1);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+            </label>
+            <label class="item-header">
+                YouTube Trailer embed link
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Movie Trailer Link" ng-model="movieTrailerLink" name="movieTrailerLink" ng-max="100" required>
+            </label>
+            <label class="item-header">
+                Description
+            </label>
+            <label class="item">
+                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Movie Description" ng-model="description" name="description" ng-max="1000"></textarea>
+            </label>
+            <button ng-disabled="addMovieForm.$invalid" class="button button-red button-large"
+                ng-click="createMovie(movieTitle, movieTrailerLink, description)">
+                Add Movie
+            </button>
+        </form>
+        <!-- ** OFFERS ** -->
+        <form ng-if="itemType=='OwnOffers'" class="add-offer-form business-item-form" name="addOfferForm">
+            
+            <label class="item-header first">
+                What type of Offer do you want to create?
+            </label>
+            <div class="item item-grey-border">
+                <div class="extra-options-label trans"
+                    ng-repeat="offerType in offerTypes"
+                    ng-class="{'applied': selectedOfferType.name == offerType.name}">
+                    <i ng-class="{'ion-checkmark': selectedOfferType.name == offerType.name, 'ion-close': selectedOfferType.name != offerType.name}"></i>
+                    <span class="extra-option-name">{{offerType.displayName}}</span>
+                    <span class="apply"
+                        ng-click="selectExtraOption(offerType, $event);">
+                        <span ng-show="selectedOfferType.name == offerType.name && !selectedOfferType.mustBeSelected">Remove</span>
+                        <span class="extra-option-selected"
+                            ng-show="selectedOfferType.name == offerType.name && selectedOfferType.mustBeSelected">Selected</span>
+                        <span ng-hide="selectedOfferType.name == offerType.name">Select</span>
+                    </span>
+                    <span class="extra-option-description">{{offerType.description}}</span>
+                </div>
+            </div>
+            <label class="item-header">
+                Offer Category
+            </label>
+            <!--
+            <div class="item special item-with-selects item-grey-border">
+                <div id="business-type-select-container" class="select-container">
+                    <div ng-click="toggleOfferCategory();" class="select-main">
+                        <span>Drinks Deals (Food)</span>
+                        <button><i ng-class="{'ion-chevron-down': !showOfferCategories, 'ion-chevron-up': showOfferCategories}"></i></button>
+                    </div>
+                </div>
+        	</div>
+            <ul class="select-options select-options-business-types" ng-class="{'open': showOfferCategories}">
+                <li ng-click="selectOfferCategory();">
+                    Offer Category
+                </li>
+            </ul> -->
+            
+            <span class="select-options-container">
+                <ul class="select-options select-offer-subcategories"
+                    ng-class="{'open': showOfferCategories}">
+                    <li ng-click="selectOfferCategory(offerCat);"
+                        ng-repeat="offerCat in offerCategories">
+                        {{offerCat.name}}
+                    </li>
+                </ul>
+            </span>
+            <div class="item special item-with-selects item-grey-border" style="float: left;">
+                <div id="business-type-select-container" class="select-container"
+                    ng-class="{'select-with-remove': style.index > 0}">
+                    <div ng-click="toggleOfferCategory(chosenOfferCat);" class="select-main">
+                        <span>{{chosenOfferCat.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !showOfferCategories, 'ion-chevron-up': showOfferCategories}"></i></button>
+                    </div>
+                </div>
+        	</div>
+            
+            <label class="item-header">
+                Offer Name / Title
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Offer Title (Headline)" ng-model="offerTitle" name="offerTitle" ng-max="100" required>
+        	</label>
+            
+            <label class="item-header">
+                Add a Cover Photo (optional)
+            </label>
+            <label class="item item-grey-border item-with-button">
+                <button class="btn-red button-full button-large" ng-click="imgUploadPrepare();">Choose Photo</button>
+            </label>
+            <div class="item item-grey-border"
+                ng-if="rootScope.progress > 0 || rootScope.imageSrcs.length > 0">
+                <progress value="{{rootScope.progress}}"></progress>
+                <image-crop          
+                     data-height="{{dataHeight}}"
+                     data-width="{{dataWidth}}"
+                     data-shape="square"
+                     data-step="imageCropStep"
+                     src="rootScope.imageSrcs[0].imageSrc"
+                     data-result="result"
+                     data-result-blob="resultBlob"
+                     crop="initCrop"
+                     padding="10"
+                     ng-show="rootScope.imageSrcs.length > 0"
+                     data-image-type="{{imgEntryType}}"
+                    ></image-crop>
+            </div>
+            
+            <label class="item-header">
+                Description
+            </label>
+            <label class="item">
+                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Offer Description" ng-model="description" name="description" ng-max="1000" required></textarea>
+        	</label>
+            
+            
+            <label class="item-header"
+                ng-if="rootScope.user.listingTypes.indexOf('Nightclub') != -1 || rootScope.user.listingTypes.indexOf('Bar') != -1">
+                Apply this Offer to an Event (optional)
+            </label>
+            <span class="select-options-container">
+                <ul class="select-options select-offer-subcategories"
+                    ng-class="{'open': showEvents}">
+                    <li ng-click="selectOfferEvent(event);"
+                        ng-repeat="event in availableEvents">
+                        {{event.name}}
+                    </li>
+                </ul>
+            </span>
+            <div class="item special item-grey-border" style="float: left;"
+                ng-if="rootScope.user.listingTypes.indexOf('Nightclub') != -1 || rootScope.user.listingTypes.indexOf('Bar') != -1"
+                ng-class="{'item-with-selects': availableEvents.length > 0, 'item-with-text': availableEvents.length == 0}">
+                <div id="business-type-select-container" class="select-container"
+                    ng-if="availableEvents.length > 0">
+                    <div class="select-main"
+                        ng-click="toggleChosenEvent(chosenOfferEvent);">
+                        <span>{{chosenOfferEvent.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !showEvents, 'ion-chevron-up': showEvents}"></i></button>
+                    </div>
+                </div>
+                <p ng-if="availableEvents.length == 0">
+                    No Events to apply this offer to.
+                </p>
+        	</div>
+            <label class="item-header"
+                ng-if="chosenOfferEvent._id == null">
+                Offer Date Details (required)
+            </label>
+            <div class="item item-grey-border"
+                ng-if="chosenOfferEvent._id == null">
+                <div class="extra-options-label trans"
+                    ng-repeat="offerRegularityType in offerRegularityTypes"
+                    ng-class="{'applied': selectedOfferRegularityType.name == offerRegularityType.name}">
+                    <i ng-class="{'ion-checkmark': selectedOfferRegularityType.name == offerRegularityType.name, 'ion-close': selectedOfferRegularityType.name != offerRegularityType.name}"></i>
+                    <span class="extra-option-name">{{offerRegularityType.displayName}}</span>
+                    <span class="apply"
+                        ng-click="selectExtraOption(offerRegularityType, $event);">
+                        <span ng-show="selectedOfferRegularityType.name == offerRegularityType.name && !selectedOfferRegularityType.mustBeSelected">Remove</span>
+                        <span class="extra-option-selected"
+                            ng-show="selectedOfferRegularityType.name == offerRegularityType.name && selectedOfferRegularityType.mustBeSelected">Selected</span>
+                        <span ng-hide="selectedOfferRegularityType.name == offerRegularityType.name">Select</span>
+                    </span>
+                    
+                    <span class="additional-hidden-div"
+                        ng-if="offerRegularityType.name == 'one-off'"
+                        ng-class="{'open': selectedOfferRegularityType.name == 'one-off' && offerRegularityType.name == 'one-off'}">
+                        <span class="text-header">
+                            Offer Start Date:
+                        </span>
+                        <span style="position: relative; width: 100%; margin-bottom: 5px;">
+                            <div class="white nightlife-input fake-input fake-date-input">
+                                {{dateInputHTML}}
+                            </div>
+                            <button class="datepicker"
+                                ng-click="openDatePicker(ipObj1);">
+                                <i class="ion-ios-calendar"></i>
+                            </button>
+                        </span>
+                        
+                        <span class="text-header">
+                            Offer End Date (optional):
+                            <span class="text-header-note">
+                                If you do not apply an end date, an end date which is 60 days after the start date will automatically be applied to the offer.
+                            </span>
+                        </span>
+                        <span style="position: relative; width: 100%; float: left;">
+                            <div class="white nightlife-input fake-input fake-date-input">
+                                {{offerEndDateInputHTML}}
+                            </div>
+                            <button class="datepicker"
+                                ng-click="openDatePicker(ipObj2);">
+                                <i class="ion-ios-calendar"></i>
+                            </button>
+                        </span>
+                    </span>
+                    
+                    <span class="additional-hidden-div slow-trans"
+                        ng-if="offerRegularityType.name == 'weekly'"
+                        ng-class="{'open': selectedOfferRegularityType.name == 'weekly' && offerRegularityType.name == 'weekly'}">
+                        <span class="text-header">
+                            First Date for Offer:
+                        </span>
+                        <span style="position: relative; width: 100%;">
+                            <div class="white nightlife-input fake-input fake-date-input">
+                                {{dateInputHTML}}
+                            </div>
+                            <button class="datepicker"
+                                ng-click="openDatePicker(ipObj1);">
+                                <i class="ion-ios-calendar"></i>
+                            </button>
+                        </span>
+                        <span class="text-note"
+                            ng-if="chosenWeekday._id != null">Offer will occur: every <span>{{chosenWeekday.name}}</span></span>
+                        <span class="text-header">
+                            How many weeks into the future do you want this offer to go? (Max 7)
+                        </span>
+                        <div id="weeks-ahead-select-container" class="select-container">
+                            <div ng-click="toggleWeeksAheadVisibility();" class="select-main">
+                                <span>{{chosenWeeksAhead.name}}</span>
+                                <button><i ng-class="{'ion-chevron-down': !showWeeksAhead, 'ion-chevron-up': showWeeksAhead}"></i></button>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <span class="select-options-container">
+                <ul class="select-options select-event-weeks-ahead" ng-class="{'open': showWeeksAhead}">
+                    <li ng-click="selectWeeksAhead(week);"
+                        ng-repeat="week in availableWeeks">
+                        {{week.name}}
+                    </li>
+                </ul>
+            </span>
+            <!--
+            <label ng-show="selectedOfferType.name == 'WithManualPromoCode' || selectedOfferType.name == 'WithAutoPromoCode'" class="item-header">
+                Select a maximum number of Offer Codes
+            </label>
+            <label ng-show="selectedOfferType.name == 'WithManualPromoCode' || selectedOfferType.name == 'WithAutoPromoCode'" class="item">
+                <input name="name" class="white nightlife-input" type="text" placeholder="No Maximum" ng-model="totalAvailable">
+        	</label>
+            -->
+        	<button class="button button-red button-large"
+                ng-disabled="addOfferForm.$invalid || rootScope.imageUploadError != null"
+                ng-click="addOffer(offerTitle, description, endDateTime);">
+                Add New Offer
+            </button>
+        </form>
+        
+        <form ng-if="itemType=='OwnEvents'" class="add-offer-form" name="addEventForm">
+            
+            <label class="item-header first">
+                Please enter the details of the Event
+            </label>
+            <!--
+            <label ng-show="rootScope.user.businessTypeName != 'Nightclub' && rootScope.user.businessTypeName != 'Bar'" class="item special">
+                <div id="business-type-select-container" class="select-container">
+                    <div ng-click="toggleTownCategory();" class="select-main">
+                        <span>Select Town</span>
+                        <button><i ng-class="{'ion-chevron-down': !showTownCategories, 'ion-chevron-up': showTownCategories}"></i></button>
+                    </div>
+                </div>
+        	</label>
+
+            <label class="item-header item-header-short">
+            </label>
+            -->
+            <span class="select-options-container">
+                <ul class="select-options select-event-music-{{currentMusicCategoryIndexBeingToggled}}" 
+                    ng-class="{'open': showMusicCategories}">
+                    <li ng-click="selectMusicCategory(musicCat);"
+                        ng-repeat="musicCat in musicStyles">
+                        {{musicCat.name}}
+                    </li>
+                </ul>
+            </span>
+            <div class="item special item-with-selects item-grey-border" style="float: left;">
+                <div id="business-type-select-container" class="select-container"
+                    ng-repeat="style in chosenMusicStyleObjects"
+                    ng-class="{'select-with-remove': style.index > 0}">
+                    <div ng-click="toggleMusicCategory(style);" class="select-main">
+                        <span>{{style.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !style.showMusicCategories, 'ion-chevron-up': style.showMusicCategories}"></i></button>
+                        <button class="remove"
+                            ng-if="style.index > 0"
+                            ng-click="removeMusicStyle(style);">Remove</button>
+                    </div>
+                </div>
+        	</div>
+            <label class="item-header item-header-short">
+                <button class="btn button-half btn-white"
+                    ng-class="{'disabled': chosenMusicStyleIds.indexOf(null) != -1 || chosenMusicStyleIds.length > 2}"
+                    ng-disabled="chosenMusicStyleIds.indexOf(null) != -1 || chosenMusicStyleIds.length > 2"
+                    ng-click="newMusicStyle();">Add a Music Style</button>
+        	</label>
+            
+            <label class="item-header">
+                Event Name / Title
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Event Title (Headline)" ng-model="eventTitle" name="eventTitle" ng-max="100" required>
+        	</label>
+            <label class="item-header">
+                Choose a cover Photo
+            </label>
+            <label class="item item-grey-border item-with-button">
+                <button class="btn-red button-full button-large" ng-click="imgUploadPrepare();">Choose Photo</button>
+            </label>
+            <div class="item item-grey-border"
+                ng-if="rootScope.progress > 0 || rootScope.imageSrcs.length > 0">
+                <progress value="{{rootScope.progress}}"></progress>
+                <image-crop          
+                     data-height="{{dataHeight}}"
+                     data-width="{{dataWidth}}"
+                     data-shape="square"
+                     data-step="imageCropStep"
+                     src="rootScope.imageSrcs[0].imageSrc"
+                     data-result="result"
+                     data-result-blob="resultBlob"
+                     crop="initCrop"
+                     padding="10"
+                     ng-show="rootScope.imageSrcs.length > 0"
+                     data-image-type="{{imgEntryType}}"
+                    ></image-crop>
+            </div>
+            <label class="item-header">
+                Description
+            </label>
+            <label class="item">
+                <textarea class="white nightlife-input nightlife-input-square" type="text" placeholder="Event Description" ng-model="description" name="description" ng-max="1000" required></textarea>
+        	</label>
+            <label class="item-header">
+                Event Date (Required)
+            </label>
+            <div class="item item-grey-border">
+                <div class="extra-options-label trans"
+                    ng-repeat="eventRegularityType in eventRegularityTypes"
+                    ng-class="{'applied': selectedEventRegularityType.name == eventRegularityType.name}">
+                    <i ng-class="{'ion-checkmark': selectedEventRegularityType.name == eventRegularityType.name, 'ion-close': selectedEventRegularityType.name != eventRegularityType.name}"></i>
+                    <span class="extra-option-name">{{eventRegularityType.displayName}}</span>
+                    <span class="apply"
+                        ng-click="selectExtraOption(eventRegularityType, $event);">
+                        <span ng-show="selectedEventRegularityType.name == eventRegularityType.name && !selectedEventRegularityType.mustBeSelected">Remove</span>
+                        <span ng-hide="selectedEventRegularityType.name == eventRegularityType.name">Select</span>
+                    </span>
+                    
+                    <span class="additional-hidden-div"
+                        ng-if="eventRegularityType.name == 'one-off'"
+                        ng-class="{'open': selectedEventRegularityType.name == 'one-off' && eventRegularityType.name == 'one-off'}">
+                        <span class="text-header">
+                            Event Date:
+                        </span>
+                        <span style="position: relative; width: 100%;">
+                            <div class="white nightlife-input fake-input fake-date-input">
+                                {{dateInputHTML}}
+                            </div>
+                            <button class="datepicker"
+                                ng-click="openDatePicker();">
+                                <i class="ion-ios-calendar"></i>
+                            </button>
+                        </span>
+                    </span>
+                    
+                    <span class="additional-hidden-div slow-trans"
+                        ng-if="eventRegularityType.name == 'weekly'"
+                        ng-class="{'open': selectedEventRegularityType.name == 'weekly' && eventRegularityType.name == 'weekly'}">
+                        <span class="text-header">
+                            Date of First Event:
+                        </span>
+                        <span style="position: relative; width: 100%;">
+                            <div class="white nightlife-input fake-input fake-date-input">
+                                {{dateInputHTML}}
+                            </div>
+                            <button class="datepicker"
+                                ng-click="openDatePicker();">
+                                <i class="ion-ios-calendar"></i>
+                            </button>
+                        </span>
+                        <span class="text-note"
+                            ng-if="chosenWeekday._id != null">Event will occur: every <span>{{chosenWeekday.name}}</span></span>
+                        <span class="text-header">
+                            How many weeks into the future do you want this event to go? (Max 7)
+                        </span>
+                        <div id="weeks-ahead-select-container" class="select-container">
+                            <div ng-click="toggleWeeksAheadVisibility();" class="select-main">
+                                <span>{{chosenWeeksAhead.name}}</span>
+                                <button><i ng-class="{'ion-chevron-down': !showWeeksAhead, 'ion-chevron-up': showWeeksAhead}"></i></button>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <span class="select-options-container">
+                <ul class="select-options select-event-weeks-ahead" ng-class="{'open': showWeeksAhead}">
+                    <li ng-click="selectWeeksAhead(week);"
+                        ng-repeat="week in availableWeeks">
+                        {{week.name}}
+                    </li>
+                </ul>
+            </span>
+            <label ng-show="rootScope.user.listingTypes.indexOf('Nightclub') == -1 && rootScope.user.listingTypes.indexOf('Bar') == -1" class="item-header">
+                Event Location (Required)
+            </label>
+            <label ng-show="rootScope.user.listingTypes.indexOf('Nightclub') == -1 && rootScope.user.listingTypes.indexOf('Bar') == -1" class="item">
+                <input class="white nightlife-input nightlife-input-square" type="text" placeholder="Select Club / Bar" ng-model="eventLocation" name="eventLocation" ng-required="rootScope.user.listingTypes.indexOf('Nightclub') == -1 && rootScope.user.listingTypes.indexOf('Bar') == -1">
+        	</label>
+            <label class="item-header">
+                Guest List
+            </label>
+            <div class="item item-grey-border">
+                <div class="extra-options-label trans"
+                    ng-repeat="guestListOption in eventGuestListOptions"
+                    ng-class="{'applied': selectedEventGuestListOption.name == guestListOption.name}">
+                    <i ng-class="{'ion-checkmark': selectedEventGuestListOption.name == guestListOption.name, 'ion-close': selectedEventGuestListOption.name != guestListOption.name}"></i>
+                    <span class="extra-option-name">{{guestListOption.displayName}}</span>
+                    <span class="apply"
+                        ng-click="selectExtraOption(guestListOption, $event);">
+                        <span ng-show="selectedEventGuestListOption.name == guestListOption.name && !selectedEventGuestListOption.mustBeSelected">Remove</span>
+                        <span ng-hide="selectedEventGuestListOption.name == guestListOption.name">Select</span>
+                    </span>
+                    
+                    <span class="additional-hidden-div slow-trans"
+                        ng-if="guestListOption.name == 'true'"
+                        ng-class="{'open': selectedEventGuestListOption.name == 'true' && guestListOption.name == 'true'}">
+                        <span class="text-header">Enter maximum number of Guest List entries allowed (optional): </span>
+                        <input type="number" class="nightlife-input white" placeholder="No Max"
+                            ng-model="input.val" ng-repeat="input in guestListMaxInput" />
+                    </span>
+                </div>
+            </div>
+            <label class="item-header">
+                Deals on the Night / Event Offers (optional)
+            </label>
+            <label class="item">
+                <button class="button button-red button-large"
+                    ng-click="addOffer();">
+                    Add an Offer to this Event
+                </button>
+            </label>
+            <label class="item-header">
+                Dress Code (Optional)
+            </label>
+            <label class="item">
+                <textarea name="dressCode" class="white nightlife-input nightlife-input-square" type="text" placeholder="Dress Code" ng-model="dressCode"></textarea>
+        	</label>
+            <label class="item-header">
+                Deals on the Night (Optional)
+            </label>
+            <label class="item">
+                <textarea name="dealsOnTheNight" class="white nightlife-input nightlife-input-square" type="text" placeholder="Deal Info" ng-model="dealsOnTheNight"></textarea>
+        	</label>
+            <label class="item-header">
+                Any Extra Info (Optional)
+            </label>
+            <label class="item">
+                <textarea name="dressCode" class="white nightlife-input nightlife-input-square" type="text" placeholder="Extra Info" ng-model="extraInfo"></textarea>
+        	</label>
+        	<button class="button button-red button-large"
+                ng-disabled="addEventForm.$invalid || !dateChosen || rootScope.imageUploadError != null || rootScope.imageSrcs.length == 0 || (chosenMusicStyleIds.length == 1 && chosenMusicStyleIds.indexOf(null) != -1)"
+                ng-click="addEvent(eventTitle, description, dressCode, dealsOnTheNight, extraInfo);">
+                Add New Event
+            </button>
+        </form>
+
+        <!-- MENU ITEMS -->
+        <form ng-show="itemType=='BlockedTableBookingIntervals'" class="add-blocked-booking-interval-form" name="addBlockedTableBookingIntervalForm">
+            
+            <label class="item-header">
+                Interval Start Date (&amp; optional Time)
+            </label>
+            <div class="item special">
+                <span class="fake-input-wrapper fake-input-wrapper-half">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{startDateInputString}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(ipObj1);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+                <span class="blocked-booking-interval-time-select">
+                    <span
+                        ng-click="showTimeSelect('start');"
+                        ng-if="!showStartTimeSelect">
+                        <i class="ion-clock"></i>
+                        Select a Time (optional)
+                    </span>
+                    <span class="fake-input-wrapper"
+                        ng-if="showStartTimeSelect">
+                        <div class="white nightlife-input fake-input fake-date-input">
+                            {{startTimeInputString}}
+                        </div>
+                        <button class="timepicker"
+                            ng-click="openTimePicker(startTimeIpObj);">
+                            <i class="ion-ios-clock"></i>
+                        </button>
+                    </span>
+                </span>
+            </div>
+            <label class="item-header">
+                Interval End Date &amp; Time
+            </label>
+            <div class="item special">
+                <span class="fake-input-wrapper fake-input-wrapper-half">
+                    <div class="white nightlife-input fake-input fake-date-input">
+                        {{endDateInputString}}
+                    </div>
+                    <button class="datepicker"
+                        ng-click="openDatePicker(ipObj2);">
+                        <i class="ion-ios-calendar"></i>
+                    </button>
+                </span>
+
+                <span class="blocked-booking-interval-time-select">
+                    <span
+                        ng-click="showTimeSelect('end');"
+                        ng-if="!showEndTimeSelect">
+                        <i class="ion-clock"></i>
+                        Select a Time (optional)
+                    </span>
+                    <span class="fake-input-wrapper"
+                        ng-if="showEndTimeSelect">
+                        <div class="white nightlife-input fake-input fake-date-input">
+                            {{endTimeInputString}}
+                        </div>
+                        <button class="timepicker"
+                            ng-click="openTimePicker(endTimeIpObj);">
+                            <i class="ion-ios-clock"></i>
+                        </button>
+                    </span>
+                </span>
+            </div>
+
+            <button ng-disabled="selectedIntervalStartDate == null || selectedIntervalEndDate == null" class="button button-red button-large"
+                ng-click="addBlockedTableBookingInterval()">
+                Add New Blocked Table Booking Interval
+            </button>
+        </form>
+        
+        <!-- MENU ITEMS -->
+        <form ng-show="itemType=='BusinessCarteMenuItemCats' || itemType=='BusinessTakeawayMenuItemCats'" class="add-menu-item-form" name="addItemToMenuForm">
+            
+            <label class="item-header first">
+                New {{itemShortName}} Menu Item
+            </label>
+            <label ng-show="rootScope.user.businessTypeName != 'Nightclub' && rootScope.user.businessTypeName != 'Bar'" class="item special">
+                <div id="business-type-select-container" class="select-container">
+                    <div ng-click="toggleMenuCatDisplay();" class="select-main">
+                        <span>{{selectedCategory.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !showMenuItemCategories, 'ion-chevron-up': showMenuItemCategories}"></i></button>
+                    </div>
+                </div>
+        	</label>
+            <label class="item-header item-header-short">
+                <!--<button class="btn button-half btn-white">Add a Menu Category</button>-->
+        	</label>
+            <ul class="select-options select-menu-categories" ng-class="{'open': showMenuItemCategories}">
+                <li
+                    ng-click="selectCategory(category);"
+                    ng-repeat="category in menuItemCategories">
+                        {{category.name}}
+                </li>
+            </ul>
+            <label class="item special">
+                <div id="business-type-select-container" class="select-container">
+                    <div ng-click="toggleMenuSubCatDisplay();" class="select-main">
+                        <span>{{selectedSubCategory.name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !showMenuItemSubCategories, 'ion-chevron-up': showMenuItemSubCategories}"></i></button>
+                    </div>
+                </div>
+            </label>
+            <label class="item-header item-header-short">
+                <!--<button class="btn button-half btn-white">Add a Sub Category</button>-->
+            </label>
+            <ul class="select-options select-menu-subcategories" ng-class="{'open': showMenuItemSubCategories}">
+                <li
+                    ng-click="selectSubCategory(subcategory);"
+                    ng-repeat="subcategory in menuItemSubCategories">
+                        {{subcategory.name}}
+                </li>
+            </ul>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Item Name (Headline)" ng-model="itemName" name="itemName" ng-max="100" required>
+        	</label>
+            <label class="item">
+                <input class="white nightlife-input" type="number" step="0.01" placeholder="Price" ng-model="price" name="price" required>
+        	</label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Description (optional)" ng-model="description" name="description" ng-max="100">
+        	</label>
+            <label class="item-header item-header-expander"
+                ng-click="showTagOptions = !showTagOptions">
+                <span class="main-header">Select Tags</span>
+                <i ng-class="{'ion-plus-round': !showTagOptions, 'ion-minus-round': showTagOptions}"></i>
+                <span class="header-note"><span>{{appliedTagsNames.length}}</span> Tags Applied</span>
+        	</label>
+            <div class="item item-expander trans"
+                ng-class="{'open': showTagOptions}">
+                <div class="applied-tags">
+                    <div class="extra-options-label trans"
+                        ng-repeat="tag in availableTags.singularTags"
+                        ng-class="{'applied': appliedTagsNames.indexOf(tag.name) != -1}">
+                        <i class="{{tag.iconClass}}"></i>
+                        {{tag.name}}
+                        <span class="apply"
+                            ng-click="applyTag([], tag);">
+                            <span ng-show="appliedTagsNames.indexOf(tag.name) != -1">Remove</span>
+                            <span ng-hide="appliedTagsNames.indexOf(tag.name) != -1">Select</span>
+                        </span>
+                    </div>
+                    
+                    <div class="tag-group-container"
+                        ng-repeat="group in availableTags.groupTags">
+                        <div class="extra-options-label trans"
+                            ng-repeat="tag in group.array"
+                            ng-class="{'applied': appliedTagsNames.indexOf(tag.name) != -1}">
+                            <i class="{{tag.iconClass}}"></i>
+                            {{tag.name}}
+                            <span class="apply"
+                                ng-click="applyTag(group, tag);">
+                                <span ng-show="appliedTagsNames.indexOf(tag.name) != -1">Remove</span>
+                                <span ng-hide="appliedTagsNames.indexOf(tag.name) != -1">Select</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+        	</div>
+            <label class="item-header item-header-expander"
+                ng-click="showExtraOptionsOptions = !showExtraOptionsOptions">
+                <span class="main-header">Extra Options for this item</span>
+                <i ng-class="{'ion-plus-round': !showExtraOptionsOptions, 'ion-minus-round': showExtraOptionsOptions}"></i>
+                <span class="header-note"><span>{{appliedOptions.length}}</span> Options Applied</span>
+        	</label>
+            <div class="item item-expander trans"
+                ng-class="{'open': showExtraOptionsOptions}">
+                <div class="applied-options"
+                    ng-class="{'applied-options-with-border': appliedOptions.length > 0}">
+                    <div class="extra-options-label applied" ng-repeat="option in appliedOptions">
+                        <label>{{option.Name}}</label>
+                        <span class="apply"
+                            ng-click="applyOption(option);">
+                            <span>Remove</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="extra-options-label"
+                    ng-show="appliedOptionsNames.indexOf(option.Name) == -1"
+                    ng-repeat="option in menuItemOptions">
+                    <label>{{option.Name}}</label>
+                    <span class="apply"
+                        ng-click="applyOption(option);">
+                        <span ng-hide="appliedOptionsNames.indexOf(option.Name) != -1">Select</span>
+                    </span>
+                </div>
+        	</div>
+            
+        	<button ng-disabled="addItemToMenuForm.$invalid || selectedCategory._id == null" class="button button-red button-large"
+                ng-click="addItemToMenu(itemName, price, description)">
+                Add New Menu Item
+            </button>
+        </form>
+        
+        <!-- MENU ITEMS CATEGORIES -->
+        <form ng-show="itemType=='MenuItemCategories'" class="add-menu-item-form" ng-submit="addItemToMenuItemCategories(catName, description);" name="addMenuItemCategoryForm">
+            
+            <label class="item-header first">
+                New Menu Category
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Category Name" name="catName"
+                    ng-max="100"
+                    ng-model="catName"
+                    required>
+                <span class="field-note"
+                    ng-show="existingCatNames.indexOf(catName) != -1 && catName.length > 0">You already have a category with this name.</span>
+        	</label>
+            <label class="item">
+                <textarea class="white nightlife-input nightlife-input-square" placeholder="Description" name="description"
+                    ng-model="description"></textarea>
+        	</label>
+            
+        	<button ng-disabled="addMenuItemCategoryForm.$invalid && existingCatNames.indexOf(catName) == -1" class="button button-red button-large">
+                Add New Menu Category
+            </button>
+        </form>
+
+        <!-- MENU ITEMS SUB CATEGORIES -->
+        <form ng-show="itemType=='MenuItemSubCategories'" class="add-menu-item-form" ng-submit="addItemToMenuItemSubCategories(catName, description);" name="addMenuItemSubCategoryForm">
+            
+            <label class="item-header first">
+                New Menu Sub-Category
+            </label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Sub-Category Name" name="catName"
+                    ng-max="100"
+                    ng-model="catName"
+                    required>
+                <span class="field-note"
+                    ng-show="existingCatNames.indexOf(catName) != -1 && catName.length > 0">You already have a category with this name.</span>
+            </label>
+            <label class="item">
+                <textarea class="white nightlife-input nightlife-input-square" placeholder="Description" name="description"
+                    ng-model="description"></textarea>
+            </label>
+            
+            <button ng-disabled="addMenuItemSubCategoryForm.$invalid && existingCatNames.indexOf(catName) == -1" class="button button-red button-large">
+                Add New Menu Sub-Category
+            </button>
+        </form>
+        
+        <!-- MENU ITEM TEMPLATE OPTIONS -->
+        <form ng-show="itemType=='MenuItemTemplateOptions'" class="add-menu-item-template-option-form" name="addMenuItemTemplateOptionForm">
+        
+            <label class="item-header first">
+                New Menu Template Option
+            </label>
+            <label class="item-header">Template Option Category</label>
+            <label class="item special">
+                <div id="business-type-select-container" class="select-container">
+                    <div ng-click="toggleMenuCatDisplay();" class="select-main">
+                        <span>{{selectedCategory.Name}}</span>
+                        <button><i ng-class="{'ion-chevron-down': !showMenuItemTemplateOptionCategories, 'ion-chevron-up': showMenuItemTemplateOptionCategories}"></i></button>
+                    </div>
+                </div>
+            </label>
+            <ul class="select-options select-menu-categories" ng-class="{'open': showMenuItemTemplateOptionCategories}">
+                <li
+                    ng-click="selectCategory(category);"
+                    ng-repeat="category in menuItemTemplateOptionCategories">
+                        {{category.Name}}
+                </li>
+            </ul>
+            <label class="item-header">Name</label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Item Name (Headline)" ng-model="businessItem.name" name="name" ng-max="100" required>
+            </label>
+            <label class="item-header">Selection Type</label>
+            <div class="item item-expander open">
+                <div class="extra-options-label trans"
+                    ng-class="{'applied': businessItem.type == 'Only One'}">
+                    <i ng-class="{'ion-close-round': businessItem.type != 'Only One', 'ion-checkmark-round': businessItem.type == 'Only One'}"></i>
+                    User selects only 1 option
+                    <span class="apply"
+                        ng-click="businessItem.type = 'Only One'">
+                        <span ng-hide="businessItem.type == 'Only One'">Select</span>
+                    </span>
+                </div>
+                <div class="extra-options-label trans"
+                    ng-class="{'applied': businessItem.type == 'Multi'}">
+                    <i ng-class="{'ion-close-round': businessItem.type != 'Multi', 'ion-checkmark-round': businessItem.type == 'Multi'}"></i>
+                    User selects multiple options
+                    <span class="apply"
+                        ng-click="businessItem.type = 'Multi'">
+                        <span ng-hide="businessItem.type == 'Multi'">Select</span>
+                    </span>
+                </div>
+            </div>
+            <label class="item-header">Template Details</label>
+            <div class="item item-expander open">
+                <div class="extra-options-label trans"
+                    ng-class="{'applied': businessItem.priceRelevant}">
+                    <i class="ion-cash"></i>
+                    Price-based Option: {{businessItem.priceRelevant}}
+                    <span class="apply"
+                        ng-click="togglePriceRel(businessItem);">
+                        <span>Change</span>
+                    </span>
+                </div>
+                <div class="extra-options-label trans"
+                    ng-class="{'applied': businessItem.quantityRelevant}">
+                    <i class="ion-navicon"></i>
+                    Quantity-based Option: {{businessItem.quantityRelevant}}
+                    <span class="apply"
+                        ng-click="toggleQuantityRel(businessItem);">
+                        <span>Change</span>
+                    </span>
+                </div>
+            </div>
+            <label class="item-header">Option Choices</label>
+            <div class="item-header item-bottom-buttons item-header-short">
+                <button class="btn button-half btn-white"
+                    ng-controller="PopupCtrl"
+                    ng-click="showPopup('NewMenuExtraOptionOption', null)">Add an Option Choice</button>
+                
+                <button class="btn button-half btn-white"
+                    ng-click="showChangeOrderButtons = !showChangeOrderButtons"
+                    ng-show="businessItem.options.length > 1">
+                    <span ng-hide="showChangeOrderButtons || businessItem.options.length < 2">Change Order</span>
+                    <span ng-show="showChangeOrderButtons && businessItem.options.length > 1">Remove Items</span>
+                </button>
+            </div>
+            <div class="item item-expander"
+                ng-class="{'open': businessItem.options.length > 0}">
+                <div class="extra-options-label trans"
+                    ng-repeat="choice in businessItem.options">
+                    <input class="white nightlife-input main-input" type="text" placeholder="Option Choice Name" ng-model="choice.name" name="name" ng-max="100" required>
+                    
+                    <span class="apply"
+                        ng-show="!showChangeOrderButtons && businessItem.options.length > 1"
+                        ng-controller="PopupCtrl"
+                        ng-click="showPopup('ConfirmDelete', choice);">
+                        <span>Remove</span>
+                    </span>
+                    <span class="apply"
+                        ng-show="showChangeOrderButtons">
+                        <span
+                            ng-click="moveOptionChoiceUp(choice)"
+                            ng-show="choice.orderIndex > 1"><i class="ion-arrow-up-b"></i></span>
+                        <span
+                            ng-click="moveOptionChoiceDown(choice)"
+                            ng-show="choice.orderIndex < businessItem.options.length"><i class="ion-arrow-down-b"></i></span>
+                    </span>
+                    <span class="bottom-note"
+                        ng-show="businessItem.priceRelevant">Extra Charge: £
+                        <input class="white nightlife-input extra-price-input" type="number" step="0.01" placeholder="Extra Charge" ng-model="choice.extraPrice" name="extraPrice" ng-required="businessItem.priceRelevant">
+                    </span>
+
+                </div>
+            </div>
+            
+            <button ng-disabled="addMenuItemTemplateOptionForm.$invalid || businessItem.options.length < 2 || selectedCategory == 0 ||businessItem.type == null" class="button button-red button-large"
+                ng-click="addTemplateOption();">
+                Add New Template Option
+            </button>
+        </form>
+    </div>
+      
+  </ion-content>
+</ion-view>

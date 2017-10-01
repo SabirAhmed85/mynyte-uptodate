@@ -1,0 +1,472 @@
+<ion-view view-title="Contacts" class="grey_bg">
+    <ion-content>
+        <h2>myNYTE Contacts</h2>
+        <div class="list">
+            <style>
+            .grid-container {
+                padding: 0 0px 19px;
+                background: #222;
+                float: left;
+                width: 100%;
+            }
+                .grid {
+    border-bottom: 2px solid #910000;
+    width: 100%;
+    color: #ddd;
+    float: left;
+    float: none;
+    width: 93%;
+    margin: 0 auto;
+    height: 615px;
+}
+
+    .ui-grid-header-cell,
+    .ui-grid-cell {
+        float: left;
+    }
+    
+    .ui-grid-column-menu-button {
+        display: none;
+    }
+    
+    .ui-grid-cell-contents {
+        margin-top: 5px;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 85%;
+    }
+    
+    .ui-grid-header-cell {
+        font-weight: bold;
+        font-size: 13px;
+    }
+    
+    .ui-grid-header-cell .ui-grid-header-cell-label {
+        white-space: nowrap;
+        overflow: hidden;
+        width: 82%;
+        float: left;
+    }
+    
+    .ui-grid-viewport {
+        overflow: inherit !important;
+    }
+    
+    .ui-grid-canvas {
+        overflow-y: hidden;
+        margin-right: 0;
+        height: 500px !important;
+        float: left;
+    }
+    
+    .ui-grid-row {
+        height: 50px !important;
+        border-top: 1px solid #611;
+        padding: 8px 0;
+        border-bottom: 1px solid #933;
+    }
+    
+    .ui-grid-row a {
+        margin: 0;
+        background: #710000;
+        border: 1px solid #aa0000;
+        padding: 5px;
+        width: 70px;
+        text-align: center;
+        color: #aaa;
+    }
+    
+    .ui-grid-filter-input {
+        margin-top: 45px;
+        margin-bottom: 10px;
+        width: 90%;
+        border: 1px solid rgb(153, 0, 0) !important;
+        border-radius: 4px !important;
+        background: rgb(255, 221, 221) !important;
+    }
+    
+    .ui-grid-filter-button {
+        display: none !important;
+        opacity: 0 !important;
+    }
+    
+    .ui-grid-header-cell.ui-grid-clearfix.ui-grid-coluiGrid-000B {
+        display: none;
+    }
+    
+    .ui-grid-pager-panel {
+    position: relative;
+    float: left;
+    width: 100%;
+    background: #111;
+    border: 1px solid #322231;
+    padding: 10px 5%;
+    border-left: 0;
+    border-right: 0;
+}
+.ui-grid-pager-container {
+  float: left;
+}
+.ui-grid-pager-control {
+  margin-right: 10px;
+  margin-left: 10px;
+  min-width: 135px;
+  float: left;
+}
+.ui-grid-pager-control button {
+  height: 25px;
+  min-width: 26px;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #eeeeee;
+  background-color: #f3f3f3;
+  border-color: #cccccc;
+}
+.ui-grid-pager-control button:focus,
+.ui-grid-pager-control button:active:focus,
+.ui-grid-pager-control button.active:focus,
+.ui-grid-pager-control button.focus,
+.ui-grid-pager-control button:active.focus,
+.ui-grid-pager-control button.active.focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.ui-grid-pager-control button:hover,
+.ui-grid-pager-control button:focus,
+.ui-grid-pager-control button.focus {
+  color: #333333;
+  text-decoration: none;
+}
+.ui-grid-pager-control button:active,
+.ui-grid-pager-control button.active {
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.ui-grid-pager-control button.disabled,
+.ui-grid-pager-control button[disabled],
+fieldset[disabled] .ui-grid-pager-control button {
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+a.ui-grid-pager-control button.disabled,
+fieldset[disabled] a.ui-grid-pager-control button {
+  pointer-events: none;
+}
+.ui-grid-pager-control button:focus,
+.ui-grid-pager-control button.focus {
+  color: #eeeeee;
+  background-color: #dadada;
+  border-color: #8c8c8c;
+}
+.ui-grid-pager-control button:hover {
+  color: #eeeeee;
+  background-color: #dadada;
+  border-color: #adadad;
+}
+.ui-grid-pager-control button:active,
+.ui-grid-pager-control button.active,
+.open > .dropdown-toggle.ui-grid-pager-control button {
+  color: #eeeeee;
+  background-color: #dadada;
+  border-color: #adadad;
+}
+.ui-grid-pager-control button:active:hover,
+.ui-grid-pager-control button.active:hover,
+.open > .dropdown-toggle.ui-grid-pager-control button:hover,
+.ui-grid-pager-control button:active:focus,
+.ui-grid-pager-control button.active:focus,
+.open > .dropdown-toggle.ui-grid-pager-control button:focus,
+.ui-grid-pager-control button:active.focus,
+.ui-grid-pager-control button.active.focus,
+.open > .dropdown-toggle.ui-grid-pager-control button.focus {
+  color: #eeeeee;
+  background-color: #c8c8c8;
+  border-color: #8c8c8c;
+}
+.ui-grid-pager-control button:active,
+.ui-grid-pager-control button.active,
+.open > .dropdown-toggle.ui-grid-pager-control button {
+  background-image: none;
+}
+.ui-grid-pager-control button.disabled,
+.ui-grid-pager-control button[disabled],
+fieldset[disabled] .ui-grid-pager-control button,
+.ui-grid-pager-control button.disabled:hover,
+.ui-grid-pager-control button[disabled]:hover,
+fieldset[disabled] .ui-grid-pager-control button:hover,
+.ui-grid-pager-control button.disabled:focus,
+.ui-grid-pager-control button[disabled]:focus,
+fieldset[disabled] .ui-grid-pager-control button:focus,
+.ui-grid-pager-control button.disabled.focus,
+.ui-grid-pager-control button[disabled].focus,
+fieldset[disabled] .ui-grid-pager-control button.focus,
+.ui-grid-pager-control button.disabled:active,
+.ui-grid-pager-control button[disabled]:active,
+fieldset[disabled] .ui-grid-pager-control button:active,
+.ui-grid-pager-control button.disabled.active,
+.ui-grid-pager-control button[disabled].active,
+fieldset[disabled] .ui-grid-pager-control button.active {
+  background-color: #710000;
+  border-color: #aa0000;
+}
+.ui-grid-pager-control button .badge {
+  color: #f3f3f3;
+  background-color: #eeeeee;
+}
+.ui-grid-pager-control input {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  height: 30px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  display: inline;
+  height: 26px;
+  width: 50px;
+  vertical-align: top;
+}
+.ui-grid-pager-control input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.ui-grid-pager-control input::-moz-placeholder {
+  color: #999999;
+  opacity: 1;
+}
+.ui-grid-pager-control input:-ms-input-placeholder {
+  color: #999999;
+}
+.ui-grid-pager-control input::-webkit-input-placeholder {
+  color: #999999;
+}
+.ui-grid-pager-control input[disabled],
+.ui-grid-pager-control input[readonly],
+fieldset[disabled] .ui-grid-pager-control input {
+  background-color: #eeeeee;
+  opacity: 1;
+}
+.ui-grid-pager-control input[disabled],
+fieldset[disabled] .ui-grid-pager-control input {
+  cursor: not-allowed;
+}
+textarea.ui-grid-pager-control input {
+  height: auto;
+}
+select.ui-grid-pager-control input {
+  height: 30px;
+  line-height: 30px;
+}
+textarea.ui-grid-pager-control input,
+select[multiple].ui-grid-pager-control input {
+  height: auto;
+}
+.ui-grid-pager-control .ui-grid-pager-max-pages-number {
+  vertical-align: bottom;
+}
+.ui-grid-pager-control .ui-grid-pager-max-pages-number > * {
+  vertical-align: middle;
+}
+.ui-grid-pager-control .first-bar {
+  width: 10px;
+  border-left: 2px solid #4d4d4d;
+  margin-top: -6px;
+  height: 12px;
+  margin-left: -3px;
+}
+.ui-grid-pager-control .first-triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 8.7px 5px 0;
+  border-color: transparent #4d4d4d transparent transparent;
+  margin-left: 2px;
+}
+.ui-grid-pager-control .next-triangle {
+  margin-left: 1px;
+}
+.ui-grid-pager-control .prev-triangle {
+  margin-left: 0;
+}
+.ui-grid-pager-control .last-triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8.7px;
+  border-color: transparent transparent transparent #4d4d4d;
+  margin-left: -1px;
+}
+.ui-grid-pager-control .last-bar {
+  width: 10px;
+  border-left: 2px solid #4d4d4d;
+  margin-top: -6px;
+  height: 12px;
+  margin-left: 1px;
+}
+.ui-grid-pager-row-count-picker {
+  float: left;
+}
+.ui-grid-pager-row-count-picker select {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  height: 30px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  height: 26px;
+  width: 67px;
+  display: inline;
+}
+.ui-grid-pager-row-count-picker select:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.ui-grid-pager-row-count-picker select::-moz-placeholder {
+  color: #999999;
+  opacity: 1;
+}
+.ui-grid-pager-row-count-picker select:-ms-input-placeholder {
+  color: #999999;
+}
+.ui-grid-pager-row-count-picker select::-webkit-input-placeholder {
+  color: #999999;
+}
+.ui-grid-pager-row-count-picker select[disabled],
+.ui-grid-pager-row-count-picker select[readonly],
+fieldset[disabled] .ui-grid-pager-row-count-picker select {
+  background-color: #eeeeee;
+  opacity: 1;
+}
+.ui-grid-pager-row-count-picker select[disabled],
+fieldset[disabled] .ui-grid-pager-row-count-picker select {
+  cursor: not-allowed;
+}
+textarea.ui-grid-pager-row-count-picker select {
+  height: auto;
+}
+select.ui-grid-pager-row-count-picker select {
+  height: 30px;
+  line-height: 30px;
+}
+textarea.ui-grid-pager-row-count-picker select,
+select[multiple].ui-grid-pager-row-count-picker select {
+  height: auto;
+}
+.ui-grid-pager-row-count-picker .ui-grid-pager-row-count-label {
+  margin-top: 3px;
+}
+.ui-grid-pager-count-container {
+  float: right;
+  margin-top: 4px;
+  min-width: 50px;
+}
+.ui-grid-pager-count-container .ui-grid-pager-count {
+  margin-right: 10px;
+  margin-left: 10px;
+  float: right;
+}
+    
+    #select-bar {
+        width: 100%;
+        padding: 3px 5%;
+        text-align: right;
+        background: #141414;
+        border: 1px solid #322231;
+        border-left: none;
+        border-right: none;
+        margin-bottom: 10px;
+        color: #aaa;
+    }
+    
+    #select-bar button {
+        background: #E7E7FD;
+        border: 1px solid #fffffd;
+        border-radius: 4px;
+        padding: 6px 40px;
+        color: #656688;
+        font-weight: bold;
+        font-size: 13px;
+    }
+            </style>
+            <span style="position: absolute;
+    top: 130px;
+    padding: 5px 10px;
+    margin: 0 5%;
+    color: #f66;
+    border-bottom: 1px solid #f66;
+    width: 90%; left: 0;">Filter the Columns using the inputs below</span>
+            <div class="grid-container">
+                <div id="select-bar">
+                    <button ng-click="notWorking()">See Comments</button>
+                </div>
+                <div id="grid1" ui-grid-pagination ui-grid="gridOptions" class="grid"></div>
+            </div>
+        <!--
+            <a class="item item-icon-left item-message-summary" ui-sref="app.contactDetail({_id:contact._id})" ng-repeat="contact in contacts">
+                <div class="message-info" style="width: 100%;">
+                    <span class="message-header">{{contact.name}}</span>
+                    <span class="message-text">{{contact._id}}</span>
+                    <span class="message-text">{{contact.companyName}}</span>
+                    <span class="message-header" style="float: right; clear: none; margin-right: 2%;">{{contact.phone}}</span>
+                    <span class="message-text" style="float: right; clear: none; margin-right: 2%;">{{contact.email}}</span>
+                </div>
+            </a>
+            -->
+        </div>
+    </ion-content>
+</ion-view>

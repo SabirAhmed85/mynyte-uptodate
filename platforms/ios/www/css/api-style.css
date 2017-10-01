@@ -1,0 +1,975 @@
+.mynyte-fast-trans {
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+body.fixfixed {
+    position: absolute !important;
+}
+
+body.mn-modal--opened {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
+/*TABLE BOOKING BUTTON*/
+.mynyte-book {
+    display: block !important;
+    height: 32px;
+    background: #e8e7e7;
+    color: #6f6060;
+    float: left;
+    margin-left: 1%;
+    padding: 15px 10px;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccbbbb;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.mynyte-book:hover {
+    background: #ebebeb;
+    color: #8e7f7f;
+}
+
+.mynyte-book span {
+    margin-top: 7px;
+    float: left;
+    margin-right: 25px;
+}
+
+.mynyte-book img {
+    width: 45px;
+    height: 47px;
+    float: left;
+    border-right: 1px solid #cecccc;
+    margin-top: -8px;
+    margin-right: 30px;
+    margin-left: 5px;
+    padding-right: 20px;
+}
+
+.mynyte-book.mn-dark {
+    background: #2b2b2b;
+    border: 1px solid #000;
+    color: #afaeae;
+}
+.mynyte-book.mn-dark:hover {
+    background: #303030;
+    color: #ccc;
+}
+
+.mynyte-book.mn-dark img {
+    border-right: 1px solid #333;
+}
+
+.mynyte-table-book {
+    width: 310px;
+}
+
+.mynyte-event-entry-book {
+    width: 345px;
+}
+
+/* ------------ */
+/*LISTINGS FEED*/
+.mynyte-listings {
+    width: 400px;
+    float: left;
+    overflow: hidden;
+    padding: 0 0 10px;
+    /* border: 1px solid #d6d4d4; */
+    position: relative;
+    max-width: calc(100% - 10px);
+    margin: 5px;
+    font-family: 'Source Sans Pro', sans-serif;
+    /* background: #ebebeb; */
+}
+
+.mynyte-listings .header {
+    float: left;
+    width: calc(100% - 18px);
+    padding: 12px 10px 15px 10px;
+    color: #674e4e;
+    font-size: 15px;
+}
+
+.mynyte-listings .scrollbar{
+    position: absolute;
+    right: 1px;
+    width: 7px;
+    background: #bfb6b6;
+    height: calc(100% - 45px);
+    top: 44px;
+    z-index: 10;
+    border-left: 1px solid #af9b9b;
+    border-right: 1px solid #af9b9b;
+    border-radius: 12px;
+    opacity: 0.9;
+}
+
+.mynyte-listings .listings-container {
+    float: left;
+    width: 100%;
+    overflow-y: scroll;
+    /* border: 1px solid #d2cdcd; */
+    position: relative;
+    display: block;
+    overflow-x: hidden;
+}
+
+.mynyte-listings .listings-container::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: rgba(40, 40, 40, 0.4);
+    /* border: 1px solid #383737; */
+    border-radius: 4px;
+}
+ 
+.mynyte-listings .listings-container::-webkit-scrollbar-track {
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important; */
+}
+ 
+.mynyte-listings .listings-container::-webkit-scrollbar-thumb {
+  background-color: #313131;
+  outline: none;
+  border-radius: 4px;
+  border: 1px solid #4a4949;
+}
+
+.mynyte-listings .listing {
+    float: left;
+    width: 100%;
+    /* border-bottom: 1px solid #d2cdcd; */
+    /* border-top: 1px solid #fff; */
+    color: #6b6b6b;
+    font-size: 14px;
+    /* height: 90px; */
+}
+
+.mynyte-listings .listing .main-img {
+    width: calc(100% - 20px);
+    margin: 10px 10px 3px;
+    float: left;
+}
+
+.mynyte-listings .listing .text-container {
+    float: left;
+    margin: 0 10px 13px;
+    width: calc(100% - 30px);
+}
+.mynyte-listings .listing.with-image .text-container {
+    margin: 0 10px 13px;
+    width: calc(100% - 30px);
+}
+
+.mynyte-listings .listing .title {
+    float: left;
+    margin-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.mynyte-listings .listing .description {
+    float: left;
+    clear: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    font-size: 13px;
+    color: #9e8585;
+    margin: 3px 0 7px;
+    text-overflow: ellipsis;
+    line-height: 20px;
+}
+.mynyte-listings .listing:hover .description {
+    color: #d6c3c3;
+}
+
+.mynyte-listings .listing .offer-end {
+    float: left;
+    clear: left;
+    color: #9c9b9b;
+    font-size: 12px;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+    /*DARK*/
+
+.mynyte-listings.mn-dark {
+    background: #1f1f1f;
+    border: 1px solid #796b6b;
+}
+
+.mynyte-listings.mn-dark .scrollbar {
+    background: #191818;
+    border-color: #383737;
+    display: none;
+}
+
+.mynyte-listings.mn-dark .listing {
+    border-bottom: 1px solid #2f2f2f;
+    border-top: 1px solid #232323;
+}
+.mynyte-listings.mn-dark .listing:hover {
+    background: #2f2f2f;
+    border-top-color: #292828;
+    border-bottom-color: #333;
+}
+
+.mynyte-listings.mn-dark .listings-container {
+    border-color: #333131;
+}
+
+.mynyte-listings.mn-dark .header {
+    color: #b39f9f;
+    border-bottom: 1px solid #333;
+    background: #252424;
+}
+
+.mynyte-listings.mn-dark .title {
+    color: #b3b2b2;
+}
+.mynyte-listings.mn-dark .listing:hover .title {
+    color: #e4e1e1;
+}
+
+    /*CLEAR*/
+
+.mynyte-listings.clear {
+    background: none;
+    border: none;
+}
+
+.mynyte-listings.clear .scrollbar {
+    background: rgba(230, 230, 230, 0.6);
+    border-color: #ded9d9;
+}
+
+
+.mynyte-listings.clear .listing {
+    border: none;
+}
+
+.mynyte-listings.clear .listing img {
+    margin-left: 0;
+}
+
+/* --------- */
+/* LIVE CHAT */
+.mynyte-frame-container {
+    float: left;
+    display: block;
+    max-width: calc(100% - 10px);
+    margin: 5px;
+    border: 1px solid #bfaeae;
+    border-radius: 6px 6px 7px 7px;
+    position: relative;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.mynyte-frame-container.mynyte-menu-display {
+    padding-bottom: 64px;
+}
+
+.mynyte-frame-container .container-header {
+    float: left;
+    width: calc(100% - 20px);
+    padding: 12px 10px;
+    background: #f8f8f8;
+    color: #a59498;
+    border-radius: 4px 4px 0 0;
+    border-bottom: 1px solid #eae4e4;
+    line-height: 22px;
+    font-size: 15px;
+    position: relative;
+    z-index: 9000;
+}
+
+.mynyte-frame-container .container-dummy {
+    float: left;
+    width: 100%;
+    height: calc(100% - 112px);
+    min-height: 170px;
+    position: relative;
+    background: #f8f8f8;
+    z-index: 8000;
+    padding-bottom: 0;
+}
+.mynyte-frame-container.mynyte-menu-display .container-dummy {
+    height: auto;
+}
+
+.mynyte-frame-container .container-dummy .chat-start {
+    width: 96%;
+    margin-left: 2%;
+    padding: 15px 10px;
+    margin-bottom: 5px;
+    color: #777777;
+    background-color: #d2d2d2;
+    margin-top: 9px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #c1c0c0;
+    box-shadow: 1px 1px 1px #666;
+    width: 90%;
+    margin-top: calc(33% - 22px);
+    margin-left: 5%;
+}
+
+.mynyte-frame-container .container-footer {
+    float: left;
+    width: 100%;
+    background: #f8f8f8;
+    border-top: 1px solid #f1f0f0;
+    position: absolute;
+    bottom: 0;
+    border-radius: 0 0 5px 5px;
+}
+
+.mynyte-frame-container iframe {
+    float: left;
+    width: 100%;
+    height: 100%;
+    border: none;
+    /* margin-top: -45px; */
+    border-top: 1px solid #f7f4f4;
+}
+
+.mynyte-frame-container .footer-transcript-note {
+    float: left;
+    width: 60%;
+    max-width: calc(100% - 90px);
+    padding: 10px;
+    color: #948b8b;
+    font-size: 13px;
+    position: absolute;
+    bottom: 0;
+}
+
+.mynyte-frame-container .container-footer img {
+    float: right;
+    width: 47px;
+    margin: 8px;
+}
+
+.mynyte-frame-container .listing-menu-item .header {
+    float: left;
+    width: calc(100% - 20px);
+    padding: 16px 10px 8px;
+    background: #eee;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #eee;
+    color: #5d4d4d;
+}
+.mynyte-frame-container .listing-menu-item .header:hover {
+    cursor: pointer;
+    background: #efefef;
+    color: #6d5d5d;
+}
+
+.mynyte-frame-container .listing-menu-item .header .listing-menu-item-open {    
+    float: right;
+    margin-right: 5px;
+    font-size: 28px;
+    border-left: 1px solid #ccc;
+    width: 50px;
+    text-align: center;
+    margin-top: -11px;
+    padding-top: 0px;
+    padding-bottom: 2px;
+}
+
+.mynyte-frame-container .listing-menu-item .body {
+    float: left;
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition: max-height 0.25s;
+    -moz-transition: max-height 0.25s;
+    transition: max-height 0.25s;
+    width: 100%;
+}
+.mynyte-frame-container .listing-menu-item .body.open {
+    max-height: 10000px;
+}
+
+.mynyte-frame-container .listing-menu-item .text-container {
+    float: left;
+    width: calc(100% - 20px);
+    padding: 14px 10px 13px;
+    font-size: 14px;
+    border-bottom: 1px solid #e3e3e3;
+    background: #1c1c1c;
+}
+
+.mynyte-frame-container .listing-menu-item .text-container .title {
+    color: #676767;
+    margin-right: 10px;
+    max-width: calc(100% - 150px);
+    line-height: 20px;
+    float: left;
+}
+
+.mynyte-frame-container .listing-menu-item .text-container .price {
+    float: right;
+    margin-right: 10px;
+    color: #833;
+    line-height: 20px;
+}
+
+.mynyte-frame-container .listing-menu-item .text-container .options {
+    float: right;
+    margin-left: 5px;
+    width: 55px;
+    text-align: center;
+    color: #8a7777;
+    line-height: 21px;
+    font-size: 13px;
+}
+
+    /* DARK */
+.mynyte-frame-container.mn-dark {
+    border-color: #151414;
+}
+
+.mynyte-frame-container.mn-dark .container-header  {
+    background: #2f2e2e;
+    border-bottom: 1px solid #555;
+    color: #c5bebe;
+}
+
+.mynyte-frame-container.mn-dark .container-dummy {
+    background: #212121;
+    border-bottom: 1px solid #111;
+    border-top: none;
+}
+
+.mynyte-frame-container.mn-dark .chat-start {
+    color: #cecaca;
+    background-color: #483131;
+    border: 1px solid #1f1414;
+    box-shadow: 1px 1px 2px #1d1c1c;
+}
+
+.mynyte-frame-container.mn-dark iframe {
+    border-top-color: #461919;
+}
+
+.mynyte-frame-container.mn-dark .container-footer {
+    background: #272727;
+    border-top-color: #3a3939;
+    border-radius: 0 0 5px 5px;
+    color: #a08686;
+}
+
+.mynyte-frame-container.mn-dark .footer-transcript-note {
+    color: #b5b3b3;
+}
+
+    /* Menu Items */
+.mynyte-frame-container.mn-dark .listing-menu-item .header {
+    background: #212121;
+    border-bottom: 1px solid #3c3a3a;
+    border-top: 1px solid #060606;
+    color: #8a7777;
+}
+.mynyte-frame-container.mn-dark .listing-menu-item .header:hover {
+    background: #262626;
+    color: #9a8888;
+}
+
+.mynyte-frame-container.mn-dark .listing-menu-item .header .listing-menu-item-open {    
+    border-left-color: #333;
+}
+
+.mynyte-frame-container.mn-dark .listing-menu-item .text-container {
+    border-bottom-color: #252525;
+}
+
+.mynyte-frame-container.mn-dark .listing-menu-item .text-container .title {
+    color: #7c7c7c;
+}
+
+.mynyte-frame-container.mn-dark .listing-menu-item .text-container .price {
+    color: #ccc;
+}
+
+.mynyte-frame-container.mn-dark .listing-menu-item .text-container .options {
+    color: #8a7777;
+}
+
+  /* NEW BUSINESS ITEM FORM */
+
+.mynyte-new-business-item.mn-dark {
+    float: left;
+    clear: left;
+    margin: 5px;
+    max-width: calc(100% - 10px);
+}
+
+.mynyte-new-business-item form {
+    float: left;
+    width: calc(100% - 20px);
+}
+
+.mynyte-form-field-container {
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+label.mynyte-form-field-label {
+    float: left;
+    clear: left;
+    width: 100%;
+    height: 25px;
+    padding: 10px 0 5px;
+    border-bottom: 1px solid #cfcfcf;
+}
+
+.mynyte-form-input-container {
+    float: left;
+    clear: left;
+    width: 100%;
+    position: relative;
+}
+
+input.mynyte-form-input.mynyte-form-text-input {
+    float: left;
+    clear: left;
+    width: calc(100% - 15px);
+    height: 35px;
+    font-size: 18px;
+    padding-left: 10px;
+    margin-top: 5px;
+    color: #888;
+}
+
+.mynyte-form-input.mynyte-form-fake-input {
+    float: left;
+    clear: left;
+    width: calc(100% - 21px);
+    background: #fff;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    height: 20px;
+    position: relative;
+    padding: 10px 10px;
+    font-size: 18px;
+    color: #888;
+}
+
+ul.mynyte-form-select.mynyte-form-fake-select {
+    width: 100%;
+    position: relative;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    top: -4px;
+    border-top: 1px solid #d6c9c9;
+    opacity: 0;
+}
+
+ul.mynyte-form-select.mynyte-form-fake-select.open {
+    max-height: 10000px;
+    opacity: 1;
+}
+
+.mynyte-form-fake-select li {
+    float: left;
+    clear: left;
+    width: calc(100% - 22px);
+    background: #f9fafd;
+    height: 25px;
+    border: 1px solid #babbbf;
+    padding: 15px 10px 10px;
+    border-top: none;
+}
+
+button.mynyte-form-datepicker,
+button.mynyte-form-timepicker,
+button.mynyte-form-selecttoggler {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 41px;
+    margin: 0;
+    width: 60px;
+    border-radius: 0;
+}
+
+.mynyte-form-input.mynyte-input-error {
+    border: 1px solid #9a5e5e;
+    background: #f7e3e3;
+}
+
+  /* BUSINESS ITEM DETAIL & SUMMARY ELEMENTS */
+
+.mynyte-business-items-summary,
+.mynyte-business-item-detail {
+    float: left;
+    clear: left;
+    max-width: calc(100% - 61px);
+    margin: 5px;
+    background: #f5f4f4;
+    border: 1px solid #9d9ec1;
+    border-radius: 6px;
+    line-height: 30px;
+}
+
+label.mynyte-label {
+    width: 200px;
+    float: left;
+    clear: left;
+    font-size: 15px;
+}
+
+span.mynyte-label-detail {
+    float: left;
+}
+
+  /* BUSINESS ITEM SUMMARY */
+.mynyte-business-items-summary {
+    padding: 10px 10px 10px 10px;
+}
+
+.mynyte-business-items-summary-item {
+    float: left;
+    max-width: calc(100% - 22px);
+    border: 1px solid #d0cfcf;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+  /* BUSINESS ITEM DETAIL */
+.mynyte-business-item-detail {
+    padding: 10px 30px 10px 20px;
+}
+
+  
+
+/* ------------- */
+/* MYNYTE POPUP */
+.mynyte-popup-cover {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(230, 230, 230, 0.3);
+    z-index: 0;
+    overflow: hidden;
+    -webkit-transition: all 0.25s;
+    -moz-transition: all 0.25s;
+    transition: all 0.25s;
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+}
+
+.mynyte-popup-cover.mynyte-popup-open {
+    z-index: 9999;
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+    top: 0;
+    left: 0;
+}
+
+.mynyte-popup {
+    width: 95%;
+    display: block;
+    min-width: 200px;
+    max-width: 500px;
+    -webkit-transition: width 0.25s;
+    -moz-transition: width 0.25s;
+    transition: width 0.25s;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    overflow: hidden;
+    max-height: 95%;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+}
+.mynyte-popup.mn-popup-slim {
+    width: 305px;
+}
+
+.mynyte-popup input[type="text"] {
+    float: left;
+    width: calc(100% - 22px);
+    margin-top: 14px;
+    border: 1px solid #d2cfcf;
+    border-radius: 4px;
+    height: 45px;
+    font-size: 18px;
+    padding: 0 10px;
+    color: #444;
+}
+
+.mn-popup-header {
+    float: left;
+    width: calc(100% - 40px);
+    height: 11px;
+    padding: 15px 20px 20px;
+    border-bottom: 1px solid #bbb;
+    background: #fbfbfb;
+    border-radius: 5px 5px 0 0;
+    font-size: 15px;
+}
+
+.mn-popup-header .mn-popup-close {
+    float: right;
+    color: #777;
+    cursor: pointer;
+}
+
+.mn-popup-body {
+    /* float: left; */
+    width: 100%;
+    padding: 5px 0 0;
+    border-bottom: 1px solid #bbb;
+    background: #fefefe;
+    border-radius: 5px 5px 0 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+.mn-popup-body::-webkit-scrollbar {
+    width: 0.5em;
+}
+.mn-popup-body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background: #fff;
+    border: 1px solid #d0d0d0;
+}
+.mn-popup-body::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+  border: 1px solid #e0e2e4;
+  border-radius: 5px;
+}
+
+.mynyte-pop-inner {
+    float: left;
+    width: 100%;
+    background: #fff;
+    min-width: 200px;
+    border-radius: 5px;
+    border: 1px solid #a2a2a2;
+    color: #9a8e90;
+    position: relative;
+}
+
+.mn-popup-body button.start-chat {
+    float: right;
+    background: #ddd;
+    border: 1px solid #aaa;
+    color: #644;
+    width: auto;
+    padding: 15px 30px;
+    cursor: pointer;
+}
+
+.mn-popup-body button.start-chat:hover {
+    background: #eee;
+    border: 1px solid #aaa;
+    color: #855;
+}
+
+.mn-popup-body form {
+    background: none !important;
+    border: none !important;
+    width: calc(100% - 40px) !important;
+    margin: 0 !important;
+    padding: 0 20px 5px !important;
+    border-bottom: 1px solid #fff !important;
+    float: left;
+}
+
+.mynyte-popup .mn-form-option-note {
+    float: left;
+    width: 100%;
+    margin-top: 3px;
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0px;
+    color: #777;
+}
+
+.mynyte-popup .mn-form-option-note span {
+    float: left;
+    width: calc(100% - 75px);
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.mynyte-popup input[type="checkbox"] {
+    float: right;
+    padding: 0;
+    margin: 3px 0 0;
+}
+
+.mynyte-popup .mn-popup-chat-ad {
+    float: left;
+    width: calc(100% - 40px);
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #674c4c;
+    background: #e8e0e0;
+    border: none;
+    height: 300px;
+    border-top: 1px solid #d8c5c5;
+    border-bottom: 1px solid #f3d5d5;
+    margin-top: 5px;
+}
+
+.mynyte-popup iframe {
+    height: 340px;
+    background: #f7f7f7;
+    border: none;
+    width: 100%;
+}
+
+.mn-popup-footer {
+    float: left;
+    width: calc(100% - 30px);
+    padding: 3px 10px 5px 20px;
+    border-top: 1px solid #fffdfd;
+    background: #fbfbfb;
+    border-radius: 0 0 5px 5px;
+    font-size: 14px;
+    color: #888;
+    position: relative;
+}
+
+.mn-popup-footer span.text {
+    float: left;
+    width: 180px;
+}
+
+.mn-popup-footer img {
+    float: right;
+    width: 45px;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
+.mn-popup-footer span {
+    float: left;
+    width: calc(100% - 70px);
+    margin-top: 7px;
+    line-height: 20px;
+}
+
+/*Light Widget Frame Manipulation */
+
+.light-widget .grey_bg {
+    background: #ddd;
+}
+
+.light-widget h2 {
+    background: #ddd;
+    border-color: #e8e7e7 !important;
+    color: #655;
+}
+
+.light-widget #header-bar {
+    background: #b39999;
+    border-bottom-color: #6b3535;
+}
+
+.light-widget .tile {
+    background-color: #eee;
+    border-color: #b5b1b1;
+}
+
+.light-widget .book-table .tablefor-item,
+.light-widget .book-tickets .additionalguests-item {
+    background-color: #f5f1f1;
+    border-color: #a7a2a2;
+}
+
+.light-widget .register .item {
+    border-color: #bfbdbd;
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker,
+.light-widget .datepicker,
+.light-widget .timepicker,
+.light-widget .black-square-button {
+    background: #bda1a1;
+    border-color: #9c6969;
+    color: #774f4f;
+    height: 52px;
+}
+
+.light-widget .datepicker i,
+.light-widget .timepicker i {
+    color: #7b4c4c;
+}
+
+.light-widget form label.item-header,
+.light-widget form div.item-header {
+    border-color: #aaa;
+}
+
+.light-widget .book-table .fake-tablefor-input,
+.light-widget .book-tickets .fake-additionalguests-input,
+.light-widget .fake-square-input {
+    border-top-color: #b96d6d;
+    border-bottom-color: #9a5858;
+}
+
+.light-widget .book-table .tableforpicker,
+.light-widget .book-tickets .additional-guests-picker {
+    border-top: 1px solid #9c6969;
+    height: 50px;
+    border-right: 1px solid #9c6969;
+}
+
+.light-widget .book-table .tablefor-span,
+.light-widget .book-tickets .additionalguests-span {
+    color: #533;
+}
+
+.light-widget label.item-header,
+.light-widget form div.item-header {
+    color: #636363;
+}
+
+.light-widget button.button-red {
+    background: #909090 !important;
+    border-color: #565656 !important;
+    color: #fff !important;
+}}}}
