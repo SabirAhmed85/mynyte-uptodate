@@ -1,3 +1,3 @@
 <?php
-    $GLOBALS['intended_environment'] = 'Staging';
+    $GLOBALS['intended_environment'] = 'Live';
 ?>
