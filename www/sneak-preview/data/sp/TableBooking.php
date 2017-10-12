@@ -11,7 +11,9 @@
     $usersEmail = (empty($_GET['usersEmail'])) ? "": mysql_real_escape_string($_GET['usersEmail']);
     $tableFor = (empty($_GET['tableFor'])) ? "": mysql_real_escape_string($_GET['tableFor']);
     $dateTimeRequested = (empty($_GET['dateTimeRequested'])) ? "": mysql_real_escape_string($_GET['dateTimeRequested']);
-    $result = mysql_query("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested');");
+    $comment = (empty($_GET['comment'])) ? "": mysql_real_escape_string($_GET['comment']);
+	//echo json_encode("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
+    $result = mysql_query("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
   }
   else if ($action == 'getRequestedTableBookings') {
     $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);

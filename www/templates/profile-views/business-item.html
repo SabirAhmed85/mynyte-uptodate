@@ -1022,11 +1022,11 @@
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested == null">Action required! The customer is waiting for your response...</span>
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested != null">Waiting for a response on your suggested time from the customer.</span>
                 </label>
-                <label class="item-header">Customer Name<span ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse"> &amp; Details</span></label>
+                <label class="item-header">Customer Name<span ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '1'"> &amp; Details</span></label>
                 <label class="item"
-                    ng-if="!rootScope.user.showUsersEmailAndPhoneInTableBookingResponse">{{businessItem.name}}</label>
+                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '0'">{{businessItem.name}}</label>
                 <label class="item"
-                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse">
+                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '1'">
                     <span class="line">{{businessItem.name}}</span>
                     <span class="line">{{businessItem.email}}</span>
                     <span class="line">{{businessItem.phone}}</span>
@@ -1037,6 +1037,8 @@
                 <label class="item">{{businessItem.convertedDateString}}</label>
                 <label class="item-header">Time</label>
                 <label class="item">{{businessItem.timeString}}</label>
+                <label class="item-header" ng-if="businessItem.comment != ''">Additional Comment</label>
+                <label class="item" ng-if="businessItem.comment != ''">{{businessItem.comment}}</label>
                 
                 <span ng-show="itemType == 'RequestedTableBookings'">
                     <button class="button button-red button-large"
