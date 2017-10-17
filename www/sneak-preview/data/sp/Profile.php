@@ -276,11 +276,12 @@
         $isAcceptingTaxiBookings = $dataJsonDecode->isAcceptingTaxiBookings;
         $isAcceptingEnquiries = $dataJsonDecode->isAcceptingEnquiries;
         $_tonightsFeedButtonOptionId = $dataJsonDecode->_tonightsFeedButtonOptionId;
+        $allowCommentInTableBooking = $dataJsonDecode->allowCommentInTableBooking;
         //$isSearchable = $dataJsonDecode->isSearchable;
         $isSearchable = 1;
       
-        $result = mysql_query("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId);");
-        //echo json_encode("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId);");
+        $result = mysql_query("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId, $allowCommentInTableBooking);");
+        //echo json_encode("CALL updateAllBusinessSettingDetails($_businessId, $isAcceptingOnlineOrders, $showTakeawayMenu, $isAcceptingTableBookings, $showCarteMenu, $maxTableBookingGuests, $isAcceptingTaxiBookings, $isSearchable, $isAcceptingEnquiries, $_tonightsFeedButtonOptionId, $allowCommentInTableBooking);");
   }
   elseif ($action == 'updateBusinessTypesForBusiness') {
     $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);

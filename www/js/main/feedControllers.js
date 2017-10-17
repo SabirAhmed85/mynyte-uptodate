@@ -1729,6 +1729,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
 		$scope.textareaShort = true;
         $scope.name = null;
         $scope.email = null;
+        $scope.comment = null;
         $scope.selectedDate1 = new Date();
         $scope.selectedTime = (new Date().getHours() < 18) ?
             new Date(64800 * 1000) :
@@ -1748,6 +1749,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
 
             $scope.tableForMax = $stateParams.tableForMax;
             $scope.commentAllowed = $stateParams.commentAllowed;
+            console.log($scope.commentAllowed);
 			$scope.textareaShort = true;
             $scope.phoneIsRequiredForBooking = $stateParams.phoneIsRequiredForBooking;
             $scope.tableBookingDisallowed = [];
@@ -1767,7 +1769,11 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             }
             $scope.dateInputHTML = $scope.convertToDate();
             $scope.timeInputHTML = $scope.convertToTime();
-			$scope.comment = '';
+            $scope.form = {
+                name: '',
+                email: '',
+                comment: ''
+            }
             
             var getCurrentInputTime = function () {
                 var d = new Date();
@@ -1912,8 +1918,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     showPastTimePopup({});
                     return false;
                 }
+                console.log($scope.form.comment);
                 var _profId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: null;
-				var comment  = ($scope.commentAllowed) ? $scope.comment: "";
+				var comment  = ($scope.commentAllowed) ? $scope.form.comment: "";
                 
                 TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString, comment).success(function (successData) {
                     var contents = "You've received a Table Booking Request.";

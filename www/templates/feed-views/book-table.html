@@ -83,9 +83,9 @@
                 </button>
         	</label>
             <label class="item"
-                ng-if="commentAllowed">
-                <textarea ng-focus="textareaShort = false" ng-blur="textareaShort = true" class="white nightlife-input trans" type="text" placeholder="Comments (Optional)" name="comment"
-                    ng-model="comment"
+                ng-if="commentAllowed == 'true'">
+                <textarea ng-focus="textareaShort = false" ng-blur="textareaShort = true" class="white nightlife-input trans" placeholder="Comments (Optional)" name="comment"
+                    ng-model="form.comment"
                     ng-class="{'nightlife-textarea-short': textareaShort}"></textarea>
             </label>
             
