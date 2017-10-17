@@ -6610,6 +6610,13 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                                                 , trueLabel: 'Show my A la Carte Menu to users'
                                                 , falseLabel: 'Do not show my A la Carte Menu to users'
                                                 , editing: false},
+                                                { key: 'allowCommentInTableBooking'
+                                                , label: 'Show a Comments Box in my Table Booking Form'
+                                                , val: (data.allowCommentInTableBooking == '0') ? 0 : 1
+                                                , optionStyle: 'binary'
+                                                , trueLabel: 'Show a Comments Box in Table Booking Form'
+                                                , falseLabel: 'Do not show a Comments Box in Table Booking Form'
+                                                , editing: false},
                                                 { key: 'maxTableBookingGuests'
                                                 , label: 'Max Number of Guests per Booking'
                                                 , val: parseInt(data.maxTableBookingGuests)
