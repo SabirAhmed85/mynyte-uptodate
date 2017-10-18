@@ -1905,18 +1905,27 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     showPastTimePopup({});
                     return false;
                 }
+<<<<<<< HEAD
+=======
+                
+>>>>>>> 74f2737be4884c17dbaaec1103cd49a13e6f7239
                 var _profId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: null;
                 
+<<<<<<< HEAD
                 TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString).success(function (successData) {
+=======
+                TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString, comment).success(function (successData) {
+                    console.log(successData);
+>>>>>>> 74f2737be4884c17dbaaec1103cd49a13e6f7239
                     var contents = "You've received a Table Booking Request.";
                     var header = "Table Booking Requested";
                     var dataObj = {
                         "actionFunction": "goToBusinessItem",
                         "businessItemType": "RequestedTableBookings",
-                        "_businessItemId": successData[0]._id
+                        "_businessItemId": successData._id
                     };
                     
-                    var recipientsArray = [successData[0]._profileId];
+                    var recipientsArray = [successData._profileId];
                     
                     $rootScope.prepareMessageNotificationFinal(recipientsArray, contents, header, dataObj);
                     
