@@ -1,4 +1,5 @@
 <?php
+  include '../functions/intellisms/SendScripts/IntelliSMS.php';
 
   require_once('../db-connect.php');
     
@@ -14,6 +15,37 @@
     $comment = (empty($_GET['comment'])) ? "": mysql_real_escape_string($_GET['comment']);
 	//echo json_encode("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
     $result = mysql_query("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
+
+    $output = mysql_fetch_assoc($result);
+    $email = $output['email'];
+    $phone = $output['phone'];
+
+    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/';
+    $emailUrl = $rootUrl . 'sneak-preview/data/functions/email.php';
+    $myvars = 'action=informRestaurantOfTableBooking&email=' . $email;
+
+    $ch = curl_init( $emailUrl );
+    curl_setopt( $ch, CURLOPT_POST, 1);
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $myvars);
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt( $ch, CURLOPT_HEADER, 0);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $response = curl_exec( $ch );
+
+    //Required php.ini settings:
+    // allow_url_fopen = On
+    // track_errors = On
+    if (substr($phone, 0, 2) == '07' || substr($phone, 0, 3) == '447') {
+      $phone = (substr($phone, 0, 2) == '07') ? '44' . substr($phone, 1, strlen($phone)): $phone;
+      $objIntelliSMS = new IntelliSMS();
+
+      $objIntelliSMS->Username = 'mynyte';
+      $objIntelliSMS->Password = 'Liberty44';
+
+      $objIntelliSMS->SendMessage ( $phone, "You've just received a Table Booking through the MyNyte App. Log into MyNyte to see full details.", 'MyNyte' );
+    }
+
   }
   else if ($action == 'getRequestedTableBookings') {
     $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);
@@ -92,11 +124,16 @@
   }
   //print(json_encode($_usersId));
   if ($action != 'deleteBlockedTableBookingInterval'
-    && $action != 'createBlockedTableBookingInterval') {
+    && $action != 'createBlockedTableBookingInterval'
+    && $action != 'createTableBooking') {
     $output = null;
     while($row = mysql_fetch_assoc($result))
       $output[] = $row;
         
+    header('Content-Type: application/json');
+    echo json_encode($output);
+  }
+  else if ($action == 'createTableBooking') {
     header('Content-Type: application/json');
     echo json_encode($output);
   }
