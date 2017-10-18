@@ -19,6 +19,9 @@
     $output = mysql_fetch_assoc($result);
     $email = $output['email'];
     $phone = $output['phone'];
+    $informByPhone = $output['informByPhone'];
+    $informByText = $output['informByText'];
+    $phone = (substr($phone, 0, 1) == '0') ? '44' . substr($phone, 1, strlen($phone)): $phone;
 
     $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/';
     $emailUrl = $rootUrl . 'sneak-preview/data/functions/email.php';
@@ -33,11 +36,24 @@
 
     $response = curl_exec( $ch );
 
+	if ($informByPhone == '1') {
+		$voiceCallUrl = $rootUrl . 'sneak-preview/data/functions/call.php';
+		$myvars = 'phone=+' . $phone;
+		
+		$ch = curl_init( $voiceCallUrl );
+		curl_setopt( $ch, CURLOPT_POST, 1);
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $myvars);
+		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt( $ch, CURLOPT_HEADER, 0);
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+	
+		$response = curl_exec( $ch );
+	}
+	
     //Required php.ini settings:
     // allow_url_fopen = On
     // track_errors = On
-    if (substr($phone, 0, 2) == '07' || substr($phone, 0, 3) == '447') {
-      $phone = (substr($phone, 0, 2) == '07') ? '44' . substr($phone, 1, strlen($phone)): $phone;
+    if ($informByText == '1' && (substr($phone, 0, 2) == '07' || substr($phone, 0, 3) == '447')) {
       $objIntelliSMS = new IntelliSMS();
 
       $objIntelliSMS->Username = 'mynyte';
