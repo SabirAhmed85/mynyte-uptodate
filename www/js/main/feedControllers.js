@@ -1928,10 +1928,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     var dataObj = {
                         "actionFunction": "goToBusinessItem",
                         "businessItemType": "RequestedTableBookings",
-                        "_businessItemId": successData[0]._id
+                        "_businessItemId": successData._id
                     };
                     
-                    var recipientsArray = [successData[0]._profileId];
+                    var recipientsArray = [successData._profileId];
                     
                     $rootScope.prepareMessageNotificationFinal(recipientsArray, contents, header, dataObj);
                     
