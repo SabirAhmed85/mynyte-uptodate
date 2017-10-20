@@ -23,7 +23,7 @@
     $informByText = $output['informByText'];
     $phone = (substr($phone, 0, 1) == '0') ? '44' . substr($phone, 1, strlen($phone)): $phone;
 
-    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/';
+    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/live/';
     $emailUrl = $rootUrl . 'sneak-preview/data/functions/email.php';
     $myvars = 'action=informRestaurantOfTableBooking&email=' . $email;
 

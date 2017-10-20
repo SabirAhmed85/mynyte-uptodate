@@ -1779,7 +1779,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 var d = new Date();
                 return (d.getMinutes() < 30) ?
                     (d.getHours()*60*60)+(d.getMinutes()*60):
-                    ((d.getHours()-1)*60*60)+(d.getMinutes()*60);
+                    (d.getHours()*60*60)+(d.getMinutes()*60);
             }
 
             var d = new Date();
