@@ -12,9 +12,6 @@
     $usersEmail = (empty($_GET['usersEmail'])) ? "": mysql_real_escape_string($_GET['usersEmail']);
     $tableFor = (empty($_GET['tableFor'])) ? "": mysql_real_escape_string($_GET['tableFor']);
     $dateTimeRequested = (empty($_GET['dateTimeRequested'])) ? "": mysql_real_escape_string($_GET['dateTimeRequested']);
-<<<<<<< HEAD
-    $result = mysql_query("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested');");
-=======
     $comment = (empty($_GET['comment'])) ? "": mysql_real_escape_string($_GET['comment']);
 	//echo json_encode("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
     $result = mysql_query("CALL createTableBooking($_usersProfileId, $_businessId, '$usersName', '$usersEmail', $tableFor, '$dateTimeRequested', '$comment');");
@@ -23,7 +20,7 @@
     $email = $output['email'];
     $phone = $output['phone'];
 
-    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/';
+    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/live/';
     $emailUrl = $rootUrl . 'sneak-preview/data/functions/email.php';
     $myvars = 'action=informRestaurantOfTableBooking&email=' . $email;
 
@@ -48,8 +45,6 @@
 
       $objIntelliSMS->SendMessage ( $phone, "You've just received a Table Booking through the MyNyte App. Log into MyNyte to see full details.", 'MyNyte' );
     }
-
->>>>>>> 74f2737be4884c17dbaaec1103cd49a13e6f7239
   }
   else if ($action == 'getRequestedTableBookings') {
     $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);

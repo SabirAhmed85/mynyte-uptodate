@@ -3,7 +3,7 @@
     require_once('../db-connect.php');
     $action = $_GET['action'];
     $platform = (empty($_GET["platform"])) ? 'non-android': $_GET["platform"];
-    $docRoot = ($intended_environment == 'Staging') ? $_SERVER['DOCUMENT_ROOT']."/staging": $_SERVER['DOCUMENT_ROOT'];
+    $docRoot = ($intended_environment == 'Staging') ? $_SERVER['DOCUMENT_ROOT']."/staging": $_SERVER['DOCUMENT_ROOT']."/live";
 
     if ($action == 'uploadImage') {
         $config["quality"] = 120; //jpeg quality
