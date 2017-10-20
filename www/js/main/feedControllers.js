@@ -1763,7 +1763,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
             }
             $scope.convertToTime = function () {
-                $scope.selectedHour = ($scope.selectedTime.getUTCHours() < 10) ? '0' + $scope.selectedTime.getUTCHours(): $scope.selectedTime.getUTCHours();
+                $scope.selectedHour = ($scope.selectedTime.getUTCHours()+1 < 10) ? '0' + $scope.selectedTime.getUTCHours()+1: $scope.selectedTime.getUTCHours()+1;
                 $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                 return $scope.selectedHour + ':' + $scope.selectedMinutes;
             }
@@ -1777,9 +1777,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             
             var getCurrentInputTime = function () {
                 var d = new Date();
+                
                 return (d.getMinutes() < 30) ?
-                    (d.getHours()*60*60)+(d.getMinutes()*60):
-                    (d.getHours()*60*60)+(d.getMinutes()*60);
+                    ((d.getHours())*60*60)+(d.getMinutes()*60):
+                    ((d.getHours()-1)*60*60)+(d.getMinutes()*60);
             }
 
             var d = new Date();
