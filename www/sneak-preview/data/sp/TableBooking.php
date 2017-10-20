@@ -1,5 +1,7 @@
 <?php
   include '../functions/intellisms/SendScripts/IntelliSMS.php';
+  
+  require_once('../functions/externalFunctions.php');
 
   require_once('../db-connect.php');
     
@@ -22,44 +24,14 @@
     $informByPhone = $output['informByPhone'];
     $informByText = $output['informByText'];
     $phone = (substr($phone, 0, 1) == '0') ? '44' . substr($phone, 1, strlen($phone)): $phone;
-
-    $rootUrl = ($intended_environment == 'Staging') ? 'https://www.mynyte.co.uk/staging/': 'https://www.mynyte.co.uk/live/';
-    $emailUrl = $rootUrl . 'sneak-preview/data/functions/email.php';
-    $myvars = 'action=informRestaurantOfTableBooking&email=' . $email;
-
-    $ch = curl_init( $emailUrl );
-    curl_setopt( $ch, CURLOPT_POST, 1);
-    curl_setopt( $ch, CURLOPT_POSTFIELDS, $myvars);
-    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt( $ch, CURLOPT_HEADER, 0);
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
-
-    $response = curl_exec( $ch );
+    
+	$emailCurl = externalCurl($root_url . 'sneak-preview/data/functions/email.php', 'action=informRestaurantOfTableBooking&email=' . $email);
 
 	if ($informByPhone == '1') {
-		$voiceCallUrl = $rootUrl . 'sneak-preview/data/functions/call.php';
-		$myvars = 'phone=+' . $phone;
-		
-		$ch = curl_init( $voiceCallUrl );
-		curl_setopt( $ch, CURLOPT_POST, 1);
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $myvars);
-		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt( $ch, CURLOPT_HEADER, 0);
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
-	
-		$response = curl_exec( $ch );
+		$callCurl = externalCurl($root_url . 'sneak-preview/data/functions/call.php', 'phone=+' . $phone);
 	}
-	
-    //Required php.ini settings:
-    // allow_url_fopen = On
-    // track_errors = On
-    if ($informByText == '1' && (substr($phone, 0, 2) == '07' || substr($phone, 0, 3) == '447')) {
-      $objIntelliSMS = new IntelliSMS();
-
-      $objIntelliSMS->Username = 'mynyte';
-      $objIntelliSMS->Password = 'Liberty44';
-
-      $objIntelliSMS->SendMessage ( $phone, "You've just received a Table Booking through the MyNyte App. Log into MyNyte to see full details.", 'MyNyte' );
+	else if ($informByText == '1' && (substr($phone, 0, 2) == '07' || substr($phone, 0, 3) == '447')) {
+      	$textSend= sendTextMessage($phone, "You've just received a Table Booking through the MyNyte App. Log into MyNyte to see full details.", 'MyNyte');
     }
 
   }

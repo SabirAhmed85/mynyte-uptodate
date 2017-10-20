@@ -53,6 +53,15 @@
         
         array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $email));
     }
+	else if ($action == 'informTaxiFirmOfTaxiBooking') {
+		$email = $_POST['email'];
+        
+        $subject = "You've just received a Taxi Booking Request on the MyNyte App";
+        $htmlEmail = file_get_contents('../../../templates/email-views/table-booking-request-received.html');
+        $actionFound = true;
+        
+        array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $email));
+	}
 
     //Process Varables where needed
     foreach ($recipients_array as $obj) {
