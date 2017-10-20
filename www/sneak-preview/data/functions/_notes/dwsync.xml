@@ -8,4 +8,6 @@
 <file name="image-upload.php" server="ftp.mynyte.co.uk//public_html/live/" local="131529728853492522" remote="131529727800000000" Dst="2" />
 <file name="externalFunctions.php" server="ftp.mynyte.co.uk//public_html/staging/" local="131529847287326681" remote="131529847200000000" Dst="2" />
 <file name="email.php" server="ftp.mynyte.co.uk//public_html/staging/" local="131529870086382462" remote="131529869400000000" Dst="2" />
+<file name="email.php" server="ftp.mynyte.co.uk//public_html/live/" local="131529877666742212" remote="131529878400000000" Dst="2" />
+<file name="externalFunctions.php" server="ftp.mynyte.co.uk//public_html/live/" local="131529877666747258" remote="131529878400000000" Dst="2" />
 </dwsync>
