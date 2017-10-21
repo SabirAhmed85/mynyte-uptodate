@@ -64,9 +64,13 @@
     //echo json_encode($output);
   }
   else if ($action == 'getBusinessesByBusinessType') {
-    $_profileId = 0;
-    $businessTypesString = $_GET['businessTypesString'];
-    $_townId = $_GET['_townId'];
+    $data               = file_get_contents("php://input");
+    $dataJsonDecode     = json_decode($data);
+    
+    $_profileId = $dataJsonDecode-> businessTypesString;
+    $businessTypesString = $dataJsonDecode-> businessTypesString;
+    $_townId = $dataJsonDecode-> _townId;
+
 
     $result = mysql_query("CALL getBusinessesByBusinessType($_profileId, '".$businessTypesString."', $_townId);");
     
