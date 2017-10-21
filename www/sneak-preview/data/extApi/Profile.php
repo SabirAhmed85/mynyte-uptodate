@@ -63,6 +63,21 @@
     echo $callback . "({'items': ".json_encode($output)."})";
     //echo json_encode($output);
   }
+  else if ($action == 'getBusinessesByBusinessType') {
+    $_profileId = 0;
+    $businessTypesString = $_GET['businessTypesString'];
+    $_townId = $_GET['_townId'];
+
+    $result = mysql_query("CALL getBusinessesByBusinessType($_profileId, '".$businessTypesString."', $_townId);");
+    
+    while($row = mysql_fetch_assoc($result))
+      $output[] = $row;
+
+    shuffle($output);
+
+    header("Content-Type: application/json");
+    echo $callback . "({'items': ".json_encode($output)."})";
+  }
 
   else if ($action == 'createExternalPersonEntity') {
     /*
