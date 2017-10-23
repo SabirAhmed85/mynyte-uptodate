@@ -253,8 +253,29 @@
 						console.log(successData);
 						var imageSize = params.imageSize || 'small';
 						
-						var divHeight = $('.mynyte-listings').height() - 100;
+						var divHeight = $('.mynyte-listings').height() - 110;
 						var htmlToAdd = "<div class='header'>What's On</div><span class='scrollbar'></span>";
+
+						function selectListingsNavItem (item) {
+							console.log(item);
+							$('.mn-listings-inner-container').each(function (index) {
+								$(this).removeClass('show');
+
+								if ($(this).data('mn-listing-type') == item) {
+									$(this).addClass('show');
+								}
+							});
+							$('.mn-listings-nav-listing').each(function (index) {
+								$(this).removeClass('active');
+
+								if ($(this).data('mn-nav-label-type') == item) {
+									$(this).addClass('active');
+								}
+							});
+						}
+						MynyteApi.selectListingsNavItem = function (params) {
+							selectListingsNavItem(params);
+						}
 	
 						function buildListingsItems () {
 							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
@@ -262,16 +283,19 @@
 								var thisType = successData.items[thisI];
 								var containerShowString = (i == 0) ? " show": "";
 
-								htmlToAdd += "<div class='mn-listings-inner-container" + containerShowString + "'>";
+								htmlToAdd += "<div data-mn-listing-type='" + thisI + "' class='mn-listings-inner-container trans" + containerShowString + "'>";
 
 								for (a = 0; a < thisType.length; a++) {
-								  var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
+								    var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
+								    var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
+								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
+								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
 
-								  htmlToAdd += "<div class='listing"+listingWithSmallImgClass+"'>";
-								  htmlToAdd += "<img class='main-img' src='https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/"+thisType[a].currentCoverPhotoName+"'></img>";
-								  htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
-								  htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
-								  htmlToAdd += "</div>";
+								    htmlToAdd += "<div class='listing"+listingWithSmallImgClass+"'>";
+								    htmlToAdd += "<img class='main-img' src='" + imgSrc + "'></img>";
+								    htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
+								    htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
+								    htmlToAdd += "</div>";
 								  	//social bar
 								  	htmlToAdd += "<div class='mn-listings-social-icons'>";
 
@@ -279,9 +303,9 @@
 								  		htmlToAdd += "<i class='fa fa-twitter trans'></i>";
 								  		htmlToAdd += "<i class='fa fa-envelope trans'></i>";
 								  	htmlToAdd += "</div>";
-								  htmlToAdd += "</div>";
+								    htmlToAdd += "</div>";
 
-								  if (a == thisType.length - 1) {
+								    if (a == thisType.length - 1) {
 										htmlToAdd += "</div>";
 
 										if (i == end - 1) {
@@ -289,7 +313,7 @@
 							
 											elem.append(htmlToAdd).css({'display': 'block'});
 										}
-								  }
+								    }
 			
 								}
 							}
@@ -303,9 +327,10 @@
 								var listingActiveString = (i == 0) ? " active": "";
 								var iconClass = successData.items[thisI][0]['iconClass'];
 
-								htmlToAdd += "<div class='mn-listings-nav-listing" + listingActiveString + "'>";
+								htmlToAdd += '<div onclick="MynyteApi.selectListingsNavItem(\'' + thisI + '\');" data-mn-nav-label-type="' + thisI + '" class="mn-listings-nav-listing' + listingActiveString + '">';
 									htmlToAdd += "<i class='fa " + iconClass + "'></i>";
 									htmlToAdd += "<span class='nav-listing-label'>" + thisI + "</span>";
+									htmlToAdd += "<span class='nav-listing-tri'></span>";
 								htmlToAdd += "</div>";
 
 								if (i == end - 1) {

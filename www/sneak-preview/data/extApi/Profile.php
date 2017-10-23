@@ -66,10 +66,22 @@
   else if ($action == 'getBusinessesByBusinessType') {
     $_profileId = $_GET['_profileId'];
     //$businessTypesString = $_GET['businessTypesString'];
-    $businessTypesString = "Restaurant, Takeaway";
+    $businessTypesString = "Restaurant, Takeaway, Nightclub, Event";
     $_townId = $_GET['_townId'];
     $limit = $_GET['limit'];
+    $hasEvents = strpos($businessTypesString, 'Event') !== false;
+    $hasMovies = strpos($businessTypesString, 'Movie') !== false;
+    $hasOffers = strpos($businessTypesString, 'Offer') !== false;
     $output_listings = array();
+
+    $businessTypesString = str_replace(" ", "", $businessTypesString);
+    $businessTypesString = str_replace(",Event", "", $businessTypesString);
+    $businessTypesString = str_replace("Event", "", $businessTypesString);
+    $businessTypesString = str_replace(",Offer", "", $businessTypesString);
+    $businessTypesString = str_replace("Offer", "", $businessTypesString);
+    $businessTypesString = str_replace(",Movie", "", $businessTypesString);
+    $businessTypesString = str_replace("Movie", "", $businessTypesString);
+    
 
     $result = mysqli_query($db_con, "CALL getBusinessesByBusinessType(".$_profileId.", '".$businessTypesString."', ".$_townId.");");
     //echo json_encode("CALL getBusinessesByBusinessType(".$_profileId.", '".$businessTypesString."', ".$_townId.");");
@@ -77,15 +89,30 @@
     while($row = mysqli_fetch_assoc($result))
       $output[] = $row;
 
+    mysqli_next_result($db_con);
+
+    if ($hasEvents == 1) {
+      $result_events = mysqli_query($db_con, "CALL getBusinessesByBusinessType(".$_profileId.", 'Event', ".$_townId.");");
+      //echo json_encode("CALL getBusinessesByBusinessType(".$_profileId.", 'Event', ".$_townId.");");
+
+      while($row_events = mysqli_fetch_assoc($result_events))
+        $output_events[] = $row_events;
+
+      for ($a = 0; $a < count($output_events); $a++) {
+        array_push($output, $output_events[$a]);
+      }
+    }
+
     shuffle($output);
+
     for ($i = 0; $i < count($output); $i++) {
       
-      if (!isset($output_listings[$output[$i]['businessTypeName']])) {
-        $output_listings[$output[$i]['businessTypeName']] = array();
+      if (!isset($output_listings[$output[$i]['listingTypeName']])) {
+        $output_listings[$output[$i]['listingTypeName']] = array();
       }
 
-      if (count($output_listings[$output[$i]['businessTypeName']]) < $limit) {
-        array_push($output_listings[$output[$i]['businessTypeName']], $output[$i]);
+      if (count($output_listings[$output[$i]['listingTypeName']]) < $limit) {
+        array_push($output_listings[$output[$i]['listingTypeName']], $output[$i]);
       }
       
       if ($i == count($output) - 1) {
@@ -131,5 +158,5 @@
     echo json_encode($output[0]["@_messageGroupId"]);
   }
 
-  mysql_close();
+  mysqli_close();
 ?>
