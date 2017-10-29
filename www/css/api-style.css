@@ -119,11 +119,12 @@ body.mn-modal--opened {
 .mynyte-listings .listings-container {
     float: left;
     width: 100%;
-    overflow-y: scroll;
+    overflow-y: hidden;
     /* border: 1px solid #d2cdcd; */
     position: relative;
     display: block;
     overflow-x: hidden;
+    margin-top: 10px;
 }
 
 .mynyte-listings .listings-container::-webkit-scrollbar {
@@ -144,6 +145,66 @@ body.mn-modal--opened {
   border: 1px solid #4a4949;
 }
 
+.mynyte-listings .mn-listings-inner-container {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  overflow-y: scroll;
+  height: 100%;
+}
+.mynyte-listings .mn-listings-inner-container.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mynyte-listings .mn-listings-nav {
+    float: left;
+    width: 100%;
+}
+
+.mynyte-listings .mn-listings-nav-listing {
+    float: left;
+    width: 25%;
+    padding-bottom: 9px;
+    position: relative;
+}
+.mynyte-listings .mn-listings-nav-listing:hover {
+    cursor: pointer;
+}
+
+.mynyte-listings .mn-listings-nav-listing i {
+    float: left;
+    width: 100%;
+    text-align: center;
+    font-size: 25px;
+    margin: 10px 0 7px;
+}
+
+.mynyte-listings .mn-listings-nav-listing span {
+    float: left;
+    clear: left;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+}
+
+.mynyte-listings .mn-listings-nav-listing span.nav-listing-tri {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 17px solid #1a1a1a;
+    position: absolute;
+    bottom: -10px;
+    left: calc(50% - 10px);
+    display: none;
+}
+.mynyte-listings .mn-listings-nav-listing.active span.nav-listing-tri {
+    display: block;
+}
+
 .mynyte-listings .listing {
     float: left;
     width: 100%;
@@ -153,11 +214,21 @@ body.mn-modal--opened {
     font-size: 14px;
     /* height: 90px; */
 }
+.mynyte-listings .listing:hover {
+    cursor: pointer;
+}
 
 .mynyte-listings .listing .main-img {
     width: calc(100% - 20px);
     margin: 10px 10px 3px;
     float: left;
+}
+
+.mynyte-listings .listing.with-small-image .main-img {
+    max-width: 100px;
+    margin-bottom: 10px;
+    border-radius: 90px;
+    height: 100px;
 }
 
 .mynyte-listings .listing .text-container {
@@ -168,6 +239,10 @@ body.mn-modal--opened {
 .mynyte-listings .listing.with-image .text-container {
     margin: 0 10px 13px;
     width: calc(100% - 30px);
+}
+.mynyte-listings .listing.with-small-image .text-container {
+    max-width: calc(100% - 140px);
+    margin-bottom: 25px;
 }
 
 .mynyte-listings .listing .title {
@@ -208,6 +283,24 @@ body.mn-modal--opened {
     width: 100%;
 }
 
+.mynyte-listings .mn-listings-social-icons {
+    float: left;
+    width: calc(100% - 20px);
+    border-top: 1px dotted #ddd;
+    padding: 10px 0 0;
+    margin: -5px 10px 10px -15px;
+    text-align: right;
+}
+.mynyte-listings .listing.with-small-image .mn-listings-social-icons {
+    width: calc(100% - 115px);
+}
+
+.mynyte-listings .mn-listings-social-icons i {
+    font-size: 20px;
+    margin-right: 13px;
+    margin-left: 10px;
+}
+
     /*DARK*/
 
 .mynyte-listings.mn-dark {
@@ -221,9 +314,35 @@ body.mn-modal--opened {
     display: none;
 }
 
+.mynyte-listings.mn-dark .mn-listings-nav {
+    background: #1d1c1c;
+    border-bottom: 1px solid #282828;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing.active {
+    color: #b39797;
+    text-shadow: 1px 2px 2px #000;
+    background: #292929;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing:hover {
+    background: #282828;
+    color: #ccc;
+    text-shadow: 1px 1px 1px #000;
+}
+.mynyte-listings.mn-dark .mn-listings-nav-listing.active:hover {
+    color: #b39797;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing span.nav-listing-tri {
+    border-top: 10px solid #292929;
+}
+.mynyte-listings.mn-dark .mn-listings-nav-listing:hover span.nav-listing-tri {
+    border-top: 17px solid #282828;
+}
+
 .mynyte-listings.mn-dark .listing {
-    border-bottom: 1px solid #2f2f2f;
-    border-top: 1px solid #232323;
+    border-bottom: 1px solid #2b2b2b;
 }
 .mynyte-listings.mn-dark .listing:hover {
     background: #2f2f2f;
@@ -246,6 +365,14 @@ body.mn-modal--opened {
 }
 .mynyte-listings.mn-dark .listing:hover .title {
     color: #e4e1e1;
+}
+
+.mynyte-listings.mn-dark .mn-listings-social-icons {
+    border-top: 1px dotted #2a2a2a;
+}
+
+.mynyte-listings.mn-dark .mn-listings-social-icons i:hover {
+    color: #ccc;
 }
 
     /*CLEAR*/
