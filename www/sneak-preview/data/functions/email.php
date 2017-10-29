@@ -1,8 +1,10 @@
 <?php
     //ini_set('display_errors', 1);
+    include_once('globals.php');
     require '../classes/php-mailer/PHPMailerAutoload.php';
     
-    $action = $_GET['action'];
+    $action = $_POST['action'];
+    echo $action;
     $actionFound = false;
 
     $recipients_array = array();
@@ -41,6 +43,25 @@
         
         array_push($recipients_array, (object)array('name' => $firstName, 'email' => $email));
     }
+    else if ($action == 'informRestaurantOfTableBooking') {
+
+        $email = $_POST['email'];
+        
+        $subject = "You've just received a Table Booking Request on the MyNyte App";
+        $htmlEmail = file_get_contents('../../../templates/email-views/table-booking-request-received.html');
+        $actionFound = true;
+        
+        array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $email));
+    }
+	else if ($action == 'informTaxiFirmOfTaxiBooking') {
+		$email = $_POST['email'];
+        
+        $subject = "You've just received a Taxi Booking Request on the MyNyte App";
+        $htmlEmail = file_get_contents('../../../templates/email-views/table-booking-request-received.html');
+        $actionFound = true;
+        
+        array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $email));
+	}
 
     //Process Varables where needed
     foreach ($recipients_array as $obj) {
@@ -55,7 +76,7 @@
         }
 
         
-        if (isset($_GET['action']) && $actionFound) {
+        if (isset($_POST['action']) && $actionFound) {
             $mail = new PHPMailer();
             
             $mail->IsSMTP();

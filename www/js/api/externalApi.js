@@ -38,7 +38,7 @@
 			var jsonpCallback = function (reponse) {};
 
 			$.ajax({
-				url: "https://www.mynyte.co.uk/sneak-preview/data/extApi/"+className+".php?action="+action,
+				url: "https://www.mynyte.co.uk/staging/sneak-preview/data/extApi/"+className+".php?action="+action,
 				type: "GET",
 				dataType: "jsonp",
 				jsonp: "jsonp",
@@ -140,14 +140,26 @@
 		}
 		
 		function createFeed (params) {
-			var elem = params.elem;
+			console.log(params);
+			var elem = params.elem || $('.mynyte-listings');
 			var feedType = params.feedType;
-			var feedTypeAction = {'offersFeed': 'getOffersFeed', 'menuDisplay': 'getMenuItems'};
+			var feedTypeAction = {'offersFeed': 'getOffersFeed', 'menuDisplay': 'getMenuItems', 'listingsFeed': 'getBusinessesByBusinessType'};
+			var feedTypeData = {
+				'listingsFeed': {
+					'_profileId': params._profileId || 0,
+					'businessTypesString': params.businessTypesString || 'All',
+					'_townId': params._townId || 1,
+					'limit': params.limit || 5
+				}
+			};
+			var defaultData = {'_businessId': params._businessId || 87};
+
+			console.log(feedType, feedTypeAction, feedTypeData);
 			
 			dataConnect({
 				'className': 'Profile',
 				'action': feedTypeAction[feedType],
-				'data': {'_businessId': 87},
+				'data': feedTypeData[feedType] || defaultData,
 				'existingVars': params,
 				'successCallback': function (params) {
 					var successData = params.successData;
@@ -236,6 +248,100 @@
 								header.find('.listing-menu-item-open').html("-");
 							}
 						});
+					}
+					else if (feedType == 'listingsFeed') {
+						console.log(successData);
+						var imageSize = params.imageSize || 'small';
+						
+						var divHeight = $('.mynyte-listings').height() - 110;
+						var htmlToAdd = "<div class='header'>What's On</div><span class='scrollbar'></span>";
+
+						function selectListingsNavItem (item) {
+							console.log(item);
+							$('.mn-listings-inner-container').each(function (index) {
+								$(this).removeClass('show');
+
+								if ($(this).data('mn-listing-type') == item) {
+									$(this).addClass('show');
+								}
+							});
+							$('.mn-listings-nav-listing').each(function (index) {
+								$(this).removeClass('active');
+
+								if ($(this).data('mn-nav-label-type') == item) {
+									$(this).addClass('active');
+								}
+							});
+						}
+						MynyteApi.selectListingsNavItem = function (params) {
+							selectListingsNavItem(params);
+						}
+	
+						function buildListingsItems () {
+							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
+								var thisI = types[i];
+								var thisType = successData.items[thisI];
+								var containerShowString = (i == 0) ? " show": "";
+
+								htmlToAdd += "<div data-mn-listing-type='" + thisI + "' class='mn-listings-inner-container trans" + containerShowString + "'>";
+
+								for (a = 0; a < thisType.length; a++) {
+								    var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
+								    var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
+								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
+								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
+
+								    htmlToAdd += "<div class='listing"+listingWithSmallImgClass+"'>";
+								    htmlToAdd += "<img class='main-img' src='" + imgSrc + "'></img>";
+								    htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
+								    htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
+								    htmlToAdd += "</div>";
+								  	//social bar
+								  	htmlToAdd += "<div class='mn-listings-social-icons'>";
+
+								  		htmlToAdd += "<i class='fa fa-facebook trans'></i>";
+								  		htmlToAdd += "<i class='fa fa-twitter trans'></i>";
+								  		htmlToAdd += "<i class='fa fa-envelope trans'></i>";
+								  	htmlToAdd += "</div>";
+								    htmlToAdd += "</div>";
+
+								    if (a == thisType.length - 1) {
+										htmlToAdd += "</div>";
+
+										if (i == end - 1) {
+											htmlToAdd += "</div>";
+							
+											elem.append(htmlToAdd).css({'display': 'block'});
+										}
+								    }
+			
+								}
+							}
+						}
+
+						function buildListingsNavigation () {
+							htmlToAdd += "<div class='mn-listings-nav'>";
+							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
+								var thisI = types[i];
+								var thisType = successData.items[thisI];
+								var listingActiveString = (i == 0) ? " active": "";
+								var iconClass = successData.items[thisI][0]['iconClass'];
+
+								htmlToAdd += '<div onclick="MynyteApi.selectListingsNavItem(\'' + thisI + '\');" data-mn-nav-label-type="' + thisI + '" class="mn-listings-nav-listing' + listingActiveString + '">';
+									htmlToAdd += "<i class='fa " + iconClass + "'></i>";
+									htmlToAdd += "<span class='nav-listing-label'>" + thisI + "</span>";
+									htmlToAdd += "<span class='nav-listing-tri'></span>";
+								htmlToAdd += "</div>";
+
+								if (i == end - 1) {
+									htmlToAdd += "</div><div class='listings-container' style='height: "+divHeight+"px;'>";
+					
+									buildListingsItems();
+								}
+							}
+						}
+
+						buildListingsNavigation();
 					}
 				},
 				'errorCallback': function () {
@@ -421,7 +527,6 @@
 				successData = params.successData,
 				htmlString = params.htmlString,
 				htmlElem = params.htmlElem;
-				console.log("OI OI");
 				
 			if (successData["items"] != null) {
 				var businessItems = MynyteApi.pageVars['Page Object']["Business Items"];
@@ -537,7 +642,8 @@
 		include('//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', function() {
 			$(document).ready(function() {
 				//General css files
-				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/css/api-style.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/staging/css/api-style.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/staging/css/ionicons.min.css" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://webfonts.creativecloud.com/c/69721a/1w;quicksand,2,WXp:W:n4,WXn:W:n7/l" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />');
 				
@@ -618,22 +724,13 @@
 				
 				//If MyNyte Table Booking Plugin
 				if ($( "div.mynyte-table-booking" ).length) {
-					/*
-					var tableBookingImgAlt = 'Log into MyNyte to book tables and make your evening plans',
-					tableBookingImgSrc = 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',
-					tableBookingTranscriptNote = '<b>Book Tables with ease</b>, and find out what\'s going on in town...',
-					tableBookingFrameSrc = 'https://www.mynyte.co.uk/staging/#/app/externalApi/bookTable/light/87/0',
-					tableBookingFrameBg = ($('div.mynyte-table-booking').hasClass("mn-dark")) ? '#212121': '#f7f7f7',
-					tableBookingFrameStyle = 'height: calc(100%); background: '+($('div.mynyte-table-booking').hasClass("mn-dark")) ? '#212121': '#f7f7f7'+';';
-
-					var tableBookingHtml = "<div class='container-header'>Book a Table with us through MyNyte</div>";
-					tableBookingHtml += "<div class='container-dummy'><iframe allowtransparency='true' style='"+tableBookingFrameStyle+"' src='"+tableBookingFrameSrc+"'></iframe></div>";
-					tableBookingHtml += "<div class='container-footer'><span class='footer-transcript-note'>"+tableBookingTranscriptNote+"</span><img class='mynyte-chat-logo' alt='"+tableBookingImgAlt+"' src='"+tableBookingImgSrc+"'/></div>";
-					*/
-					
 					createPortal({'type': TableBooking, 'onComplete': function () {$('div.mynyte-table-booking').addClass("mynyte-frame-container")}});
 				}
 
+				//If MyNyte Listings Feed
+				if ($( "div.mynyte-listings" ).length) {
+					createFeed({'elem': $( "div.mynyte-listings" ), 'feedType': 'listingsFeed', 'onComplete': function () {$('div.mynyte-listings').addClass("mynyte-frame-container")}});
+				}
 
 				//If MyNyte Menu Display Plugin
 				if ($( "div.mynyte-menu-display" ).length) {

@@ -47,6 +47,8 @@
     while($row = mysql_fetch_assoc($result))
         $output[] = $row;
 
+    shuffle($output);
+
     header('Content-Type: application/json');
     echo json_encode($output);
   }

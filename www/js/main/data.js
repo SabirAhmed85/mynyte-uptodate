@@ -1250,10 +1250,10 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 
 app.factory('TableBooking', ['$http', 'Config', function($http, Config) {
 	var data = {};
-	data.createTableBooking = function (_usersProfileId, _businessId, usersName, usersEmail, tableFor, dateTimeRequested) {
+	data.createTableBooking = function (_usersProfileId, _businessId, usersName, usersEmail, tableFor, dateTimeRequested, comment) {
 		return $http(
             {
-				method: 'POST', url:Config.TableBookingUrl + '?action=createTableBooking&_usersProfileId=' + _usersProfileId + '&_businessId=' + _businessId + '&usersName=' + usersName + '&usersEmail=' + usersEmail + '&tableFor=' + tableFor + '&dateTimeRequested=' + dateTimeRequested
+				method: 'POST', url:Config.TableBookingUrl + '?action=createTableBooking&_usersProfileId=' + _usersProfileId + '&_businessId=' + _businessId + '&usersName=' + usersName + '&usersEmail=' + usersEmail + '&tableFor=' + tableFor + '&dateTimeRequested=' + dateTimeRequested + '&comment=' + comment
 			}
 		);
 	}

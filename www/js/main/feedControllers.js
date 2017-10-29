@@ -1246,6 +1246,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     $scope.listing.isAcceptingTableBookings = ($scope.listing.isAcceptingTableBookings == '1') ? true : false;
                     $scope.listing.isAcceptingOnlineOrders = ($scope.listing.isAcceptingOnlineOrders == '1') ? true : false;
                     $scope.listing.phoneIsRequiredForBooking = ($scope.listing.showUsersEmailAndPhoneInTableBookingResponse == '1') ? true : false;
+                    $scope.listing.allowCommentInTableBooking = ($scope.listing.allowCommentInTableBooking == '1') ? true : false;
                     $scope.listing.showTakeawayMenu = ($scope.listing.showTakeawayMenu == '1' && $scope.listing.hasTakeawayMenuItem) ? true: false;
                     $scope.listing.showCarteMenu = ($scope.listing.showCarteMenu == '1' && $scope.listing.hasCarteMenuItem) ? true: false;
                     $scope.listing.currentCoverPhotoName = ($scope.listing.listingType == 'Movie') ? 'https://www.cineworld.co.uk' + $scope.listing.currentCoverPhotoName: $scope.listing.currentCoverPhotoName;
@@ -1381,7 +1382,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                         , _id: $scope.listing.relListingId
                         , listingName: $scope.listing.name
                         , tableForMax: $scope.listing.maxTableBookingGuests
-                        , phoneIsRequiredForBooking: $scope.listing.phoneIsRequiredForBooking});
+                        , phoneIsRequiredForBooking: $scope.listing.phoneIsRequiredForBooking
+                        , commentAllowed: $scope.listing.allowCommentInTableBooking});
                 }
                 else if ($scope.listing.isAcceptingTableBookings && !$rootScope.userLoggedIn) {
                     $rootScope.showPopUp($scope, 'BookTable');
@@ -1723,8 +1725,11 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
         $scope.rootScope = $rootScope;
         $scope.listing = [];
         $scope.tableFor = 2;
+		$scope.commentAllowed = false;
+		$scope.textareaShort = true;
         $scope.name = null;
         $scope.email = null;
+        $scope.comment = null;
         $scope.selectedDate1 = new Date();
         $scope.selectedTime = (new Date().getHours() < 18) ?
             new Date(64800 * 1000) :
@@ -1743,6 +1748,9 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             $scope.pageTitle = $rootScope.pageTitle;
 
             $scope.tableForMax = $stateParams.tableForMax;
+            $scope.commentAllowed = $stateParams.commentAllowed;
+            console.log($scope.commentAllowed);
+			$scope.textareaShort = true;
             $scope.phoneIsRequiredForBooking = $stateParams.phoneIsRequiredForBooking;
             $scope.tableBookingDisallowed = [];
 
@@ -1755,17 +1763,23 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
             }
             $scope.convertToTime = function () {
-                $scope.selectedHour = ($scope.selectedTime.getUTCHours() < 10) ? '0' + $scope.selectedTime.getUTCHours(): $scope.selectedTime.getUTCHours();
+                $scope.selectedHour = ($scope.selectedTime.getUTCHours()+1 < 10) ? '0' + $scope.selectedTime.getUTCHours()+1: $scope.selectedTime.getUTCHours()+1;
                 $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                 return $scope.selectedHour + ':' + $scope.selectedMinutes;
             }
             $scope.dateInputHTML = $scope.convertToDate();
             $scope.timeInputHTML = $scope.convertToTime();
+            $scope.form = {
+                name: '',
+                email: '',
+                comment: ''
+            }
             
             var getCurrentInputTime = function () {
                 var d = new Date();
+                
                 return (d.getMinutes() < 30) ?
-                    (d.getHours()*60*60)+(d.getMinutes()*60):
+                    ((d.getHours())*60*60)+(d.getMinutes()*60):
                     ((d.getHours()-1)*60*60)+(d.getMinutes()*60);
             }
 
@@ -1905,18 +1919,20 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     showPastTimePopup({});
                     return false;
                 }
+                console.log($scope.form.comment);
                 var _profId = ($rootScope.userLoggedIn) ? $rootScope.user._profileId: null;
+				var comment  = ($scope.commentAllowed) ? $scope.form.comment: "";
                 
-                TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString).success(function (successData) {
+                TableBooking.createTableBooking($rootScope.user._profileId || 0, $stateParams._id, name, email, $scope.tableFor, $scope.dateTimeString, comment).success(function (successData) {
                     var contents = "You've received a Table Booking Request.";
                     var header = "Table Booking Requested";
                     var dataObj = {
                         "actionFunction": "goToBusinessItem",
                         "businessItemType": "RequestedTableBookings",
-                        "_businessItemId": successData[0]._id
+                        "_businessItemId": successData._id
                     };
                     
-                    var recipientsArray = [successData[0]._profileId];
+                    var recipientsArray = [successData._profileId];
                     
                     $rootScope.prepareMessageNotificationFinal(recipientsArray, contents, header, dataObj);
                     

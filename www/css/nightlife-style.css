@@ -3840,11 +3840,17 @@ textarea.nightlife-input {
     padding: 5px 2%;
     height: 100px;
     width: 100%;
+    border-radius: 0;
+    padding-top: 15px !important;
 }
 input.nightlife-input.nightlife-input-square,
 textarea.nightlife-input.nightlife-input-square {
     border-radius: 0;
     webkit-border-radius: 0;
+}
+
+textarea.nightlife-input.nightlife-textarea-short {
+    height: 30px;
 }
 
 i.input-alert {
@@ -6329,6 +6335,7 @@ div#searchbox-categories i {
     margin-left: 5px;
 }
 
+
 button.invite-friends i {
     font-size: 26px;
     margin-top: -1px;
@@ -7969,6 +7976,7 @@ form .radio-select-option-container {
     float: left;
     font-size: 13px;
     border: 1px solid #a7a3a3;
+
     width: calc(100% + 1px);
     border-radius: 0 0 4px 4px;
     padding: 3px 5px 2px;
@@ -8583,6 +8591,7 @@ location-lookup ul li span {
     border-bottom-color: #9c8181;
     /* border-left: 1px solid #9c6969; */
 }
+
 
 .light-widget .book-table .tableforpicker,
 .light-widget .book-tickets .additional-guests-picker {

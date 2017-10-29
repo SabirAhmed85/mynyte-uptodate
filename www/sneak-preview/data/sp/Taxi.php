@@ -1,4 +1,6 @@
 <?php
+	require_once('../functions/externalFunctions.php');
+	
     require_once('../db-connect.php');
     
     $action = (empty($_GET['action'])) ? "": mysql_real_escape_string($_GET['action']);
@@ -92,9 +94,19 @@
         $quickestIsRequired = $_GET['quickestIsRequired'];
         
         $result = mysql_query("CALL bookTaxi($_relContactId, '$pickUpTown', $_pickUpPlaceId, $_dropOffPlaceId, $totalPassengers, $quickestIsRequired, '$pickUpLongAddress', '$pickUpAddressLine1', '$pickUpPostCode', '$dropOffLongAddress', '$dropOffAddressLine1', '$dropOffPostCode');");
-        //$result ="CALL bookTaxi($_relContactId, '$pickUpTown', $_pickUpPlaceId, $_dropOffPlaceId, $totalPassengers, $quickestIsRequired, '$pickUpLongAddress', '$pickUpAddressLine1', '$pickUpPostCode', '$dropOffLongAddress', '$dropOffAddressLine1', '$dropOffPostCode');";
-        //print($result);
-        sendJson($result);
+        //print("CALL bookTaxi($_relContactId, '$pickUpTown', $_pickUpPlaceId, $_dropOffPlaceId, $totalPassengers, $quickestIsRequired, '$pickUpLongAddress', '$pickUpAddressLine1', '$pickUpPostCode', '$dropOffLongAddress', '$dropOffAddressLine1', '$dropOffPostCode');");
+		
+		$output = null;
+    	while($row = mysql_fetch_assoc($result))
+      		$output[] = $row;
+			
+		for ($i = 0; $i < count($output); $i++) {
+			$emailCurl = externalCurl($root_url . 'sneak-preview/data/functions/email.php', 'action=informTaxiFirmOfTaxiBooking&email=' . $output[$i]['email']);
+			
+			if ($i == count($output) - 1) {
+				echo json_encode($output);
+			}
+		}
     }
     elseif ($action == "respondToTaxiBookingRequest") {
         $_businessId = (empty($_GET['_businessId'])) ? "": mysql_real_escape_string($_GET['_businessId']);

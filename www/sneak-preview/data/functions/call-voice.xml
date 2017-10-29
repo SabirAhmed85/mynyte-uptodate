@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+	<Say voice="woman">
+		Hello. This message is from My Night. Your restaurant just received a new Table Booking Request through the app.
+	</Say>
+	<Pause length="1"/>
+	<Say voice="woman">
+		Please Sign in to the website or the app for full details. Thank you.
+	</Say>
+</Response>
