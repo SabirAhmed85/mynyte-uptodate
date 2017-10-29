@@ -584,7 +584,7 @@
                 IF(CoverPhoto.name IS NULL, 'default.jpg', CoverPhoto.name) as currentProfilePhotoName
             FROM Event
             LEFT JOIN BusinessPlace ON BusinessPlace._id = Event._businessPlaceId
-            LEFT JOIN Business ON Business._id = BusinessPlace._id
+            LEFT JOIN Business ON Business._id = BusinessPlace._businessId
             LEFT JOIN Profile ON Profile._id = Business._profileId
             LEFT JOIN ProfilePhoto ON ProfilePhoto._id = Profile._currentProfilePhotoId
             LEFT JOIN CoverPhoto ON CoverPhoto._id = Event._currentCoverPhotoId
