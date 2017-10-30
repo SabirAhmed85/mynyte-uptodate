@@ -25,7 +25,7 @@
         <img class="main-img profile-img"
             src="/sneak-preview/img/user_images/profile_photo/default.jpg"
             ng-src="{{rootScope.assetsFolderUrl}}/img/user_images/profile_photo/{{feature.currentProfilePhotoName}}"
-            ng-if="feature.currentProfilePhotoName != null && (feature.listingType == 'Offer' || feature.listingType == 'Event' && feature.currentCoverPhotoName == null)"/>
+            ng-if="feature.currentProfilePhotoName != null && (feature.listingType == 'Offer' || (feature.listingType == 'Event' && feature.currentCoverPhotoName == null))"/>
     </div>
     <div class="offer-description-container"
         ng-if="feature.listingType == 'Offer' || (feature.listingType == 'Event' && feature.currentCoverPhotoName == null)">

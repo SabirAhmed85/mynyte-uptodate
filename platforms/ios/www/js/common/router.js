@@ -427,7 +427,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
           }
         })
         .state('app.bookTable', {
-          url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/book-table/:_id/:listingName/:tableForMax",
+          url: "/nl-feedListings/:searchType/:_businessTypeId/nl-feedListing/:_listingId/:listingType/book-table/:_id/:listingName/:tableForMax/:phoneIsRequiredForBooking/:commentAllowed",
           views: {
             'feed-tab' :{
                 templateUrl: "templates/feed-views/book-table.html",
@@ -438,7 +438,9 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             searchType: null, _businessTypeId: null, _listingId: null, listingType: null,
             _id: null,
             listingName: null,
-            tableForMax: null
+            tableForMax: null,
+            phoneIsRequiredForBooking: null,
+            commentAllowed: null
           }
         })
         .state('app.bookTickets', {

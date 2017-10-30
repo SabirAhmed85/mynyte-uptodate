@@ -82,6 +82,13 @@
                     <i class="ion-ios-clock"></i>
                 </button>
         	</label>
+            <label class="item"
+                ng-if="commentAllowed == 'true'">
+                <textarea ng-focus="textareaShort = false" ng-blur="textareaShort = true" class="white nightlife-input trans" placeholder="Comments (Optional)" name="comment"
+                    ng-model="form.comment"
+                    ng-class="{'nightlife-textarea-short': textareaShort}"></textarea>
+            </label>
+            
             <div class="form-error-note"
                 ng-if="tableBookingDisallowed.length > 0"
                 ng-repeat="reason in tableBookingDisallowed"

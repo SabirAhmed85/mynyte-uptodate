@@ -3840,11 +3840,17 @@ textarea.nightlife-input {
     padding: 5px 2%;
     height: 100px;
     width: 100%;
+    border-radius: 0;
+    padding-top: 15px !important;
 }
 input.nightlife-input.nightlife-input-square,
 textarea.nightlife-input.nightlife-input-square {
     border-radius: 0;
     webkit-border-radius: 0;
+}
+
+textarea.nightlife-input.nightlife-textarea-short {
+    height: 30px;
 }
 
 i.input-alert {
@@ -4646,6 +4652,7 @@ form div.item-header {
 .edit-form.event-edit .item .line {
     float: left;
     clear: left;
+    margin-bottom: 5px;
 }
 
 .extra-options-label {
@@ -5771,7 +5778,7 @@ div#searchbox-categories i {
 .feature-info-dummy {
     float: left;
     width: 100%;
-    height: 33px;
+    height: 30px;
     margin-top: -34px;
     background: #444;
     opacity: 0.7;
@@ -5819,7 +5826,7 @@ div#searchbox-categories i {
     overflow: hidden;
     height: calc(101.5vw * (2/3));
 }
-.Offer.feed-item .main-img-container {
+.feed-item .main-img-container.small-container {
     width: auto;
     height: auto;
 }
@@ -6328,6 +6335,7 @@ div#searchbox-categories i {
     margin-left: 5px;
 }
 
+
 button.invite-friends i {
     font-size: 26px;
     margin-top: -1px;
@@ -6532,6 +6540,8 @@ label.special,
 .item-with-selects .select-container {
     margin-bottom: 5px;
 }
+
+
 
 .select-main span {
     float: left;
@@ -7040,7 +7050,6 @@ ion-header-bar input {
     left: 30px;
     border: 1px solid rgb(154, 1, 1);
     background: rgb(84, 1, 1);
-    line-height: 19px;
 }
 #header-bar #search-input.isVisible {
     top: 5px;
@@ -7967,6 +7976,7 @@ form .radio-select-option-container {
     float: left;
     font-size: 13px;
     border: 1px solid #a7a3a3;
+
     width: calc(100% + 1px);
     border-radius: 0 0 4px 4px;
     padding: 3px 5px 2px;
@@ -8582,6 +8592,7 @@ location-lookup ul li span {
     /* border-left: 1px solid #9c6969; */
 }
 
+
 .light-widget .book-table .tableforpicker,
 .light-widget .book-tickets .additional-guests-picker {
     border-top: 1px solid #b97b7b;
@@ -8995,6 +9006,10 @@ location-lookup ul li span {
         opacity: 0 !important;
         top: -1000px !important;
     }
+    .intended-browser #header-bar .top-right-button.feed-page.isVisible.ion-close-round {
+        opacity: 1 !important;
+        top: 0px !important;
+    }
 
     #header-bar .header-icon-right-span.isVisible {
         opacity: 0;
@@ -9173,7 +9188,7 @@ location-lookup ul li span {
         max-width: 830px;
         float: left;
         margin: 50px auto 0 0;
-        margin-left: calc(50% - 440px);
+        margin-left: calc(50% - 443px);
         width: calc(100% - 38px);
     }
     .scroll.padding {
@@ -9191,6 +9206,7 @@ location-lookup ul li span {
     .see-business-menu-items .scroll {
         width: 670px;
         margin-top: 60px;
+        margin-left: calc(50% - 440px);
     }
     .admin-view .scroll {
         margin-left: 0;
@@ -9416,7 +9432,7 @@ location-lookup ul li span {
     .more-page .item,
     .see-trailer .tile {
         width: 670px;
-        margin-left: calc(50% - 420px);
+        margin-left: calc(50% - 415px);
         border: 1px solid #483535;
         border-radius: 6px 6px 0 0;
         padding-top: 10px;
@@ -9457,6 +9473,10 @@ location-lookup ul li span {
         border: none;
         width: 100%;
         margin-left: 0;
+    }
+    .UpcomingEvents.view-wrapper,
+    .Offers.view-wrapper {
+        padding: 0 10px;
     }
     .register-intro .item,
     .register-form ion-content,
@@ -9596,7 +9616,7 @@ location-lookup ul li span {
     
     #searchBox button#search-submit,
     #searchBox button#dummy-search-submit {
-        margin-top: 25px;
+        margin-top: 29px;
         width: 22%;
         margin-left: 4px;
         height: 42px;
@@ -9836,7 +9856,7 @@ location-lookup ul li span {
     .left-side-display {
         width: calc(30% - 30px);
         max-width: 180px;
-        margin: 65px 10px 10px;
+        margin: 65px 15px 10px 20px;
         padding: 5px 10px;
         border-radius: 6px;
         top: 105px;
@@ -9845,7 +9865,7 @@ location-lookup ul li span {
     }
     .side-display {
         float: left;
-        left: calc(50% + 240px);
+        left: calc(50% + 231px);
         height: 196px;
         overflow: hidden;
     }
@@ -9858,7 +9878,7 @@ location-lookup ul li span {
         border-radius: 6px 0 0 6px;
         color: #8d8d8d;
         top: 40px;
-        width: calc((100% - 930px)/2);
+        width: calc((100% - 960px)/2);
         display: flex;
         max-width: none;
     }
@@ -9896,6 +9916,10 @@ location-lookup ul li span {
         margin-top: 0;
         opacity: 0;
     }
+    .movies-side-display {
+        max-height: none;
+        height: 250px;
+    }
     .platform-ios .events-side-display,
     .platform-ios .movies-side-display,
     .platform-android .events-side-display,
@@ -9914,12 +9938,15 @@ location-lookup ul li span {
         background: #292929;
         border: 1px solid #4e4c4c;
         margin-top: 0;
-        top: 310px;
+        top: 320px;
         color: #888;
         padding: 5px 10px;
         height: auto;
         max-height: calc(100% - 315px);
         overflow-y: scroll;
+    }
+    .below-movie-display .kickstarter-side-display {
+        top: 370px;
     }
     .platform-ios .kickstarter-side-display,
     .platform-android .kickstarter-side-display {
@@ -10073,9 +10100,9 @@ location-lookup ul li span {
         margin-bottom: 0;
         border-bottom: 1px solid #2f2b2b;
         padding-bottom: 5px;
-        margin-left: -6%;
-        padding-left: 6%;
-        width: 112%;
+        margin-left: -10px;
+        padding-left: 10px;
+        width: calc(100% + 20px);
         font-size: 14px;
         font-weight: bold;
         color: #866363;
@@ -10109,6 +10136,7 @@ location-lookup ul li span {
         padding-bottom: 3px;
         padding-left: 4%;
         font-size: 13px;
+        -webkit-font-smoothing: auto;
     }
     .side-display .display-top-note i,
     .movies-side-display i {
@@ -10354,7 +10382,7 @@ location-lookup ul li span {
         padding-top: 10px !important;
     }
     .movies-side-display span.last-display-item {
-        top: 186px;
+        top: 243px;
         border-top: 1px solid #322;
         padding-top: 10px;
     }
@@ -10379,7 +10407,7 @@ location-lookup ul li span {
         float: none;
         margin: auto;
         width: 96px;
-        height: 64px;
+        height: auto;
         display: block;
         margin-bottom: 4px;
     }

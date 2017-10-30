@@ -70,6 +70,13 @@ app.factory('Profile', ['$http', 'Config', function($http, Config) {
 			}
 		);
     }
+    data.getRestaurantBusinessSettingsForBusiness = function (_businessId) {
+        return $http(
+            {
+				method: 'GET', url:Config.CreateProfileUrl + '?action=getRestaurantBusinessSettingsForBusiness&_businessId=' + _businessId
+			}
+		);
+    }
     data.getBusinessTypesForBusiness = function (_businessId) {
         return $http(
             {
@@ -1010,6 +1017,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+	data.deleteMenuCategory = function (_categoryId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=deleteMenuCategory&_businessId=' + _businessId,
+                data: {'_categoryId': _categoryId},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
 
 	data.createMenuItemSubCategory = function (catName, catDescription, _businessId) {
 		return $http(
@@ -1046,6 +1062,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
             {
 				method: 'POST', url:Config.MenuItemUrl + '?action=updateMenuItemSubCategoryDetailsForBusiness&_businessId=' + _businessId,
                 data: {'_menuItemSubCategoryId': _menuItemSubCategoryId, 'description': description, 'catName': catName},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
+	data.deleteMenuSubCategory = function (_subcategoryId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=deleteMenuSubCategory&_businessId=' + _businessId,
+                data: {'_subcategoryId': _subcategoryId},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}
 		);
@@ -1163,6 +1188,15 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 			}
 		);
 	}
+	data.archiveMenuItem = function (_itemId, _businessId) {
+		return $http(
+            {
+				method: 'POST', url:Config.MenuItemUrl + '?action=archiveMenuItem&_businessId=' + _businessId,
+                data: {'_itemId': _itemId},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			}
+		);
+	}
     data.updateMenuItemTemplateOption = function (_businessId, optionObj, selectedCatId) {
 		return $http(
             {
@@ -1216,10 +1250,10 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
 
 app.factory('TableBooking', ['$http', 'Config', function($http, Config) {
 	var data = {};
-	data.createTableBooking = function (_usersProfileId, _businessId, usersName, usersEmail, tableFor, dateTimeRequested) {
+	data.createTableBooking = function (_usersProfileId, _businessId, usersName, usersEmail, tableFor, dateTimeRequested, comment) {
 		return $http(
             {
-				method: 'POST', url:Config.TableBookingUrl + '?action=createTableBooking&_usersProfileId=' + _usersProfileId + '&_businessId=' + _businessId + '&usersName=' + usersName + '&usersEmail=' + usersEmail + '&tableFor=' + tableFor + '&dateTimeRequested=' + dateTimeRequested
+				method: 'POST', url:Config.TableBookingUrl + '?action=createTableBooking&_usersProfileId=' + _usersProfileId + '&_businessId=' + _businessId + '&usersName=' + usersName + '&usersEmail=' + usersEmail + '&tableFor=' + tableFor + '&dateTimeRequested=' + dateTimeRequested + '&comment=' + comment
 			}
 		);
 	}

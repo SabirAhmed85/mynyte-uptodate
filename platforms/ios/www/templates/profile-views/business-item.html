@@ -253,7 +253,8 @@
             </form>
             
             <form ng-if="itemType=='OwnEvents'" class="business-item-form edit-form event-edit" ng-class="{'editing': editing}" name="updateEventForm">
-                <label class="item">
+                <label class="item"
+                	ng-if="businessItem.currentCoverPhotoName != null && businessItem.currentCoverPhotoName != ''">
                     <img ng-src="{{assetsFolderUrl}}/img/user_images/cover_photo/{{businessItem.currentCoverPhotoName}}" />
                 </label>
                 <label class="item-header first">
@@ -598,7 +599,6 @@
             <form class="business-item-form menu-item-category-summary edit-form"
                 ng-if="itemType == 'MenuItemCategories'"
                 name="editMenuItemCategoryForm"
-                ng-submit="updateMenuCategory(businessItem.name, businessItem.description);"
                 ng-class="{'editing': editing}">
                 <label class="item-header first">
                     {{businessItem.name}}
@@ -643,9 +643,15 @@
                 
                 <span>
                     <button class="button button-red button-large"
+                		 ng-click="updateMenuCategory(businessItem.name, businessItem.description);"
                          ng-disabled="editMenuItemCategoryForm.$invalid || !editing || (catName != originalCatName && existingCatNames.indexOf(catName) != -1)"
                          ng-show="editing">
                         Edit Category
+                    </button>
+                    <button class="button button-red button-large"
+                		 ng-click="requestMenuCategoryDelete();"
+                         ng-show="editing && businessItem.isUniversal == '0'">
+                        Delete Category
                     </button>
                 </span>
             </form>
@@ -654,7 +660,6 @@
             <form class="business-item-form menu-item-sub-category-summary edit-form"
                 ng-if="itemType == 'MenuItemSubCategories'"
                 name="editMenuItemSubCategoryForm"
-                ng-submit="updateMenuSubCategory(businessItem.name, businessItem.description);"
                 ng-class="{'editing': editing}">
                 <label class="item-header first">
                     {{businessItem.name}}
@@ -693,9 +698,15 @@
                 
                 <span>
                     <button class="button button-red button-large"
+                		 ng-click="updateMenuSubCategory(businessItem.name, businessItem.description);"
                          ng-disabled="editMenuItemSubCategoryForm.$invalid || !editing || (catName != originalCatName && existingCatNames.indexOf(catName) != -1)"
                          ng-show="editing">
                         Edit Sub-Category
+                    </button>
+                    <button class="button button-red button-large"
+                		 ng-click="requestMenuSubCategoryDelete();"
+                         ng-show="editing">
+                        Delete Sub-Category
                     </button>
                 </span>
             </form>
@@ -854,6 +865,11 @@
                     ng-click="updateMenuItem(businessItem.Name, businessItem.Price, businessItem.Description);">
                     Apply Changes
                 </button>
+                <button ng-disabled="!editing" class="button button-red button-large"
+                    ng-show="editing"
+                    ng-click="requestMenuItemArchive();">
+                    Delete Item
+                </button>
             </form>
             
             <!-- MENU ITEM TEMPLATE OPTIONS -->
@@ -1006,14 +1022,23 @@
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested == null">Action required! The customer is waiting for your response...</span>
                     <span ng-if="businessItem.isAccepted == '0' && businessItem.isRejected == '0' && businessItem.isCompleted == '0' && businessItem.isCancelled == '0' && businessItem.dateTimeSuggested != null">Waiting for a response on your suggested time from the customer.</span>
                 </label>
-                <label class="item-header">Customer Name</label>
-                <label class="item">{{businessItem.name}}</label>
+                <label class="item-header">Customer Name<span ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '1'"> &amp; Details</span></label>
+                <label class="item"
+                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '0'">{{businessItem.name}}</label>
+                <label class="item"
+                    ng-if="rootScope.user.showUsersEmailAndPhoneInTableBookingResponse == '1'">
+                    <span class="line">{{businessItem.name}}</span>
+                    <span class="line">{{businessItem.email}}</span>
+                    <span class="line">{{businessItem.phone}}</span>
+                </label>
                 <label class="item-header">Party Of</label>
                 <label class="item">{{businessItem.tableFor}}</label>
                 <label class="item-header">Date</label>
                 <label class="item">{{businessItem.convertedDateString}}</label>
                 <label class="item-header">Time</label>
                 <label class="item">{{businessItem.timeString}}</label>
+                <label class="item-header" ng-if="businessItem.comment != ''">Additional Comment</label>
+                <label class="item" ng-if="businessItem.comment != ''">{{businessItem.comment}}</label>
                 
                 <span ng-show="itemType == 'RequestedTableBookings'">
                     <button class="button button-red button-large"
@@ -1031,7 +1056,8 @@
                         </span>
                     </button>
                     <button class="button button-red button-large"
-                         ng-click="updateTableBooking('reject');">
+                         ng-click="updateTableBooking('reject');"
+                         ng-if="rootScope.user.hideRejectButtonInTableBookingResponse == '0'">
                         <span class="button-outer-label reject-booking-label">
                             <i class="ion-close"></i>
                             <span class="button-inner-label">Reject Booking</span>

@@ -23,14 +23,15 @@ body.mn-modal--opened {
     color: #6f6060;
     float: left;
     margin-left: 1%;
-    padding: 15px 10px;
+    padding: 10px 10px;
     margin-bottom: 5px;
     margin-top: 10px;
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
     border: 1px solid #ccbbbb;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Titillium Web', ariel, sans-serif;
+    max-width: calc(100% - 28px);
 }
 
 .mynyte-book:hover {
@@ -39,20 +40,21 @@ body.mn-modal--opened {
 }
 
 .mynyte-book span {
-    margin-top: 7px;
+    margin-top: 5px;
     float: left;
-    margin-right: 25px;
+    margin-right: 10px;
+    font-size: 15px;
 }
 
 .mynyte-book img {
-    width: 45px;
-    height: 47px;
+    width: 38px;
+    height: 40px;
     float: left;
     border-right: 1px solid #cecccc;
-    margin-top: -8px;
-    margin-right: 30px;
-    margin-left: 5px;
-    padding-right: 20px;
+    margin-top: -4px;
+    margin-right: 15px;
+    margin-left: 0px;
+    padding-right: 10px;
 }
 
 .mynyte-book.mn-dark {
@@ -74,7 +76,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-event-entry-book {
-    width: 345px;
+    min-width: 265px;
 }
 
 /* ------------ */
@@ -117,11 +119,12 @@ body.mn-modal--opened {
 .mynyte-listings .listings-container {
     float: left;
     width: 100%;
-    overflow-y: scroll;
+    overflow-y: hidden;
     /* border: 1px solid #d2cdcd; */
     position: relative;
     display: block;
     overflow-x: hidden;
+    margin-top: 10px;
 }
 
 .mynyte-listings .listings-container::-webkit-scrollbar {
@@ -142,6 +145,66 @@ body.mn-modal--opened {
   border: 1px solid #4a4949;
 }
 
+.mynyte-listings .mn-listings-inner-container {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  overflow-y: scroll;
+  height: 100%;
+}
+.mynyte-listings .mn-listings-inner-container.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mynyte-listings .mn-listings-nav {
+    float: left;
+    width: 100%;
+}
+
+.mynyte-listings .mn-listings-nav-listing {
+    float: left;
+    width: 25%;
+    padding-bottom: 9px;
+    position: relative;
+}
+.mynyte-listings .mn-listings-nav-listing:hover {
+    cursor: pointer;
+}
+
+.mynyte-listings .mn-listings-nav-listing i {
+    float: left;
+    width: 100%;
+    text-align: center;
+    font-size: 25px;
+    margin: 10px 0 7px;
+}
+
+.mynyte-listings .mn-listings-nav-listing span {
+    float: left;
+    clear: left;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+}
+
+.mynyte-listings .mn-listings-nav-listing span.nav-listing-tri {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 17px solid #1a1a1a;
+    position: absolute;
+    bottom: -10px;
+    left: calc(50% - 10px);
+    display: none;
+}
+.mynyte-listings .mn-listings-nav-listing.active span.nav-listing-tri {
+    display: block;
+}
+
 .mynyte-listings .listing {
     float: left;
     width: 100%;
@@ -151,11 +214,21 @@ body.mn-modal--opened {
     font-size: 14px;
     /* height: 90px; */
 }
+.mynyte-listings .listing:hover {
+    cursor: pointer;
+}
 
 .mynyte-listings .listing .main-img {
     width: calc(100% - 20px);
     margin: 10px 10px 3px;
     float: left;
+}
+
+.mynyte-listings .listing.with-small-image .main-img {
+    max-width: 100px;
+    margin-bottom: 10px;
+    border-radius: 90px;
+    height: 100px;
 }
 
 .mynyte-listings .listing .text-container {
@@ -166,6 +239,10 @@ body.mn-modal--opened {
 .mynyte-listings .listing.with-image .text-container {
     margin: 0 10px 13px;
     width: calc(100% - 30px);
+}
+.mynyte-listings .listing.with-small-image .text-container {
+    max-width: calc(100% - 140px);
+    margin-bottom: 25px;
 }
 
 .mynyte-listings .listing .title {
@@ -206,6 +283,24 @@ body.mn-modal--opened {
     width: 100%;
 }
 
+.mynyte-listings .mn-listings-social-icons {
+    float: left;
+    width: calc(100% - 20px);
+    border-top: 1px dotted #ddd;
+    padding: 10px 0 0;
+    margin: -5px 10px 10px -15px;
+    text-align: right;
+}
+.mynyte-listings .listing.with-small-image .mn-listings-social-icons {
+    width: calc(100% - 115px);
+}
+
+.mynyte-listings .mn-listings-social-icons i {
+    font-size: 20px;
+    margin-right: 13px;
+    margin-left: 10px;
+}
+
     /*DARK*/
 
 .mynyte-listings.mn-dark {
@@ -219,9 +314,35 @@ body.mn-modal--opened {
     display: none;
 }
 
+.mynyte-listings.mn-dark .mn-listings-nav {
+    background: #1d1c1c;
+    border-bottom: 1px solid #282828;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing.active {
+    color: #b39797;
+    text-shadow: 1px 2px 2px #000;
+    background: #292929;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing:hover {
+    background: #282828;
+    color: #ccc;
+    text-shadow: 1px 1px 1px #000;
+}
+.mynyte-listings.mn-dark .mn-listings-nav-listing.active:hover {
+    color: #b39797;
+}
+
+.mynyte-listings.mn-dark .mn-listings-nav-listing span.nav-listing-tri {
+    border-top: 10px solid #292929;
+}
+.mynyte-listings.mn-dark .mn-listings-nav-listing:hover span.nav-listing-tri {
+    border-top: 17px solid #282828;
+}
+
 .mynyte-listings.mn-dark .listing {
-    border-bottom: 1px solid #2f2f2f;
-    border-top: 1px solid #232323;
+    border-bottom: 1px solid #2b2b2b;
 }
 .mynyte-listings.mn-dark .listing:hover {
     background: #2f2f2f;
@@ -244,6 +365,14 @@ body.mn-modal--opened {
 }
 .mynyte-listings.mn-dark .listing:hover .title {
     color: #e4e1e1;
+}
+
+.mynyte-listings.mn-dark .mn-listings-social-icons {
+    border-top: 1px dotted #2a2a2a;
+}
+
+.mynyte-listings.mn-dark .mn-listings-social-icons i:hover {
+    color: #ccc;
 }
 
     /*CLEAR*/
@@ -294,7 +423,6 @@ body.mn-modal--opened {
     line-height: 22px;
     font-size: 15px;
     position: relative;
-    z-index: 9000;
 }
 
 .mynyte-frame-container .container-dummy {
@@ -304,7 +432,6 @@ body.mn-modal--opened {
     min-height: 170px;
     position: relative;
     background: #f8f8f8;
-    z-index: 8000;
     padding-bottom: 0;
 }
 .mynyte-frame-container.mynyte-menu-display .container-dummy {
@@ -427,6 +554,7 @@ body.mn-modal--opened {
     margin-right: 10px;
     color: #833;
     line-height: 20px;
+    width: auto;
 }
 
 .mynyte-frame-container .listing-menu-item .text-container .options {
@@ -512,11 +640,11 @@ body.mn-modal--opened {
 
   /* NEW BUSINESS ITEM FORM */
 
-.mynyte-new-business-item.mn-dark {
+.mynyte-new-business-item {
     float: left;
     clear: left;
     margin: 5px;
-    max-width: calc(100% - 10px);
+    max-width: calc(100% - 30px);
 }
 
 .mynyte-new-business-item form {
@@ -557,6 +685,16 @@ input.mynyte-form-input.mynyte-form-text-input {
     color: #888;
 }
 
+span.input-maxlength-note {
+    float: right;
+    margin-top: 5px;
+    color: #999;
+    margin-right: 5px;
+}
+
+
+
+
 .mynyte-form-input.mynyte-form-fake-input {
     float: left;
     clear: left;
@@ -569,6 +707,26 @@ input.mynyte-form-input.mynyte-form-text-input {
     padding: 10px 10px;
     font-size: 18px;
     color: #888;
+    display: inline-table;
+}
+
+.mynyte-form-input.mynyte-form-fake-input .selected-option-label {
+    white-space: nowrap;
+    float: left;
+    width: calc(100% - 32px);
+    overflow: hidden;
+}
+
+.mynyte-form-input.mynyte-form-fake-input .mynyte-form-select-toggler {
+    float: right;
+    margin-top: -11px;
+    margin-right: -11px;
+    position: relative;
+    height: 42px;
+    width: 40px;
+    margin-bottom: -11px;
+    background: #eee;
+    border: 1px solid #bbb;
 }
 
 ul.mynyte-form-select.mynyte-form-fake-select {
@@ -651,7 +809,8 @@ span.mynyte-label-detail {
     border: 1px solid #d0cfcf;
     padding: 10px;
     border-radius: 6px;
-}
+}   
+
 
   /* BUSINESS ITEM DETAIL */
 .mynyte-business-item-detail {
@@ -687,6 +846,8 @@ span.mynyte-label-detail {
     -webkit-align-items: center;
     -moz-align-items: center;
     align-items: center;
+    top: 0;
+    left: 0;
 }
 
 .mynyte-popup-cover.mynyte-popup-open {
@@ -694,8 +855,6 @@ span.mynyte-label-detail {
     opacity: 1;
     transform: scale(1);
     pointer-events: auto;
-    top: 0;
-    left: 0;
 }
 
 .mynyte-popup {
@@ -706,11 +865,10 @@ span.mynyte-label-detail {
     -webkit-transition: width 0.25s;
     -moz-transition: width 0.25s;
     transition: width 0.25s;
-    display: -webkit-flex;
-    display: flex;
+    display: flow-root;
     -webkit-box-pack: center;
     overflow: hidden;
-    max-height: 95%;
+    max-height: 90%;
     -ms-flex-pack: center;
     -webkit-justify-content: center;
     -moz-justify-content: center;
@@ -723,6 +881,7 @@ span.mynyte-label-detail {
 }
 .mynyte-popup.mn-popup-slim {
     width: 305px;
+
 }
 
 .mynyte-popup input[type="text"] {
@@ -755,7 +914,7 @@ span.mynyte-label-detail {
 }
 
 .mn-popup-body {
-    /* float: left; */
+    float: left;
     width: 100%;
     padding: 5px 0 0;
     border-bottom: 1px solid #bbb;
@@ -763,7 +922,7 @@ span.mynyte-label-detail {
     border-radius: 5px 5px 0 0;
     overflow-x: hidden;
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+    max-height: 90vh;
 }
 .mn-popup-body::-webkit-scrollbar {
     width: 0.5em;
@@ -889,6 +1048,42 @@ span.mynyte-label-detail {
     width: calc(100% - 70px);
     margin-top: 7px;
     line-height: 20px;
+}
+
+/*Business Items Summary in Dropdown*/
+.dropdown-wrapper h4 {
+    float: left;
+    width: calc(100% - 70px);
+    margin: -10px 15px 10px 10px;
+    color: #555;
+    background: #e9e9e9;
+    padding: 10px 5px;
+    border-radius: 4px 0 0 0;
+    border: 1px solid #d9d9d9;
+}
+
+.dropdown-wrapper i.fa-times {
+    width: 22px;
+    float: left;
+    font-size: 25px;
+    margin-top: -4px;
+    margin-right: 5px;
+    color: #888;
+}
+
+.dropdown-wrapper i.fa-times:hover {
+    cursor: pointer;
+    color: #bbb;
+}
+
+.dropdown-wrapper ul {
+    padding: 10px;
+}
+
+.dropdown-wrapper .mynyte-business-items-summary-item {
+    margin-bottom: 10px;
+    line-height: 22px;
+    display: block;
 }
 
 /*Light Widget Frame Manipulation */

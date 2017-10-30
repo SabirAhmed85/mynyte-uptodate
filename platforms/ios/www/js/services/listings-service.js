@@ -77,7 +77,6 @@ app.factory('listingsService', ['$q', 'datesService', function($q, datesService)
             }
             setTimeout(function () {
                 scope.pageLoading = false;
-                scope.$apply();
             }, 150);
         }
     };
