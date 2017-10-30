@@ -4305,6 +4305,10 @@ button.button-large {
     text-align: center;
     width: 46px;
 }
+.fake-time-input-s .timepicker i,
+.fake-time-input-s .datepicker i {
+    margin-left: -7px;
+}
 
 .datepicker i.ion-ios-calendar {
     margin-top: -5px;

@@ -6876,7 +6876,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
 
         $scope.$on('$ionicView.beforeEnter', function() {
             $rootScope.topRightButtonIsPlus = ($stateParams.setting == 'BlockedTableBookingIntervals') ? true: $rootScope.topRightButtonIsPlus;
-            $rootScope.topRightButtonIsEdit = ($stateParams.setting == 'BlockedTableBookingIntervals') ? false: $rootScope.topRightButtonIsPlus;
+            $rootScope.topRightButtonIsEdit = ($stateParams.setting == 'BlockedTableBookingIntervals') ? false: $rootScope.topRightButtonIsEdit;
         });
         
         $scope.pageLoad = function () {
@@ -6944,6 +6944,7 @@ app.controller('ProfileCtrl', ['$rootScope', '$scope', '$state', '$stateParams',
                 case 'Business':
                     switch($stateParams.setting) {
                         case 'OpeningTimes':
+                            $rootScope.topRightButtonIsEdit = true;
                             $scope.weekdayModel = [
                                 {name:'Monday', opening: 'Closed', closing: 'Closed', index: 0},
                                 {name:'Tuesday', opening: 'Closed', closing: 'Closed', index: 1},
