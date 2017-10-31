@@ -4299,6 +4299,10 @@ button.button-large {
     text-align: center;
     width: 46px;
 }
+.fake-time-input-s .timepicker i,
+.fake-time-input-s .datepicker i {
+    margin-left: -7px;
+}
 
 .datepicker i.ion-ios-calendar {
     margin-top: -5px;
@@ -10306,6 +10310,11 @@ location-lookup ul li span {
         opacity: 0;
         -webkit-user-select: none;
         z-index: 0;
+    }
+	
+	.left-side-display .display-item,
+	.right-side-display .display-item {
+        width: 100%;
     }
     
     .events-side-display .display-item,
