@@ -66,7 +66,7 @@
   else if ($action == 'getBusinessesByBusinessType') {
     $_profileId = $_GET['_profileId'];
     //$businessTypesString = $_GET['businessTypesString'];
-    $businessTypesString = "Restaurant, Takeaway, Nightclub, Event";
+    $businessTypesString = "Bar, Nightclub, Event";
     $_townId = $_GET['_townId'];
     $limit = $_GET['limit'];
     $hasEvents = strpos($businessTypesString, 'Event') !== false;
