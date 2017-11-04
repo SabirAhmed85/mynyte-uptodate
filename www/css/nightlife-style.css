@@ -10330,6 +10330,11 @@ location-lookup ul li span {
         -webkit-user-select: none;
         z-index: 0;
     }
+	
+	.left-side-display .display-item,
+	.right-side-display .display-item {
+        width: 100%;
+    }
     
     .left-side-display .display-item,
     .right-side-display .display-item {
