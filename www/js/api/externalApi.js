@@ -278,6 +278,14 @@
 						}
 	
 						function buildListingsItems () {
+							function goToFeedOption (optionUrl) {
+								console.log(optionUrl);
+								window.open(optionUrl);
+							}
+							MynyteApi.goToFeedOption = function (e, optionUrl) {
+								e.preventDefault();
+								goToFeedOption(optionUrl);
+							}
 							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
 								var thisI = types[i];
 								var thisType = successData.items[thisI];
@@ -287,15 +295,46 @@
 
 								for (a = 0; a < thisType.length; a++) {
 								    var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
+								    var urlEscapedName = thisType[a].name.replace(" ", "%20");
 								    var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
-								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
-								    	'https://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
+								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
+								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
+								    var listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie' || thisType[a].listingTypeName == 'Offer') ? 
+								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
+								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/Business';
+								    var feedButtonHref = listingHref + '/' + urlEscapedName + '/nl-feedListing-photos/'+thisType[a]._listingId;
 
-								    htmlToAdd += "<div class='listing"+listingWithSmallImgClass+"'>";
+								    if (thisType[a].tonightsFeedButtonOptionName == 'See A la Carte Menu') {
+								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/2';
+								    }
+								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Takeaway Menu') {
+								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/1';
+								    }
+								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Table') {
+
+								    }
+								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Tickets') {
+
+								    }
+								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Details') {
+
+								    }
+								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Trailer') {
+
+								    }
+
+								    htmlToAdd += "<a href='"+listingHref+"' target='_blank' class='listing"+listingWithSmallImgClass+"'>";
 								    htmlToAdd += "<img class='main-img' src='" + imgSrc + "'></img>";
 								    htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
 								    htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
 								    htmlToAdd += "</div>";
+
+								    //Tonight's Feed Button Option
+								    htmlToAdd += '<button onclick="MynyteApi.goToFeedOption(event, \''+feedButtonHref+'\')" class="mn-listings-option-button">';
+								  		htmlToAdd += thisType[a].tonightsFeedButtonOptionName;
+								  	htmlToAdd += "</button>";
+
+								    /* HIDE FOR NOW
 								  	//social bar
 								  	htmlToAdd += "<div class='mn-listings-social-icons'>";
 
@@ -303,7 +342,9 @@
 								  		htmlToAdd += "<i class='fa fa-twitter trans'></i>";
 								  		htmlToAdd += "<i class='fa fa-envelope trans'></i>";
 								  	htmlToAdd += "</div>";
-								    htmlToAdd += "</div>";
+								  	/**/
+
+								    htmlToAdd += "</a>";
 
 								    if (a == thisType.length - 1) {
 										htmlToAdd += "</div>";
@@ -320,8 +361,10 @@
 						}
 
 						function buildListingsNavigation () {
-							htmlToAdd += "<div class='mn-listings-nav'>";
-							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
+							var typesObj = Object.keys(successData.items);
+							var typesLen = typesObj.length;
+							htmlToAdd += "<div class='mn-listings-nav listings-"+typesLen+"-item-container'>";
+							for (var types = typesObj, i = 0, end = typesLen; i < end; i++) {
 								var thisI = types[i];
 								var thisType = successData.items[thisI];
 								var listingActiveString = (i == 0) ? " active": "";
@@ -329,7 +372,7 @@
 
 								htmlToAdd += '<div onclick="MynyteApi.selectListingsNavItem(\'' + thisI + '\');" data-mn-nav-label-type="' + thisI + '" class="mn-listings-nav-listing' + listingActiveString + '">';
 									htmlToAdd += "<i class='fa " + iconClass + "'></i>";
-									htmlToAdd += "<span class='nav-listing-label'>" + thisI + "</span>";
+									htmlToAdd += "<span class='nav-listing-label'>" + thisI + "s</span>";
 									htmlToAdd += "<span class='nav-listing-tri'></span>";
 								htmlToAdd += "</div>";
 
