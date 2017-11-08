@@ -295,32 +295,41 @@
 
 								for (a = 0; a < thisType.length; a++) {
 								    var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
-								    var urlEscapedName = thisType[a].name.replace(" ", "%20");
+								    var urlEscapedName = thisType[a].name.replace(/ /g, "%20");
 								    var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
 								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
 								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
 								    var listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie' || thisType[a].listingTypeName == 'Offer') ? 
-								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
-								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/Business';
-								    var feedButtonHref = listingHref + '/' + urlEscapedName + '/nl-feedListing-photos/'+thisType[a]._listingId;
+								    	'https://www.mynyte.co.uk/staging/#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
+								    	'https://www.mynyte.co.uk/staging/#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/Business';
+									var listingInnerPageHref = listingHref.replace("/feed/", "/");
+								    var feedButtonHref = listingInnerPageHref + '/' + urlEscapedName + '/nl-feedListing-photos/'+thisType[a]._listingId;
+									
+									listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie') ? 
+										'https://www.mynyte.co.uk/staging/#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
+										listingHref;
+									listingInnerPageHref = listingHref.replace("/feed/", "/");
 
 								    if (thisType[a].tonightsFeedButtonOptionName == 'See A la Carte Menu') {
-								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/2';
+								    	feedButtonHref = listingInnerPageHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/2';
 								    }
 								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Takeaway Menu') {
-								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/1';
+								    	feedButtonHref = listingInnerPageHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/1';
 								    }
 								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Table') {
-
+										thisType[a].showUsersEmailAndPhoneInTableBookingResponse = (thisType[a].showUsersEmailAndPhoneInTableBookingResponse == 1) ? true: false;
+										thisType[a].allowCommentInTableBooking = (thisType[a].allowCommentInTableBooking == 1) ? true: false;
+										
+								    	feedButtonHref = listingInnerPageHref + '/book-table/' + thisType[a].relListingId + '/' + urlEscapedName + '/'+thisType[a].maxTableBookingGuests+'/'+thisType[a].showUsersEmailAndPhoneInTableBookingResponse+'/'+thisType[a].allowCommentInTableBooking;
 								    }
 								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Tickets') {
-
+								    	feedButtonHref = listingInnerPageHref + '/book-tickets/' + thisType[a].relListingId + '/' + urlEscapedName;
 								    }
 								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Details') {
-
+								    	feedButtonHref = listingHref;
 								    }
 								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Trailer') {
-
+								    	feedButtonHref = listingInnerPageHref + '//see-trailer/'+thisType[a].relListingId+'/'+urlEscapedName;
 								    }
 
 								    htmlToAdd += "<a href='"+listingHref+"' target='_blank' class='listing"+listingWithSmallImgClass+"'>";
