@@ -2277,6 +2277,8 @@ textarea {
     border-top: 1px solid #333;
 }
 .article-accordian h3.first {
+
+
     padding-top: 3px;
     padding-bottom: 13px;
     border-top: none;
@@ -2700,6 +2702,7 @@ span.notification-counter {
 }
 
 .item-spacer.item-spacer-small {
+
     height: 10px;
 }
 
@@ -3123,6 +3126,7 @@ span.notification-counter {
 
 .message-attachment {
     position: fixed;
+
     width: 100%;
     bottom: 97px;
     padding: 10px;
@@ -6121,6 +6125,7 @@ div#searchbox-categories i {
     height: 30px;
 }
 
+
 .nightfinder-horizontal-slider span.index-0,
 .nightfinder-horizontal-slider span.index-1,
 .nightfinder-horizontal-slider span.index-2 {
@@ -7042,6 +7047,10 @@ ion-header-bar input {
 }
 #header-bar .header-star.isVisible.tooltip {
     z-index: 9999;
+}
+#header-bar .header-star.isVisible:hover {
+    cursor: pointer;
+    color: #fff;
 }
 
 #header-bar #search-input {
@@ -8953,6 +8962,7 @@ location-lookup ul li span {
     }
     .comment-main-text::-moz-placeholder { /* Firefox 19+ */
       color: #fff;
+
     }
     .comment-main-text:-ms-input-placeholder { /* IE 10+ */
       color: #fff;
@@ -9104,6 +9114,15 @@ location-lookup ul li span {
         height: 38px;
         border-right: 1px solid #751717;
         border-top: none;
+    }
+
+    .tabs-icon-bottom.tabs .tab-item:hover,
+    .tabs-icon-bottom>.tabs .tab-item:hover,
+    .tabs-icon-top.tabs .tab-item:hover,
+    .tabs-icon-top>.tabs .tab-item:hover {
+        border-left: 1px solid #480707;
+        border-right: 1px solid #751717;
+        color: #caa;
     }
     
     .tabs-icon-top .tab-item.first-tab-item {
@@ -9348,6 +9367,19 @@ location-lookup ul li span {
     .article-page .tile b,
     .article-page .tile strong {
         color: #ddd;
+    }
+
+    #centralContent .tile:hover {
+        background: #2f2f2f;
+        border-color: #5f5e5e;
+        cursor: pointer;
+    }
+
+    .feed-item button:hover,
+    .front-screen-cover button:hover {
+        background: #aa1111;
+        border-color: #4a1010;
+        cursor: pointer;
     }
     
     .list {
@@ -9602,6 +9634,12 @@ location-lookup ul li span {
         width: calc(100% - 45px);
     }
 
+    #searchBox h2:hover {
+        cursor: pointer;
+        background: #211f1f;
+        font-weight: bold;
+    }
+
     #searchBox .nightfinder-horizontal-slider {
         margin-left: -5px;
     }
@@ -9618,6 +9656,14 @@ location-lookup ul li span {
     #searchBox .dummy-input-container .music-input-container-inner {
         margin-left: 4%;
     }
+
+    .left button:hover,
+    .right button:hover {
+        background: #3e3c3c;
+        border: 1px solid #5f5c5c;
+        color: #f7f7f7;
+        border-left: 1px solid #464141;
+    }
     
     #searchBox button#search-submit,
     #searchBox button#dummy-search-submit {
@@ -9632,6 +9678,13 @@ location-lookup ul li span {
     }
     #searchBox button#dummy-search-submit span {
         width: 80px;
+    }
+
+    #searchBox button#search-submit:hover,
+    #searchBox button#dummy-search-submit:hover {
+        background: #960909;
+        border: 1px solid #9e2121;
+        color: #ffffff;
     }
     
     div#searchbox-categories i {
@@ -9678,6 +9731,12 @@ location-lookup ul li span {
         cursor: default;
     }
 
+    .animate-show .cat-select-option:hover {
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
     .main-feed-dummy {
         width: 670px;
     }
@@ -9696,6 +9755,18 @@ location-lookup ul li span {
     }
     .dummy-input-container .dummy-select-display {
         margin-bottom: 2px !important;
+    }
+
+    .feed-header span i:hover {
+        background: #3e3d3d;
+        color: #fff;
+        border-color: #656363;
+        cursor: pointer;
+    }
+
+    .feed-header .hide-button:hover {
+        cursor: pointer;
+        color: #eee;
     }
 
     .feed-item .main-img-container {
@@ -10525,6 +10596,7 @@ location-lookup ul li span {
     .offers-side-display span.item-title {
         color: #673434;
         float: left;
+
         width: calc(100% - 1px);
     }
     .whats-open-side-display span.item-title {
