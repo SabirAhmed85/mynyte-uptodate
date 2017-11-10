@@ -92,14 +92,15 @@ body.mn-modal--opened {
     font-family: 'Titillium Web', Ariel, sans-serif;
 }
 
-.mynyte-listings .header {
+.mynyte-listings .mn-listings-header,
+.mynyte-listings .mn-listings-footer {
     float: left;
     width: calc(100% - 18px);
-    padding: 12px 10px 15px 10px;
+    padding: 7px 10px 8px 10px;
     font-size: 15px;
 }
 
-.mynyte-listings .scrollbar{
+.mynyte-listings .mn-listings-scrollbar{
     position: absolute;
     right: 1px;
     width: 7px;
@@ -111,6 +112,36 @@ body.mn-modal--opened {
     border-right: 1px solid #af9b9b;
     border-radius: 12px;
     opacity: 0.9;
+}
+
+.mynyte-listings .mn-listings-header span,
+.mynyte-listings .mn-listings-footer span {
+    float: left;
+    width: calc(100% - 80px);
+    margin-top: 12px;
+    background: transparent;
+}
+
+.mynyte-listings .mn-listings-header span b,
+.mynyte-listings .mn-listings-footer span b{
+    font-weight: bold;
+}
+
+.mynyte-listings .mn-listings-header img,
+.mynyte-listings .mn-listings-footer img {
+    float: right;
+    width: 45px;
+    font-size: 15px;
+    margin: 0;
+}
+
+.mynyte-listings .mn-listings-footer {
+    float: left;
+    width: calc(100% - 18px);
+    padding: 7px 10px 8px 10px;
+    font-size: 15px;
+    bottom: 0px;
+    position: absolute;
 }
 
 .mynyte-listings .listings-container {
@@ -149,7 +180,7 @@ body.mn-modal--opened {
   left: 0;
   visibility: hidden;
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 50px);
 }
 .mynyte-listings .mn-listings-inner-container.show {
   opacity: 1;
@@ -171,6 +202,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-listings .mn-listings-nav.listings-2-item-container .mn-listings-nav-listing {
+
     width: 50%;
 }
 
@@ -325,6 +357,34 @@ body.mn-modal--opened {
     margin-left: 10px;
 }
 
+.mynyte-listings .more-listings-note {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    width: calc(100% - 30px);
+    background: #fff;
+    font-size: 13px;
+    color: #222;
+    padding: 7px 15px;
+    opacity: 0;
+    z-index: 0;
+}
+.mynyte-listings .more-listings-note.show {
+    opacity: 1;
+    z-index: 1;
+}
+
+.mynyte-listings .more-listings-note a {
+    float: left;
+    width: 100%;
+    color: #333;
+}
+
+.mynyte-listings .more-listings-note a:hover {
+    color: #824b4b;
+    font-weight: bold;
+}
+
 /* LIGHT */
 .mynyte-listings.mn-light {
     background: #ebebeb;
@@ -332,8 +392,8 @@ body.mn-modal--opened {
 }
 
 .mynyte-listings.mn-light .scrollbar {
-    background: #191818;
-    border-color: #383737;
+    background: #e8e8e8;
+    border-color: #cecece;
     display: none;
 }
 
@@ -377,10 +437,18 @@ body.mn-modal--opened {
     border-color: #333131;
 }
 
-.mynyte-listings.mn-light .header {
+.mynyte-listings.mn-light .mn-listings-header,
+.mynyte-listings.mn-light .mn-listings-footer {
     color: #775656;
     border-bottom: 1px solid #d0cbcb;
     background: #ececec;
+}
+
+.mynyte-listings.mn-light .mn-listings-header {
+    border-bottom: 1px solid #d0cbcb;
+}
+.mynyte-listings.mn-light .mn-listings-footer {
+    border-top: 1px solid #d0cbcb;
 }
 
 .mynyte-listings.mn-light .with-small-image .main-img {
@@ -407,6 +475,21 @@ body.mn-modal--opened {
 
 .mynyte-listings.mn-light .mn-listings-social-icons i:hover {
     color: #ccc;
+}
+
+.mynyte-listings.mn-light .more-listings-note {
+    background: #fff;
+    color: #222;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #a28b8b;
+}
+
+.mynyte-listings.mn-light .more-listings-note a {
+    color: #333;
+}
+
+.mynyte-listings.mn-light .more-listings-note a:hover {
+    color: #824b4b;
 }
 
     /*DARK*/
@@ -483,6 +566,19 @@ body.mn-modal--opened {
     color: #ccc;
 }
 
+.mynyte-listings.mn-dark .more-listings-note {
+    background: #222;
+    color: #eee;
+}
+
+.mynyte-listings.mn-dark .more-listings-note a {
+    color: #eee;
+}
+
+.mynyte-listings.mn-dark .more-listings-note a:hover {
+    color: #ccc;
+}
+
     /*CLEAR*/
 
 .mynyte-listings.clear {
@@ -509,6 +605,7 @@ body.mn-modal--opened {
 .mynyte-frame-container {
     float: left;
     display: block;
+
     max-width: calc(100% - 10px);
     margin: 5px;
     border: 1px solid #bfaeae;
@@ -1033,6 +1130,7 @@ span.mynyte-label-detail {
     overflow-y: scroll;
     max-height: 90vh;
 }
+
 .mn-popup-body::-webkit-scrollbar {
     width: 0.5em;
 }
