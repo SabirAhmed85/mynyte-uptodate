@@ -95,9 +95,9 @@ body.mn-modal--opened {
 .mynyte-listings .mn-listings-header,
 .mynyte-listings .mn-listings-footer {
     float: left;
-    width: calc(100% - 18px);
-    padding: 7px 10px 8px 10px;
-    font-size: 15px;
+    width: calc(100% - 22px);
+    padding: 6px 10px 9px 10px;
+    font-size: 17px;
 }
 
 .mynyte-listings .mn-listings-scrollbar{
@@ -137,7 +137,7 @@ body.mn-modal--opened {
 
 .mynyte-listings .mn-listings-footer {
     float: left;
-    width: calc(100% - 18px);
+    width: calc(100% - 22px);
     padding: 7px 10px 8px 10px;
     font-size: 15px;
     bottom: 0px;
@@ -181,6 +181,7 @@ body.mn-modal--opened {
   visibility: hidden;
   overflow-y: scroll;
   height: calc(100% - 50px);
+  width: 100%;
 }
 .mynyte-listings .mn-listings-inner-container.show {
   opacity: 1;
@@ -388,7 +389,7 @@ body.mn-modal--opened {
 /* LIGHT */
 .mynyte-listings.mn-light {
     background: #ebebeb;
-    border: 1px solid #d6d4d4;
+    border: 1px solid #a05555;
 }
 
 .mynyte-listings.mn-light .scrollbar {
@@ -439,13 +440,14 @@ body.mn-modal--opened {
 
 .mynyte-listings.mn-light .mn-listings-header,
 .mynyte-listings.mn-light .mn-listings-footer {
-    color: #775656;
+    color: #ece5e5;
     border-bottom: 1px solid #d0cbcb;
-    background: #ececec;
+    background: #a93f3f;
+    border: 1px solid #cc6969;
 }
 
 .mynyte-listings.mn-light .mn-listings-header {
-    border-bottom: 1px solid #d0cbcb;
+    border-bottom: 1px solid #670606;
 }
 .mynyte-listings.mn-light .mn-listings-footer {
     border-top: 1px solid #d0cbcb;
@@ -478,10 +480,10 @@ body.mn-modal--opened {
 }
 
 .mynyte-listings.mn-light .more-listings-note {
-    background: #fff;
+    background: #e0e0e0;
     color: #222;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #a28b8b;
+    border-top: 1px solid #c5c3c3;
+    border-bottom: 1px solid #8a3939;
 }
 
 .mynyte-listings.mn-light .more-listings-note a {
