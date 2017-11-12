@@ -49,15 +49,15 @@
     $timeScale = 'present';
     $_townId = 1;
     $_businessId = ($_GET['_businessId']);
+    $menuType = (isset($_GET['menuType'])) ? $_GET['menuType']: 'takeaway';
+	$_menuTypeId = ($menuType == 'takeaway') ? 1: 2;
 
     //$result = mysql_query("CALL getListingsForMainFeed($_townId, $_userId)");
-    $result = mysqli_query($db_con, "CALL getMenuItems('$_businessId', 0, 1);");
-    //echo json_encode("CALL getOffers($_userId, $_townId, $_businessId, $_eventId, $_offerId, '$timeScale');");
-    
+    $result = mysqli_query($db_con, "CALL getMenuItems($_businessId, 0, $_menuTypeId);");
+    //echo json_encode("CALL getMenuItems2(19, 0, 1);");
+
     while($row = mysqli_fetch_assoc($result))
       $output[] = $row;
-
-    shuffle($output);
 
     header("Content-Type: application/json");
     echo $callback . "({'items': ".json_encode($output)."})";
