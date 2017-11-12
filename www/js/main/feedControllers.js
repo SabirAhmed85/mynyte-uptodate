@@ -1763,7 +1763,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 return $scope.days[$scope.selectedDate1.getDay()] + ', ' + $scope.selectedDate1.getDate() + ' ' + $scope.months[$scope.selectedDate1.getMonth()] + ' ' + $scope.selectedDate1.getFullYear();
             }
             $scope.convertToTime = function () {
-                $scope.selectedHour = ($scope.selectedTime.getUTCHours()+1 < 10) ? '0' + $scope.selectedTime.getUTCHours()+1: $scope.selectedTime.getUTCHours()+1;
+                $scope.selectedHour = ($scope.selectedTime.getUTCHours()+1 < 10) ? '0' + $scope.selectedTime.getUTCHours(): $scope.selectedTime.getUTCHours();
                 $scope.selectedMinutes = ($scope.selectedTime.getUTCMinutes() < 10) ? '0' + $scope.selectedTime.getUTCMinutes(): $scope.selectedTime.getUTCMinutes();
                 return $scope.selectedHour + ':' + $scope.selectedMinutes;
             }
