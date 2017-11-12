@@ -15,7 +15,7 @@
         $menuItemCategoryIdString = (empty($_GET['menuItemCategoryIdString'])) ? "0": mysql_real_escape_string($_GET['menuItemCategoryIdString']);
         $_menuTypeId = (empty($_GET['_menuTypeId'])) ? "": mysql_real_escape_string($_GET['_menuTypeId']);
         
-        $result = mysql_query("CALL getMenuItems7('$_businessId', '$_menuTypeId', '$menuItemCategoryIdString');");
+        $result = mysql_query("CALL getMenuItems('$_businessId', '$_menuTypeId', '$menuItemCategoryIdString');");
     }
     elseif ($action == 'getMenuItem') {
         $_menuItemId = (empty($_GET['_menuItemId'])) ? "": mysql_real_escape_string($_GET['_menuItemId']);
