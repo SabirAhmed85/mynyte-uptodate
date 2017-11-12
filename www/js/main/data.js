@@ -1114,7 +1114,7 @@ app.factory('MenuItems', ['$http', 'Config', function($http, Config) {
     data.getMenuItems = function (_businessId, _menuItemCategoryId, _menuTypeId) {
 		return $http(
             {
-				method: 'GET', url:Config.MenuItemUrl + '?action=getMenuItems&_businessId=' + _businessId + '&_menuItemCategoryId=' + _menuItemCategoryId + '&_menuTypeId=' + _menuTypeId
+				method: 'GET', url:Config.MenuItemUrl + '?action=getMenuItems&_businessId=' + _businessId + '&menuItemCategoryIdString=' + _menuItemCategoryId + '&_menuTypeId=' + _menuTypeId
 			}
 		);
 	}
