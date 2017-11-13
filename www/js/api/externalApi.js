@@ -1,19 +1,22 @@
 (function(){
+	//Global Reused Functions
+
    // DOM Ready - do your stuff
    MynyteApi = function () {
    		var disableScroll = false;
    		var windowOuterHeight = $(window).height();
    		var scripts = document.getElementsByTagName("script");
    		var currentScript = scripts[scripts.length - 1].src;
-   		var current_environment = 'live/';
+   		var current_environment = 'live';
    		var current_environment_page_url = null;
    		var current_environment_file_url = null;
+		var _bid = mynyte_business_id;
 
    		if (typeof(current_mynyte_env) !== 'undefined') {
    			current_environment = current_mynyte_env;
    		}
-   		current_environment_page_url = (current_environment == 'staging/') ? "staging/": "";
-   		current_environment_file_url = (current_environment == 'staging/') ? "staging/": "live/";
+   		current_environment_page_url = (current_environment == 'staging') ? "staging/": "";
+   		current_environment_file_url = (current_environment == 'staging') ? "staging/": "live/";
    		console.log(current_environment);
 		
 		MynyteApi.pageVars = {};
@@ -182,12 +185,12 @@
 					'limit': params.limit || 5
 				},
 				'menuDisplay': {
-					'_businessId': params._businessId || 87,
+					'_businessId': _bid,
 					'menuType': params.menuType || 'takeaway',
 					'menuItemCategoryIdString': params.menuItemCategoryIdString || '0'
 				}
 			};
-			var defaultData = {'_businessId': params._businessId || 87};
+			var defaultData = {'_businessId': _bid};
 
 			console.log(feedType, feedTypeAction, feedTypeData);
 			
@@ -421,7 +424,7 @@
 											htmlToAdd += "<div class='header'>"+cat+"<span class='listing-menu-item-open'>+</span></div>";
 											htmlToAdd += "<div class='body'>"
 											for (var c = 0; c < categories[cat].length; c++) {
-												htmlToAdd += "<div class='text-container'><span class='title'>"+categories[cat][c]["name"]+"</span><span class='options'>Options</span><span class='price'>£ "+categories[cat][c]["price"]+"</span></div>";
+												htmlToAdd += "<div class='text-container'><span class='title'>"+categories[cat][c]["name"]+"</span><!--<span class='options'>Options</span>--><span class='price'>£ "+categories[cat][c]["price"]+"</span></div>";
 
 												if (c == categories[cat].length - 1) {
 													$('.header').on("click", function () {
@@ -870,9 +873,9 @@
 				}
 
 				//If MyNyte Menu Display Plugin
-				if ($( "div.mynyte-menu-display" ).length) {
+				/*if ($( "div.mynyte-menu-display" ).length) {
 					createFeed({'feedType': 'menuDisplay','_businessId': 90,'menuType': 'takeaway', 'menuItemCategoryIdString': '1, 23'});
-				}
+				}*/
 
 				//If MyNyte Business items SUmmary
 				if ($( "div.mynyte-business-items-summary").length) {
