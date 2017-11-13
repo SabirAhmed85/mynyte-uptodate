@@ -1,10 +1,3 @@
-/* UNIQUE TO ENVIRONMENT (Options are: 'Staging' and 'Live')*/
-/* UNIQUE TO PLATFORM (Options are: 'ios' and 'android' and 'browser')*/
-var IntendedEnvironment = "Live";
-var IntendedPlatform = "ios";
-var DebugMode = false;
-/* */
-
 var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/live/";
 var AssetsFolderUrl = RootUrl + "sneak-preview";
 var AnalyticsScriptSrc = (IntendedPlatform == "browser") ? " https://www.google-analytics.com/ ": "";

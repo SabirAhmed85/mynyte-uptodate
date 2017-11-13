@@ -43,21 +43,17 @@
     //echo json_encode($output);
   }
   else if ($action == 'getMenuItems') {
-    $_userId = 0;
-    $_eventId = 0;
-    $_offerId = 0;
-    $timeScale = 'present';
-    $_townId = 1;
     $_businessId = ($_GET['_businessId']);
+    $menuType = (isset($_GET['menuType'])) ? $_GET['menuType']: 'takeaway';
+	  $_menuTypeId = ($menuType == 'takeaway') ? 1: 2;
+    $menuItemCategoryIdString = (!isset($_GET['menuItemCategoryIdString'])) ? "0": $_GET['menuItemCategoryIdString'];
 
     //$result = mysql_query("CALL getListingsForMainFeed($_townId, $_userId)");
-    $result = mysqli_query($db_con, "CALL getMenuItems('$_businessId', 0, 1);");
-    //echo json_encode("CALL getOffers($_userId, $_townId, $_businessId, $_eventId, $_offerId, '$timeScale');");
-    
+    $result = mysqli_query($db_con, "CALL getMenuItems($_businessId, $_menuTypeId, '$menuItemCategoryIdString');");
+    //echo json_encode("CALL getMenuItems($_businessId, $_menuTypeId, '$menuItemCategoryIdString');");
+
     while($row = mysqli_fetch_assoc($result))
       $output[] = $row;
-
-    shuffle($output);
 
     header("Content-Type: application/json");
     echo $callback . "({'items': ".json_encode($output)."})";

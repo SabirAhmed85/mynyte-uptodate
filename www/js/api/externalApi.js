@@ -3,12 +3,24 @@
    MynyteApi = function () {
    		var disableScroll = false;
    		var windowOuterHeight = $(window).height();
+   		var scripts = document.getElementsByTagName("script");
+   		var currentScript = scripts[scripts.length - 1].src;
+   		var current_environment = 'live/';
+   		var current_environment_page_url = null;
+   		var current_environment_file_url = null;
+
+   		if (typeof(current_mynyte_env) !== 'undefined') {
+   			current_environment = current_mynyte_env;
+   		}
+   		current_environment_page_url = (current_environment == 'staging/') ? "staging/": "";
+   		current_environment_file_url = (current_environment == 'staging/') ? "staging/": "live/";
+   		console.log(current_environment);
 		
 		MynyteApi.pageVars = {};
 		MynyteApi.pageVars['Globals'] = {
 			'Mynyte': {
 				'main-logo': 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',
-				'table-booking-frame-src': 'https://www.mynyte.co.uk/staging/#/app/externalApi/bookTable/light/87/0'
+				'table-booking-frame-src': 'https://www.mynyte.co.uk/'+current_environment_page_url+'#/app/externalApi/bookTable/light/87/0'
 			},
 			'Myday': {
 				'main-logo': 'https://www.mydayapp.co.uk/sneak-preview/img/logo.png'
@@ -38,7 +50,7 @@
 			var jsonpCallback = function (reponse) {};
 
 			$.ajax({
-				url: "https://www.mynyte.co.uk/staging/sneak-preview/data/extApi/"+className+".php?action="+action,
+				url: "https://www.mynyte.co.uk/"+current_environment_file_url+"sneak-preview/data/extApi/"+className+".php?action="+action,
 				type: "GET",
 				dataType: "jsonp",
 				jsonp: "jsonp",
@@ -141,8 +153,26 @@
 		
 		function createFeed (params) {
 			console.log(params);
-			var elem = params.elem || $('.mynyte-listings');
+			var defElem;
 			var feedType = params.feedType;
+
+			switch (params.feedType) {
+				case 'menuDisplay':
+					defElem = $('.mynyte-menu-display');
+					params.menuDisplayImgAlt = 'Log into MyNyte to book tables and make your evening plans';
+					params.menuDisplayTranscriptNote = '<b>Book Tables with ease</b>, and find out what\'s going on in town...';
+					params.menuDisplayImgSrc = 'https://www.mynyte.co.uk/sneak-preview/img/logo.png';
+					params.menuItemCategoryIdString = params.menuItemCategoryIdString || '0';
+					break;
+				case 'offersFeed':
+					defElem = $('.mynyte-offers-display');
+					break;
+				default: 
+					defElem = $('.mynyte-listings');
+					break;
+			}
+
+			var elem = params.elem || defElem;
 			var feedTypeAction = {'offersFeed': 'getOffersFeed', 'menuDisplay': 'getMenuItems', 'listingsFeed': 'getBusinessesByBusinessType'};
 			var feedTypeData = {
 				'listingsFeed': {
@@ -150,11 +180,190 @@
 					'businessTypesString': params.businessTypesString || 'All',
 					'_townId': params._townId || 1,
 					'limit': params.limit || 5
+				},
+				'menuDisplay': {
+					'_businessId': params._businessId || 87,
+					'menuType': params.menuType || 'takeaway',
+					'menuItemCategoryIdString': params.menuItemCategoryIdString || '0'
 				}
 			};
 			var defaultData = {'_businessId': params._businessId || 87};
 
 			console.log(feedType, feedTypeAction, feedTypeData);
+			
+			function createListingsFeedFromResults (resultData) {
+				var successData = resultData;
+				var imageSize = params.imageSize || 'small';
+				var htmlToAdd = "";
+				var divHeight = $('.mynyte-listings').height() - 180;
+				var listingsHeader = {
+					html: "<div class='mn-listings-header'><span><b>What's On &amp; About</b> in Bedford</span> <img src='https://www.mynyte.co.uk/sneak-preview/img/logo.png' /></div><span class='scrollbar'></span>"	
+				};
+				var listingsFooter = {
+					html: "<div class='mn-listings-footer'><span>Stay up to date with <b>MyNyte</b></span> <img src='https://www.mynyte.co.uk/sneak-preview/img/logo.png' /></div>"	
+				};
+						
+				htmlToAdd += listingsHeader.html;
+
+				function selectListingsNavItem (item) {
+					console.log(item);
+					$('.mn-listings-inner-container').each(function (index) {
+						$(this).removeClass('show');
+
+						if ($(this).data('mn-listing-type') == item) {
+							$(this).addClass('show');
+						}
+					});
+					$('.mn-listings-nav-listing').each(function (index) {
+						$(this).removeClass('active');
+
+						if ($(this).data('mn-nav-label-type') == item) {
+							$(this).addClass('active');
+						}
+					});
+					$('.mynyte-listings .more-listings-note').each(function (index) {
+						$(this).removeClass('show');
+
+						if ($(this).data('mn-listing-type') == item) {
+							$(this).addClass('show');
+						}
+					});
+				}
+				MynyteApi.selectListingsNavItem = function (params) {
+					selectListingsNavItem(params);
+				}
+
+				function buildListingsItems () {
+					function goToFeedOption (optionUrl) {
+						console.log(optionUrl);
+						window.open(optionUrl);
+					}
+					MynyteApi.goToFeedOption = function (e, optionUrl) {
+						e.preventDefault();
+						goToFeedOption(optionUrl);
+					}
+					for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
+						var thisI = types[i];
+						var thisType = successData.items[thisI];
+						var containerShowString = (i == 0) ? " show": "";
+						var listingTypeName = thisType[0].listingTypeName;
+						var seeCatButtonShowClass = (i == 0) ? " show": "";
+						var seeCategoryButton = {
+							href: listingCatHref + "searchRestaurantsByFoodStyle//",
+							text: "See more " + listingTypeName + "s on MyNyte",
+							title: "See more " + listingTypeName + "s on MyNyte"
+						};
+						seeCategoryButton.html = "<div data-mn-listing-type='"+listingTypeName+"' class='more-listings-note"+seeCatButtonShowClass+"'><a href='"+seeCategoryButton.href+"' title='"+seeCategoryButton.title+"'>" + seeCategoryButton.text + "</a></div>";
+
+						htmlToAdd += "<div data-mn-listing-type='" + thisI + "' class='mn-listings-inner-container trans" + containerShowString + "'>";
+
+						for (a = 0; a < thisType.length; a++) {
+							var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
+							var urlEscapedName = thisType[a].name.replace(/ /g, "%20");
+							var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
+								'https://www.mynyte.co.uk/'+current_environment_file_url+'sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
+								'https://www.mynyte.co.uk/'+current_environment_file_url+'sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
+							var listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie' || thisType[a].listingTypeName == 'Offer') ? 
+								'https://www.mynyte.co.uk/'+current_environment_page_url+'#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
+								'https://www.mynyte.co.uk/'+current_environment_page_url+'#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/Business';
+							var listingCatHref = "https://www.mynyte.co.uk/"+current_environment_page_url+"#/app/feed/nl-feedListings/";
+							var listingInnerPageHref = listingHref.replace("/feed/", "/");
+							var feedButtonHref = listingInnerPageHref + '/' + urlEscapedName + '/nl-feedListing-photos/'+thisType[a]._listingId;
+							
+							listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie') ? 
+								'https://www.mynyte.co.uk/'+current_environment_page_url+'#/app/feed/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
+								listingHref;
+							listingInnerPageHref = listingHref.replace("/feed/", "/");
+
+							if (thisType[a].tonightsFeedButtonOptionName == 'See A la Carte Menu') {
+								feedButtonHref = listingInnerPageHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/2';
+							}
+							else if (thisType[a].tonightsFeedButtonOptionName == 'See Takeaway Menu') {
+								feedButtonHref = listingInnerPageHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/1';
+							}
+							else if (thisType[a].tonightsFeedButtonOptionName == 'Book Table') {
+								thisType[a].showUsersEmailAndPhoneInTableBookingResponse = (thisType[a].showUsersEmailAndPhoneInTableBookingResponse == 1) ? true: false;
+								thisType[a].allowCommentInTableBooking = (thisType[a].allowCommentInTableBooking == 1) ? true: false;
+								
+								feedButtonHref = listingInnerPageHref + '/book-table/' + thisType[a].relListingId + '/' + urlEscapedName + '/'+thisType[a].maxTableBookingGuests+'/'+thisType[a].showUsersEmailAndPhoneInTableBookingResponse+'/'+thisType[a].allowCommentInTableBooking;
+							}
+							else if (thisType[a].tonightsFeedButtonOptionName == 'Book Tickets') {
+								feedButtonHref = listingInnerPageHref + '/book-tickets/' + thisType[a].relListingId + '/' + urlEscapedName;
+							}
+							else if (thisType[a].tonightsFeedButtonOptionName == 'See Details') {
+								feedButtonHref = listingHref;
+							}
+							else if (thisType[a].tonightsFeedButtonOptionName == 'See Trailer') {
+								feedButtonHref = listingInnerPageHref + '//see-trailer/'+thisType[a].relListingId+'/'+urlEscapedName;
+							}
+
+							htmlToAdd += "<a href='"+listingHref+"' target='_blank' class='listing"+listingWithSmallImgClass+"'>";
+							htmlToAdd += "<img class='main-img' src='" + imgSrc + "'></img>";
+							htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
+							htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
+							htmlToAdd += "</div>";
+
+							//Tonight's Feed Button Option
+							htmlToAdd += '<button onclick="MynyteApi.goToFeedOption(event, \''+feedButtonHref+'\')" class="mn-listings-option-button">';
+								htmlToAdd += thisType[a].tonightsFeedButtonOptionName;
+							htmlToAdd += "</button>";
+
+							/* HIDE FOR NOW
+							//social bar
+							htmlToAdd += "<div class='mn-listings-social-icons'>";
+
+								htmlToAdd += "<i class='fa fa-facebook trans'></i>";
+								htmlToAdd += "<i class='fa fa-twitter trans'></i>";
+								htmlToAdd += "<i class='fa fa-envelope trans'></i>";
+							htmlToAdd += "</div>";
+							/**/
+
+							htmlToAdd += "</a>";
+
+							if (a == thisType.length - 1) {
+								htmlToAdd += "</div>";
+								
+								htmlToAdd += seeCategoryButton.html;
+								
+								if (i == end - 1) {
+									htmlToAdd += "</div>";
+									
+									htmlToAdd += listingsFooter.html;
+					
+									elem.append(htmlToAdd).css({'display': 'block'});
+								}
+							}
+	
+						}
+					}
+				}
+
+				function buildListingsNavigation () {
+					var typesObj = Object.keys(successData.items);
+					var typesLen = typesObj.length;
+					htmlToAdd += "<div class='mn-listings-nav listings-"+typesLen+"-item-container'>";
+					for (var types = typesObj, i = 0, end = typesLen; i < end; i++) {
+						var thisI = types[i];
+						var thisType = successData.items[thisI];
+						var listingActiveString = (i == 0) ? " active": "";
+						var iconClass = successData.items[thisI][0]['iconClass'];
+
+						htmlToAdd += '<div onclick="MynyteApi.selectListingsNavItem(\'' + thisI + '\');" data-mn-nav-label-type="' + thisI + '" class="mn-listings-nav-listing' + listingActiveString + '">';
+							htmlToAdd += "<i class='fa " + iconClass + "'></i>";
+							htmlToAdd += "<span class='nav-listing-label'>" + thisI + "s</span>";
+							htmlToAdd += "<span class='nav-listing-tri'></span>";
+						htmlToAdd += "</div>";
+
+						if (i == end - 1) {
+							htmlToAdd += "</div><div class='listings-container' style='height: "+divHeight+"px;'>";
+			
+							buildListingsItems();
+						}
+					}
+				}
+
+				buildListingsNavigation();
+			}
 			
 			dataConnect({
 				'className': 'Profile',
@@ -191,6 +400,7 @@
 					}
 					else if (feedType == 'menuDisplay') {
 						successData = successData.items;
+						console.log(successData);
 						var categories = {};
 
 						var htmlToAdd = "<div class='container-header'>See our Menu</div>";
@@ -251,140 +461,7 @@
 					}
 					else if (feedType == 'listingsFeed') {
 						console.log(successData);
-						var imageSize = params.imageSize || 'small';
-						
-						var divHeight = $('.mynyte-listings').height() - 110;
-						var htmlToAdd = "<div class='header'>What's On</div><span class='scrollbar'></span>";
-
-						function selectListingsNavItem (item) {
-							console.log(item);
-							$('.mn-listings-inner-container').each(function (index) {
-								$(this).removeClass('show');
-
-								if ($(this).data('mn-listing-type') == item) {
-									$(this).addClass('show');
-								}
-							});
-							$('.mn-listings-nav-listing').each(function (index) {
-								$(this).removeClass('active');
-
-								if ($(this).data('mn-nav-label-type') == item) {
-									$(this).addClass('active');
-								}
-							});
-						}
-						MynyteApi.selectListingsNavItem = function (params) {
-							selectListingsNavItem(params);
-						}
-	
-						function buildListingsItems () {
-							function goToFeedOption (optionUrl) {
-								console.log(optionUrl);
-								window.open(optionUrl);
-							}
-							MynyteApi.goToFeedOption = function (e, optionUrl) {
-								e.preventDefault();
-								goToFeedOption(optionUrl);
-							}
-							for (var types = Object.keys(successData.items), i = 0, end = types.length; i < end; i++) {
-								var thisI = types[i];
-								var thisType = successData.items[thisI];
-								var containerShowString = (i == 0) ? " show": "";
-
-								htmlToAdd += "<div data-mn-listing-type='" + thisI + "' class='mn-listings-inner-container trans" + containerShowString + "'>";
-
-								for (a = 0; a < thisType.length; a++) {
-								    var listingWithSmallImgClass = (imageSize == "small") ? ' with-small-image': '';
-								    var urlEscapedName = thisType[a].name.replace(" ", "%20");
-								    var imgSrc = (thisType[a].listingTypeName == 'Event' && thisType[a].currentCoverPhotoName != 'default.jpg') ? 
-								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/cover_photo/'+thisType[a].currentCoverPhotoName: 
-								    	'https://www.mynyte.co.uk/staging/sneak-preview/img/user_images/profile_photo/'+thisType[a].currentProfilePhotoName;
-								    var listingHref = (thisType[a].listingTypeName == 'Event' || thisType[a].listingTypeName == 'Movie' || thisType[a].listingTypeName == 'Offer') ? 
-								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/'+thisType[a].listingTypeName:
-								    	'https://www.mynyte.co.uk/staging/#/app/nl-feedListings///nl-feedListing/'+thisType[a].relListingId+'/Business';
-								    var feedButtonHref = listingHref + '/' + urlEscapedName + '/nl-feedListing-photos/'+thisType[a]._listingId;
-
-								    if (thisType[a].tonightsFeedButtonOptionName == 'See A la Carte Menu') {
-								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/2';
-								    }
-								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Takeaway Menu') {
-								    	feedButtonHref = listingHref + '/see-menu/' + thisType[a].relListingId + '/' + urlEscapedName + '/1';
-								    }
-								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Table') {
-
-								    }
-								    else if (thisType[a].tonightsFeedButtonOptionName == 'Book Tickets') {
-
-								    }
-								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Details') {
-
-								    }
-								    else if (thisType[a].tonightsFeedButtonOptionName == 'See Trailer') {
-
-								    }
-
-								    htmlToAdd += "<a href='"+listingHref+"' target='_blank' class='listing"+listingWithSmallImgClass+"'>";
-								    htmlToAdd += "<img class='main-img' src='" + imgSrc + "'></img>";
-								    htmlToAdd += "<div class='text-container'><span class='title'>"+thisType[a].name+"</span>";
-								    htmlToAdd += "<span class='description'>"+thisType[a].listingType1+"</span>";
-								    htmlToAdd += "</div>";
-
-								    //Tonight's Feed Button Option
-								    htmlToAdd += '<button onclick="MynyteApi.goToFeedOption(event, \''+feedButtonHref+'\')" class="mn-listings-option-button">';
-								  		htmlToAdd += thisType[a].tonightsFeedButtonOptionName;
-								  	htmlToAdd += "</button>";
-
-								    /* HIDE FOR NOW
-								  	//social bar
-								  	htmlToAdd += "<div class='mn-listings-social-icons'>";
-
-								  		htmlToAdd += "<i class='fa fa-facebook trans'></i>";
-								  		htmlToAdd += "<i class='fa fa-twitter trans'></i>";
-								  		htmlToAdd += "<i class='fa fa-envelope trans'></i>";
-								  	htmlToAdd += "</div>";
-								  	/**/
-
-								    htmlToAdd += "</a>";
-
-								    if (a == thisType.length - 1) {
-										htmlToAdd += "</div>";
-
-										if (i == end - 1) {
-											htmlToAdd += "</div>";
-							
-											elem.append(htmlToAdd).css({'display': 'block'});
-										}
-								    }
-			
-								}
-							}
-						}
-
-						function buildListingsNavigation () {
-							var typesObj = Object.keys(successData.items);
-							var typesLen = typesObj.length;
-							htmlToAdd += "<div class='mn-listings-nav listings-"+typesLen+"-item-container'>";
-							for (var types = typesObj, i = 0, end = typesLen; i < end; i++) {
-								var thisI = types[i];
-								var thisType = successData.items[thisI];
-								var listingActiveString = (i == 0) ? " active": "";
-								var iconClass = successData.items[thisI][0]['iconClass'];
-
-								htmlToAdd += '<div onclick="MynyteApi.selectListingsNavItem(\'' + thisI + '\');" data-mn-nav-label-type="' + thisI + '" class="mn-listings-nav-listing' + listingActiveString + '">';
-									htmlToAdd += "<i class='fa " + iconClass + "'></i>";
-									htmlToAdd += "<span class='nav-listing-label'>" + thisI + "s</span>";
-									htmlToAdd += "<span class='nav-listing-tri'></span>";
-								htmlToAdd += "</div>";
-
-								if (i == end - 1) {
-									htmlToAdd += "</div><div class='listings-container' style='height: "+divHeight+"px;'>";
-					
-									buildListingsItems();
-								}
-							}
-						}
-
-						buildListingsNavigation();
+						createListingsFeedFromResults(successData);
 					}
 				},
 				'errorCallback': function () {
@@ -684,9 +761,26 @@
 
 		include('//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', function() {
 			$(document).ready(function() {
+				function loadScript(url, callback)
+				{
+				    // Adding the script tag to the head as suggested before
+				    var head = document.getElementsByTagName('head')[0];
+				    var script = document.createElement('script');
+				    script.type = 'text/javascript';
+				    script.src = url;
+
+				    // Then bind the event to the callback function.
+				    // There are several events for cross browser compatibility.
+				    script.onreadystatechange = callback;
+				    script.onload = callback;
+
+				    // Fire the loading
+				    head.appendChild(script);
+				}
+
 				//General css files
-				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/staging/css/api-style.css" type="text/css" />');
-				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/staging/css/ionicons.min.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/'+current_environment_file_url+'css/api-style.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/'+current_environment_file_url+'css/ionicons.min.css" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://webfonts.creativecloud.com/c/69721a/1w;quicksand,2,WXp:W:n4,WXn:W:n7/l" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />');
 				
@@ -777,7 +871,7 @@
 
 				//If MyNyte Menu Display Plugin
 				if ($( "div.mynyte-menu-display" ).length) {
-					//createFeed({'feedType': 'menuDisplay', 'menuDisplayImgAlt': 'Log into MyNyte to book tables and make your evening plans', 'menuDisplayImgSrc': 'https://www.mynyte.co.uk/sneak-preview/img/logo.png', 'menuDisplayTranscriptNote': '<b>Book Tables with ease</b>, and find out what\'s going on in town...'});
+					createFeed({'feedType': 'menuDisplay','_businessId': 90,'menuType': 'takeaway', 'menuItemCategoryIdString': '1, 23'});
 				}
 
 				//If MyNyte Business items SUmmary

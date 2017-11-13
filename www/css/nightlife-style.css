@@ -2279,6 +2279,7 @@ textarea {
 .article-accordian h3.first {
 
 
+
     padding-top: 3px;
     padding-bottom: 13px;
     border-top: none;
@@ -7050,7 +7051,7 @@ ion-header-bar input {
 }
 #header-bar .header-star.isVisible:hover {
     cursor: pointer;
-    color: #fff;
+    color: #eee;
 }
 
 #header-bar #search-input {
@@ -9014,6 +9015,11 @@ location-lookup ul li span {
         margin-left: -10px;
     }
 
+    #header-bar i.top-right-button:hover {
+        cursor: pointer;
+        color: #eee;
+    }
+
     .intended-browser #header-bar .top-right-button.isVisible.ion-edit,
     .intended-browser #header-bar .top-right-button.isVisible.ion-plus-round,
     .intended-browser #header-bar .top-right-button.isVisible.ion-close-round,
@@ -9065,9 +9071,18 @@ location-lookup ul li span {
         margin-left: 5px;
     }
 
+    #header-bar .header-buttons:hover {
+        cursor: pointer;
+    }
+
     #header-bar .header-buttons button {
         padding-top: 5px;
         padding-right: 13px;
+    }
+
+    #header-bar .header-buttons button:hover {
+        color: #fff;
+        cursor: pointer;
     }
 
     #header-bar .header-buttons button i {
@@ -9433,6 +9448,15 @@ location-lookup ul li span {
         top: 11px;
     }
 
+    .item.item-icon-left:hover {
+        background-color: #292929;
+        color: #ddd;
+    }
+
+    .item.item-icon-left:hover i {
+        color: #ddd;
+    }
+
     .message-group .message-group-wrapper {
         overflow-y: scroll;
         width: 670px !important;
@@ -9578,6 +9602,27 @@ location-lookup ul li span {
     .content .offer {
         padding-left: 13px;
         padding-right: 13px;
+    }
+
+    .accordian.today-offers label:hover,
+    .accordian.future-offers label:hover {
+        color: #d4c5c5;
+        cursor: pointer;
+    }
+
+    .content .offer:hover {
+        background: #dedcdc;
+        cursor: pointer;
+        color: #525151;
+        border-color: #fff;
+    }
+    .content .offer:hover .offer-main-text {
+        color: #0a0a0a;
+    }
+
+    .content .offer.feature:hover {
+        background: #f5e9ef !important;
+        color: #525151;
     }
     
     /* Feed */
