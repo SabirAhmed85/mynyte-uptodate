@@ -706,12 +706,12 @@ body.mn-modal--opened {
     background: #eee;
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #eee;
-    color: #5d4d4d;
+    color: #292323;
 }
 .mynyte-frame-container .listing-menu-item .header:hover {
     cursor: pointer;
     background: #efefef;
-    color: #6d5d5d;
+    color: #751e1e;
 }
 
 .mynyte-frame-container .listing-menu-item .header .listing-menu-item-open {    
@@ -748,7 +748,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-frame-container .listing-menu-item .text-container .title {
-    color: #676767;
+    color: #7b7b7b;
     margin-right: 10px;
     max-width: calc(100% - 150px);
     line-height: 20px;
