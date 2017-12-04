@@ -41,17 +41,17 @@ gulp.task('compress', ['clean-dist'], function () {
 gulp.task('deploy', function() {
 	var targetDest;
 	if (argv.live) {
-		targetDest = '/live/';
+		targetDest = 'public_html/live/';
 	}
 	else if (argv.staging) {
-		targetDest = '/staging/'
+		targetDest = 'public_html/staging/'
 	};
 
-	return gulp.src('**/*.js')
+	return gulp.src('./www/index.html')
 		.pipe(scp({
 			host: 'ftp.mynyte.co.uk',
-			username: 'sabir@mynyte.co.uk',
-			password: 'The_edgesxa454',
+			username: 'qxiryynz',
+			password: 'ip95@*8bFY^E',
 			dest: targetDest
 		}))
 		.on('error', function(err) {
