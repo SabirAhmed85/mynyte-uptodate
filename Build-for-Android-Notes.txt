@@ -9,9 +9,16 @@ cordova build android --release
 Android Home: 	C:\Program Files (x86)\Android\android-sdk
 Java: 		C:\Program Files (x86)\Java\jdk1.8.0_111 (version name at the end may be different)
 
+	[To generate a keystore - which you shouldn't have to do]
+	/*Use cmd as admin*/
+	keytool -genkey -v -keystore <keystoreName>.keystore -alias <Keystore AliasName> -keyalg <Key algorithm> -keysize <Key size> -validity <Key Validity in Days>
+	e.g - keytool -genkey -v -keystore NAME-mobileapps.keystore -alias NAMEmobileapps -keyalg RSA -keysize 2048 -validity 10000
+
+
 In JAVA Version folder > Bin :
 
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore mynyte-key-2.keystore android-release-unsigned.apk mynyte
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore <keystoreName> android-release-unsigned.apk <alias>
+e.g. jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore mynyte-key-2.keystore android-release-unsigned.apk mynyte
 
 (* Cut & Drag signed version of build into the following Android folder mentioned below *)
 
