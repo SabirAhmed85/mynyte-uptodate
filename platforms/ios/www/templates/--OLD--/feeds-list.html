@@ -1,0 +1,10 @@
+<ion-view view-title="Feeds">
+   <ion-content has-header="true">
+      <div class="list">
+        <a class="item item-icon-right" ng-click="showNews($index);" ng-repeat="feed in feeds">
+          {{feed.title}}
+          <i class="icon ion-arrow-right-c"></i>
+        </a>
+      </div>
+    </ion-content>
+</ion-view>

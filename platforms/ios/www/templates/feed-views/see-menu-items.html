@@ -1,0 +1,587 @@
+<ion-view view-title="See Menu" class="black_bg special-h2">
+    <ion-content>
+        <div class="page-loading-container"
+            ng-if="pageLoading">
+            <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+            <span class="loading-text">Loading ...</span>
+        </div>
+        <div ng-if="!pageLoading">
+            <h2 ng-class="{'headerHasStatusBar': rootScope.headerHasStatusBar == true}">{{menuItems[0].menuItemCategoryName}}</h2>
+            <div class="list see-menu-items">
+                <a class="item item-message-summary menu-item-container" ng-repeat="menuItem in normalMenuItems">
+                    <div class="message-info menu-item" style="width: 100%;">
+                        <span class="message-header">{{menuItem.Name}}</span>
+                        <span class="price"><span class="from" ng-show="menuItem.extraOptionsPriceRelevant != '0' && menuItem.extraOptionsPriceRelevant != null">from</span> £{{menuItem.Price}}</span>
+                        <span class="add-item" 
+                            ng-click="addMenuItemToOrder(menuItem);"
+                            ng-show="menuItem._menuExtraOptionId != null">
+                            <i class="ion-navicon"></i>
+                        </span>
+                        <span class="description">{{menuItem.Description}}</span>
+                        <span class="tags" ng-show="menuItem.tags[0].tagName != null">
+                            <span class="tag" ng-repeat="tag in menuItem.tags">
+                                <i class="{{tag.iconClass}}"></i>
+                                <span>{{tag.tagName}}</span>
+                            </span>
+                        </span>
+                    </div>
+                </a>
+
+                <span ng-repeat="subCat in categorizedMenuItems">
+                    <h3>{{subCat.subCatName}}</h3>
+                    <a class="item item-message-summary menu-item-container" ng-repeat="menuItem in subCat.items">
+                        <div class="message-info menu-item" style="width: 100%;">
+                            <span class="message-header">{{menuItem.Name}}</span>
+                            <span class="price"><span class="from" ng-show="menuItem.extraOptionsPriceRelevant != '0' && menuItem.extraOptionsPriceRelevant != null">from</span> £{{menuItem.Price}}</span>
+                            <span class="add-item" 
+                                ng-click="addMenuItemToOrder(menuItem);"
+                                ng-show="menuItem._menuExtraOptionId != null">
+                                <i class="ion-navicon"></i>
+                            </span>
+                            <span class="description">{{menuItem.Description}}</span>
+                            <span class="tags" ng-show="menuItem.tags[0].tagName != null">
+                                <span class="tag" ng-repeat="tag in menuItem.tags">
+                                    <i class="{{tag.iconClass}}"></i>
+                                    <span>{{tag.tagName}}</span>
+                                </span>
+                            </span>
+                        </div>
+                    </a>
+                </span>
+            </div>
+        </div>
+    </ion-content>
+    <div class="extra-options-panel" ng-class="{'isVisible': showExtraOptions}">
+        <style>
+                .menu-item {
+                    margin-left: 3px !important;
+                    padding: 1px 0;
+                }
+                .menu-item .message-header {
+                    width: calc(80% - 45px);
+                    font-weight: normal;
+                    font-size: 15px;
+                    padding-bottom: 5px;
+                    white-space: normal !important;
+                }
+            
+                .menu-item .price {
+                    width: 18%;
+                    float: left;
+                    font-size: 14px;
+                    color: #fff;
+                    text-align: right;
+                    margin-right: 5px;
+                    white-space: normal !important;
+                    line-height: 14px;
+                    margin-top: 2px;
+                }
+                .menu-item .price .from {
+                    font-size: 12px;
+                    color: #bbb;
+                }
+            
+                .menu-item .description {
+                    float: left;
+                    font-size: 13px;
+                    white-space: normal !important;
+                    width: calc(100% - 50px);
+                    clear: left;
+                }
+            
+                .menu-item .add-item {
+                    float: right;
+                    font-size: 30px;
+                    border-left: 1px solid #282828;
+                    width: 34px;
+                    text-align: center;
+                    height: 34px;
+                    margin-top: 2px;
+                    margin-right: 7px;
+                    margin-bottom: 3px;
+                    padding-left: 3px;
+                }
+            
+                .menu-item .add-item i {
+                    color: #ddd;
+                }
+            
+                .menu-item .tags {
+                    float: left;
+                    clear: left;
+                    border-top: 1px solid #333;
+                    padding-top: 3px;
+                    width: calc(100% - 50px);
+                }
+            
+                .menu-item .tag {
+                    float: left;
+                    margin-right: 15px;
+                }
+            
+                .menu-item .tag i {
+                    font-size: 17px;
+                    float: left;
+                    margin-right: 5px;
+                }
+            
+                .menu-item .tag span {
+                    font-size: 12px;
+                    float: left;
+                }
+        
+                .menu-item-container .items-added {
+                    float: left;
+                    clear: left;
+                    background: #1F1D1D;
+                    width: 100%;
+                    padding: 0px 0%;
+                    font-size: 14px;
+                    border: 1px solid #3A3838;
+                    border-radius: 6px;
+                    margin-bottom: 2px;
+                    margin-top: 7px;
+                }
+        
+                .menu-item-container .button-container {
+                    float: right;
+                    width: calc(75% - 41px);
+                    overflow: hidden;
+                    white-space: nowrap;
+                    height: 31px;
+                }
+        
+                .menu-item-container .items-added .change-button {
+                    float: right;
+                    font-size: 12px;
+                    padding-right: 5px;
+                    margin-right: 10px;
+                    padding: 0px 2% 0 3%;
+                    font-weight: bold;
+                    margin-top: 6px;
+                    border-left: 1px solid #2B2727;
+                }
+                .menu-item-container .items-added .change-button.isHidden {
+                    width: 0;
+                }
+        
+                .menu-item-container .items-added .main {
+                    float: left;
+                    padding: 0px 2% 0px 0px;
+                    width: calc(25% + 40px);
+                }
+        
+                .menu-item-container .items-added .main .quantity{
+                    float: left;
+                    background: #101010;
+                    margin-right: 5px;
+                    text-align: center;
+                    padding: 5px 6px;
+                    color: #fff;
+                    border-radius: 4px 0 0 0;
+                    border: 1px solid #3E2C2C;
+                    margin-top: -1px;
+                    width: 40px;
+                    border-bottom: 3px solid #1F1C1C;
+                    margin-left: -1px;
+                }
+                .menu-item-container .items-added .main .price{
+                        float: left;
+                        font-weight: bold;
+                        margin-top: 5px;
+                }
+                .menu-item-container .items-added .text{
+                    float: left;
+                    clear: left;
+                    padding: 0 5px;
+                    font-size: 12px;
+                    width: 100%;
+                    border-top: 1px solid #2B2727;
+                }
+        
+                .menu-item-container .items-added button {
+                    float: right;
+                    background: #080808;
+                    border: 1px solid #550000;
+                    border-radius: 4px;
+                    color: #ddd;
+                    font-size: 11px;
+                    height: 30px;
+                    -webkit-transition: all 0.3s;
+                    -moz-transition: all 0.3s;
+                    transition: all 0.3s;
+                    opacity: 0.7;
+                    border: 1px solid #4A3737;
+                    padding: auto 5px;
+                    width: 41px;
+                    margin-top: 1px;
+                    margin-left: 0px;
+                    margin-right: 3px;
+                    padding-left: 0;
+                    padding-right: 0;
+                    overflow: hidden;
+                }
+                .menu-item-container .items-added button.delete-item {
+                    color: #eee;
+                    -webkit-transition: all 0.3s;
+                    -moz-transition: all 0.3s;
+                    transition: all 0.3s;
+                    width: 85px;
+                }
+                .menu-item-container .items-added button.add-item {
+                    width: 75px;
+                }
+                
+                .menu-item-container .items-added button.button-left.delete-item,
+                .menu-item-container .items-added button.button-left.add-item {
+                    width: 48px;
+                }
+        
+                .menu-item-container .items-added button.cancel-delete {
+                    border: 1px solid #990000;
+                    opacity: 0.8;
+                    float: right;
+                    margin-right: 10px;
+                }
+        
+                .menu-item-container .items-added button i {
+                    margin-top: 0px;
+                    float: none;
+                    height: 13px;
+                    width: 12px;
+                }
+            
+                .extra-options-panel {
+                    float: left;
+                    width: 100%;
+                    height: 76%;
+                    position: fixed;
+                    background: #111;
+                    top: 100%;
+                    -webkit-transition: all 0.1s;
+                    -moz-transition: all 0.1s;
+                    -o-transition: all 0.1s;
+                    transition: all 0.1s;
+                    overflow-y: scroll;
+                }
+                .extra-options-panel.isVisible {
+                    top: 64px;
+                }
+            
+                .extra-options-panel h2 {
+                    background: #111;
+                    border-bottom: 1px solid #333;
+                    border-top: 1px solid #222;
+                    font-size: 15px;
+                }
+        
+                .extra-options-panel h2 i {
+                    float: right;
+                }
+            
+                .extra-options-panel ul {
+                    float: left;
+                    width: 100%;
+                    color: #999;
+                    font-size: 16px;
+                }
+            
+                .extra-options-panel li {
+                    color: #766;
+                    border-color: #222;
+                    border-top-color: #322;
+                    float: left;
+                    width: 100%;
+                    background: #161616;
+                }
+                .extra-options-panel li.item {
+                    padding: 16px 18px;
+                }
+                .extra-options-panel li.selected {
+                    color: #caa;
+                    border-top: 1px solid #000;
+                }
+                .extra-options-panel li.selected {
+                    background: #111;
+                    border-color: #222;
+                }
+        
+        
+                .extra-options-panel li label {
+                    float: left;
+                    width: 100%;
+                    padding: 4px 4% 7px;
+                    background: #000;
+                    color: #ddd;
+                    font-size: 14px;
+                }
+        
+                .extra-options-panel li label.selected {
+                    padding: 0px 4% 2px;
+                    font-size: 12px;
+                }
+        
+                .extra-options-panel li label span.main {
+                    float: left;
+                    padding: 5px 2% 5px 0;
+                    max-width: 70%
+                }
+        
+                .extra-options-panel .selected span.main {
+                    padding: 0px 2% 2px 0;
+                }
+        
+                .extra-options-panel li label span.main .quantity {
+                    float: left;
+                    background: #101010;
+                    margin-right: 5px;
+                    text-align: center;
+                    padding: 5px 6px;
+                    color: #fff;
+                    border-radius: 4px 0 0 0;
+                    border: 1px solid #3E2C2C;
+                    margin-top: -1px;
+                    width: 40px;
+                    border-bottom: 3px solid #1F1C1C;
+                    margin-left: -1px;
+                }
+        
+                .extra-options-panel li label span.note {
+                    float: left;
+                    clear: left;
+                    font-size: 13px;
+                    margin-top: 4px;
+                    color: #888;
+                }
+                .extra-options-panel label.selected span.note {
+                    display: none;
+                }
+        
+                .extra-options-panel li label span.reselect {
+                    float: right;
+                    display: none;
+                }
+                .extra-options-panel li.item.activated {
+                    color: #988;
+                    border-color: #333;
+                    border-top-color: #433;
+                    background: #1B1B1B;
+                }
+        
+                .extra-options-panel .selected span.reselect {
+                    display: block;
+                }
+        
+                .extra-options-panel .option-list li i {
+                    float: right;
+                }
+        
+                .extra-options-panel .option-list .item .title {
+                    width: 40%;
+                    float: left;
+                    white-space: normal;
+                }
+        
+                .extra-options-panel .option-list .item .price {
+                    float: right;
+                    font-size: 14px;
+                    margin-right: 15px;
+                    color: #ddd;
+                    width: 60px;
+                    margin-top: -10px;
+                    text-align: right;
+                }
+        
+                .extra-options-panel .option-list .item .price .extra {
+                    float: left;
+                    font-size: 12px;
+                    margin-right: 5px;
+                    color: #999;
+                    text-align: right;
+                    width: 100%;
+                }
+        
+                .extra-options-panel .option-list .item .price .amount {
+                    float: left;
+                    clear: left;
+                    margin-top: -5px;
+                    text-align: right;
+                    width: 100%;
+                }
+        
+                .extra-options-panel .option-list .item .quantity {
+                    float: right;
+                    margin-top: -7px;
+                }
+        
+                .extra-options-panel .option-list .item .quantity input {
+                    width: 31px;
+                    height: 31px;
+                    float: left;
+                    padding: 5px;
+                    background: #cbb;
+                    border: 1px solid #844;
+                    color: #660000;
+                    font-size: 14px;
+                }
+        
+                .extra-options-panel .option-list .item .quantity button {
+                    float: left;
+                    width: 32px;
+                    height: 31px;
+                    background: #000;
+                    border: 1px solid #744;
+                    color: #a66;
+                    border-radius: 0 4px 4px 0;
+                    text-align: center;
+                }
+        
+                .extra-options-panel .option-list .item .quantity button i {
+                    float: none;
+                    margin-right: 0;
+                }
+        
+                .extra-options-panel .extra-options-total {
+                    float: left;
+                    width: 100%;
+                    background: #411;
+                    padding: 2% 4.5%;
+                    color: #aaa;
+                    font-size: 15px;
+                    text-align: center;
+                    border-bottom: 1px solid #880000;
+                }
+        
+                .extra-options-panel .extra-options-total button.add-to-menu {
+                    margin-top: 5px;
+                    margin-bottom: 0;
+                    float: right;
+                    font-size: 13px;
+                    padding-top: 5px;
+                    padding-bottom: 0px;
+                    background: #B7B7B7;
+                    color: #8E8787;
+                    width: 48.5%;
+                    font-weight: normal;
+                }
+        
+                .extra-options-panel .extra-options-total button.add-to-menu.active {
+                    background: #FFF1F1;
+                    color: #844;
+                }
+        
+                .extra-options-panel .extra-options-total button.add-to-menu .inner-container {
+                    float: none;
+                    margin: 0 auto;
+                    position: relative;
+                    display: inline-block;
+                }
+        
+                .extra-options-panel .extra-options-total button.add-to-menu .inner-container span {
+                    float: left;
+                    margin-left: 20px;
+                    width: 65px;
+                }
+        
+                .extra-options-panel .extra-options-total i {
+                    font-size: 24px;
+                    color: #888;
+                    float: left;
+                    margin-top: 0px;
+                }
+                .extra-options-panel .extra-options-total .active i {
+                    color: #844;
+                }
+        
+                .extra-options-panel .extra-options-total .extra-options-total-price {
+                    float: left;
+                    width: 45%;
+                    border-top: 1px solid #670000;
+                    margin-top: 7px;
+                    padding-top: 8px;
+                }
+        
+                .extra-options-panel .extra-options-total .extra-options-total-price label {
+                    float: left;
+                }
+        
+                .extra-options-panel .extra-options-total .extra-options-total-price span {
+                    float: right;
+                    font-weight: bold;
+                }
+        
+                .extra-options-panel .next-button {
+                    color: #D09E9E;
+                    text-align: center;
+                    font-weight: bold;
+                                }
+            </style>
+        <h2>
+            <span>Extra Options</span>
+            <i class="ion-close-round" ng-click="closeExtraOptions();"></i>
+        </h2>
+        <ul>
+            <li ng-repeat="option in currentExtraOptions">
+                <label class="option-label">
+                    <span class="main">{{option.name}}</span>
+                    <span ng-show="option.type == 'Only One'" class="note">You can select one option</span>
+                    <span ng-show="option.type == 'Multi'" class="note">You can select as many as you like</span>
+                </label>
+                <ul class="option-list">
+                    <li class="item" ng-class="{'selected': option.preselected || optionChoice.preselected}" ng-repeat="optionChoice in option.optionChoices">
+                        <span>{{optionChoice.name}}</span>
+                        <span class="price" ng-show="optionChoice.extraPrice != null && optionChoice.extraPrice != '0' && option.priceRelevant">
+                            <span class="extra">extra</span>
+                            <span class="amount" ng-show="!option.extraChargeIsPerUnit">£{{optionChoice.extraPrice}}</span>
+                            <span class="amount" ng-show="option.extraChargeIsPerUnit">£{{optionChoice.totalExtraPrice}}</span>
+                        </span>
+                    </li>
+                </ul>
+            </li>
+            <!--
+            <li>
+                <label class="option-label">
+                    <span class="main">Salad Option</span>
+                    <span class="note">Select one Option</span>
+                </label>
+                <ul class="option-list">
+                    <li class="item">
+                        <span>Salad</span>
+                        <i class="ion-checkmark"></i>
+                        <span class="price">
+                            <span class="extra">extra</span>
+                            <span class="amount">£2.99</span>
+                        </span>
+                        <span class="quantity">
+                            <input type="number" disabled="true" value="0">
+                            <button>
+                                <i class="ion-chevron-down"></i>
+                            </button>
+                        </span>
+                    </li>
+                    <li class="item">
+                        <span>No Salad</span>
+                        <i class="ion-checkmark"></i>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <label class="option-label">
+                    <span class="main">Sauce Option</span>
+                    <span class="note">Select as many as you like</span>
+                </label>
+                <ul class="option-list">
+                    <li class="item">
+                        <span>Garlic Sauce</span>
+                        <i class="ion-checkmark"></i>
+                    </li>
+                    <li class="item">
+                        <span>Chilli Sauce</span>
+                        <i class="ion-checkmark"></i>
+                    </li>
+                </ul>
+            </li>
+            -->
+        </ul>
+    </div>
+</ion-view>

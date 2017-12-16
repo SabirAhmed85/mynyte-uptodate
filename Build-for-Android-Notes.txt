@@ -1,0 +1,22 @@
+BUILD FOR ANDROID FOR PROD
+
+In Actual Cordova project folder:
+
+cordova build android --release
+
+(* Drag release version of build into the following Java folder mentioned below *)
+
+Android Home: 	C:\Program Files (x86)\Android\android-sdk
+Java: 		C:\Program Files (x86)\Java\jdk1.8.0_111 (version name at the end may be different)
+
+In JAVA Version folder > Bin :
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore mynyte-key-2.keystore android-release-unsigned.apk mynyte
+
+(* Cut & Drag signed version of build into the following Android folder mentioned below *)
+
+In Program Files (x86) > Android > android-sdk > build-tools > version number :
+
+zipalign -v 4 android-release-unsigned.apk MyNyte.apk
+
+(* Cut & Drag final zipped version of build back into the main Output > apk folder in the Cordova Project (at top) *)

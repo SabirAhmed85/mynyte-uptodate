@@ -1,0 +1,48 @@
+<ion-view view-title="OfferDetail" class="black_bg">
+  	<ion-content>
+        <div class="list">
+            <div id="offers-detailedContent" class="detailedContent">
+                <div id="offers-detailedContent-inner" class="detailedContent-inner">
+                    <div class="mainImg">
+                        <img class="main-img" src="http://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{offer.currentOfferCoverPhotoName}}"
+                            ng-if="offer.currentOfferCoverPhotoName != null"/>
+                    </div>
+                    <div class="mainText">
+                        <h3 class="offer-timescale">
+                            <span ng-if="offer.timeScale == 'future'">
+                                Hold your horses buddy, this offer's not yet started.
+                            </span>
+                            <span ng-if="offer.timeScale == 'present'">
+                                Offer now on! What are you waiting for?
+                            </span>
+                            <span ng-if="offer.timeScale == 'past'">
+                                This offer has now ended, but it was good while it lasted!
+                            </span>
+                        </h3>
+                        <h3 class="offer-title">{{offer.title}} at {{offer.businessName}}</h3>
+                        <p>{{offer.description}}</p>
+                        <h3 class="weekday-name" ng-if="offer.weekdayName != null">Every {{offer.weekdayName}}</h3>
+                        <div class="date-text"><label>Offer <span ng-if="offer.timeScale == 'future'">Starts</span><span ng-if="offer.timeScale != 'future'">Started</span>:</label> {{offer.startDateTimeString}}</div>
+                        <div class="date-text bottom"><label>Offer <span ng-if="offer.timeScale != 'past'">Ends</span><span ng-if="offer.timeScale == 'past'">Ended</span>:</label> {{offer.endDateTimeString}}</div>
+                        <!-- <button class="btn button-full btn-white">Book a Table</button> -->
+                    </div>
+                    <div class="niceTile">
+                        <div class="niceTile-inner">
+                            <button class="btn button-full btn-red"
+                                ng-class="{'disabled': rootScope.user.isBusiness == '1'}"
+                                ng-disabled="rootScope.user.isBusiness == '1'"
+                                ng-click="offerEnquire();">Enquire about this Offer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+    <style>
+        #offer-enquiry {
+            top: calc(100% - 118px);
+            width: 100%;
+            padding-top: 0;
+        }
+    </style>
+</ion-view>

@@ -1,0 +1,23 @@
+<div class="offers-side-display side-display x-slow-trans">
+    <h3>Tonight's Offers</h3>
+    <div class="display-item x-slow-trans"
+        ng-repeat="offer in todaysOffers"
+        ng-class="{'show': offer.show}"
+        ng-click="goToTodaysItem('Offer', offer._id);">
+        <div class="display-top-note">
+            <i class="{{offer.offerSubCategoryClass}}"></i>
+            {{offer.offerSubCategoryName}}
+        </div>
+        <span class="first-display-item">
+            <span class="item-title">{{offer.name}}</span>
+            <span class="item-business">{{offer.businessName}}</span>
+            <span class="item-note">{{offer.description}}</span>
+        </span>
+    </div>
+    <span class="last-display-item display-item">
+        <label class="prev"
+            ng-click="changeItemsForWideDisplay('Offers', 'prev', todaysOffers, 'manual');">Prev</label>
+        <label class="next"
+            ng-click="changeItemsForWideDisplay('Offers', 'next', todaysOffers, 'manual');">Next</label>
+    </span>
+</div>

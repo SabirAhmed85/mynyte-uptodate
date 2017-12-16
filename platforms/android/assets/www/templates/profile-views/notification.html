@@ -1,0 +1,36 @@
+<ion-view view-title="Notification" class="black_bg">
+    <div class="page-loading-container"
+        ng-show="pageLoading != false">
+        <ion-spinner icon="lines" class="spinner-red"></ion-spinner>
+        <span class="loading-text">Loading ...</span>
+    </div>
+    <ion-content>
+        <div class="list">
+            <div ng-show="notificationType == 'Offer Request'">
+                Offer Request
+                <button ng-click="" class="button button-assertive">
+                    Generate Code
+                </button>
+                <label class="item item-input">
+                    <input type="text" placeholder="Offer Code">
+                </label>
+                <button ng-click="" class="button button-block button-assertive">
+                    SEND RESPONSE
+                </button>
+            </div>
+            <div ng-show="notificationType == 'Taxi Booking Request'">
+                Taxi Booking Request
+                <label class="item item-input">
+                    <input type="text" placeholder="password">
+                </label>
+                <button ng-click="" class="button button-block button-assertive">
+                    SEND RESPONSE
+                </button>
+            </div>
+            <div ng-show="notificationType == 'Follower Event'">
+                New Followers
+                <img ng-repeat="follower in followerEventFollowers" src="img/logomain.png">
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

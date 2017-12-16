@@ -1,0 +1,19 @@
+<ion-view view-title="Contacts" class="black_bg">
+    <ion-content>
+        <div class="list summary-display">
+            <a class="item item-message-summary profile-item-summary no-bottom"
+                ng-click="nextPageFunction(item)"
+                ng-repeat="item in photos">
+                <div>
+                    <div style="width: 100%; overflow: hidden;"
+                        ng-style="{height: windowWidth+'px'};">
+                        <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                            ng-show="item.picType == 'Profile Photo' || item.picType == 'Cover Photo'" />
+                        <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{_listingProfileId}}_{{item._folderId}}_{{item.name}}"
+                                ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'" />
+                    </div>
+                </div>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

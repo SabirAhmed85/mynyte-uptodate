@@ -1,0 +1,42 @@
+<ion-view view-title="{{itemType}}" class="black_bg">
+    <ion-content>
+        <div class="list content {{itemType}}" ng-class="{'niceTile': itemType == 'Offers' && businessesItems.length > 0}">
+            <div class="accordian today-offers">
+                <div class="accordian-section first" 
+                    ng-repeat="category in businessesItems"
+                    ng-show="itemType == 'Offers' && businessesItems.length > 0">
+                    <div ng-include="'templates/shared-partials/offer-category-accordian.html'"></div>
+                </div>
+            </div>
+            <div class="tile businesses-items-note"
+                ng-show="itemType == 'Offers' && businessesItems.length == 0">
+                <span class="listing-detail-container">
+                    <i class="ion-social-usd main"></i>
+                    <span class="text">No current offers to show.</span>
+                </span>
+            </div>
+            <div class="tile" 
+                ng-repeat="item in businessesItems" 
+                ui-sref="app.nlfeedListing({_listingId:item.relListingId, listingType:item.listingType})"
+                ng-show="itemType == 'UpcomingEvents' && businessesItems.length > 0">
+                <div class="main-search-result-listing">
+                    <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/profile_photo/{{item.currentProfilePhotoName}}" />
+                    <div class="listing-detail-container">
+                        <span class="listing-name">{{item.name}}</span>
+                        <span class="listing-description">{{item.description}}</span>
+                        <span class="listing-type"></span>
+                    </div>
+                    <i class="ion-chevron-right"></i>
+                    <div class="icon-bar-container" ng-include="'templates/shared-partials/listing-icon-bar.html'"></div>
+                </div>
+            </div>
+            <div class="tile businesses-items-note"
+                ng-show="itemType == 'UpcomingEvents' && businessesItems.length == 0">
+                <span class="listing-detail-container">
+                    <i class="ion-calendar main"></i>
+                    <span class="text">No upcoming events have been uploaded.</span>
+                </span>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,62 +1,51 @@
 var gulp = require('gulp');
-var minify = require('gulp-minify');
-var cleanCss = require('gulp-clean-css');
-var uglify = require('gulp-uglifyjs');
-var htmlmin = require('gulp-htmlmin');
-var argv = require('yargs').argv;
-var clean = require('gulp-clean');
+var gutil = require('gulp-util');
+var bower = require('bower');
 var concat = require('gulp-concat');
-var gcallback = require('gulp-callback');
-var scp = require('gulp-scp2');
+var sass = require('gulp-sass');
+var minifyCss = require('gulp-minify-css');
+var rename = require('gulp-rename');
+var sh = require('shelljs');
 
-var params = {
-	appHTML: ['./www/templates/*.html', './www/templates/**/*.html', './www/templates/**/**/*.html'],
-	appJs: ['./www/js/**/*.js'],
-	appCss: ['./www/css/*.css']
-}
+var paths = {
+  sass: ['./scss/**/*.scss']
+};
 
-gulp.task('clean-dist', function () {
-    return gulp.src('dist/', {read: false})
-        .pipe(clean());
+gulp.task('default', ['sass']);
+
+gulp.task('sass', function(done) {
+  gulp.src('./scss/ionic.app.scss')
+    .pipe(sass())
+    .on('error', sass.logError)
+    .pipe(gulp.dest('./www/css/'))
+    .pipe(minifyCss({
+      keepSpecialComments: 0
+    }))
+    .pipe(rename({ extname: '.min.css' }))
+    .pipe(gulp.dest('./www/css/'))
+    .on('end', done);
 });
 
-gulp.task('compress', ['clean-dist'], function () {
-	gulp.src(params.appJs)
-	    .pipe(uglify('app.js'))
-	    .pipe(gulp.dest('dist/js/'))
-	    .pipe(gcallback(function () {
-	    	console.log('done');
-	    }));
-
-	gulp.src(params.appCss)
-	    .pipe(cleanCss())
-	    .pipe(concat('app.css'))
-	    .pipe(gulp.dest('dist/css/'));
-
-	gulp.src(params.appHTML)
-	    .pipe(htmlmin({'collapseWhitespace': true}))
-	    .pipe(gulp.dest('dist/templates/'));
+gulp.task('watch', function() {
+  gulp.watch(paths.sass, ['sass']);
 });
 
-gulp.task('deploy', function() {
-	var targetDest;
-	if (argv.live) {
-		targetDest = 'public_html/live/';
-	}
-	else if (argv.staging) {
-		targetDest = 'public_html/staging/'
-	};
-
-	return gulp.src('./www/index.html')
-		.pipe(scp({
-			host: 'ftp.mynyte.co.uk',
-			username: 'qxiryynz',
-			password: 'ip95@*8bFY^E',
-			dest: targetDest
-		}))
-		.on('error', function(err) {
-			console.log(err);
-		});
+gulp.task('install', ['git-check'], function() {
+  return bower.commands.install()
+    .on('log', function(data) {
+      gutil.log('bower', gutil.colors.cyan(data.id), data.message);
+    });
 });
 
-gulp.task('build', ['compress','clean-dist']);
+gulp.task('git-check', function(done) {
+  if (!sh.which('git')) {
+    console.log(
+      '  ' + gutil.colors.red('Git is not installed.'),
+      '\n  Git, the version control system, is required to download Ionic.',
+      '\n  Download git here:', gutil.colors.cyan('http://git-scm.com/downloads') + '.',
+      '\n  Once git is installed, run \'' + gutil.colors.cyan('gulp install') + '\' again.'
+    );
+    process.exit(1);
+  }
+  done();
+});

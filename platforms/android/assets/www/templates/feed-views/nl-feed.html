@@ -1,0 +1,134 @@
+<ion-view view-title="MyNyte | Find your night in Bedford; Clubs, bars, restaurants, takeaways &amp; movies." class="black_bg nl-feed no-breadcrumb">
+  	<ion-content
+        ng-class="{'bg-blur': rootScope.showSearchPanel || rootScope.showAssistantPanel}">
+       <!-- <div class="list">
+        
+    <small class="tag-line">A set of google location services for AngularJS</small>
+
+        <div class="column black flex-item">
+          <location-lookup id="pickup-location-input" ng-model="lookedUpPickUpLocation" limit-to="4"></location-lookup>
+          <location-lookup id="dropoff-location-input" ng-model="lookedUpDropOffLocation" limit-to="4"></location-lookup>
+        </div>
+          
+          <input type="text" id="pickup-address-line-1"></input>
+          <input type="text" id="pickup-town"></input>
+          <input type="text" id="pickup-postcode"></input>
+          <input type="text" id="dropoff-address-line-1"></input>
+          <input type="text" id="dropoff-town"></input>
+          <input type="text" id="dropoff-postcode"></input>
+        -->
+        <!-- End Locator Test -->
+
+<!-- SKobbler
+<style>
+    #map {
+        height: 500px;
+    }
+</style>
+
+<div id="map"></div>
+<script>
+var map = L.skobbler.map('map', {
+        apiKey: '05d8a146b342b9a11c42049ef213144e'
+    });
+</script> -->
+
+<!-- Other Directions Map
+        <div map-lazy-load="https://maps.google.com/maps/api/js">
+          <ng-map center="52.13633549999999,-0.4858214999999291" default-style="true" zoom="47">
+                <directions
+                draggable="false"
+                panel="directions-panel"
+                origin="131 Coventry Road, Bedford, MK40 4EN"
+                on-directions_changed="vm.directionsChanged(evt)"
+                destination="56 Howard Avenue, Bedford, MK40 4EB">
+                </directions>
+            </ng-map>
+            <div id="directions-panel" style="width: 100%; float:left; height: 100%; overflow: auto; padding: 0px 5px">
+            
+
+        </div> -->
+        <div class="main-feed-dummy trans"
+            ng-class="{'isVisible': pageLoading}">
+            <div id="searchBox" class="slide-animate-container">
+                <h2>
+                    <span class="blink span-left full">
+                        <span class="dummy-text"></span>
+                    </span>
+                </h2>
+                
+                <div id="searchBox-toggle open">
+                    <div id="searchbox-categories">
+                        <i class="ion-arrow-left-b"></i>
+                        <div class="nightfinder-horizontal-slider">
+                            <span class="dummy-slider-option blink"></span>
+                        </div>
+                        <i class="ion-arrow-right-b"></i>
+                        <span id="triangle"></span>
+                    </div>
+                    <div id="searchBox-inner">
+                        <div class="dummy-input-container">
+                            <div>
+                                <span class="dummy-label blink"></span>
+                                <div class="dummy-select-display left">
+                                    <span class="blink"></span>
+                                    <button></button>
+                                </div>
+                            </div>
+                            <div class="music-input-container-inner">
+                                <span class="dummy-label blink"></span>
+                                <div class="dummy-select-display right">
+                                    <span class="blink"></span>
+                                    <button></button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <button class="btn button-full" id="dummy-search-submit">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="dummy-tonight-button-container blink">
+                <span></span>
+                <span></span>
+                <span class="far-right"></span>
+            </div>
+            
+            <a class="tile dummy-tile feed-item">
+                <div class="main-img-container">
+                    <img class="main-img" ng-src="sneak-preview/img/user_images/cover_photo/default.jpg">
+                </div>
+                <span class="feature-info-dummy">
+                    <span class="dummy-label blink"></span>
+                </span>
+                <div class="add feature" ng-style="{'background-color': feature.bgColor}">
+                    <span class="name-label blink red left top"></span>
+                </div>
+            </a>
+            <a class="tile dummy-tile feed-item">
+                <div class="main-img-container">
+                    <img class="main-img" ng-src="sneak-preview/img/user_images/cover_photo/default.jpg">
+                </div>
+                <span class="feature-info-dummy">
+                    <span class="dummy-label blink"></span>
+                </span>
+                <div class="add feature" ng-style="{'background-color': feature.bgColor}">
+                    <span class="name-label blink red left top"></span>
+                </div>
+            </a>
+        </div>
+        
+        <div class="main-feed-container trans"
+            ng-class="{'isVisible': !pageLoading}">
+            <div ng-include="'templates/feed-views/partials/nightlife-search-v2.html'"></div>
+            <div id="centralContent" class="trans"
+                ng-class="{'empty': reloadingCentralContent}">
+                <div ng-include="'templates/feed-views/partials/featured-tile.html'"></div>
+            </div>
+        </div>
+      
+  </ion-content>
+  
+</ion-view>

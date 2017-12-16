@@ -1,0 +1,66 @@
+<ion-view view-title="Contacts" class="black_bg">
+    <ion-content>
+        <div class="list summary-display {{itemType}}">
+            <div class="item item-message-summary profile-item-with-categories"
+                ng-class="{'first': profileItemCat == profileItemCats[0]}"
+                ng-repeat="profileItemCat in profileItemCats">
+                <div class="message-info"
+                    ng-if="itemType != 'PhotosSummary' && itemType !='SpecificPhotoFolderSummary'">
+                    <span class="message-header-icon"><i class="{{profileItemCat.icon}}"></i></span>
+                    <span class="message-header">{{profileItemCat.name}}</span>
+                    <span class="message-header-icon right">
+                        <i  ng-click="profileItemCat.showing = !profileItemCat.showing"
+                        ng-class="{'ion-plus-round': !profileItemCat.showing, 
+                            'ion-minus-round': profileItemCat.showing}"></i>
+                    </span>
+                </div>
+                <div class="profile-item-category slow-trans"
+                    ng-class="{'open': profileItemCat.showing, 'expandable-category': itemType != 'PhotosSummary' && itemType !='SpecificPhotoFolderSummary'}">
+                    <span class="empty-span"
+                        ng-if="profileItemCat.items.length == 0">
+                        <span class="inner-span">{{noItemsMessage}}<span ng-if="itemType != 'Liked'">{{profileItemCat.name}}</span></span>
+                    </span>
+                    <a class="item item-message-summary profile-item-summary"
+                        ng-click="nextPageFunction(item)"
+                        ng-repeat="item in profileItemCat.items"
+                        ng-class="{'no-bottom': itemType == 'SpecificPhotoFolderSummary'}">
+                        <div>
+                            <div 
+                                ng-show="itemType == 'Watched' || itemType == 'Following' || itemType == 'Followed' || itemType == 'FollowedBusiness' || itemType == 'Likes' || itemType == 'Liked'">
+                                <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{item.currentCoverPhotoName}}"
+                                    ng-if="item.currentCoverPhotoName != null"/>
+                                <p ng-show="itemType == 'Watched' || itemType == 'Likes'">{{item.name}}</p>
+                                <p ng-show="itemType != 'Likes'">{{item.displayName}}</p>
+                            </div>
+                            
+                            <div ng-show="itemType == 'PhotosSummary'">
+                                <div style="width: 100%; overflow: hidden; border-bottom: 1px solid #444; margin-bottom: 5px;"
+                                    ng-style="{height: windowWidth+'px'};">
+                                    <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                                        ng-show="item.picType == 'Cover Photo' || item.picType == 'Profile Photo'">
+                                    <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{rootScope.user._profileId}}_{{item._albumId}}_{{item.name}}"
+                                        ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">
+                                </div>
+                                
+                                <p ng-show="item.picType == 'Cover Photo'">Cover Photos</p>
+                                <p ng-show="item.picType == 'Profile Photo'">Profile Photos</p>
+                                <p ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">{{item.picType}}</p>
+                                <span class="counter">{{item.photoCount}}</span>
+                            </div>
+                            <div style="width: 100%; overflow: hidden;"
+                                ng-show="itemType == 'SpecificPhotoFolderSummary'"
+                                ng-style="{height: windowWidth+'px'};">
+                                <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/{{item.albumName}}/{{item.name}}"
+                                    ng-show="item.picType == 'Profile Photo' || item.picType == 'Cover Photo'" />
+                                <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/general_photo/{{rootScope.user._profileId}}_{{item._folderId}}_{{item.name}}"
+                                        ng-show="item.picType != 'Profile Photo' && item.picType != 'Cover Photo'">
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+            </div>
+            
+        </div>
+    </ion-content>
+</ion-view>

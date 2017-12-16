@@ -1,0 +1,45 @@
+<span class="icon-bar">
+    <!-- <i class="ion-more"></i> -->
+    <span class="left-icon follow" ng-class="{'half': !rootScope.userLoggedIn, 'third': rootScope.userLoggedIn}">
+        <span class="inner-container">
+            <i class="ion-eye" 
+                ng-show="feature.listingType == 'Event' || feature.listingType == 'Offer' || feature.listingType == 'Movie'" 
+                ng-class="{'active': feature.watch == '2'}"
+                ng-click="toggleUserEngagement('Watch', feature, $event); $event.stopPropagation();"></i>
+            <i class="ion-person-add" 
+                ng-show="feature.listingType != 'Event' && feature.listingType != 'Offer' && feature.listingType != 'Movie'" 
+                ng-class="{'active': feature.follow == '1'}"
+                ng-click="toggleUserEngagement('Follow', feature, $event); $event.stopPropagation();"></i>
+            <i class="ion-thumbsup" 
+                ng-show="rootScope.userLoggedIn && rootScope.user.isBusiness == '0'" 
+                ng-class="{'active': feature.like == '3'}"
+                ng-click="toggleUserEngagement('Like', feature, $event); $event.stopPropagation();"></i>
+            <!--<i ng-show="rootScope.userLoggedIn" class="ion-chatboxes"></i>-->
+            
+            <span 
+                ng-click="rootScope.goToLogin($event); $event.stopPropogation();"
+                ng-show="!rootScope.userLoggedIn && (feature.listingType == 'Event' || feature.listingType == 'Offer' || feature.listingType == 'Movie' )">Log In to Watch</span>
+            <span 
+                ng-click="rootScope.goToLogin($event); $event.stopPropogation();"
+                ng-show="!rootScope.userLoggedIn && feature.listingType != 'Event' && feature.listingType != 'Offer' && feature.listingType != 'Movie'">Log In to Follow</span>
+
+        </span>
+    </span>
+    <!-- <span class="right-icon invite" 
+        ng-class="{'half': !rootScope.userLoggedIn, 'third': rootScope.userLoggedIn}"
+        ng-click="rootScope.shareListing($event, feature); $event.stopPropagation();">
+        <span class="inner-container">
+            <i class="ion-ios-people"></i>
+            <span ng-show="rootScope.userLoggedIn">Invite</span>
+            <span ng-show="!rootScope.userLoggedIn">Invite Friends</span>
+        </span>
+    </span> -->
+    <span class="right-icon third send"
+        ng-click="pinListingToMsg(feature, $event); $event.stopPropagation();"
+        ng-if="!rootScope.userLoggedIn || rootScope.user.isBusiness == '0'">
+        <span class="inner-container">
+            <i class="ion-email-unread"></i>
+            <span>Send to Friends</span>
+        </span>
+    </span>
+</span>

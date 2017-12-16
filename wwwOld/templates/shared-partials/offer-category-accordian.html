@@ -1,0 +1,36 @@
+<label ng-click="category.showFull = !category.showFull">
+    {{category.name}}
+    <i ng-class="{'ion-plus-round': !category.showFull, 'ion-minus-round': category.showFull}"></i>
+</label>
+<div class="content" ng-show="category.showFull" ng-class="{'open':category.showFull}">
+    <div class="offer" eat-click-if="!feature.isFeature" ng-repeat="feature in category.offers" 
+        ng-class="{'feature':feature.businessIsFeatured = '1', 'last': feature.index == category.offers.length}"
+        ng-click="goToOffer(feature);">
+        <span class="offer-img-container" ng-show="feature.businessIsFeatured == '1' && feature.currentOfferCoverPhotoName != null">
+            <img src="http://www.mynyte.co.uk/sneak-preview/img/user_images/cover_photo/{{feature.currentOfferCoverPhotoName}}" />
+        </span>
+        <p class="offer-main-text">{{feature.description}}</p>
+        <i class="ion-chevron-right" ng-show="feature.businessIsFeatured == '1'"></i>
+        <div class="offer-where-container">
+            <p class="offer-where-text">Where: {{feature.businessName}}</p>
+        </div>
+        <div class="offer-when-container">
+            <p class="offer-when-text">When:
+                <span class="inline"
+                    ng-if="feature.weekdayName != null && feature.timeScale != 'past'">
+                    Every {{feature.weekdayName}}
+                </span>
+                <span class="inline"
+                    ng-if="feature.weekdayName != null && feature.timeScale != 'present' && feature.todayOrFuture == 'future'">
+                    from
+                </span>
+                <span class="inline"
+                    ng-if="(feature.weekdayName == null && (feature.todayOrFuture == 'future' || feature.timeScale == 'past')) || (feature.weekdayName != null && feature.todayOrFuture != 'today' && feature.timeScale != 'present')">
+                    {{feature.startDateTimeString}}
+                </span>
+             until {{feature.endDateTimeString}}
+            </p>
+        </div>
+        <div class="icon-bar-container" ng-include="'templates/shared-partials/listing-icon-bar.html'"></div>
+    </div>
+</div>

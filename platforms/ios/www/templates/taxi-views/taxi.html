@@ -1,0 +1,78 @@
+<ion-view view-title="Taxi" class="black_bg">
+    <ion-content>
+        <div class="list">
+            <div class="niceTile" id="taxi-form">
+                <h2><span>Book Your Taxi Right Here</span></h2>
+                <div class="niceTile-inner">
+                    <!--<button ng-if="rootScope.userLoggedIn == true" class="btn button-quarter btn-white saved-journeys">Use a Saved Journey</button>-->
+                    <span class="login-invite"
+                        ng-if="!rootScope.userLoggedIn" >You must be logged in to make Taxi Bookings.</span>
+                    <form>
+                    <div id="taxi-main-form">
+                        <div class="row" ng-show="rootScope.userLoggedIn">
+                            <div id="address_lookup_field" ng-click></div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="column black flex-item">
+                              <location-lookup id="pickup-location-input" ng-model="lookedUpPickUpLocation" limit-to="4"></location-lookup>
+                              <location-lookup id="dropoff-location-input" ng-model="lookedUpDropOffLocation" limit-to="4"></location-lookup>
+                            </div>
+                            <!-- <button class="btn button-quarter saved-places black-square-button"
+                                ng-if="rootScope.userLoggedIn">Use a Saved Place</button>
+                            <button class="btn button-quarter saved-places bottom black-square-button"
+                                ng-if="rootScope.userLoggedIn">Use a Saved Place</button> -->
+                        </div>
+                        
+                          <input type="hidden" id="pickup-address-line-1"/>
+                          <input type="hidden" id="pickup-town"/>
+                          <input type="hidden" id="pickup-postcode"/>
+                          <input type="hidden" id="dropoff-address-line-1"/>
+                          <input type="hidden" id="dropoff-town"/>
+                          <input type="hidden" id="dropoff-postcode"/>
+                          <input type="hidden" id="pickup-placeId"/>
+                          <input type="hidden" id="dropoff-placeId"/>
+                      
+                        <div class="row" id="passengers">
+                            <span class="left-span">Total Passengers</span>
+                            <span class="right-span">
+                                <button class="black-square-button"
+                                    ng-click="updateTotalPassengers(1);"><i class="ion-plus"></i></button>
+                                <div class="number-input fake-input fake-square-input" name="totalPassengers" id="taxi-passengers">
+                                    {{currentTotalPassengers}}
+                                </div>
+                                <button class="black-square-button"
+                                    ng-click="updateTotalPassengers(-1);"><i class="ion-minus"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn button-full btn-red" id="search-submit" ng-click="bookTaxi()"
+                        ng-class="{'disabled': rootScope.user.isBusiness == '1' || !rootScope.userLoggedIn || lookedUpPickUpLocation == null || lookedUpDropOffLocation == null}">Book taxi now</button>
+                    <!-- <button class="btn button-full btn-white" id="search-submit" ng-click="scheduleTaxi()">Schedule Taxi for later</button> -->
+                    </form>
+                </div>
+            </div>
+            
+            <div class="selectPane" id="select-places" style="display: none;">
+                <div class="selectPane-inner">
+                    <h3>My Places</h3>
+                    <div class="main">
+                        <div class="journey-labels">
+                            <label>From <span class="fromDisplayLabel"></span> to <span class="toDisplayLabel"></span><span class="passengersDisplayLabel"></span></label>
+                            <label>From <span class="fromDisplayLabel"></span> to <span class="toDisplayLabel"></span><span class="passengersDisplayLabel"></span></label>
+                        </div>
+                    
+                        <div class="place-labels">
+                            <label><span class="name"></span><span class="hyphen hidden"> - </span><span class="address"></span><span class="comma hidden">, </span><span class="postcode"></span></label>
+                            <label><span class="name"></span><span class="hyphen hidden"> - </span><span class="address"></span><span class="comma hidden">, </span><span class="postcode"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+    <div class="taxis-side side" ng-include="'templates/shared-partials/profile-info-sidebar.html'"></div>
+    <div class="taxis-side side" ng-include="'templates/shared-partials/offers-sidebar.html'"></div>
+    <div class="taxis-side side" ng-include="'templates/shared-partials/events-sidebar.html'"></div>
+</ion-view>

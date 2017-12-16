@@ -1,0 +1,16 @@
+<ion-view view-title="{{feed.title}}">
+   <ion-content has-header="true">
+      <div class="item item-icon-left">
+      <i class="icon ion-information-circled"></i>
+      	{{feed.description}}
+      </div>
+      <div class="item item-divider">Feeds</div>
+      <div class="list">
+          <a ng-click="showFullFeed($index)" class="item item-thumbnail-left" ng-repeat="item in feed.entries">
+            <img ng-if="getImage($index)" ng-src="{{getImage($index)}}" alt="{{item.title}}">
+            <h2>{{item.title}}</h2>
+            <p ng-bind-html="item.contentSnippet"></p></p>
+          </a>
+      </div>
+    </ion-content>
+</ion-view>

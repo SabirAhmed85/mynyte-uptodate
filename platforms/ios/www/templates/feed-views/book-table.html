@@ -1,0 +1,87 @@
+<ion-view view-title="Final Details" class="grey_bg">
+  	<ion-content>
+        <h2>Book a Table</h2>
+      <div class="tile register">
+        <form name="completeTableBookingForm" class="book-table">
+            <style>
+                form {
+                    margin-top: 15px;
+                }
+                label {
+                    float: left;
+                    z-index: 0;
+                    position: relative;
+                }
+            
+                button.skip-step {
+                    float: right;
+                    margin: 0 5% 15px;
+                    background: #eeeeff;
+                    border: 1px solid #bbbbff;
+                    border-radius: 4px;
+                    padding: 2px 25px;
+                    color: #667;
+                }
+            </style>
+            
+            <label class="item-header"
+                ng-show="!rootScope.userLoggedIn">
+                Contact Details
+            </label>
+            <label class="item"
+                ng-show="!rootScope.userLoggedIn">
+                <input onFocus="window.scrollTo(0, 0);" class="white nightlife-input" type="text" placeholder="Full Name" name="name"  
+                    ng-required="!rootScope.userLoggedIn"
+                    ng-model="name">
+            </label>
+            <label class="item"
+                ng-show="!rootScope.userLoggedIn">
+                <input onFocus="window.scrollTo(0, 0);" class="white nightlife-input" type="email" placeholder="Email Address" name="email"  
+                    ng-required="!rootScope.userLoggedIn"
+                    ng-model="email">
+        	</label>
+            <div class="item tablefor-item">
+                <span class="tablefor-span">Table for:</span>
+                <button class="tableforpicker"
+                    ng-click="updateTableFor(1);">
+                    <i class="ion-plus-round"></i>
+                </button>
+                <div class="white nightlife-input fake-input fake-tablefor-input">
+                    {{tableFor}}
+                </div>
+                <button class="tableforpicker"
+                    ng-click="updateTableFor(-1);">
+                    <i class="ion-minus-round"></i>
+                </button>
+        	</div>
+            <label class="item-header">
+                Booking Date &amp; Time
+            </label>
+            <label class="item">
+                <div class="white nightlife-input fake-input fake-date-input">
+                    {{dateInputHTML}}
+                </div>
+                <button class="datepicker"
+                    ng-click="openDatePicker();">
+                    <i class="ion-ios-calendar"></i>
+                </button>
+        	</label>
+            <label class="item">
+                <div class="white nightlife-input fake-input fake-date-input">
+                    {{timeInputHTML}}
+                </div>
+                <button class="timepicker"
+                    ng-click="openTimePicker();">
+                    <i class="ion-ios-clock"></i>
+                </button>
+        	</label>
+        	<button type="submit" id="submit" class="button button-red button-large"
+                ng-disabled="completeTableBookingForm.$invalid"
+                ng-click="completeTableBooking(name, email);">
+                Book It
+            </button>
+        </form>
+      </div>
+      
+  </ion-content>
+</ion-view>

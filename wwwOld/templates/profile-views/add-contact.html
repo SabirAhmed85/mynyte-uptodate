@@ -1,0 +1,43 @@
+<ion-view view-title="Add New Contact" class="grey_bg">
+  	<ion-content>
+      <h2>Please fill in the details for your new Contact</h2>
+      <div class="tile register">
+        <form ng-submit="addContact(businessType, town, companyName, name, role, phone, email, website, note);" name="addContactForm">
+            <label class="item first">
+                <input class="white nightlife-input first" type="text" placeholder="Business Type" ng-model="businessType" name="businessType" required>
+        	</label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Town" ng-model="town" name="town" required>
+        	</label>
+            
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Company Name" ng-model="companyName" name="companyName" maxlength="100" required>
+        	</label>
+            <label class="item">
+                <input name="name" class="white nightlife-input" type="text" placeholder="Contact's Name" ng-model="name" maxlength="25" required>
+        	</label>
+            
+            
+            <label class="item">
+                <input name="role" class="white nightlife-input" type="text" placeholder="Role / Position" ng-model="role" maxlength="50">
+        	</label>
+            <label class="item">
+                <input class="white nightlife-input" type="tel" placeholder="Phone Number" ng-model="phone" maxlength="20">
+        	</label>
+        	<label class="item">
+                <input class="white nightlife-input" type="email" placeholder="e-mail" ng-model="email" maxlength="100">
+        	</label>
+            <label class="item">
+                <input class="white nightlife-input" type="text" placeholder="Website Address" ng-model="website" maxlength="100">
+        	</label>
+            <label class="item last">
+                <input class="white nightlife-input" type="text" placeholder="Note" ng-model="note" maxlength="250">
+        	</label>
+        	<button ng-disabled="addContactForm.$invalid || (addContactForm.email.$viewValue == '' && addContactForm.phone.$viewValue == '')" class="button button-red button-large">
+                ADD CONTACT
+            </button>
+        </form>
+      </div>
+      
+  </ion-content>
+</ion-view>

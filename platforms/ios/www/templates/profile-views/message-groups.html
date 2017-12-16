@@ -1,0 +1,20 @@
+<ion-view view-title="Message Group" class="black_bg">
+    <ion-content>
+        <div class="list">
+            <a class="item item-message-summary" ui-sref="app.messageGroup({_id:msgGroup._id, relListing: relListing, groupType: groupType, messageNameString: msgGroup.name})" ng-repeat="msgGroup in messageGroups">
+                <img class="icon ion-notification" src="img/user_images/profile_photo/{{msgGroup.mainPhoto}}"
+                    ng-if="groupType == 'Business'"/>
+                <i class="icon message-group-icon"
+                    ng-class="{'ion-person': !msgGroup.multipleNames,'ion-ios-people': msgGroup.multipleNames}"
+                    ng-show="groupType != 'Business'"></i>
+                <div class="message-info"
+                    ng-class="{'bolded': msgGroup.messageGroupHasUnreadMessage == '1'}">
+                    <span class="message-header">
+                        <span>{{msgGroup.name}}</span>
+                    </span>
+                    <span class="message-text">{{msgGroup.lastMessageSentBy}}: <span ng-if="msgGroup._lastMessageItemId != null"><i class="ion-paperclip"></i></span>{{msgGroup.lastMessageText}}</span>
+                </div>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

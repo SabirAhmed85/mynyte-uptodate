@@ -1,0 +1,249 @@
+<ion-view view-title="Settings" class="black_bg">
+    <ion-content padding="10">
+        <div>
+            <div ng-if="settingsType == 'Business'">
+                <div ng-repeat="businessType in settings.businessSettings">
+                    <h2>{{businessType.businessType}} Settings</h2>
+                    <form class="business-item-form edit-form individual-edit-form" ng-class="{'editing': editing}" name="updateOfferForm">
+                        <div ng-repeat="specificSetting in businessType.specificSettings">
+                            <div class="item-header">
+                                <div>
+                                    {{specificSetting.label}}
+                                    <span ng-click="editField(specificSetting);"
+                                        ng-hide="editing && !specificSetting.editing">
+                                        <span ng-if="!specificSetting.editing">Change</span>
+                                        <span ng-if="specificSetting.editing">Cancel</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="item"
+                                ng-show="!specificSetting.editing">
+                                <div ng-show="specificSetting.optionStyle == 'binary'">
+                                    <p ng-show="specificSetting.val">{{specificSetting.trueLabel}}</p>
+                                    <p ng-show="!specificSetting.val">{{specificSetting.falseLabel}}</p>
+                                </div>
+                                <div ng-show="specificSetting.optionStyle == 'multiple'">
+                                    <p ng-show="specificSetting.val">{{specificSetting.labels[specificSetting.val].name}}</p>
+                                </div>
+                            </div>
+                            <div class="item item-expander open"
+                                ng-show="specificSetting.editing">
+                                <div ng-show="specificSetting.optionStyle == 'binary'">
+                                    <div class="extra-options-label trans"
+                                    ng-class="{'applied': specificSetting.val}">
+                                        <i ng-class="{'ion-close-round': !specificSetting.val, 'ion-checkmark-round': specificSetting.val}"></i>
+                                        <span style="width: calc(100% - 85px); float: left; white-space: normal;">
+                                            {{specificSetting.trueLabel}}
+                                        </span>
+                                        <span class="apply"
+                                            ng-click="specificSetting.val = 1">
+                                            <span ng-hide="!specificSetting.editing">Apply</span>
+                                        </span>
+                                    </div>
+                                    <div class="extra-options-label trans"
+                                        ng-class="{'applied': !specificSetting.val}">
+                                        <i ng-class="{'ion-close-round': specificSetting.val, 'ion-checkmark-round': !specificSetting.val}"></i>
+                                        <span style="width: calc(100% - 85px); float: left; white-space: normal;">
+                                            {{specificSetting.falseLabel}}
+                                        </span>
+                                        <span class="apply"
+                                            ng-click="specificSetting.val = 0">
+                                            <span ng-hide="!specificSetting.editing">Apply</span>
+                                        </span>
+                                    </div>
+                                    
+                                    <button class="button button-white button-large"
+                                        ng-show="editing && specificSetting.editing"
+                                        ng-click="submitFieldEdit(specificSetting)">Apply Change</button>
+                                </div>
+                                <div ng-show="specificSetting.optionStyle == 'multiple'">
+                                    <div class="extra-options-label trans"
+                                    ng-class="{'applied': specificSetting.val == label._id}"
+                                    ng-repeat="label in specificSetting.labels">
+                                        <i ng-class="{'ion-close-round': specificSetting.val != label._id, 'ion-checkmark-round': specificSetting.val == label._id}"></i>
+                                        <span style="width: calc(100% - 85px); float: left; white-space: normal;">
+                                            {{label.name}}
+                                        </span>
+                                        <span class="apply"
+                                            ng-click="specificSetting.val = label._id">
+                                            <span ng-hide="!specificSetting.editing">Apply</span>
+                                        </span>
+                                    </div>
+                                    
+                                    <button class="button button-white button-large"
+                                        ng-show="editing && specificSetting.editing"
+                                        ng-click="submitFieldEdit(specificSetting)">Apply Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <form ng-if="settingsType=='Profile'" class="business-item-form edit-form individual-edit-form" ng-class="{'editing': editing}" name="updateOfferForm">
+                <div class="item-header first">
+                    <span ng-if="rootScope.user.id == null">MyNyte Account</span>
+                    <span ng-if="rootScope.user.id != null">FB Connected Account</span>
+                </div>
+                <div class="item-header">
+                    Your Display Name
+                    <span ng-click="editField(settings.displayName);"
+                        ng-hide="editing && !settings.displayName.editing">
+                        <span ng-if="!settings.displayName.editing">Change</span>
+                        <span ng-if="settings.displayName.editing">Cancel</span>
+                    </span>
+                </div>
+                <div class="item">
+                    <p ng-hide="settings.displayName.editing">{{settings.displayName.value}}</p>
+                    <input ng-show="settings.displayName.editing" class="white nightlife-input" type="text" placeholder="You must enter a Display Name" ng-model="settings.displayName.value" name="Display Name" ng-max="100" required>
+                    <button class="button button-white button-large"
+                        ng-show="settings.displayName.editing"
+                        ng-click="submitFieldEdit(settings.displayName)">Apply Change</button>
+                </div>
+                <div class="item-header"
+                    ng-if="rootScope.user.id == null">
+                    Your Account Password
+                    <span ng-click="editField(settings.word);"
+                        ng-hide="editing && !settings.word.editing">
+                        <span ng-if="!settings.word.editing">Change</span>
+                        <span ng-if="settings.word.editing">Cancel</span>
+                    </span>
+                </div>
+                <div class="item"
+                    ng-if="rootScope.user.id == null">
+                    <p ng-hide="settings.word.editing">{{settings.word.value}}</p>
+                    <input ng-show="settings.word.editing" class="white nightlife-input" type="text" placeholder="You must enter a Password" ng-model="settings.word.value" name="Display Name" ng-max="100" required>
+                    <button class="button button-white button-large"
+                        ng-show="settings.word.editing"
+                        ng-click="submitFieldEdit(settings.word)">Apply Change</button>
+                </div>
+                <div ng-if="rootScope.user.isBusiness == '0'">
+                    <div class="item-header">
+                        Your First Name
+                        <span ng-click="editField(settings.firstName)"
+                            ng-hide="editing && !settings.firstName.editing">
+                            <span ng-if="!settings.firstName.editing">Change</span>
+                            <span ng-if="settings.firstName.editing">Cancel</span>
+                        </span>
+                    </div>
+                    <div class="item">
+                        <p ng-hide="settings.firstName.editing">{{settings.firstName.value}}</p>
+                        <input ng-show="settings.firstName.editing" class="white nightlife-input" type="text" placeholder="You must enter a First Name" ng-model="settings.firstName.value" name="First Name" ng-max="100" required>
+                        <button class="button button-white button-large"
+                            ng-show="settings.firstName.editing"
+                            ng-click="submitFieldEdit(settings.firstName)">Apply Change</button>
+                    </div>
+                    <div class="item-header">
+                        Your Last Name
+                        <span ng-click="editField(settings.lastName)"
+                            ng-hide="editing && !settings.lastName.editing">
+                            <span ng-if="!settings.lastName.editing">Change</span>
+                            <span ng-if="settings.lastName.editing">Cancel</span>
+                        </span>
+                    </div>
+                    <div class="item">
+                        <p ng-hide="settings.lastName.editing">{{settings.lastName.value}}</p>
+                        <input ng-show="settings.lastName.editing" class="white nightlife-input" type="text" placeholder="You must enter a Last Name" ng-model="settings.lastName.value" name="Last Name" ng-max="100" required>
+                        <button class="button button-white button-large"
+                            ng-show="settings.lastName.editing"
+                            ng-click="submitFieldEdit(settings.lastName)">Apply Change</button>
+                    </div>
+                </div>
+                <div ng-if="rootScope.user.isBusiness == '1'">
+                    <div class="item-header">
+                        Your Business Name
+                        <span ng-click="editField(settings.businessName)"
+                            ng-hide="editing && !settings.businessName.editing">
+                            <span ng-if="!settings.businessName.editing">Change</span>
+                            <span ng-if="settings.businessName.editing">Cancel</span>
+                        </span>
+                    </div>
+                    <div class="item">
+                        <p ng-hide="settings.businessName.editing">{{settings.businessName.value}}</p>
+                        <input ng-show="settings.businessName.editing" class="white nightlife-input" type="text" placeholder="You must enter a Business Name" ng-model="settings.businessName.value" name="Business Name" ng-max="100" required>
+                        <button class="button button-white button-large"
+                            ng-show="settings.businessName.editing"
+                            ng-click="submitFieldEdit(settings.businessName)">Apply Change</button>
+                    </div>
+                </div>
+                <div class="item-header">
+                    Your Address
+                    <span ng-click="editField(settings.addressLine1)"
+                        ng-hide="editing && !settings.addressLine1.editing">
+                        <span ng-if="!settings.addressLine1.editing">Change</span>
+                        <span ng-if="settings.addressLine1.editing">Cancel</span>
+                    </span>
+                </div>
+                <div class="item">
+                    <p ng-show="settings.addressLine1.value == '' && !settings.addressLine1.editing">No address saved.</p>
+                    <p ng-hide="settings.addressLine1.editing">{{settings.addressLine1.value}}</p>
+                    <p ng-hide="settings.addressLine1.editing">{{settings.addressLine2.value}}</p>
+                    <p ng-hide="settings.addressLine1.editing">{{settings.postcode.value}}</p>
+                    <input ng-show="settings.addressLine1.editing" class="white nightlife-input" type="text" placeholder="Address Line 1" ng-model="settings.addressLine1.value" name="Address Line 1" ng-max="100" required>
+                    <input ng-show="settings.addressLine1.editing" class="white nightlife-input" type="text" placeholder="Address Line 2" ng-model="settings.addressLine2.value" name="Address Line 2" ng-max="100" required>
+                    <input ng-show="settings.addressLine1.editing" class="white nightlife-input" type="text" placeholder="Postcode" ng-model="settings.postcode.value" name="PostCode" ng-max="12" required>
+                    <button class="button button-white button-large"
+                        ng-show="settings.addressLine1.editing"
+                        ng-click="submitFieldEdit(settings.addressLine1)">Apply Change</button>
+                </div>
+                
+                <div class="item-header"
+                    ng-if="rootScope.user.id == null">
+                    Your Email
+                    <span ng-click="editField(settings.email)"
+                        ng-hide="editing && !settings.email.editing">
+                        <span ng-if="!settings.email.editing">Change</span>
+                        <span ng-if="settings.email.editing">Cancel</span>
+                    </span>
+                </div>
+                <div class="item"
+                    ng-if="rootScope.user.id == null">
+                    <p ng-show="settings.email.value == '' && !settings.email.editing">No main address saved.</p>
+                    <p ng-hide="settings.email.editing">{{settings.email.value}}</p>
+                    <input ng-show="settings.email.editing" class="white nightlife-input" type="text" placeholder="Main email address" ng-model="settings.email.value" name="Email" ng-max="100" required>
+                    <button class="button button-white button-large"
+                        ng-show="settings.email.editing"
+                        ng-click="submitFieldEdit(settings.email)">Apply Change</button>
+                </div>
+                <div class="item-header">
+                    Your Phone Number
+                    <span ng-click="editField(settings.phone1)"
+                        ng-hide="editing && !settings.phone1.editing">
+                        <span ng-if="!settings.phone1.editing">Change</span>
+                        <span ng-if="settings.phone1.editing">Cancel</span>
+                    </span>
+                </div>
+                <div class="item">
+                    <p ng-show="settings.phone1.value == '' && !settings.phone1.editing">No main phone number saved.</p>
+                    <p ng-hide="settings.phone1.editing">{{settings.phone1.value}}</p>
+                    <input ng-show="settings.phone1.editing" class="white nightlife-input" type="number" placeholder="Main phone number (optional)" ng-model="settings.phone1.value" name="Phone 2" ng-max="100">
+                    <button class="button button-white button-large"
+                        ng-show="settings.phone1.editing"
+                        ng-click="submitFieldEdit(settings.phone1)">Apply Change</button>
+                </div>
+                
+                <label class="item-header">
+                    Your Profile Description
+                    <span ng-click="editField(settings.description)"
+                        ng-hide="editing && !settings.description.editing">
+                        <span ng-if="!settings.description.editing">Change</span>
+                        <span ng-if="settings.description.editing">Cancel</span>
+                    </span>
+                </label>
+                <label class="item">
+                    <p ng-hide="settings.description.editing">{{settings.description.value}}</p>
+                    <input ng-show="settings.description.editing" class="white nightlife-input" type="number" placeholder="Description (optional)" ng-model="settings.description.value" name="Phone 2" ng-max="100">
+                    <button class="button button-white button-large"
+                        ng-show="settings.description.editing"
+                        ng-click="submitFieldEdit(settings.description)">Apply Change</button>
+                </label>
+                
+                <button class="button button-red button-large"
+                    ng-show="!editing"
+                    ng-click="logOut();">
+                    Log Out
+                </button>
+            </form>
+            
+        </div>
+    </ion-content>
+</ion-view>

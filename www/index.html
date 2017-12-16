@@ -13,9 +13,6 @@
     <link href="css/image-crop.css" rel="stylesheet">
     <link href="css/nightlife-style.css" rel="stylesheet">
      <!--<link href="css/townlife-style.css" rel="stylesheet">-->
-     
-    <link href="https://fonts.googleapis.com/css?family=Quicksand|Titillium+Web" rel="stylesheet">
-    <script src="https://webfonts.creativecloud.com/quicksand:n4,n7:default.js" type="text/javascript"></script>
     
     <script type="text/javascript" src="js/plugins/jsapi.js"></script>
     
@@ -36,9 +33,6 @@
     
     <!-- Root controller -->
     <script src="js/main/controllers.js"></script>
-
-    <!-- Globals -->
-    <script src="js/common/globals.js"></script>
     
     <!-- Controllers -->
     <script src="js/main/feedControllers.js"></script>
@@ -46,7 +40,6 @@
     <script src="js/main/taxiControllers.js"></script>
     <script src="js/main/offersControllers.js"></script>
     <script src="js/main/moreControllers.js"></script>
-    <script src="js/main/adminControllers.js"></script>
     <script src="js/main/data.js"></script>
     
     <!-- common js -->
@@ -62,8 +55,6 @@
     <script src="js/plugins/sq-lite-plugin.js"></script>
     <script src="js/plugins/file-upload.js"></script>
     <script src="js/plugins/image-crop.js"></script>
-    <script src="js/plugins/xml2json.min.js"></script>
-    <script src="js/plugins/angular-google-client.min.js"></script>
     
     <!-- Services / Workers -->
     <script src="js/services/dates-worker.js"></script>
@@ -110,8 +101,7 @@
   
     <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
   </head>
-  <body class="intended-browser"
-    ng-class="{'external-api-view': externalView, 'admin-view': currentViewType == 'admin'}">
+  <body class="intended-browser">
     <div class="tooltip-screen-cover"
         ng-class="{'open': tooltipShowing}">
         <span class="tooltip">
@@ -173,7 +163,7 @@
             ng-click="goBackOne()"></i>
         <i class="icon ion-android-happy header-star trans"
             ng-class="{
-                'isHidden': showBackButton || !showAssistantButton || currentViewType == 'admin', 
+                'isHidden': showBackButton || !showAssistantButton, 
                 'isVisible': !showBackButton && showAssistantButton,
                 'tooltip': tooltipShowing,
                 'activated': showingAssistant}"
@@ -228,8 +218,7 @@
                 'ion-close-round': currentlyEditing || showHeaderButtons || showSearchPanel,
                 'ion-gear-a': topRightButtonIsSettings,
                 'isVisible': topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings || topRightButtonIsClock || (showHeaderButtons && currentViewName == 'app.feed'),
-                'ion-clock': (topRightButtonIsClock && !showSearchPanel && !showAssistantPanel),
-                'feed-page': currentViewName == 'app.feed'}" ng-click="topRightButtonFunction()"></i>
+                'ion-clock': (topRightButtonIsClock && !showSearchPanel && !showAssistantPanel)}" ng-click="topRightButtonFunction()"></i>
         <span class="header-icon-right-span" ng-class="{'isVisible': topRightButtonIsEdit && !currentlyEditing}" ng-click="topRightButtonFunction()">Edit</span>
 
         <div class="header-log-in-container">
@@ -451,7 +440,7 @@
     <!-- BROWSER Only -->
     <div id="breadcrumb-bar"
         ng-if="showBackButton || topRightButtonIsPlus || topRightButtonIsEdit || topRightButtonIsSettings"
-        ng-class="{'full': currentViewName == 'app.feed.nlfeedListing', 'admin-view': currentViewType == 'admin'}">
+        ng-class="{'full': currentViewName == 'app.feed.nlfeedListing'}">
         <button class="web-back-button"
             ng-if="showBackButton"
             ng-click="goBackOne();">
@@ -477,52 +466,31 @@
         </button>
     </div>
     
-    <div class="iframe-container trans {{frameClass}}"
-        ng-class="{'open': frameOpen}">
-        <iframe height="100%" class="x-slow-trans"
-            ng-src="{{trustSrc(frameUrl)}}">
-        </iframe>
-        <i class="ion-close-round"
-            ng-click="closeFrame()"></i>
-    </div>
-    
-    <div class="feed-side side trans outer-side"
-        ng-class="{'show': currentViewType != 'admin'}"
+    <div class="feed-side side trans show outer-side"
         ng-include="'templates/shared-partials/profile-info-sidebar.html'"></div>
-    <!--<div class="feed-side side trans outer-side"
-        ng-class="{'show': currentViewType == 'admin'}"
-        ng-include="'templates/shared-partials/profile-info-sidebar-admin.html'"></div>-->
     <!--
     <div class="feed-side side"
         ng-class="{'show': currentViewName == 'app.offers' || currentViewName == 'app.offerDetail' || currentViewName == 'app.taxi'}"
         ng-include="'templates/shared-partials/events-sidebar.html'"></div>
     -->
     <div class="feed-side side"
-        ng-class="{'show': (currentViewName == 'app.offers' || currentViewName == 'app.offers.offerDetail' || currentViewName == 'app.taxi') && currentViewType != 'admin'}"
+        ng-class="{'show': currentViewName == 'app.offers' || currentViewName == 'app.offers.offerDetail' || currentViewName == 'app.taxi'}"
         ng-include="'templates/shared-partials/movies-sidebar.html'"></div>
     
     <div class="feed-side side"
-        ng-class="{'show': (currentViewName != 'app.feed.nlfeedListing' && currentViewName != 'app.offers' && currentViewName != 'app.offers.offerDetail' && currentViewName != 'app.taxi') && currentViewType != 'admin'}"
+        ng-class="{'show': currentViewName != 'app.feed.nlfeedListing' && currentViewName != 'app.offers' && currentViewName != 'app.offers.offerDetail' && currentViewName != 'app.taxi'}"
         ng-include="'templates/shared-partials/offers-sidebar.html'"></div>
     <!--<div class="feed-side side trans"
         ng-class="{'show': currentViewName != 'app.feed.nlfeedListing'}"
         ng-include="'templates/shared-partials/whats-open-sidebar.html'"></div>-->
     <div class="feed-side side trans"
-        ng-class="{
-        	'show': currentViewName != 'app.feed.nlfeedListing' && currentViewType != 'admin', 
-            'below-movie-display': (currentViewName == 'app.offers' || currentViewName == 'app.offers.offerDetail' || currentViewName == 'app.taxi') && currentViewType != 'admin'}"
+        ng-class="{'show': currentViewName != 'app.feed.nlfeedListing'}"
         ng-include="'templates/shared-partials/kickstarter-sidebar.html'"></div>
     
-    <div class="feed-side side trans outer-side"
-        ng-class="{'show': currentViewType != 'admin'}"
+    <div class="feed-side side trans show outer-side"
         ng-include="'templates/shared-partials/social-sidebar.html'"></div>
-    <div class="feed-side side trans outer-side"
-        ng-class="{'show': currentViewType != 'admin'}"
+    <div class="feed-side side trans show outer-side"
         ng-include="'templates/shared-partials/bottom-right-sidebar.html'"></div>
-    
-    <div class="feed-side side trans"
-        ng-class="{'show': currentViewType == 'admin'}"
-        ng-include="'templates/shared-partials/right-sidebar-admin.html'"></div>
 
 
     <script id="popup-template.html" type="text/ng-template">
@@ -530,13 +498,4 @@
     </script>
     
   </body>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-76662538-1', 'auto');
-      ga('send', 'pageview');
-    </script>
 </html>
