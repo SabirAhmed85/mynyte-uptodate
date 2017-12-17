@@ -18,7 +18,7 @@ Java: 		C:\Program Files (x86)\Java\jdk1.8.0_111 (version name at the end may be
 In JAVA Version folder > Bin :
 
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore <keystoreName> android-release-unsigned.apk <alias>
-e.g. jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore mynyte-key-2.keystore android-release-unsigned.apk mynyte
+e.g. jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore mynyte-mobileapps.keystore android-release-unsigned.apk mynytemobileapps
 
 (* Cut & Drag signed version of build into the following Android folder mentioned below *)
 
