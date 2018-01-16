@@ -8,6 +8,7 @@
    		var scripts = document.getElementsByTagName("script");
    		var currentScript = scripts[scripts.length - 1].src;
    		var current_environment = 'live';
+   		var current_db_environment = mynyte_db_environment || 'live';
    		var current_environment_page_url = null;
    		var current_environment_file_url = null;
 		var _bid = mynyte_business_id;
@@ -17,6 +18,7 @@
    		}
    		current_environment_page_url = (current_environment == 'staging') ? "staging/": "";
    		current_environment_file_url = (current_environment == 'staging') ? "staging/": "live/";
+   		current_db_environment_file_url = current_db_environment + "/";
    		console.log(current_environment);
 		
 		MynyteApi.pageVars = {};
@@ -53,7 +55,7 @@
 			var jsonpCallback = function (reponse) {};
 
 			$.ajax({
-				url: "https://www.mynyte.co.uk/"+current_environment_file_url+"sneak-preview/data/extApi/"+className+".php?action="+action,
+				url: "https://www.mynyte.co.uk/"+current_db_environment_file_url+"sneak-preview/data/extApi/"+className+".php?action="+action,
 				type: "GET",
 				dataType: "jsonp",
 				jsonp: "jsonp",
