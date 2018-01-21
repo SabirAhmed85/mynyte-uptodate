@@ -122,6 +122,32 @@
 		    head.appendChild(script);
 		}
 
+		function createPopup(params) {
+			var popupHtml = "";
+
+			params.class = (params.class) ? ' ' + params.class : '';
+
+			if ($('.mynyte-popup-cover').length == 0) {
+				var div = $("<div/>").appendTo($('body'));
+				div.attr('class', 'mynyte-popup-cover');
+			}
+
+			if (params.class == " menu-item-detail") {
+				popupHtml = '<div class="mynyte-popup'+params.class+'">';
+					popupHtml += '<div class="mn-popup-header">';
+						popupHtml += '<h4 class="menu-item-title"></h4>';
+						popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({});"></i>';
+					popupHtml += '</div>';
+					popupHtml += '<div class="mn-popup-body">';
+						popupHtml += '<img src="#" alt=""/>';
+						popupHtml += '<p class="menu-item-description">';
+					popupHtml += '</div>';
+				popupHtml += '</div>';
+			}
+
+			$('.mynyte-popup-cover').append(popupHtml);
+		}
+
 		function openPopup(params) {
 			var speed = (params.speed == 'fast') ? 1: 250;
 			lockScroll();
@@ -168,6 +194,7 @@
 					params.menuDisplayTranscriptNote = '<b>Book Tables with ease</b>, and find out what\'s going on in town...';
 					params.menuDisplayImgSrc = 'https://www.mynyte.co.uk/sneak-preview/img/logo.png';
 					params.menuItemCategoryIdString = params.menuItemCategoryIdString || '0';
+					params.menuItemClickable = params.menuItemClickable || false;
 					break;
 				case 'offersFeed':
 					defElem = $('.mynyte-offers-display');
@@ -407,6 +434,22 @@
 						successData = successData.items;
 						console.log(successData);
 						var categories = {};
+						if (existingVars.menuItemClickable == true) {
+							createPopup({'class': 'menu-item-detail'});
+							console.log("show");
+							MynyteApi.showMenuItem = function (item) {
+								console.log(item);
+								console.log($(item).parent('.text-container'));
+								var par = $(item).parent('.text-container');
+								var title = par.find('.title').html();
+								var description = par.find('.description').html();
+								$('.mynyte-popup.menu-item-detail').find('h4').html(title);
+								if (typeof(description) !== 'undefined') {
+									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('.menu-item-description').html(description);
+								}
+								openPopup({'speed': 'fast'});
+							}
+						}
 
 						var htmlToAdd = "<div class='container-header'>See our Menu</div>";
 						htmlToAdd += "<div class='container-dummy'>";
@@ -416,7 +459,7 @@
 						  }
 						  if (a == successData.length - 1) {
 							for (var b = 0; b < successData.length; b++) {
-								categories[successData[b].menuItemCategoryName].push({'name': successData[b].Name, 'price': successData[b].Price});
+								categories[successData[b].menuItemCategoryName].push({'name': successData[b].Name, 'price': successData[b].Price, 'description': successData[b].Description});
 
 								if (b == successData.length - 1) {
 
@@ -426,7 +469,14 @@
 											htmlToAdd += "<div class='header'>"+cat+"<span class='listing-menu-item-open'>+</span></div>";
 											htmlToAdd += "<div class='body'>"
 											for (var c = 0; c < categories[cat].length; c++) {
-												htmlToAdd += "<div class='text-container'><span class='title'>"+categories[cat][c]["name"]+"</span><!--<span class='options'>Options</span>--><span class='price'>£ "+categories[cat][c]["price"]+"</span></div>";
+												var menuItemClickableString = (existingVars.menuItemClickable == true) ? " onclick='MynyteApi.showMenuItem(this);'": "";
+												var menuItemClickableClass = (existingVars.menuItemClickable == true) ? " menu-item-clickable": "";
+												htmlToAdd += "<div class='text-container'>";
+													htmlToAdd += "<span class='title"+menuItemClickableClass+"'"+menuItemClickableString+">"+categories[cat][c]["name"]+"</span>";
+													htmlToAdd += "<!--<span class='options'>Options</span>-->";
+													htmlToAdd += "<span class='price'>£ "+categories[cat][c]["price"]+"</span>";
+													htmlToAdd += "<span class='description"+menuItemClickableClass+"'"+menuItemClickableString+">"+categories[cat][c]["description"]+"</span>";
+												htmlToAdd += "</div>";
 
 												if (c == categories[cat].length - 1) {
 													$('.header').on("click", function () {
@@ -1290,6 +1340,10 @@
 			}).error(function (errorData) {
         		console.log(errorData);
 			});
+		}
+
+		MynyteApi.closePopup = function (params) {
+			closePopup(params);
 		}
 
 		MynyteApi.dataConnect = function (params) {

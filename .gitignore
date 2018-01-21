@@ -4,6 +4,9 @@ sneak-preview/
 sneak-preview/img/user_images/
 /.htaccess
 
+www/sneak-preview/data/globals.php
+www/js/common/globals.js
+
 # OS generated files #
 ######################
 .DS_Store
