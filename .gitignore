@@ -3,7 +3,9 @@ sneak-preview/
 !sneak-preview/img/
 sneak-preview/img/user_images/
 /.htaccess
+
 www/js/common/globals.js
+www/sneak-preview/data/globals.php
 
 # OS generated files #
 ######################

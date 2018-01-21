@@ -1,10 +1,9 @@
 <?php
     //ini_set('display_errors', 1);
-    include_once('globals.php');
     require '../classes/php-mailer/PHPMailerAutoload.php';
+    header("Access-Control-Allow-Origin: http://www.sundaes-gelato.com");
     
     $action = $_POST['action'];
-    echo $action;
     $actionFound = false;
 
     $recipients_array = array();
@@ -62,6 +61,22 @@
         
         array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $email));
 	}
+    else if ($action == 'contactBusinessThroughContactForm') {
+        $RecipientEmail = $_POST['RecipientEmail'];
+
+        $BusinessName = $_POST['BusinessName'];
+        $Name = $_POST['Name'];
+        $Email = $_POST['Email'];
+        $Phone = $_POST['Phone'];
+        $Subject = $_POST['Subject'];
+        $Message = $_POST['Message'];
+        
+        $subject = "You've just received a new Enquiry/Contact through the ". $BusinessName ." Website";
+        $htmlEmail = file_get_contents('../../../templates/email-views/contact-received.html');
+        $actionFound = true;
+        
+        array_push($recipients_array, (object)array('name' => 'Business Manager', 'email' => $RecipientEmail));
+    }
 
     //Process Varables where needed
     foreach ($recipients_array as $obj) {
@@ -73,6 +88,14 @@
 
         if ($action == 'sendMyNyteWelcomeEmail' || $action == 'sendInviteToMyNyteApp') {
             $htmlEmail = str_replace('{{$FirstName}}', $firstName, $htmlEmail);
+        }
+        else if ($action == 'contactBusinessThroughContactForm') {
+            $htmlEmail = str_replace('{{$BusinessName}}', $BusinessName, $htmlEmail);
+            $htmlEmail = str_replace('{{$Name}}', $Name, $htmlEmail);
+            $htmlEmail = str_replace('{{$Email}}', $Email, $htmlEmail);
+            $htmlEmail = str_replace('{{$Phone}}', $Phone, $htmlEmail);
+            $htmlEmail = str_replace('{{$Subject}}', $Subject, $htmlEmail);
+            $htmlEmail = str_replace('{{$Message}}', $Message, $htmlEmail);
         }
 
         

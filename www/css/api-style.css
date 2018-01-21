@@ -706,12 +706,12 @@ body.mn-modal--opened {
     background: #eee;
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #eee;
-    color: #5d4d4d;
+    color: #292323;
 }
 .mynyte-frame-container .listing-menu-item .header:hover {
     cursor: pointer;
     background: #efefef;
-    color: #6d5d5d;
+    color: #751e1e;
 }
 
 .mynyte-frame-container .listing-menu-item .header .listing-menu-item-open {    
@@ -748,11 +748,29 @@ body.mn-modal--opened {
 }
 
 .mynyte-frame-container .listing-menu-item .text-container .title {
-    color: #676767;
+    color: #7b7b7b;
     margin-right: 10px;
     max-width: calc(100% - 150px);
     line-height: 20px;
     float: left;
+}
+.mynyte-frame-container .listing-menu-item .text-container .title.menu-item-clickable:hover {
+    cursor: pointer;
+    color: #7e7e7e;
+}
+
+.mynyte-frame-container .listing-menu-item .text-container .description {
+    color: #8e8989;
+    margin-right: 10px;
+    float: left;
+    clear: left;
+    font-size: 12px;
+    line-height: 17px;
+    margin-top: 6px;
+}
+.mynyte-frame-container .listing-menu-item .text-container .description.menu-item-clickable:hover {
+    cursor: pointer;
+    color: #9e8989;
 }
 
 .mynyte-frame-container .listing-menu-item .text-container .price {
@@ -1112,12 +1130,28 @@ span.mynyte-label-detail {
     background: #fbfbfb;
     border-radius: 5px 5px 0 0;
     font-size: 15px;
+    position: relative;
+}
+
+.mn-popup-header h4 {    
+    float: left;
+    width: calc(100% - 15px);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.mn-popup-header .menu-item-title {
+    color: #927070;
 }
 
 .mn-popup-header .mn-popup-close {
     float: right;
     color: #777;
     cursor: pointer;
+    font-size: 25px;
+    position: absolute;
+    top: 10px;
+    right: 15px;
 }
 
 .mn-popup-body {
@@ -1155,6 +1189,16 @@ span.mynyte-label-detail {
     border: 1px solid #a2a2a2;
     color: #9a8e90;
     position: relative;
+}
+
+.mn-popup-body .menu-item-description {
+    float: left;
+    font-size: 14px;
+    line-height: 23px;
+    padding: 10px;
+    margin-left: 10px;
+    margin: 0 10px 9px;
+    color: #666;
 }
 
 .mn-popup-body button.start-chat {

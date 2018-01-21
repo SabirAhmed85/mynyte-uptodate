@@ -1,0 +1,22 @@
+<ion-view view-title="{{rootScope.pageTitle}} on MyNyte.co.uk" class="grey_bg see-trailer"><ion-content><div class="page-loading-container" ng-show="pageLoading"><ion-spinner icon="lines" class="spinner-red"></ion-spinner><span class="loading-text">Loading ...</span></div><div id="detailedContent" class="trans" ng-class="{'isVisible': !pageLoading}"><div class="tile register"><style>.see-trailer .tile {
+                        border-bottom: none;
+                        margin-bottom: 0;
+                    }
+                    .video-container {
+                        position: relative;
+                        padding-bottom: 56.25%;
+                        padding-top: 30px; height: 0; overflow: hidden;
+                        width: 100%;
+                        background: #111;
+                    }
+                     
+                    .video-container iframe,
+                    .video-container object,
+                    .video-container embed {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: #111;
+                    }</style><div class="video-container"><div class="page-loading-container"><ion-spinner icon="lines" class="spinner-red"></ion-spinner><span class="loading-text">Loading Trailer...</span></div><iframe frameborder="0" width="560" height="315" allowfullscreen ng-src="{{movieTrailerLink}}"></iframe></div></div><div class="item">{{movieTitle}}</div></div></ion-content></ion-view>

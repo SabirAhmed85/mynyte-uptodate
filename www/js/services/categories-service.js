@@ -54,6 +54,7 @@ app.factory('categoriesService', ['$q', 'Categories', 'Profile', function($q, Ca
     var getAvailableMusicStyles = function () {
         
         var promise = Categories.getAvailableMusicStyles().then(function (response) {
+            console.log(response);
             var musicStyles = response.data;
             musicStyles.unshift({name: 'All Music Styles', _id: 0});
             for (var a = 0; a < musicStyles.length; a++) {

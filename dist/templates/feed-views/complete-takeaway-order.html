@@ -1,0 +1,235 @@
+<ion-view view-title="See Menu" class="black_bg special-h2"><ion-content><style>.special-h2 h2 {
+                position: relative;
+                z-index: 100;
+                padding: 10px 5%;
+                font-size: 17px;
+            }
+            .special-h2 h2.headerHasStatusBar {
+                margin-top: 60px;
+            }
+        
+            .special-h2 .list {
+                float: left;
+                width: 100%;
+            }
+            .menu-summary-item .message-header {
+                width: calc(70% - 45px);
+                font-weight: normal;
+                font-size: 15px;
+                padding-bottom: 5px;
+                white-space: normal !important;
+            }
+        
+            .menu-summary-item i.ion-chevron-right {
+                float: right;
+                color: #dbb;
+            }
+        
+            .menu-summary-item .message-count {
+                float: right;
+                background: #1F1E1E;
+                border: 1px solid #313030;
+                padding: 4px 7px;
+                border-radius: 4px;
+                margin: -5px 20px 0 0;
+            }
+        
+            .menu-order-summary-item {
+                margin-bottom: 10px;
+                padding-bottom: 6px;
+                padding-top: 10px;
+            }
+        
+            .menu-order-summary-item .order-type-selecter {
+                float: left;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        
+            .menu-order-summary-item .order-type-selecter label {
+                float: left;
+                width: 50%;
+                text-align: center;
+                background: #252525;
+                border: 1px solid #1D1C1C;
+                color: #888;
+            }
+        
+            .menu-order-summary-item label.label-left {
+                border-radius: 6px 0 0 6px;
+            }
+
+            .menu-order-summary-item label.label-right {
+                border-radius: 0 6px 6px 0;
+            }
+
+            .menu-order-summary-item label.selected {
+                background: #0A0A0A;
+                border-color: #292828;
+                color: #fee;
+            }
+
+            .menu-order-summary-item label.label-left.selected {
+                border-right-color: #222;
+            }
+
+            .menu-order-summary-item label.label-right.selected {
+                border-left-color: #222;
+            }
+
+            .menu-order-summary-item .order-summary {
+                background: #220000;
+                border: 1px solid #330000;
+                width: 100%;
+                float: left;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+            .menu-order-summary-item .order-price {
+                float: left;
+                width: 100%;
+                color: #b88;
+                font-size: 15px;
+                text-align: center;
+                margin-bottom: 8px;
+                border-bottom: 1px solid #522;
+                padding-bottom: 5px;
+            }
+
+            .menu-order-summary-item .order-summary button {
+                margin-top: 5px;
+                margin-bottom: 0;
+                font-size: 13px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .menu-order-summary-item .minimum-delivery-label {
+                float: left;
+                clear: left;
+                color: #966;
+                font-size: 12px;
+                width: 100%;
+                text-align: center;
+                border-top: 1px solid #422;
+                margin-top: 6px;
+                padding-top: 3px;
+            }
+        
+            .menu-order-summary-item .minimum-delivery-label span.span-left {
+                float: left;
+            }
+            .menu-order-summary-item .minimum-delivery-label span.span-right {
+                float: right;
+            }
+        
+            .menu-order-summary-item .minimum-delivery-label span span {
+                color: #bbb;
+                margin-left: 10px;
+            }
+        
+            .btn-pink {
+                background: #FFF1F1;
+                color: #844;
+                border: 1px solid #fff;
+                border-radius: 4px;
+            }
+        
+            .btn-pink-inactive {
+                background: #B7B7B7;
+                color: #8E8787;
+            }
+        
+            .menu-order-container {
+                float: left;
+                clear: left;
+                width: 100%;
+                margin-top: 10px;
+                border-top: 1px solid #636161;
+                border-bottom: 1px solid #656262;
+                margin-bottom: 8px;
+            }
+        
+            .menu-order-container .menu-summary-item {
+                float: left;
+                width: 100%;
+                margin-top: 5px;
+                border-bottom: 1px solid #292929;
+                padding-bottom: 10px;
+                padding-top: 10px;
+            }
+        
+            .menu-order-container .menu-summary-item .price {
+                float: right;
+                color: #ccc;
+                font-size: 14px;
+            }
+        
+            .menu-order-container .menu-summary-item ul {
+                float: left;
+                clear: left;
+                font-size: 13px;
+                padding-left: 10px;
+                color: #aaa;
+                width: 98%;
+            }
+        
+            .menu-order-container .menu-summary-item ul li {
+                width: 90%;
+            }
+        
+            .menu-order-container .message-header span.counter {
+                margin-right: 5px;
+                font-weight: bold;
+            }
+        
+            .menu-order-container .menu-summary-item ul span.individual-price {
+                float: right;
+            }
+        
+            .menu-order-summary-item .totals {
+                float: left;
+                width: 100%;
+                margin-bottom: 6px;
+            }
+        
+            .menu-order-summary-item .totals label {
+                float: left;
+                color: #eee;
+                font-size: 13px;
+            }
+        
+            .menu-order-summary-item .totals span {
+                float: right;
+                color: #ddd;
+                font-size: 15px;
+                font-weight: bold;
+            }
+        
+            .menu-order-delivery,
+            .menu-order-payment {
+                position: absolute;
+                top: 100%;
+            }
+        
+            .menu-order-delivery.isVisible,
+            .menu-order-payment.isVisible {
+                top: 45px;
+                height: calc(100% - 94px);
+                overflow-y: scroll;
+                padding-bottom: 20px;
+            }
+        
+            .menu-order-delivery form,
+            .menu-order-payment form {
+                margin-top: 15px;
+                float: left;
+            }
+        
+            .menu-order-delivery label,
+            .menu-order-payment label {
+                float: left;
+                z-index: 0;
+                position: relative;
+            }</style><h2 ng-class="{'headerHasStatusBar': rootScope.headerHasStatusBar == true}">Complete Order</h2><div class="item menu-order-summary-item"><span class="order-type-selecter"><label ng-show="currentOrderMethod == 'Collection'">Collection</label><label ng-show="currentOrderMethod == 'Delivery'">Delivery</label></span><span class="order-summary"><span class="order-price">Total Order: £<span>{{rootScope.currentOrderTrayTotal}}</span></span> <button class="btn-pink button-full" ng-click="submitOrder()">Complete Order</button> </span><span ng-show="currentOrderMethod == 'Delivery'" class="minimum-delivery-label trans"><span class="span-left">Minimum order: <span>£10.00</span></span> <span class="span-right">Delivery: <span>FREE</span></span></span><div class="menu-order-container"><div class="menu-summary-item" ng-repeat="menuItem in menuItemsOrdered"><div class="message-info" style="width: 100%"><span class="message-header"><span class="counter">{{menuItem.quantity}}</span> <span>{{menuItem.item.Name}}</span> </span><span class="price"><span ng-show="menuItem.item.itemsAddedToBasket[0].specificItem.length == 0">{{(menuItem.item.finalPrice * menuItem.quantity).formatMoney(2)}}</span> <span ng-show="menuItem.item.itemsAddedToBasket[0].specificItem.length > 0">{{(menuItem.item.finalPrice).formatMoney(2)}}</span></span><ul ng-show="menuItem.item.itemsAddedToBasket[0].specificItem.length > 0"><li ng-repeat="item in menuItem.item.itemsAddedToBasket"><span>{{item.quantity}}</span> <span class="individual-price">{{item.specificItem[0].finalPrice}}</span> <span ng-repeat="specificItem in item.specificItem">{{specificItem.chosenOption.name}} |</span></li></ul></div></div></div><div class="totals"><label>Total Price <span>(£)</span></label><span>{{rootScope.currentOrderTrayTotal}}</span></div></div></ion-content><!-- Hidden Address Panel --><div class="tile register menu-order-delivery trans" ng-class="{'isVisible': showEnterAddressPanel}"><h2>Delivery Details</h2><form ng-submit="enterUserDetails(name, email, phone1, addressLine1, addressLine2, postCode);" name="enterUserDetailsForm"><label class="item-header">Please enter your Details</label><label class="item"><input class="white nightlife-input" type="text" placeholder="Your Name" ng-model="name" name="name" required></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Main Phone Number" ng-model="phone1" name="phone1" required="email == ''"></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Email Address" ng-model="email" name="email" required></label><label class="item-header">Address</label><label class="item"><input class="white nightlife-input" type="text" placeholder="Address Line 1" ng-model="addressLine1" name="addressLine1" required></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Address Line 2" ng-model="addressLine2" name="addressLine2" required></label><label class="item last"><input class="white nightlife-input last" name="postCode" type="text" placeholder="Post Code" ng-model="postCode" required></label><button type="submit" id="submit" ng-disabled="enterUserDetailsForm.$invalid || rootScope.user.isBusiness == '1'" class="button button-red button-large">Enter Payment Info.</button></form></div><div class="tile register menu-order-payment trans" ng-class="{'isVisible': showEnterPaymentDetailsPanel}"><h2>Payment Details</h2><form ng-submit="enterPaymentInfo(cardNumber, expiryDate, startDate, nameOnCard);" name="enterPaymentInfoForm"><label class="item-header">Please enter payment Details</label><label class="item"><input class="white nightlife-input" type="text" placeholder="Card Number" ng-model="cardNumber" name="cardNumber" ng-required></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Expiry Date" ng-model="expiryDate" name="expiryDate" ng-required></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Start Date" ng-model="startDate" name="startDate" ng-required></label><label class="item"><input class="white nightlife-input" type="text" placeholder="Name on Card" ng-model="nameOnCard" name="nameOnCard" ng-required></label><button type="submit" id="submit" ng-disabled="enterPaymentInfoForm.$invalid || rootScope.user.isBusiness == '1'" class="button button-red button-large">Submit Payment Info.</button></form></div></ion-view>

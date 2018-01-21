@@ -665,6 +665,7 @@ $timeout(function () {
     
     $rootScope.clearAllExpiredTransactions = function () {
         Notifications.clearAllExpiredTransactions().success(function (successData) {
+          console.log(successData);
             if ($rootScope.debugMode) {console.log('All Expired Transaction Success Data: ', successData);};
             var fullNotificationsArray = ["Taxi Booking Accepted", "Taxi Booking Not Available", "Table Booking Not Accepted", "Taxi Booking Won"];
             var fullNotificationsObject =
@@ -695,7 +696,7 @@ $timeout(function () {
                 }
             };
                 
-            if (successData != null) {
+            if (successData != null && successData != "null") {
                 var prepareNotif = function (obj) {
                     if (obj["items"] != null && obj["items"].length > 0) {
                         $rootScope.prepareMessageNotificationFinal(obj["items"], obj["headings"], obj["contents"], obj["dataObj"]);

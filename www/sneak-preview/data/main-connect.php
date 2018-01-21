@@ -11,13 +11,22 @@
   //Debug
   //ini_set('display_errors', 1);
 
-  $db_host = "localhost";
+  if ($intended_environment != 'Local') {
+    $db_host = "localhost";
 
-  $db_uid = "qxiryynz_mynyteuser";
+    $db_uid = "qxiryynz_mynyteuser";
 
-  $db_pass = "wM)Ln8-Q2o6g";
+    $db_pass = "wM)Ln8-Q2o6g";
+  }
+  else {
+    $db_host = "127.0.0.1";
+
+    $db_uid = "root";
+
+    $db_pass = "";
+  }
   
-  if ($intended_environment == 'Staging') {
+  if ($intended_environment == 'Staging' || $intended_environment == 'Local') {
     $db_name = "qxiryynz_MyNyte_Staging";
   }
   else if ($intended_environment == 'Live') {

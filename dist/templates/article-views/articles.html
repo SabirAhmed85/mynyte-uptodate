@@ -1,0 +1,20 @@
+<script type="text/ng-template" id="/natural-articles.html"><div ng-repeat="article in articles">{{article.title}}</div></script><script type="text/ng-template" id="/sectioned-article.html"><div class="article-accordian">
+    <span ng-repeat="articleCategory in articleCategories">
+      <h3 ng-class="{'first': articleCategory == articleCategories[0]}">
+        <i class="{{articleCategory.icon}}"
+          ng-if="articleCategory.icon != null"></i>
+        {{articleCategory.title}}
+      </h3>
+      <span ng-repeat="article in articleCategory.articles" class="article-accordian-article">
+        <span class="header"
+          ng-click="article.show = !article.show">
+          <span>{{article.title}}</span>
+          <i ng-class="{'ion-plus-round': !article.show, 'ion-minus-round': article.show}"></i>
+        </span>
+        <span class="body trans"
+          ng-bind-html="article.text"
+          ng-class="{'open': article.show}">
+        </span>
+      </span>
+    </span>
+  </div></script><ion-view view-title="Privacy Policy on MyNyte.co.uk" class="grey_bg privacy-policy article-page"><ion-content><h2>{{pageTitle}}</h2><div class="tile register businesses-items-note" ng-include src="'/sectioned-article.html'"></div></ion-content></ion-view>

@@ -1,4 +1,17 @@
-var RootUrl = (IntendedEnvironment == 'Staging') ? "https://www.mynyte.co.uk/staging/": "https://www.mynyte.co.uk/live/";
+var RootUrl;
+console.log(IntendedEnvironment);
+switch(IntendedEnvironment) {
+  case 'Staging': 
+    RootUrl = "https://www.mynyte.co.uk/staging/";
+    break;
+  case 'Live': 
+    RootUrl = "https://www.mynyte.co.uk/live/";
+    break;
+  case 'Local':
+    RootUrl = "";
+    break;
+} 
+var dataFolder = (IntendedEnvironment == 'Local') ? 'json': 'sp';
 var AssetsFolderUrl = RootUrl + "sneak-preview";
 var AnalyticsScriptSrc = (IntendedPlatform == "browser") ? " https://www.google-analytics.com/ ": "";
 var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://stats.g.doubleclick.net/ https://www.cineworld.co.uk/ https://maps.googleapis.com/"+AnalyticsScriptSrc+"data:";
