@@ -8,7 +8,7 @@
    		var scripts = document.getElementsByTagName("script");
    		var currentScript = scripts[scripts.length - 1].src;
    		var current_environment = 'live';
-   		var current_db_environment = mynyte_db_environment || 'live';
+   		var current_db_environment = (typeof(mynyte_db_environment) !== 'undefined') ? mynyte_db_environment : 'live';
    		var current_environment_page_url = null;
    		var current_environment_file_url = null;
 		var _bid = mynyte_business_id;
