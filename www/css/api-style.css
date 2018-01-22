@@ -1201,6 +1201,15 @@ span.mynyte-label-detail {
     color: #666;
 }
 
+.mynyte-popup.menu-item-detail .mn-popup-body img {
+    float: left;
+    width: 90px;
+    height: 90px;
+    border: 1px solid #ccc;
+    border-radius: 52px;
+    margin: 7px 15px 10px;
+}
+
 .mn-popup-body button.start-chat {
     float: right;
     background: #ddd;
