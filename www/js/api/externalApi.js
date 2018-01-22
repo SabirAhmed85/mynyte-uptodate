@@ -443,9 +443,13 @@
 								var par = $(item).parent('.text-container');
 								var title = par.find('.title').html();
 								var description = par.find('.description').html();
+								var imageURL = par.data('image-url');
 								$('.mynyte-popup.menu-item-detail').find('h4').html(title);
 								if (typeof(description) !== 'undefined') {
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('.menu-item-description').html(description);
+								}
+								if (typeof(imageURL) != 'undefined') {
+									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('img').attr('src', imageURL);
 								}
 								openPopup({'speed': 'fast'});
 							}
@@ -459,7 +463,7 @@
 						  }
 						  if (a == successData.length - 1) {
 							for (var b = 0; b < successData.length; b++) {
-								categories[successData[b].menuItemCategoryName].push({'name': successData[b].Name, 'price': successData[b].Price, 'description': successData[b].Description});
+								categories[successData[b].menuItemCategoryName].push({'name': successData[b].Name, 'price': successData[b].Price, 'description': successData[b].Description, 'imageURL': successData[b].imageURL});
 
 								if (b == successData.length - 1) {
 
@@ -471,7 +475,8 @@
 											for (var c = 0; c < categories[cat].length; c++) {
 												var menuItemClickableString = (existingVars.menuItemClickable == true) ? " onclick='MynyteApi.showMenuItem(this);'": "";
 												var menuItemClickableClass = (existingVars.menuItemClickable == true) ? " menu-item-clickable": "";
-												htmlToAdd += "<div class='text-container'>";
+												var imageURLString = (categories[cat][c]['imageURL'] != '' && categories[cat][c]['imageURL'] != null) ? ' data-image-url="'+categories[cat][c]['imageURL']+'"': '';
+												htmlToAdd += "<div class='text-container'"+ imageURLString +">";
 													htmlToAdd += "<span class='title"+menuItemClickableClass+"'"+menuItemClickableString+">"+categories[cat][c]["name"]+"</span>";
 													htmlToAdd += "<!--<span class='options'>Options</span>-->";
 													htmlToAdd += "<span class='price'>£ "+categories[cat][c]["price"]+"</span>";
