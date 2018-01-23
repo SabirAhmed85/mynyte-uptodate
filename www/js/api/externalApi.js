@@ -443,7 +443,7 @@
 								var par = $(item).parent('.text-container');
 								var title = par.find('.title').html();
 								var description = par.find('.description').html();
-								var imageURL =  (par.data('image-url')) ? 'https://www.mynyte.co.uk/' + current_environment_page_url + '/sneak-preview/img/user_images/catalogue_item_photo/' + par.data('image-url') : null;
+								var imageURL =  (par.data('image-url')) ? 'https://www.mynyte.co.uk/' + current_environment_file_url + '/sneak-preview/img/user_images/catalogue_item_photo/' + par.data('image-url') : null;
 								$('.mynyte-popup.menu-item-detail').find('h4').html(title);
 								if (typeof(description) !== 'undefined') {
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('.menu-item-description').html(description);
