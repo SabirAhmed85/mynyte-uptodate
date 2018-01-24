@@ -449,12 +449,17 @@
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('.menu-item-description').html(description);
 								}
 								if (typeof(imageURL) != 'undefined' && imageURL != null) {
+									var p = $('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('p.menu-item-description');
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('img').attr('src', imageURL);
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('img').show();
+									if (!p.hasClass("with-image")) {
+										$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('p.menu-item-description').addClass("with-image");
+									}
 								}
 								else {
 									console.log("yo");
 									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('img').hide();
+									$('.mynyte-popup.menu-item-detail').find('.mn-popup-body').find('p.menu-item-description').removeClass("with-image");
 								}
 								openPopup({'speed': 'fast'});
 							}
