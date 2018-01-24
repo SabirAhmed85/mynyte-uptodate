@@ -1200,6 +1200,10 @@ span.mynyte-label-detail {
     margin: 0 10px 9px;
     color: #666;
 }
+.mn-popup-body .menu-item-description.with-image {
+    float: left;
+    width: calc(100% - 175px);
+}
 
 .mynyte-popup.menu-item-detail .mn-popup-body img {
     float: left;
@@ -1207,7 +1211,7 @@ span.mynyte-label-detail {
     height: 90px;
     border: 1px solid #ccc;
     border-radius: 52px;
-    margin: 7px 15px 10px;
+    margin: 12px 15px 10px;
 }
 
 .mn-popup-body button.start-chat {
