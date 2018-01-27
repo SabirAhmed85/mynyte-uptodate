@@ -4,18 +4,20 @@
    // DOM Ready - do your stuff
    MynyteApi = function () {
    		var disableScroll = false;
+		//SHOULD ACTUALLY CHECK THE DOMAIN TO SEE IF THEY ARE OUR DEV TEAM ETC
+		var localDevAllowed = true;
    		var windowOuterHeight = $(window).height();
    		var scripts = document.getElementsByTagName("script");
    		var currentScript = scripts[scripts.length - 1].src;
-   		var current_environment = 'staging';
-   		var current_db_environment = (typeof(mynyte_db_environment) !== 'undefined') ? mynyte_db_environment : 'live';
+   		var current_environment = (typeof(current_mynyte_env) !== 'undefined' && localDevAllowed == true) ? current_mynyte_env: 'live';
+   		var current_db_environment = (typeof(mynyte_db_environment) !== 'undefined' && localDevAllowed == true) ? mynyte_db_environment : current_environment;
    		var current_environment_page_url = null;
    		var current_environment_file_url = null;
+   		var current_environment_root_prefix = (current_environment == 'local' && localDevAllowed == true) ? 
+   			(typeof(local_root_prefix) !== 'undefined') ? local_root_prefix : "localhost/": 
+   			"https://www.mynyte.co.uk";
 		var _bid = mynyte_business_id;
 
-   		if (typeof(current_mynyte_env) !== 'undefined') {
-   			current_environment = current_mynyte_env;
-   		}
    		current_environment_page_url = (current_environment == 'staging') ? "staging/": "";
    		current_environment_file_url = (current_environment == 'staging') ? "staging/": "live/";
    		current_db_environment_file_url = current_db_environment + "/";
@@ -849,8 +851,8 @@
 				}
 
 				//General css files
-				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/'+current_environment_file_url+'css/api-style.css" type="text/css" />');
-				$('head').append('<link rel="stylesheet" href="https://www.mynyte.co.uk/'+current_environment_file_url+'css/ionicons.min.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="'+ current_environment_root_prefix +current_environment_file_url+'css/api-style.css" type="text/css" />');
+				$('head').append('<link rel="stylesheet" href="'+ current_environment_root_prefix +current_environment_file_url+'css/ionicons.min.css" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://webfonts.creativecloud.com/c/69721a/1w;quicksand,2,WXp:W:n4,WXn:W:n7/l" type="text/css" />');
 				$('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />');
 				
@@ -1235,6 +1237,7 @@
 			    													var img = $('<img />');
 			    													var imgsContainer = $(elem).parent('span').find('.mynyte-image-input-images');
 			    													img.attr('src', reader.result);
+			    													console.log(img.height);
 			    													imgContainer.append(img);
 			    													imgsContainer.append(imgContainer);
 
