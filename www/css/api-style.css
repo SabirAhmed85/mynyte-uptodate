@@ -909,13 +909,44 @@ input.mynyte-form-input.mynyte-form-text-input {
     color: #888;
 }
 
+input.mynyte-form-input.mynyte-form-image-input {
+    background: #ddd;
+    padding: 15px 10px;
+    color: #ddd;
+    float: left;
+    width: calc(100% - 20px);
+    clear: left;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.mynyte-form-input-container .mynyte-image-input-images {
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+.mynyte-form-input-container .mynyte-image-input-images .img-container {
+    width: 74px;
+    float: left;
+    border: 1px solid #ccadad;
+    margin-top: 5px;
+    height: 60px;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+.mynyte-form-input-container .mynyte-image-input-images .img-container img {
+    float: left;
+    width: 100%;
+}
+
 span.input-maxlength-note {
     float: right;
     margin-top: 5px;
     color: #999;
     margin-right: 5px;
 }
-
 
 
 

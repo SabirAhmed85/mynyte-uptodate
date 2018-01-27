@@ -7,7 +7,7 @@
    		var windowOuterHeight = $(window).height();
    		var scripts = document.getElementsByTagName("script");
    		var currentScript = scripts[scripts.length - 1].src;
-   		var current_environment = 'live';
+   		var current_environment = 'staging';
    		var current_db_environment = (typeof(mynyte_db_environment) !== 'undefined') ? mynyte_db_environment : 'live';
    		var current_environment_page_url = null;
    		var current_environment_file_url = null;
@@ -1108,7 +1108,8 @@
 											
 											function addPropFinal (i, isReqLabel, inputString) {
 												var prop = keys[i];
-												htmlString += "<div class='mynyte-form-field-container'><label class='mynyte-form-field-label'>" + modelProperties[prop]["Name"] + isReqLabel + "</label>";
+												var name = modelProperties[prop]["Name"].replace(" Arr[]", "s");
+												htmlString += "<div class='mynyte-form-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
 												htmlString += "<div class='mynyte-form-input-container'>" + inputString + "</div></div>";
 												
 												if (i < keys.length - 1) {
@@ -1131,27 +1132,9 @@
 													propType = modelProperties[prop]["Related Property Type"],
 													propSubType = modelProperties[prop]["Related Property Sub-Type"];
 
-												if (dataType.indexOf('VARCHAR') > -1) {
-													inputString = "<input name = '" +name+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='text' "+maxLen+""+minLen+" />";
-													if (maxLen != "") {
-														inputString += "<span class='input-maxlength-note'>" + modelProperties[prop]["Max Length"] + " Char Max</span>";
-													}
-													
-													addPropFinal(i, isReqLabel, inputString);
-												}
-												/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
-												else if (dataType.indexOf('INT') > -1 && propType != null) {
-													inputString = "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" />";
-													if (maxLen != "") {
-														inputString += "<span class='input-maxlength-note'>" + modelProperties[prop]["Max Length"] + " Char Max</span>";
-													}
-													
-													addPropFinal(i, isReqLabel, inputString);
-												}
 												
-												//Should check if the option is a select-style option
-
-												else if (dataType.indexOf('INT') > -1 && propType == null) {		
+												//Should actually check if the option is a select-style option
+												if (dataType.indexOf('INT') > -1 && propType == null) {		
 													var propType = modelProperties[prop]["Related Property Type"] || 'Business Item',
 														propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
 														propLabel = modelProperties[prop]["Related Property Label"] || 'Business Entity Item',
@@ -1216,14 +1199,62 @@
 														}
 													});
 												}
-												else if (dataType == 'DATE') {
-													inputString = "<div data-name='" +  modelProperties[prop]["Name"] + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-datepicker'></button></div>";
-													
-													addPropFinal(i, isReqLabel, inputString);
-												}
-												else if (dataType == 'TIME') {
-													inputString = "<div data-name='" +  modelProperties[prop]["Name"] + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-timepicker'></button></div>";
-													
+												else {
+													if (dataType.indexOf('VARCHAR') > -1) {
+														inputString = "<input name = '" +name+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='text' "+maxLen+""+minLen+" />";
+														if (maxLen != "") {
+															inputString += "<span class='input-maxlength-note'>" + modelProperties[prop]["Max Length"] + " Char Max</span>";
+														}
+													}
+													/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
+													else if (dataType.indexOf('INT') > -1 && propType != null) {
+														inputString = "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" />";
+														if (maxLen != "") {
+															inputString += "<span class='input-maxlength-note'>" + modelProperties[prop]["Max Length"] + " Char Max</span>";
+														}
+													}
+													else if (dataType == 'DATE') {
+														inputString = "<div data-name='" +  modelProperties[prop]["Name"] + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-datepicker'></button></div>";
+														
+													}
+													else if (dataType == 'TIME') {
+														inputString = "<div data-name='" +  modelProperties[prop]["Name"] + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-timepicker'></button></div>";
+														
+													}
+													else if (dataType == 'IMAGE') {
+														MynyteApi.imageUploadFileTypeCheck = function (elem) {
+															console.log(elem.value);
+
+															function readFile(a) {
+																var reader = new FileReader();
+
+			    													console.log(reader, a);
+			   													reader.readAsDataURL(elem.files[a]);
+			   													reader.onload = function (read) {
+			    													var imgContainer = $('<div class="img-container"></div>');
+			    													var img = $('<img />');
+			    													var imgsContainer = $(elem).parent('span').find('.mynyte-image-input-images');
+			    													img.attr('src', reader.result);
+			    													imgContainer.append(img);
+			    													imgsContainer.append(imgContainer);
+
+			    													if (a < elem.files.length - 1) {
+			    														readFile(a+1);
+			    													}
+			    													else {
+
+			    													}
+			   													};
+																reader.onerror = function (error) {
+			     													console.log('Error: ', error);
+			   													};
+		   													}
+
+		   													readFile(0);
+														}
+														inputString = "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+" multiple/><span class='mynyte-image-input-images'></span></span>";
+													}
+
 													addPropFinal(i, isReqLabel, inputString);
 												}
 											}
