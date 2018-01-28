@@ -931,7 +931,7 @@ input.mynyte-form-input.mynyte-form-image-input {
     float: left;
     border: 1px solid #ccadad;
     margin-top: 5px;
-    height: 60px;
+    height: 74px;
     overflow: hidden;
     margin-right: 5px;
 }
@@ -1051,6 +1051,17 @@ label.mynyte-label {
 
 span.mynyte-label-detail {
     float: left;
+    margin-left: 20px;
+}
+span.mynyte-label-detail.with-image {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+span.mynyte-label-detail.with-image img {
+    width: 100%;
 }
 
   /* BUSINESS ITEM SUMMARY */
@@ -1070,6 +1081,12 @@ span.mynyte-label-detail {
   /* BUSINESS ITEM DETAIL */
 .mynyte-business-item-detail {
     padding: 10px 30px 10px 20px;
+}
+
+.mynyte-business-item-detail .mynyte-label-container {
+    float: left;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
   
