@@ -8,10 +8,20 @@ var clean = require('gulp-clean');
 var concat = require('gulp-concat');
 var gcallback = require('gulp-callback');
 var scp = require('gulp-scp2');
+var rename = require('gulp-rename');
+var fs = require('fs-extra');
+var replace = require('gulp-replace');
 
 var params = {
 	appHTML: ['./www/templates/*.html', './www/templates/**/*.html', './www/templates/**/**/*.html'],
 	appJs: ['./www/js/**/*.js'],
+	apiJs: [
+		'./www/js/api-dev/externalApi.js'
+		, './www/js/api-dev/apiSetupVars.js'
+		, './www/js/api-dev/apiGlobalFunctions.js'
+		, './www/js/api-dev/apiDataConnect.js'
+		, './www/js/api-dev/apiPopup.js'],
+	apiPath: './www/js/api/',
 	appCss: ['./www/css/*.css']
 }
 
@@ -57,6 +67,22 @@ gulp.task('deploy', function() {
 		.on('error', function(err) {
 			console.log(err);
 		});
+});
+
+gulp.task('processApi', function () {
+	var setupVars = fs.readFileSync(params.apiJs[1], "utf8");
+	var globalFunc = fs.readFileSync(params.apiJs[2], "utf8");
+	var dataConnect = fs.readFileSync(params.apiJs[3], "utf8");
+	var popup = fs.readFileSync(params.apiJs[4], "utf8");
+
+	return gulp.src(params.apiJs[0])
+        .pipe(replace('//***apiSetupVarsScript***//', setupVars))
+        .pipe(replace('//***apiGlobalFunctionsScript***//', globalFunc))
+        .pipe(replace('//***apiDataConnectScript***//', dataConnect))
+        .pipe(replace('//***apiPopupScript***//', popup))
+        //.pipe(rename('externalApi.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(params.apiPath));
 });
 
 gulp.task('build', ['compress','clean-dist']);
