@@ -8,7 +8,7 @@ $('body').ontouchmove = function(e){
    if(disableScroll){
      e.preventDefault();
    } 
-}
+};
 
 function lockScroll () {
 	// lock scroll position, but retain settings for later

@@ -11,6 +11,7 @@ var scp = require('gulp-scp2');
 var rename = require('gulp-rename');
 var fs = require('fs-extra');
 var replace = require('gulp-replace');
+var jshint = require('gulp-jshint');
 
 var params = {
 	appHTML: ['./www/templates/*.html', './www/templates/**/*.html', './www/templates/**/**/*.html'],
@@ -20,7 +21,9 @@ var params = {
 		, './www/js/api-dev/apiSetupVars.js'
 		, './www/js/api-dev/apiGlobalFunctions.js'
 		, './www/js/api-dev/apiDataConnect.js'
-		, './www/js/api-dev/apiPopup.js'],
+		, './www/js/api-dev/apiPopup.js'
+		, './www/js/api-dev/apiCreateHTML.js'
+		, './www/js/api-dev/apiImportScripts.js'],
 	apiPath: './www/js/api/',
 	appCss: ['./www/css/*.css']
 }
@@ -69,19 +72,29 @@ gulp.task('deploy', function() {
 		});
 });
 
-gulp.task('processApi', function () {
+gulp.task('lintApiJs', function () {
+	return gulp.src(params.apiJs)
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+});
+
+gulp.task('processApi', ['lintApiJs'], function () {
 	var setupVars = fs.readFileSync(params.apiJs[1], "utf8");
 	var globalFunc = fs.readFileSync(params.apiJs[2], "utf8");
 	var dataConnect = fs.readFileSync(params.apiJs[3], "utf8");
 	var popup = fs.readFileSync(params.apiJs[4], "utf8");
+	var createHTML = fs.readFileSync(params.apiJs[5], "utf8");
+	var importScripts = fs.readFileSync(params.apiJs[6], "utf8");
 
 	return gulp.src(params.apiJs[0])
         .pipe(replace('//***apiSetupVarsScript***//', setupVars))
         .pipe(replace('//***apiGlobalFunctionsScript***//', globalFunc))
         .pipe(replace('//***apiDataConnectScript***//', dataConnect))
         .pipe(replace('//***apiPopupScript***//', popup))
+        .pipe(replace('//***apiCreateHTMLScript***//', createHTML))
+        .pipe(replace('//***apiImportScriptsScript***//', importScripts))
         //.pipe(rename('externalApi.min.js'))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(gulp.dest(params.apiPath));
 });
 

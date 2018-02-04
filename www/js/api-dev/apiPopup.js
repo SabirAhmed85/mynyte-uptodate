@@ -36,7 +36,9 @@ function openPopup(params) {
 		document.body.classList.add('mn-modal--opened');
 	}
 
-	window.setTimeout(function () {$('.mynyte-popup-cover').addClass("mynyte-popup-open")}, speed);
+	window.setTimeout(
+		function () {$('.mynyte-popup-cover').addClass("mynyte-popup-open");
+	}, speed);
 
 	if (params.onComplete) {
 		params.onComplete();

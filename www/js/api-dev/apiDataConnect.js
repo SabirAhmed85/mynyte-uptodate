@@ -42,17 +42,17 @@ function internalDataConnect (params) {
 			type: "POST", cache: false, processData: false, async: false
 		}
 	};
-	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0]["internalDataUrl"]);
+	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl);
 	console.log(action);
 	$.ajax({
-		url: MynyteApi.pageVars['New Business Item Forms'][0]["internalDataUrl"]+"/"+className+".php?action="+action,
-		type: actionPropsMap[action]["type"],
+		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
+		type: actionPropsMap[action].type,
 		dataType: "json",
 		context: self,
-		async: actionPropsMap[action]["async"],
+		async: actionPropsMap[action].async,
 		data: data,
-    	cache: actionPropsMap[action]["cache"],
-    	processData: actionPropsMap[action]["processData"],
+    	cache: actionPropsMap[action].type,
+    	processData: actionPropsMap[action].processData,
     	contentType: false,
 		success: function (successData) {
 			successCallback({successData: successData, existingVars: existingVars});
