@@ -185,7 +185,7 @@ function businessItemsSummaryItemHTML(params) {
 			html += "</ul></span></div>";
 		},
 		'itemSummaryPreClose': function () {
-			html += "<a href='" + params.htmlElem.data('link') + params.i + "' class='action-button view-detail-button'>View Detail</a>";
+			html += "<a href='" + params.htmlElem.data('link') + params._itemId + "' class='action-button view-detail-button'>View Detail</a>";
 			html += "</div>";
 		},
 		'dropdownSelectionPreClose': function () {
@@ -219,8 +219,8 @@ function businessItemsSummaryGeneralHTML(params) {
 }
 
 function formFieldHTML(params) {
-	var inputString;
-	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType;
+	var inputString = "";
+	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType, prop = params.prop;
 
 	var globalFieldSetup = {
 		dataType: function () {dataType =  prop["Data Type"];},
@@ -235,42 +235,45 @@ function formFieldHTML(params) {
 
 	var createFieldHTML = {
 		'Text': function () {
-			inputString = "<input name = '" +params.name+ "' class='mynyte-form-input mynyte-form-text-input"+params.isReq+"' type='text' "+params.maxLen+""+params.minLen+" />";
+			inputString += "<input name = '" +name+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='text' "+maxLen+""+minLen+" />";
 			if (params.maxLen != "") {
-				inputString += "<span class='input-maxlength-note'>" + params.maxLen + " Char Max</span>";
+				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Number': function () {
-			inputString = "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" />";
+			inputString += "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" />";
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Fake': function () {
-			inputString = "<div data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'></span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
+			inputString += "<div data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'></span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 		},
 		'IMAGE': function () {
-			inputString = "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+" multiple/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+" multiple/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
-			inputString = "<div data-name='" +  params.name + "' class='mynyte-form-input mynyte-form-fake-input"+params.isReq+"'><button class='mynyte-form-datepicker'></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-datepicker'></button></div>";
 		},
 		'TIME': function () {
-			inputString = "<div data-name='" +  params.name + "' class='mynyte-form-input mynyte-form-fake-input"+params.isReq+"'><button class='mynyte-form-timepicker'></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-timepicker'></button></div>";
 		}
 	};
 
-
-	globalFieldSetup[params.prop]();
-	fieldHTML[params.fieldType]();
+	console.log(params.prop);
+	//globalFieldSetup[params.prop]();
+	for (var val in globalFieldSetup) {
+		globalFieldSetup[val]();
+	}
+	createFieldHTML[params.fieldType]();
 	return inputString;
 }
 
 function formGeneralHTML(params) {
-	var htmlString;
+	var htmlString = "";
 	var formGeneralHTML = {
 		'formStart': function () {
-			htmlString = "<form action='#' name='mynyte-business-item-add-form' onsubmit='return MynyteApi.addBusinessItem();'>";
+			htmlString += "<form action='#' name='mynyte-business-item-add-form' onsubmit='return MynyteApi.addBusinessItem();'>";
 		},
 		'formFieldContainer': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s"),
@@ -279,8 +282,8 @@ function formGeneralHTML(params) {
 			htmlString += "<div class='mynyte-form-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
 		},
-		'formComlete': function () {
-			htmlString = "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>Add Item</button></div>";
+		'formComplete': function () {
+			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>Add Item</button></div>";
 			htmlString += "</form>";
 		}
 	};
