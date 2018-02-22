@@ -591,6 +591,7 @@
 		}
 		
 		function toggleRelatedItemSelect(e, elem) {
+
 			e.preventDefault();
 			var propLabel = $(elem).data('name'),
 				popupCover = $('body').find('.dropdown-wrapper.'+propLabel+'-dropdown-wrapper').parents('.mynyte-popup-cover');
@@ -598,6 +599,7 @@
 			if (popupCover.hasClass('mynyte-popup-open')) {
 				popupCover.removeClass('mynyte-popup-open');
 			} else {
+				console.log("hi");
 				popupCover.addClass('mynyte-popup-open');
 			}
 		}
@@ -1032,10 +1034,12 @@
 												prop = keys[i],
 												dataType = modelProperties[prop]["Data Type"],
 												isReq = (modelProperties[prop]["Is Required"]) ? " required-input": "",
-												propType = prop["Related Property Type"];
-												console.log(modelProperties[prop]);
+												propType = modelProperties[prop]["Related Property Type"];
 												//Should actually check if the option is a select-style option
+												console.log(modelProperties[prop]);
+												console.log(prop["Related Property Type"], dataType.indexOf('INT'), propType != null);
 												if (dataType.indexOf('INT') > -1 && propType != null) {		
+												console.log(modelProperties[prop]["Related Property Type"]);
 													var propType = modelProperties[prop]["Related Property Type"] || 'Business Item',
 														propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
 														propLabel = modelProperties[prop]["Related Property Label"] || 'Business Entity Item',
@@ -1072,7 +1076,7 @@
 																htmlElem = null,
 																htmlPropNameToDisplay = modelProperties[prop]["Name"].substr((modelProperties[prop].Name.indexOf('_') == 0) ? 1: 0, modelProperties[prop].Name.length).replace(" Id", ""),
 																propNameCssFormat = modelProperties[prop]["Name"].replace(/ /g, '-').toLowerCase(),
-																popupHtml = '<div class="mynyte-popup-cover dropdown-wrapper price-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+name.replace(/ /g, '-').toLowerCase()+'-dropdown-wrapper"><h4>Select a '+htmlPropNameToDisplay+'</h4><i data-name="' + propNameCssFormat + '" class="fa fa-times" onclick="return MynyteApi.toggleRelatedItemSelect(event, this)"></i><ul class="dropdown '+name.replace(/ /g, '-').toLowerCase()+'-dropdown"></ul></div></div></div>';
+																popupHtml = '<div class="mynyte-popup-cover dropdown-wrapper price-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+name.replace(/ /g, '-').toLowerCase()+'-dropdown-wrapper"><h4>Select a '+htmlPropNameToDisplay+'</h4><i data-name="' + propNameCssFormat + '" class="fa fa-times" onclick="MynyteApi.toggleRelatedItemSelect(event, this);"></i><ul class="dropdown '+name.replace(/ /g, '-').toLowerCase()+'-dropdown"></ul></div></div></div>';
 																
 															MynyteApi.pageVars['Page Object']["Business Items"] = {};
 																

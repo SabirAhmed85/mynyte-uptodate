@@ -3,12 +3,14 @@ function genericItemTypeObj (params) {
 	var genericItemTypeObj = {
 		'Business Entity Item': function () {
 			obj = {
-				class: 'BusinessEntity', action: 'getBusinessEntityItems',
-				data: {
-					_businessId: MynyteApi.pageVars['New Business Item Forms'][0]._businessId,
-					businessEntityItemType: params.propType,
-					extraFiltersString: "[["+params.propSubLabel+"='"+params.propSubType+"']]",
-					_relatedViewModelId: 'NULL'
+				'Business Entity Item': {
+					class: 'BusinessEntity', action: 'getBusinessEntityItems',
+					data: {
+						_businessId: MynyteApi.pageVars['New Business Item Forms'][0]._businessId,
+						businessEntityItemType: params.propType,
+						extraFiltersString: "[['"+params.propSubLabel+"'='"+params.propSubType+"']]",
+						_relatedViewModelId: 'NULL'
+					}
 				}
 			};	
 		}

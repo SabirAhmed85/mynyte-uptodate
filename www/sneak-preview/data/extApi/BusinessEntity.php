@@ -165,7 +165,7 @@
       $output[] = $row;
 
     header("Content-Type: application/json");
-    echo $callback . "({'items': ".json_encode($output)."})";
+    echo json_encode($output);
 
   mysql_close();
 ?>
