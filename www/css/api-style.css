@@ -864,6 +864,61 @@ body.mn-modal--opened {
 
   /* NEW BUSINESS ITEM FORM */
 
+button.mynyte-button {
+    width: 200px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+button.mynyte-button:hover {
+    cursor: pointer;
+}
+
+button.mynyte-button-with-icon {
+    padding: 7px 10px;
+}
+
+button.mynyte-button-primary {
+    color: #503f3f;
+    background: #c19999;
+    border: 1px solid #7f6868;
+    width: 170px;
+}
+
+button.mynyte-button-secondary {
+    color: #503f3f;
+    background: #c19999;
+    border: 1px solid #7f6868;
+    width: 170px;
+}
+
+button.mynyte-button-secondary.mynyte-button-secondary-dark {
+    color: #403939;
+    background: #a59595;
+    border: 1px solid #7f6868;
+}
+
+.mynyte-button-inner-wrapper {
+    float: none;
+    margin: 0 auto;
+    display: block;
+}
+
+button.mynyte-button-secondary .mynyte-button-inner-wrapper {
+    width: 112px;
+}
+
+.mynyte-button-inner-wrapper i {
+    float: left;
+    font-size: 22px;
+}
+
+.mynyte-button-inner-wrapper span {
+    float: left;
+    margin-top: 3px;
+    margin-left: 14px;
+}
+
 .mynyte-new-business-item {
     float: left;
     clear: left;
@@ -903,7 +958,7 @@ input.mynyte-form-input.mynyte-form-text-input {
     clear: left;
     width: calc(100% - 15px);
     height: 35px;
-    font-size: 18px;
+    font-size: 14px;
     padding-left: 10px;
     margin-top: 5px;
     color: #888;
@@ -911,7 +966,7 @@ input.mynyte-form-input.mynyte-form-text-input {
 
 input.mynyte-form-input.mynyte-form-image-input {
     background: #ddd;
-    padding: 15px 10px;
+    padding: 15px 5px 15px 10px;
     color: #ddd;
     float: left;
     width: calc(100% - 20px);
@@ -920,20 +975,39 @@ input.mynyte-form-input.mynyte-form-image-input {
     margin-top: 5px;
 }
 
+
+input.mynyte-form-input.mynyte-removeable-input {
+    width: calc(100% - 205px);
+    margin-right: 13px;
+}
+
 .mynyte-form-input-container .mynyte-image-input-images {
     float: left;
     clear: left;
     width: 100%;
 }
 
+.mynyte-form-input-container .mynyte-image-input-images .img-outer-container {
+    float: left;
+    width: 100%;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
 .mynyte-form-input-container .mynyte-image-input-images .img-container {
     width: 74px;
     float: left;
     border: 1px solid #ccadad;
-    margin-top: 5px;
+    margin-top: 6px;
     height: 74px;
     overflow: hidden;
     margin-right: 5px;
+}
+
+.mynyte-form-input-container .mynyte-image-input-images .img-input-container {
+    float: left;
+    width: calc(100% - 86px);
+    margin-left: 5px;
 }
 
 .mynyte-form-input-container .mynyte-image-input-images .img-container img {
@@ -1021,6 +1095,17 @@ button.mynyte-form-selecttoggler {
     margin: 0;
     width: 60px;
     border-radius: 0;
+}
+
+.mynyte-form-input-container .input-inner-container {
+    float: left;
+    width: 100%;
+}
+
+.mynyte-form-input-container button.remove-input-button {
+    margin-top: 7px;
+    float: right;
+    margin-right: 3px;
 }
 
 .mynyte-form-input.mynyte-input-error {
