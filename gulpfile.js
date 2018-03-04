@@ -78,7 +78,7 @@ gulp.task('lintApiJs', function () {
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('processApi', ['lintApiJs'], function () {
+gulp.task('processApi', function () {
 	var setupVars = fs.readFileSync(params.apiJs[1], "utf8");
 	var globalFunc = fs.readFileSync(params.apiJs[2], "utf8");
 	var dataConnect = fs.readFileSync(params.apiJs[3], "utf8");

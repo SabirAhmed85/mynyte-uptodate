@@ -427,7 +427,11 @@
 				businessItems[thisItem._id] = {};
 			}
 			
-			businessItems[thisItem._id]._id = thisItem._id;
+			businessItems[thisItem._id]._itemId = thisItem._id;
+
+			if (viewType != 'Dropdown Selection' || (viewType == 'Dropdown Selection' && (viewModelProps == null || viewModelProps.indexOf("_id") > 0))) {
+				businessItems[thisItem._id]._id = thisItem._id;
+			}
 			
 			if (thisItem.metaName.indexOf("Arr[]") == -1 && thisItem.metaName.indexOf("_") != 0 && (viewModelProps == null || viewModelProps.indexOf(thisItem.metaName) > - 1)) {
 				businessItems[thisItem._id][thisItem.metaName] = thisItem.metaValue;
@@ -460,7 +464,6 @@
 						_businessEntityItemId: thisItem.metaValue
 					},
 					successCallback: function (success) {
-					
 						if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName]) {
 							var counter = 0;
 							businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] = "";
@@ -520,15 +523,14 @@
 					htmlString += businessItemsSummaryItemHTML({element: 'itemStart', item: businessItems[ind], view: viewType});
 
 					for (var prop in businessItems[ind]) {
-						if (prop != "Arrays") {
+						if (prop != "Arrays" && prop != '_itemId') {
 							htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop});
-						} else {
+						} else if (prop != '_itemId') {
 							for (var prop2 in businessItems[ind][prop]) {
 								htmlString += businessItemsSummaryItemHTML({element: 'arrayProp', item: businessItems[ind], prop: prop, prop2: prop2});
 							}
 						}
 					}
-					
 					
 					if (viewType == 'Item Summary') {
 						htmlString += businessItemsSummaryItemHTML({element: 'itemSummaryPreClose', htmlElem: htmlElem, _itemId: businessItems[ind]._id});
@@ -1022,11 +1024,10 @@
 
 												MynyteApi.addFormInputToForm = function (button) {
 													var newInput = $(button).siblings('.input-container').find('.mynyte-form-input').first().clone(),
-														newImg = $(button).siblings('.input-container').find('.mynyte-image-input-images').first().clone(),
+														newImg = $(button).siblings('.input-container').find('.mynyte-image-input-images').first().clone().empty(),
 														par = $(button).siblings('.input-container')[0],
 														innerCont = $("<span class='input-inner-container'></span>"),
 														removeButton = $($.parseHTML("<button type='button' onclick='MynyteApi.removeFormInputFromForm(this);' class='remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon'><span class='mynyte-button-inner-wrapper'><i class='fa fa-minus'></i><span>Remove</span></span></button>"));
-														console.log(newInput, button);
 
 													newInput.val('').addClass('mynyte-removeable-input').appendTo(innerCont);
 													removeButton.appendTo(innerCont);
@@ -1037,17 +1038,20 @@
 													innerCont.appendTo(par);
 												};
 												//Should actually check if the option is a select-style option
-												if (dataType.indexOf('INT') > -1 && propType != null) {		
+												if (dataType.indexOf('INT') > -1 && propType != null) {
 													var propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
 														propLabel = modelProperties[prop]["Related Property Label"] || 'Business Entity Item',
 														propSubLabel = modelProperties[prop]["Related Property Sub-Label"] || "'Related Business Entity Specific Item Type'",
-														propViewModelProps = ['_id'];
+														propViewModelProps = modelProperties[prop]["Related Property ViewModel Props"] || ['_id'];
+
 													propType = modelProperties[prop]["Related Property Type"] || 'Business Item';
+
 														
 													if (modelProperties[prop]["Related Property ViewModel Props"]) {
 														var viewModelProps = modelProperties[prop]["Related Property ViewModel Props"].split(",");
 														propViewModelProps = [];
 														for (var a = 0; a < viewModelProps.length; a++) {
+															viewModelProps[a] = viewModelProps[a].trim();
 															propViewModelProps.push(viewModelProps[a]);
 														}
 													}
@@ -1079,9 +1083,9 @@
 															MynyteApi.pageVars['Page Object']["Business Items"] = {};
 																
 															$('body').append(popupHtml);
-															
+
 															loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), 'viewModelProps': propViewModelProps});
-															
+
 															inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop]});
 															
 															addPropFinal(i, isReqLabel, inputString);
@@ -1094,7 +1098,10 @@
 												else {
 
 													if (dataType.indexOf('VARCHAR') > -1) {
-														inputString = formFieldHTML({fieldType: 'Text', prop: modelProperties[prop]});
+														var size = dataType.substr(dataType.indexOf('(') + 1, dataType.indexOf(')') - dataType.indexOf('(') - 1);
+														var fieldType = (parseInt(size) <= 1000) ? 'Text': 'Textarea';
+
+														inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop]});
 													}
 													/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
 													else if (dataType.indexOf('INT') > -1 && propType == null) {
@@ -1129,8 +1136,8 @@
 
 				    													imgContainer.append(img);
 				    													imgOuterContainer.append(imgContainer);
-				    													imgInputContainer.append($('<input class="img-container-alt mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Alternative Text (for SEO)"/>'));
-				    													imgInputContainer.append($('<input class="img-container-title mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Title" />'));
+				    													//imgInputContainer.append($('<input class="img-container-alt mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Alternative Text (for SEO)"/>'));
+				    													//imgInputContainer.append($('<input class="img-container-title mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Title" />'));
 				    													imgOuterContainer.append(imgInputContainer);
 				    													imgsContainer.append(imgOuterContainer);
 
@@ -1204,6 +1211,7 @@
 
 
 									var assignValToPageObject = function (i, val) {
+										val = (typeof(val) === 'undefined') ? val : val.toString().replace("'", '&#39;').replace('"', '&#34;');
 										if (i > 0) {
 											pageObjectModel[prop].Value.push(val);
 										}
@@ -1218,8 +1226,13 @@
 									var handleInputVal = function (i) {
 										var input = $('input[name="' + name + '"]').eq(i);
 
-										if (input.attr('type') == 'file' && input[0].files) {
+										if (input.attr('type') == 'file' && input[0].files[0]) {
+											var inputImageAlt = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-alt').val();
+											var inputImageTitle = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-title').val();
 											valToAssign = input[0].files[0].name;
+											pageObjectModel[prop].IsImage = true;
+											pageObjectModel[prop].AltText = inputImageAlt;
+											pageObjectModel[prop].TitleText = inputImageTitle;
 										}
 										else {
 											valToAssign = input.val();
@@ -1266,7 +1279,6 @@
 
 										if ($('input[name="' + name + '"]').length) {
 											for (a = 0; a < $('input[name="' + name + '"]').length; a++) {
-												console.log($('input[name="' + name + '"]').eq(a)[0], name, a);
 												handleInputVal(a);
 											}
 										}
@@ -1281,10 +1293,10 @@
 											}
 										}
 
-										if (pageObjectModel[prop].Value == "" || typeof(pageObjectModel[prop].Value) === 'undefined') {
+										if (pageObjectModel[prop]["Is Required"] && ((pageObjectModel[prop].Value == "" || typeof(pageObjectModel[prop].Value) === 'undefined') && pageObjectModel[prop]) ) {
 											handleErrorVal();
 										}
-										else {
+										else if (pageObjectModel[prop]["Is Required"]) {
 											reverseErrorValHandling();
 										}
 									}

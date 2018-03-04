@@ -12,6 +12,7 @@
     $_businessId = $_GET['_businessId'];
     $businessEntityItemName = $_GET['businessEntityItemName'];
     $nameValuePairString = $_GET['nameValuePairString'];
+    $nameValuePairString = str_replace('"', '&#34;', $nameValuePairString);
     
     /*
     addBusinessEntityItem Method Parameters:
@@ -22,7 +23,7 @@
       Example: CALL addBusinessEntityItem(1, "Apppointment Booking", "[['Related Business Entity Item Appointment Type':='Process Serving Job']],[['_Related User Account Id':='19']]");
 
     */
-      //echo 'CALL addBusinessEntityItem('.$_businessId.', "'.$businessEntityItemName.'", "'.$nameValuePairString.'")';
+  //echo 'CALL addBusinessEntityItem('.$_businessId.', "'.$businessEntityItemName.'", "'.$nameValuePairString.'")';
     $result = mysql_query('CALL addBusinessEntityItem('.$_businessId.', "'.$businessEntityItemName.'", "'.$nameValuePairString.'")');
   }
 
