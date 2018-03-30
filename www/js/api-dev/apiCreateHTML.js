@@ -170,7 +170,7 @@ function businessItemsSummaryItemHTML(params) {
 					return "";
 				}
 			};
-
+			console.log(params.item._itemId);
 			html += "<"+ elemType + dataPropToDisplayString() +" class='mynyte-business-items-summary-item"+dropdownClass+"' data-item-ref='"+params.item._itemId+"'>";
 		},
 		'nonArrayProp': function () {
@@ -206,12 +206,30 @@ function businessItemsSummaryItemHTML(params) {
 }
 
 function businessItemsSummaryGeneralHTML(params) {
-	var html = "";
+	var html = "",
+		itemsLen = params.itemsLen,
+		currentPage = params.currentPage,
+		pageItemLimit = params.pageItemLimit;
 
 	var globalSetup = {
 	};
 
 	var businessItemsSummaryGeneralHTML = {
+		'pager': function () {
+			var pages = itemsLen / pageItemLimit,
+				lowInd = ((params.currentPage - 1) * pageItemLimit) + 1,
+				highInd = ((params.currentPage - 1) * pageItemLimit) + pageItemLimit,
+				selectedStr;
+			highInd = (highInd > itemsLen) ? itemsLen: highInd;
+
+			html += "<div class='mynyte-items-pager'><span class='mn-pager-text'>Currently showing results " + lowInd + " to " + highInd + " out of " + itemsLen + ".</span>";
+			html += "<span class='mn-pager-dropdown'><span>Go to page:</span> <select onchange='MynyteApi.changeBusinessItemsCurrentPage(this);'>";
+			for (var a = 0; a < pages; a++) {
+				selectedStr = (a+1 == currentPage) ? " selected='selected'": "";
+				html += "<option value='page_" + (a + 1) + "'"+ selectedStr +">" + (a + 1) + "</option>"; 
+			}
+			html += "</select></div>";
+		},
 		'noItemsNote': function () {
 			html += "<div>" + params.text + "</div>";
 		}
@@ -227,11 +245,11 @@ function formFieldHTML(params) {
 
 	var globalFieldSetup = {
 		dataType: function () {dataType =  prop["Data Type"];},
-		name: function () {name = prop.Name.toLowerCase().replace(/ /g, "-");},
+		name: function () {name = propNameCssFormatter(prop.Name);},
 		isReq: function () {isReq = (prop["Is Required"]) ? " required-input": "";},
 		maxLen: function () {maxLen = (prop["Max Length"]) ? " data-maxLength='"+prop["Max Length"]+"'": "";},
 		minLen: function () {minLen = (prop["Min Length"]) ? " data-minLength='"+prop["Min Length"]+"'": "";},
-		propNameCssFormat: function () {propNameCssFormat = prop.Name.replace(/ /g, '-').toLowerCase();},
+		propNameCssFormat: function () {propNameCssFormat = propNameCssFormatter(prop.Name);},
 		propType: function () {propType = prop["Related Property Type"];},
 		propSubType: function () {propSubType = prop["Related Property Sub-Type"];},
 		isArray: function () {isArray = prop.Name.indexOf(" Arr[]") > -1;}
@@ -252,25 +270,24 @@ function formFieldHTML(params) {
 		},
 		'Number': function () {
 			inputString += "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" /></span>";
-			if (maxLen != "") {
-				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
-			}
+		},
+		'Double': function () {
+			inputString += "<input name='"+name+"' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' step='0.01' "+maxLen+""+minLen+" /></span>";
 		},
 		'Fake': function () {
-			inputString += "<div data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'>Select an Option</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div></span>";
+			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'>Select an Option</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div></span>";
 		},
 		'IMAGE': function () {
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span></span>";
 		},
 		'DATE': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-datepicker'></button></div></span>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span></span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div></span>";
 		},
 		'TIME': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><button class='mynyte-form-timepicker'></button></div></span>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span></span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div></span>";
 		}
 	};
 
-	console.log(params.prop);
 	//globalFieldSetup[params.prop]();
 	for (var val in globalFieldSetup) {
 		globalFieldSetup[val]();
@@ -293,9 +310,10 @@ function formGeneralHTML(params) {
 		},
 		'formFieldContainer': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s").replace(" Id", "").replace("_Related", ""),
-				isReqLabel = (params.prop["Is Required"]) ? " (Required)": "";
+				isReqLabel = (params.prop["Is Required"]) ? " (Required)": "",
+				cssName = params.prop.Name.replace(/ /g, "-").replace(".", "").toLowerCase();
 
-			htmlString += "<div class='mynyte-form-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
+			htmlString += "<div class='mynyte-form-field-container " + cssName + "-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
 		},
 		'formComplete': function () {

@@ -162,11 +162,18 @@
     echo json_encode($output[0]["@_messageGroupId"]);
   }
 
-  while($row = mysql_fetch_assoc($result))
-      $output[] = $row;
+  if ($action != 'addBusinessEntityItem') {
+    while($row = mysql_fetch_assoc($result))
+        $output[] = $row;
 
+      header("Content-Type: application/json");
+      echo $action.'({items:'.json_encode($output).'})';
+  }
+  else {
+    $row = mysql_fetch_assoc($result);    
     header("Content-Type: application/json");
-    echo $action.'({items:'.json_encode($output).'})';
+    echo $action.'({item:'.json_encode($row["@_businessItemId"]).'})';
+  }
 
   mysql_close();
 ?>

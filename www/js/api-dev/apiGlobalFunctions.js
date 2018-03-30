@@ -30,6 +30,10 @@ function unlockScroll() {
 	window.scrollTo(scrollPosition[0], scrollPosition[1]);
 }
 
+function propNameCssFormatter(name) {
+    return name.replace(/ /g, '-').replace(/\[/g, "").replace(/\]/g, "").toLowerCase();
+}
+
 $(document)
     .on('focus', 'input.popup-input', function(e) {
         $('body').addClass('fixfixed');
