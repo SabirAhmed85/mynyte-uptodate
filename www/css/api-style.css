@@ -2537,8 +2537,11 @@ body.mn-modal--opened {
     color: #4e4e4e;
 }
 
-.mynyte-button.share-button i {
+.mynyte-button.share-button i,
+.mynyte-button-primary i {
     margin-right: 10px;
+    width: 20px;
+    text-align: center;
 }
 
 .mynyte-button-inner-wrapper {
