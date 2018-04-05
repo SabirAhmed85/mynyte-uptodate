@@ -1151,10 +1151,11 @@ button.mynyte-form-selecttoggler {
 }
 
 label.mynyte-label {
-    width: 200px;
+    width: 240px;
     float: left;
     clear: left;
     font-size: 15px;
+    padding-bottom: 0;
 }
 
 span.mynyte-label-detail {
@@ -2724,7 +2725,7 @@ button.mynyte-form-selecttoggler {
 .mynyte-business-item-detail {
     float: left;
     clear: left;
-    max-width: calc(100% - 61px);
+    max-width: calc(100% - 10px);
     margin: 5px;
     background: #f5f4f4;
     border: 1px solid #9d9ec1;
@@ -2763,13 +2764,6 @@ button.mynyte-form-selecttoggler {
     width: 50px;
     margin-top: -5px;
     margin-bottom: 5px;
-}
-
-label.mynyte-label {
-    width: 200px;
-    float: left;
-    clear: left;
-    font-size: 15px;
 }
 
 span.mynyte-label-detail {
@@ -2973,7 +2967,7 @@ span.mynyte-label-detail.with-image img {
 .mynyte-popup.simple-loader i {
     color: #b38c8c;
     float: none;
-    margin: 15px auto 0;
+    margin: 0px auto 20px;
     display: block;
     width: 56px;
     height: 56px;

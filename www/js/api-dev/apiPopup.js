@@ -70,7 +70,8 @@ function openPopup(params) {
 
 function closePopup(params) {
 	var className = (params.class) ? '.'+params.class: '';
-	$('.mynyte-popup-cover'+className).removeClass("mynyte-popup-open");
+	$('.mynyte-popup-cover.mynyte-popup-open').removeClass("mynyte-popup-open");
+	console.log($('.mynyte-popup-cover'+className));
 	// un-lock scroll position
   	unlockScroll();
     enableScrolling();
