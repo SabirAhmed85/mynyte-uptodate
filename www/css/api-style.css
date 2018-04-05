@@ -1142,7 +1142,7 @@ button.mynyte-form-selecttoggler {
 .mynyte-business-item-detail {
     float: left;
     clear: left;
-    max-width: calc(100% - 61px);
+    max-width: calc(100% - 10px);
     margin: 5px;
     background: #f5f4f4;
     border: 1px solid #9d9ec1;
@@ -2454,7 +2454,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-frame-container.mn-dark .listing-menu-item .text-container .options {
-    color: #8a7777;
+    color: #b93737;
 }
 
   /* NEW BUSINESS ITEM FORM */
@@ -2486,6 +2486,11 @@ body.mn-modal--opened {
     border: 1px solid #7f6868;
     width: 170px;
 }
+.mynyte-button-secondary:hover {
+    color: #503f3f;
+    background: #c5aeae;
+    border: 1px solid #756161;
+}
 
 .mynyte-button-secondary.mynyte-button-secondary-dark {
     color: #403939;
@@ -2494,6 +2499,50 @@ body.mn-modal--opened {
 }
 .mynyte-button-secondary.mynyte-button-secondary-dark:hover {
     background: #c5b7b7;
+}
+
+.mynyte-button.fb-share {
+    background: #3a509e;
+    border: 1px solid #152c7d;color: #ddd;
+}
+.mynyte-button.tw-share {
+    background: #478cce;
+    border: 1px solid #38698c;
+    color: #ddd;
+}
+.mynyte-button.wa-share {
+    background: #58c782;
+    border: 1px solid #229053;
+    color: #ddd;
+}
+.mynyte-button.e-share {
+    background: #c5c8d0;
+    border: 1px solid #8b8e9a;
+    color: #6b6b6b;
+}
+
+.mynyte-button.fb-share:hover {
+    background: #4b64bb;
+    color: #fff;
+}
+.mynyte-button.tw-share:hover {
+    background: #62a4e2;
+    color: #fff;
+}
+.mynyte-button.wa-share:hover {
+    background: #6bdc96;
+    color: #fff;
+}
+.mynyte-button.e-share:hover {
+    background: #d8dade;
+    color: #4e4e4e;
+}
+
+.mynyte-button.share-button i,
+.mynyte-button-primary i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
 }
 
 .mynyte-button-inner-wrapper {
@@ -2743,7 +2792,7 @@ button.mynyte-form-selecttoggler {
 
 .mynyte-business-items-summary .mynyte-items-pager {
     float: left;
-    width: calc(100% - 30px);
+    width: calc(100% - 2px);
     padding: 10px 15px 0;
     background: #ddd;
     margin-bottom: 10px;
@@ -2797,7 +2846,7 @@ span.mynyte-label-detail.with-image img {
 
   /* BUSINESS ITEM DETAIL */
 .mynyte-business-item-detail {
-    padding: 10px 30px 10px 20px;
+    padding: 10px 20px 10px 20px;
 }
 
 .mynyte-business-item-detail .mynyte-label-container {
