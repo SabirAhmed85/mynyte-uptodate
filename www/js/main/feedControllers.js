@@ -1237,6 +1237,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     $scope.listing = successData[0];
                     $rootScope.pageTitle = $scope.listing.name;
                     $scope.pageTitle = $rootScope.pageTitle;
+                    $rootScope.seoPageTitle = "Events Tonight Near Me - Latest Events in " + $rootScope.currentSearchTown + " | MyNyte";
+                    $scope.seoPageTitle = $rootScope.seoPageTitle;
+                    $rootScope.seoPageDesc = "Events Tonight Near Me - Latest Events in " + $rootScope.currentSearchTown + " | MyNyte";
+                    $scope.seoPageDesc = $rootScope.seoPageDesc;
                     $scope.listing.follow = successData[0].follow;
                     
                     listingsService.createListingTypesObjForListing($scope.listing);
