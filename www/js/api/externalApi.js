@@ -234,6 +234,7 @@ function openPopup(params) {
 		params.onComplete();
 	}
 }
+MynyteApi.openPopup = openPopup;
 
 function closePopup(params) {
 	var className = (params.class) ? '.'+params.class: '';
@@ -251,6 +252,7 @@ function closePopup(params) {
 		}
 
 }
+MynyteApi.closePopup = closePopup;
 
 	function genericItemTypeObj (params) {
 	var obj = {};

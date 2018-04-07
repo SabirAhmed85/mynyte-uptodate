@@ -27,6 +27,31 @@ label {
     padding-bottom: 10px;
 }
 
+.label-message {
+    float: left;
+    width: 100%;
+    background: #eee;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+.label-message-success {
+    display: none;
+    background: #6cfbb6;
+    border: 1px solid #68cec0;
+}
+.label-message-success.show {
+    display: block;
+}
+.label-message-error {
+    display: none;
+    background: #f1acac;
+    border: 1px solid #c37070;
+}
+.label-message-error.show {
+    display: block;
+}
+
 /*TABLE BOOKING BUTTON*/
 .mynyte-book {
     display: block !important;
@@ -1266,16 +1291,17 @@ span.mynyte-label-detail.with-image img {
 
 }
 
-.mynyte-popup input[type="text"] {
+.mynyte-popup input[type="text"],
+.mynyte-popup input[type="number"] {
     float: left;
-    width: calc(100% - 22px);
-    margin-top: 14px;
+    width: 100%;
+    margin-top: 10px;
     border: 1px solid #d2cfcf;
     border-radius: 4px;
     height: 45px;
-    font-size: 18px;
+    font-size: 15px;
     padding: 0 10px;
-    color: #444;
+    color: #888;
 }
 
 .mn-popup-header {
@@ -2895,6 +2921,9 @@ span.mynyte-label-detail.with-image img {
     transform: scale(1);
     pointer-events: auto;
 }
+.mynyte-popup-cover.property-contact-popup-cover .mynyte-popup {
+    max-width: 500px;
+}
 
 .mynyte-popup {
     width: 95%;
@@ -2928,14 +2957,26 @@ span.mynyte-label-detail.with-image img {
 
 .mynyte-popup input[type="text"] {
     float: left;
-    width: calc(100% - 22px);
-    margin-top: 14px;
+    width: 100%;
+    margin-top: 10px;
     border: 1px solid #d2cfcf;
     border-radius: 4px;
     height: 45px;
-    font-size: 18px;
+    font-size: 15px;
     padding: 0 10px;
+    color: #888;
+}
+
+.mynyte-popup textarea {
+    float: left;
+    width: 100%;
+    border: 1px solid #d2cfcf;
+    border-radius: 4px;
+    height: 85px;
+    font-size: 14px;
+    padding: 10px 10px;
     color: #444;
+    margin-top: 5px;
 }
 
 .mn-popup-header {
@@ -2974,13 +3015,13 @@ span.mynyte-label-detail.with-image img {
 .mn-popup-body {
     float: left;
     width: 100%;
-    padding: 5px 0 0;
+    padding: 5px;
     border-bottom: 1px solid #bbb;
     background: #fefefe;
     border-radius: 5px 5px 0 0;
     overflow-x: hidden;
     overflow-y: scroll;
-    max-height: 90vh;
+    max-height: calc(90vh - 45px);
     padding-top: 20px;
 }
 
@@ -3071,11 +3112,22 @@ span.mynyte-label-detail.with-image img {
 .mn-popup-body form {
     background: none !important;
     border: none !important;
-    width: calc(100% - 40px) !important;
+    width: 100% !important;
     margin: 0 !important;
-    padding: 0 20px 5px !important;
+    padding: 0 15px 10px !important;
     border-bottom: 1px solid #fff !important;
     float: left;
+}
+
+.mn-popup-body form .row {
+    float: left;
+    clear: left;
+    width: 100%;
+    margin-top: 9px;
+}
+
+.mn-popup-body form .row button {
+    float: right;
 }
 
 .mynyte-popup .mn-form-option-note {
