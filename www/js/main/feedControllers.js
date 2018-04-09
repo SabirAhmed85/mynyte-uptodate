@@ -2,9 +2,21 @@
 app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollDelegate', '$ionicConfig', '$cordovaSocialSharing', '$state','$scope', 'Categories', 'Places', 'Events', 'NgMap', 'Profile', 'location', 'Offers', 'fileReader', 'userService', '$cordovaSQLite', '$cordovaFileTransfer', 'listingsService', 'categoriesService', '$timeout', function($rootScope, $ionicViewSwitcher, $ionicScrollDelegate, $ionicConfig, $cordovaSocialSharing, $state, $scope, Categories, Places, Events, NgMap, Profile, location, Offers, fileReader, userService, $cordovaSQLite, $cordovaFileTransfer, listingsService, categoriesService, $timeout) {
     //location.get(angular.noop, angular.noop);
     $scope.pageLoading = true;
+
+    $scope.$on('$ionicView.beforeEnter', function() {
+        $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+        $rootScope.seoPageTitle = ($scope.seoPageTitle) ? $scope.seoPageTitle: $rootScope.seoPageTitle;
+        $rootScope.seoPageDesc = ($scope.seoPageDesc) ? $scope.seoPageDesc: $rootScope.seoPageDesc;
+    });
     
     $scope.pageLoad = function () {
         $scope.rootScope = $rootScope;
+
+        $rootScope.seoPageTitle = "Events & Businesses Near Me Tonight – Latest Events| MyNyte";
+        $scope.seoPageTitle = $rootScope.seoPageTitle;
+        $rootScope.seoPageDesc = "Any events near me tonight?  Find events near you with the help of MyNyte, including cinema, restaurants, clubs and other events.";
+        $scope.seoPageDesc = $rootScope.seoPageDesc;
+
         
         //Root Functions that Apply heavily to this page
         $rootScope.changeFeedHeader = function (newItem) {
@@ -1221,6 +1233,7 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
         
         $scope.$on('$ionicView.beforeEnter', function() {
             $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+            $rootScope.seoPageDesc = ($scope.seoPageDesc) ? $scope.seoPageDesc: $rootScope.seoPageDesc;
             
             $rootScope.allPopoverImages = $scope.popoverImages || $rootScope.allPopoverImages;
         });
@@ -1237,6 +1250,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                     $scope.listing = successData[0];
                     $rootScope.pageTitle = $scope.listing.name;
                     $scope.pageTitle = $rootScope.pageTitle;
+                    $rootScope.seoPageDesc = "Any events near me tonight?  Find events near you with the help of MyNyte, including cinema, restaurants, clubs and other events.";
+                    $scope.seoPageDesc = $rootScope.seoPageDesc;
                     $scope.listing.follow = successData[0].follow;
                     
                     listingsService.createListingTypesObjForListing($scope.listing);
@@ -1554,6 +1569,8 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
             }
             
             $rootScope.pageTitle = $scope.pageTitle || $rootScope.pageTitle;
+            $rootScope.seoPageTitle = $scope.seoPageTitle || $rootScope.seoPageTitle;
+            $rootScope.seoPageDesc = $scope.seoPageDesc || $rootScope.seoPageDesc;
         });
         
         $scope.pageLoad = function () {
@@ -1575,6 +1592,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 case 'Offers':
                     $rootScope.pageTitle = 'Offers at ' + $stateParams.listingName;
                     $scope.pageTitle = $rootScope.pageTitle;
+                    $rooScope.seoPageTitle = 'See Latest Offers & Deals at ' + $stateParams.listingName + " | MyNyte";
+                    $scope.seoPageTitle = $rootScope.seoPageTitle;
+                    $rootScope.seoPageDesc = 'Check out the latest offers and deals at ' + $stateParams.listingName + ' with MyNyte. Plan your next night out with ease with MyNyte.';
+                    $scope.seoPageDesc = $rootScoep.seoPageDesc;
                     $scope.pageSubTitle = ($stateParams.listingType != 'Event') ? 'Current/Upcoming Offers' : 'Deals on the Night';
                     $scope.getBusinessItems = function () {
                         var listingType = ($stateParams.listingType == 'Event') ? 'Event': 'Business';
@@ -1659,6 +1680,10 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
                 case 'UpcomingEvents':
                     $rootScope.pageTitle = 'Upcoming Events at ' + $stateParams.listingName;
                     $scope.pageTitle = $rootScope.pageTitle;
+                    $rooScope.seoPageTitle = 'See Upcoming Events at ' + $stateParams.listingName + " | MyNyte";
+                    $scope.seoPageTitle = $rootScope.seoPageTitle;
+                    $rootScope.seoPageDesc = 'Check out upcoming events at ' + $stateParams.listingName + ' with MyNyte. Plan your next night out with ease with MyNyte.';
+                    $scope.seoPageDesc = $rootScoep.seoPageDesc;
                     $scope.getBusinessItems = function () {
                     
                         Events.getEventsByBusiness($stateParams._businessId, 'present', $rootScope.user._profileId || 0).success(function (successData) {
@@ -1699,11 +1724,17 @@ app.controller('NLFeedCtrl', ['$rootScope', '$ionicViewSwitcher', '$ionicScrollD
         
         $scope.$on('$ionicView.beforeEnter', function() {
             $rootScope.pageTitle = ($scope.pageTitle) ? $scope.pageTitle: $rootScope.pageTitle;
+            $rootScope.seoPageTitle = $scope.seoPageTitle || $rootScope.seoPageTitle;
+            $rootScope.seoPageDesc = $scope.seoPageDesc || $rootScope.seoPageDesc;
         });
         
         $scope.pageLoad = function () {
             $rootScope.pageTitle = $scope.movieTitle + ' Trailer';
             $scope.pageTitle = $rootScope.pageTitle;
+            $rooScope.seoPageTitle = 'Watch the trailer for ' + $stateParams.listingName + " | Book Tickets to see " + $stateParams.listingName + " | MyNyte";
+            $scope.seoPageTitle = $rootScope.seoPageTitle;
+            $rootScope.seoPageDesc = 'Looking to go see a film tonight? Check out the movie trailer and book tickets with ease through MyNyte. Sign up today. ';
+            $scope.seoPageDesc = $rootScoep.seoPageDesc;
             var getMoviesTrailerLink = function () {
                 Movies.getMoviesTrailerLink($stateParams._id).success(function (successData) {
                     $scope.movieTrailerLink = $sce.trustAsResourceUrl(successData[0].trailerLink);

@@ -3,7 +3,7 @@ sneak-preview/
 !sneak-preview/img/
 sneak-preview/img/user_images/
 /.htaccess
-node_modules/
+/node_modules/
 
 www/js/common/globals.js
 www/sneak-preview/data/globals.php

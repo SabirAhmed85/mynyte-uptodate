@@ -3,21 +3,30 @@
 
   $httpUrl = ($intended_environment == 'Staging') ? "https://www.mynyte.co.uk/staging": "https://www.mynyte.co.uk/live";
 
-  header("Access-Control-Allow-Origin: $httpUrl");
+  header("Access-Control-Allow-Origin: *");
   if ($intended_environment != 'Staging') {
-    header("Access-Control-Allow-Origin: https://mynyte.co.uk");
+    header("Access-Control-Allow-Origin: *");
   }
   
   //Debug
-  //ini_set('display_errors', 1);
+  ini_set('display_errors', 1);
 
-  $db_host = "localhost";
+  if ($intended_environment != 'Local') {
+    $db_host = "localhost";
 
-  $db_uid = "qxiryynz_mynyteuser";
+    $db_uid = "qxiryynz_mynyteuser";
 
-  $db_pass = "wM)Ln8-Q2o6g";
-  
-  if ($intended_environment == 'Staging') {
+    $db_pass = "wM)Ln8-Q2o6g";
+  }
+  else {
+    $db_host = "127.0.0.1";
+
+    $db_uid = "root";
+
+    $db_pass = "";
+  }
+
+  if ($intended_environment == 'Staging' || $intended_environment == 'Local') {
     $db_name = "qxiryynz_MyNyte_Staging";
   }
   else if ($intended_environment == 'Live') {

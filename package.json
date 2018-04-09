@@ -1,19 +1,25 @@
 {
   "devDependencies": {
-    "gulp": "latest",
+    "fs-extra": "^5.0.0",
+    "gulp": "^3.9.1",
     "gulp-callback": "0.0.3",
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^3.9.0",
+    "gulp-cli": "^2.0.1",
     "gulp-coffee": "latest",
     "gulp-concat": "^2.6.1",
     "gulp-connect": "latest",
     "gulp-htmlmin": "^3.0.0",
+    "gulp-jshint": "^2.1.0",
     "gulp-minify": "^2.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.6.1",
     "gulp-sass": "latest",
     "gulp-scp2": "latest",
-    "gulp-uglify": "latest",
+    "gulp-uglify": "^3.0.0",
     "gulp-uglifyjs": "^0.6.2",
     "gulp-util": "latest",
+    "jshint": "^2.9.5",
     "yargs": "^10.0.3"
   }
 }
