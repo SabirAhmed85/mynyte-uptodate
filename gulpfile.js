@@ -16,15 +16,24 @@ var jshint = require('gulp-jshint');
 var params = {
 	appHTML: ['./www/templates/*.html', './www/templates/**/*.html', './www/templates/**/**/*.html'],
 	appJs: ['./www/js/**/*.js'],
-	apiJs: [
+	currentApiJs: [
+		'./www/js/api-dev/externalApi.v2.js'
+		, './www/js/api-dev/v2/apiSetupVars.js'
+		, './www/js/api-dev/v2/apiGlobalFunctions.js'
+		, './www/js/api-dev/v2/apiDataConnect.js'
+		, './www/js/api-dev/v2/apiPopup.js'
+		, './www/js/api-dev/v2/apiCreateHTML.js'
+		, './www/js/api-dev/v2/apiImportScripts.js'
+		, './www/js/api-dev/v2/apiFormFunctions.js'],
+	prevApiJs: [
 		'./www/js/api-dev/externalApi.js'
-		, './www/js/api-dev/apiSetupVars.js'
-		, './www/js/api-dev/apiGlobalFunctions.js'
-		, './www/js/api-dev/apiDataConnect.js'
-		, './www/js/api-dev/apiPopup.js'
-		, './www/js/api-dev/apiCreateHTML.js'
-		, './www/js/api-dev/apiImportScripts.js'
-		, './www/js/api-dev/apiFormFunctions.js'],
+		, './www/js/api-dev/v1/apiSetupVars.js'
+		, './www/js/api-dev/v1/apiGlobalFunctions.js'
+		, './www/js/api-dev/v1/apiDataConnect.js'
+		, './www/js/api-dev/v1/apiPopup.js'
+		, './www/js/api-dev/v1/apiCreateHTML.js'
+		, './www/js/api-dev/v1/apiImportScripts.js'
+		, './www/js/api-dev/v1/apiFormFunctions.js'],
 	apiPath: './www/js/api/',
 	appCss: ['./www/css/*.css']
 }
@@ -79,16 +88,38 @@ gulp.task('lintApiJs', function () {
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('processApi', function () {
-	var setupVars = fs.readFileSync(params.apiJs[1], "utf8");
-	var globalFunc = fs.readFileSync(params.apiJs[2], "utf8");
-	var dataConnect = fs.readFileSync(params.apiJs[3], "utf8");
-	var popup = fs.readFileSync(params.apiJs[4], "utf8");
-	var createHTML = fs.readFileSync(params.apiJs[5], "utf8");
-	var importScripts = fs.readFileSync(params.apiJs[6], "utf8");
-	var formScripts = fs.readFileSync(params.apiJs[7], "utf8");
+gulp.task('processPrevApi', function () {
+	var setupVars = fs.readFileSync(params.prevApiJs[1], "utf8");
+	var globalFunc = fs.readFileSync(params.prevApiJs[2], "utf8");
+	var dataConnect = fs.readFileSync(params.prevApiJs[3], "utf8");
+	var popup = fs.readFileSync(params.prevApiJs[4], "utf8");
+	var createHTML = fs.readFileSync(params.prevApiJs[5], "utf8");
+	var importScripts = fs.readFileSync(params.prevApiJs[6], "utf8");
+	var formScripts = fs.readFileSync(params.prevApiJs[7], "utf8");
 
-	return gulp.src(params.apiJs[0])
+	return gulp.src(params.prevApiJs[0])
+        .pipe(replace('//***apiSetupVarsScript***//', setupVars))
+        .pipe(replace('//***apiGlobalFunctionsScript***//', globalFunc))
+        .pipe(replace('//***apiDataConnectScript***//', dataConnect))
+        .pipe(replace('//***apiPopupScript***//', popup))
+        .pipe(replace('//***apiCreateHTMLScript***//', createHTML))
+        .pipe(replace('//***apiImportScriptsScript***//', importScripts))
+        .pipe(replace('//***apiFormFunctions***//', formScripts))
+        //.pipe(rename('externalApi.min.v2.js'))
+        //.pipe(uglify())
+        .pipe(gulp.dest(params.apiPath));
+});
+
+gulp.task('processApi', ['processPrevApi'], function () {
+	var setupVars = fs.readFileSync(params.currentApiJs[1], "utf8");
+	var globalFunc = fs.readFileSync(params.currentApiJs[2], "utf8");
+	var dataConnect = fs.readFileSync(params.currentApiJs[3], "utf8");
+	var popup = fs.readFileSync(params.currentApiJs[4], "utf8");
+	var createHTML = fs.readFileSync(params.currentApiJs[5], "utf8");
+	var importScripts = fs.readFileSync(params.currentApiJs[6], "utf8");
+	var formScripts = fs.readFileSync(params.currentApiJs[7], "utf8");
+
+	return gulp.src(params.currentApiJs[0])
         .pipe(replace('//***apiSetupVarsScript***//', setupVars))
         .pipe(replace('//***apiGlobalFunctionsScript***//', globalFunc))
         .pipe(replace('//***apiDataConnectScript***//', dataConnect))
