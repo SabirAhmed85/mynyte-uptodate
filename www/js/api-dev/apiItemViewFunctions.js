@@ -94,7 +94,7 @@ function itemViewObjectInit(params) {
 					'internalDataUrl': oldParams.internalDataUrl || '/'
 				};
 				formObjectInit(params2);
-				//loopPropertiesToCreateItemHtml();
+				loopPropertiesToCreateItemHtml();
 			}
 			else {
 				var d=document,

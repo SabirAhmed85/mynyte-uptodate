@@ -632,7 +632,14 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 		htmlString += formGeneralHTML({element: 'formComplete'});
 
 		MynyteApi.pageVars['Page Object'].Model = modelProperties;
-		$( "div.mynyte-new-business-item").append(htmlString).css({'display': 'block'});
+
+		if ($( "div.mynyte-new-business-item").length) {
+			$( "div.mynyte-new-business-item").append(htmlString).css({'display': 'block'});
+		}
+		else if ($( "div.mynyte-business-item-detail").length) {
+			$( "div.mynyte-business-item-detail").children().hide();
+			$( "div.mynyte-business-item-detail").append(htmlString);
+		}
 
 		if (dateProps.length) {
 			addFormDatePickers();
@@ -850,7 +857,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 		}
 		
-		console.log(dataVal);
+		console.log("dataVal: ", dataVal);
 		if (typeof(dataVal) === 'undefined' || dataVal == '') {
 			compileFieldHtml('');
 		} else {
@@ -1286,7 +1293,7 @@ function formObjectInit(params) {
 					'internalDataUrl': oldParams.internalDataUrl || '/'
 				};
 				formObjectInit(params2);
-				//loopPropertiesToCreateItemHtml();
+				loopPropertiesToCreateItemHtml();
 			}
 			else {
 				var d=document,
