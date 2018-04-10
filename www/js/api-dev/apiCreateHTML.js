@@ -318,12 +318,15 @@ function formGeneralHTML(params) {
 		'formStart': function () {
 			htmlString += "<form action='#' name='mynyte-business-item-add-form' onsubmit='return MynyteApi.addBusinessItem();'>";
 		},
-		'formFieldContainer': function () {
+		'formFieldLabel': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s").replace(" Id", "").replace("_Related", ""),
 				isReqLabel = (params.prop["Is Required"]) ? " (Required)": "",
 				cssName = params.prop.Name.replace(/ /g, "-").replace(".", "").toLowerCase();
 
 			htmlString += "<div class='mynyte-form-field-container " + cssName + "-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
+			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
+		},
+		'formFieldContainer': function () {
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
 		},
 		'formComplete': function () {

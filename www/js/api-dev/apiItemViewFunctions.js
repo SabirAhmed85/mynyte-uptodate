@@ -1,5 +1,7 @@
 function itemViewObjectInit(params) {
 	var bidd;
+
+	MynyteApi.pageVars['Page Object'] = {};
 	
 	MynyteApi.pageVars['Business Item Detail Displays'] = MynyteApi.pageVars['Business Item Detail Displays'] || [];
 
@@ -17,7 +19,6 @@ function itemViewObjectInit(params) {
 		'businessEntityItemTypeLabel': params.businessEntityItemTypeLabel,
 		'UploadCompleteUrl': params.UploadCompleteUrl,
 		'_businessId': params._businessId
-
 	};
 	bidd = MynyteApi.pageVars['Business Item Detail Displays'][MynyteApi.pageVars['Business Item Detail Displays'].length - 1];
 	console.log(params);
@@ -27,7 +28,7 @@ function itemViewObjectInit(params) {
 			className: 'BusinessEntity', 
 			action: 'getBusinessEntityItemModel', 
 			data: {
-				_businessId: bidd.elem.data('bid'),
+				_businessId: bidd._businessId,
 				businessEntityItemType: bidd.businessEntityItemType,
 				extraFiltersString: "",
 				_relatedViewModelId: bidd._relatedViewModelId
@@ -86,13 +87,15 @@ function itemViewObjectInit(params) {
 					};
 
 					var params2 = {
+						'elem': bidd2.elem,
 						'_businessId': bidd2._businessId,
 						'businessEntityItemType': bidd2.businessEntityItemType,
 						'businessEntityItemTypeLabel': bidd2.businessEntityItemTypeLabel,
 						'businessEntityItemSubType': bidd2.businessEntityItemSubType,
 						'_relatedViewModelId': bidd2._relatedViewModelId,
 						'onUploadCompleteUrl': bidd2.onUploadCompleteUrl,
-						'internalDataUrl': bidd2.internalDataUrl || '/'
+						'internalDataUrl': bidd2.internalDataUrl || '/',
+						'formType': 'edit-item-form'
 					};
 					formObjectInit(params2);
 				}
@@ -205,7 +208,7 @@ function itemViewObjectInit(params) {
 				oldParams: params
 			}, 
 			data: {
-				_businessId: bidd.elem.data('bid'),
+				_businessId: bidd._businessId,
 				_businessEntityItemId: bidd.businessEntityItemId
 			},
 			successCallback: function (params) {
@@ -219,3 +222,5 @@ function itemViewObjectInit(params) {
 
 	getItemModel();
 }
+
+MynyteApi.itemViewObjectInit = itemViewObjectInit;

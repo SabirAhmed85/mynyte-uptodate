@@ -691,49 +691,6 @@ MynyteApi = function () {
 			}
 		}
 	}
-	
-	function toggleRelatedItemSelect(e, elem) {
-
-		e.preventDefault();
-		var propLabel = $(elem).data('name'),
-			propIndex = $(elem).data('index'),
-			popupCover = $('body').find('.dropdown-wrapper.'+propLabel+'-dropdown-wrapper').parents('.mynyte-popup-cover');
-			
-		if (popupCover.hasClass('mynyte-popup-open')) {
-			popupCover.removeClass('mynyte-popup-open');
-			popupCover.removeAttr('data-index');
-		} else {
-			popupCover.addClass('mynyte-popup-open');
-			popupCover.attr('data-index', propIndex);
-		}
-	}
-	
-	function addItemToFormFromDropdown (button) {
-		var input, propLabel,
-			li = $(button).parents('li'),
-			item = li.data('item-ref'),
-			propToDisplay = li.data('prop-to-display'),
-			parUl = li.parents('ul.dropdown'),
-			parCover = $(parUl).closest('.mynyte-popup-cover'),
-			classList = parUl.attr('class').split(/\s+/);
-			
-		$(button).parents('.mynyte-popup-open').removeClass('mynyte-popup-open');
-		$.each(classList, function(index, i) {
-			if (i.indexOf('-dropdown') > -1) {
-    			//do something
-				propLabel = i.substr(0, i.indexOf('-dropdown'));
-				input = $('.mynyte-form-input.mynyte-form-fake-input[data-name="'+propLabel+'"]').eq(parCover[0].dataset.index);
-				
-				if ($(input).data('data-selected-item-ref')) {
-					$(input).data('selected-item-ref', item);
-				}
-				else {
-					$(input).attr('data-selected-item-ref', item);
-				}
-				$(input).find('.selected-option-label').html(propToDisplay);
-			}
-		});
-	}
 
 	function prepareMyNyteItems () {
 		$(document).ready(function() {
@@ -852,9 +809,7 @@ MynyteApi = function () {
 
 			//If MyNyte Business items SUmmary
 			if ($("div.mynyte-business-item-detail").length) {
-				var elem = $("div.mynyte-business-item-detail"),
-					bidd = null,
-					params = {
+				/*var params = {
 						'elem': $("div.mynyte-business-item-detail"),
 						'businessEntityItemId': (window.location.href.indexOf('?_itemId') > -1) ? window.location.href.substr(window.location.href.indexOf('?_itemId=') + 9, window.location.href.length): $("div.mynyte-business-item-detail").data('item-id'),
 						'businessEntityItemType': elem.data('item-type') || '/',
@@ -870,15 +825,13 @@ MynyteApi = function () {
 						'isEditable': (elem.data('editable') == true) 
 					};
 
-				MynyteApi.pageVars['Page Object'] = {};
-
-				itemViewObjectInit(params);
+				MynteApi.itemViewObjectInit(params);*/
 			}
 
 			//If MyNyte Business items SUmmary
 			if ($( "div.mynyte-new-business-item").length) {
+				/*
 				var htmlDiv = $( "div.mynyte-new-business-item");
-				MynyteApi.pageVars['Page Object'] = {};
 
 				var params = {
 					'_businessId': htmlDiv.data('bid'),
@@ -890,7 +843,8 @@ MynyteApi = function () {
 					'internalDataUrl': htmlDiv.data('internal-data') || '/'
 				};
 
-				formObjectInit(params);
+				MynyteApi.formObjectInit(params);
+				*/
 			}
 		});
 	}
@@ -943,14 +897,6 @@ MynyteApi = function () {
 	
 	MynyteApi.createPortal = function (params) {
 		createPortal(params);	
-	};
-	
-	MynyteApi.toggleRelatedItemSelect = function (event, elem) {
-		toggleRelatedItemSelect(event, elem);
-	};
-	
-	MynyteApi.addItemToFormFromDropdown = function (button) {
-		addItemToFormFromDropdown(button);
 	};
 	
 };
