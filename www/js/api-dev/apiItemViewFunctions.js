@@ -4,6 +4,7 @@ function itemViewObjectInit(params) {
 	MynyteApi.pageVars['Business Item Detail Displays'] = MynyteApi.pageVars['Business Item Detail Displays'] || [];
 
 	MynyteApi.pageVars['Business Item Detail Displays'][MynyteApi.pageVars['Business Item Detail Displays'].length] = {
+		'elem': params.elem, 
 		'businessEntityItemId': (window.location.href.indexOf('?_itemId') > -1) ? window.location.href.substr(window.location.href.indexOf('?_itemId=') + 9, window.location.href.length): params.businessEntityItemId || $("div.mynyte-business-item-detail").data('item-id'),
 		'businessEntityItemType': params.businessEntityItemType || '/',
 		'internalDataUrl': params.internalDataUrl|| '/',
@@ -11,6 +12,7 @@ function itemViewObjectInit(params) {
 		'htmlViewModelMethod': params.htmlViewModelMethod || 'default',
 		'htmlViewModelScript': params.htmlViewModelScript || '',
 		'htmlViewModelParams': params.htmlViewModelParams || {},
+		'isEditable': params.isEditable || false,
 		'businessEntityItemSubType': params.businessEntityItemSubType,
 		'businessEntityItemTypeLabel': params.businessEntityItemTypeLabel,
 		'UploadCompleteUrl': params.UploadCompleteUrl,
@@ -25,7 +27,7 @@ function itemViewObjectInit(params) {
 			className: 'BusinessEntity', 
 			action: 'getBusinessEntityItemModel', 
 			data: {
-				_businessId: $("div.mynyte-business-item-detail").data('bid'),
+				_businessId: bidd.elem.data('bid'),
 				businessEntityItemType: bidd.businessEntityItemType,
 				extraFiltersString: "",
 				_relatedViewModelId: bidd._relatedViewModelId
@@ -49,7 +51,68 @@ function itemViewObjectInit(params) {
 			htmlString = "";
 		MynyteApi.pageVars['Page Object'] = successData;
 
+		function editButtonDisplayToggle(isEditing, b) {
+			if (!!isEditing) {
+				b.find('i').addClass('fa-close').removeClass('fa-edit');
+				b.find('span.mynyte-button-inner-wrapper').find('span').html('Cancel');
+			} else {
+				b.removeClass('is-editing');
+				b.find('i').addClass('fa-edit').removeClass('fa-close');
+				b.find('span.mynyte-button-inner-wrapper').find('span').html('Edit');
+			}
+		}
 
+		function formDisplayToggle(toHide, b) {
+			var p = b.parents('.mynyte-button-container').eq(0);
+			if (!!toHide) {
+				console.log(toHide);
+				p.siblings('.mynyte-label-container').show();
+				p.siblings('form').hide();
+			} else {
+				p.siblings('.mynyte-label-container').hide();
+				p.siblings('form').show();
+			}
+		};
+
+		function editButtonClicked(button) {
+			var b = $(button);
+			if (!b.hasClass('is-editing')) {
+				b.addClass('is-editing');
+
+				var bidd2 = MynyteApi.pageVars['Business Item Detail Displays'][MynyteApi.pageVars['Business Item Detail Displays'].length - 1];
+				if (typeof(bidd2.onFormChangeComplete) === 'undefined') {
+					bidd2.onFormChangeComplete = function () {
+						editButtonDisplayToggle(true, b);
+					};
+
+					var params2 = {
+						'_businessId': bidd2._businessId,
+						'businessEntityItemType': bidd2.businessEntityItemType,
+						'businessEntityItemTypeLabel': bidd2.businessEntityItemTypeLabel,
+						'businessEntityItemSubType': bidd2.businessEntityItemSubType,
+						'_relatedViewModelId': bidd2._relatedViewModelId,
+						'onUploadCompleteUrl': bidd2.onUploadCompleteUrl,
+						'internalDataUrl': bidd2.internalDataUrl || '/'
+					};
+					formObjectInit(params2);
+				}
+				else {
+					formDisplayToggle(false, b);
+					editButtonDisplayToggle(true, b);
+				}
+			}
+			else {
+				formDisplayToggle(true, b);
+				editButtonDisplayToggle(false, b);
+			}
+		}
+		MynyteApi.editButtonClicked = editButtonClicked;
+
+		function createItemEditButton () {
+			var buttonHtml = buttonsHtmlObj({element: 'Edit'});
+			bidd.elem.append(buttonHtml.html);
+			console.log(buttonHtml);
+		}
 
 		function loopPropertiesToCreateItemHtml () {
 			var htmlString = "";
@@ -71,7 +134,7 @@ function itemViewObjectInit(params) {
 				}
 
 				if (a == successData.items.length - 1) {
-					$( "div.mynyte-business-item-detail").append(htmlString).css({'display': 'block'});
+					bidd.elem.append(htmlString).css({'display': 'block'});
 				}
 			}
 		}
@@ -84,16 +147,9 @@ function itemViewObjectInit(params) {
 			}
 
 			if (bidd.htmlViewModelMethod != 'custom' || bidd.htmlViewModelScript == '') {
-				var params2 = {
-					'_businessId': oldParams._businessId,
-					'businessEntityItemType': oldParams.businessEntityItemType,
-					'businessEntityItemTypeLabel': oldParams.businessEntityItemTypeLabel,
-					'businessEntityItemSubType': oldParams.businessEntityItemSubType,
-					'_relatedViewModelId': oldParams._relatedViewModelId,
-					'onUploadCompleteUrl': oldParams.onUploadCompleteUrl,
-					'internalDataUrl': oldParams.internalDataUrl || '/'
-				};
-				formObjectInit(params2);
+				if (!!bidd.isEditable) {
+					createItemEditButton();
+				}
 				loopPropertiesToCreateItemHtml();
 			}
 			else {
@@ -106,7 +162,7 @@ function itemViewObjectInit(params) {
 					customBusinessItemGeneralHtml({
 						properties: successData.items,
 						onComplete: function (html) {
-							$( "div.mynyte-business-item-detail").append(html).css({'display': 'block'});
+							bidd.elem.append(html).css({'display': 'block'});
 						},
 						internalDataUrl: bidd.internalDataUrl,
 						extraParams: bidd.htmlViewModelParams
@@ -149,7 +205,7 @@ function itemViewObjectInit(params) {
 				oldParams: params
 			}, 
 			data: {
-				_businessId: $("div.mynyte-business-item-detail").data('bid'),
+				_businessId: bidd.elem.data('bid'),
 				_businessEntityItemId: bidd.businessEntityItemId
 			},
 			successCallback: function (params) {

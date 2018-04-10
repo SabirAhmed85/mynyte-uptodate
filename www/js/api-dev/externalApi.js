@@ -855,6 +855,7 @@ MynyteApi = function () {
 				var elem = $("div.mynyte-business-item-detail"),
 					bidd = null,
 					params = {
+						'elem': $("div.mynyte-business-item-detail"),
 						'businessEntityItemId': (window.location.href.indexOf('?_itemId') > -1) ? window.location.href.substr(window.location.href.indexOf('?_itemId=') + 9, window.location.href.length): $("div.mynyte-business-item-detail").data('item-id'),
 						'businessEntityItemType': elem.data('item-type') || '/',
 						'internalDataUrl': elem.data('internal-data') || '/',
@@ -862,10 +863,11 @@ MynyteApi = function () {
 						'htmlViewModelMethod': elem.data('html-method') || 'default',
 						'htmlViewModelScript': elem.data('html-script') || '',
 						'htmlViewModelParams': elem.data('html-script-input') || {},
-						'businessEntityItemSubType': elem.data('item-sub-type').split(",")[1],
-						'businessEntityItemTypeLabel': elem.data('item-sub-type').split(",")[0],
+						'businessEntityItemSubType': (elem.data('item-sub-type')) ? elem.data('item-sub-type').split(",")[1] : null,
+						'businessEntityItemTypeLabel': (elem.data('item-sub-type')) ? elem.data('item-sub-type').split(",")[0] : null,
 						'UploadCompleteUrl': elem.data('link'),
-						'_businessId': elem.data('bid') 
+						'_businessId': elem.data('bid'),
+						'isEditable': (elem.data('editable') == true) 
 					};
 
 				MynyteApi.pageVars['Page Object'] = {};

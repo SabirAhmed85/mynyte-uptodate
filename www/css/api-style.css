@@ -2496,7 +2496,7 @@ body.mn-modal--opened {
 }
 
 .mynyte-button-with-icon {
-    padding: 7px 10px;
+    padding: 10px 10px;
 }
 
 .mynyte-button-primary {
@@ -2574,7 +2574,7 @@ body.mn-modal--opened {
 .mynyte-button-inner-wrapper {
     float: none;
     margin: 0 auto;
-    display: inline-flex;
+    display: table;
 }
 
 .mynyte-button-secondary .mynyte-button-inner-wrapper {
@@ -2584,12 +2584,14 @@ body.mn-modal--opened {
 .mynyte-button-inner-wrapper i {
     float: left;
     font-size: 22px;
+    height: 20px;
 }
 
 .mynyte-button-inner-wrapper span {
     float: left;
     margin-top: 3px;
     margin-left: 12px;
+    line-height: 15px;
 }
 
 .mynyte-new-business-item {
@@ -2737,6 +2739,11 @@ span.input-maxlength-note {
     margin-bottom: -11px;
     background: #eee;
     border: 1px solid #bbb;
+}
+
+.mynyte-form-input.mynyte-form-fake-input span {
+    float: left;
+    line-height: 18px;
 }
 
 ul.mynyte-form-select.mynyte-form-fake-select {

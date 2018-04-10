@@ -1,7 +1,7 @@
 function prepareBusinessItemForm (modelProperties, htmlString) {
 	var keys = Object.keys(modelProperties),
 		newItems = [], dateProps = [],
-		dataType, prop, isReqLabel;
+		dataType, prop, isReqLabel, bidd;
 	var nonBootstrapProps = ["class", "onChangeDate"];
 
 	var addFormDatePickers = function () {
@@ -43,13 +43,17 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 			$( "div.mynyte-new-business-item").append(htmlString).css({'display': 'block'});
 		}
 		else if ($( "div.mynyte-business-item-detail").length) {
-			$( "div.mynyte-business-item-detail").children().hide();
-			$( "div.mynyte-business-item-detail").append(htmlString);
+			bidd = MynyteApi.pageVars['Business Item Detail Displays'][MynyteApi.pageVars['Business Item Detail Displays'].length - 1];
+			$( "div.mynyte-business-item-detail").children('.mynyte-label-container').hide();
+			$( "div.mynyte-business-item-detail").append(htmlString).css({'display': 'block'});
+			MynyteApi.pageVars['Business Item Detail Displays'][MynyteApi.pageVars['Business Item Detail Displays'].length - 1].onFormChangeComplete();
 		}
 
 		if (dateProps.length) {
 			addFormDatePickers();
 		}
+
+
 	};
 	
 	var addPropFinal = function addPropFinal (i, isReqLabel, inputString) {

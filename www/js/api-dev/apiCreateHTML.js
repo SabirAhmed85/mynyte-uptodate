@@ -60,6 +60,11 @@ function buttonsHtmlObj (params) {
 					var myWindow = window.open("https://www.mynyte.co.uk/#/app/profile/", "mynyte-table-book-window", "width=485,height=560");
 				}
 			};
+		},
+		'Edit': function () {
+			obj = {
+				html: "<div class='mynyte-form-field-container mynyte-button-container'><button class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
+			};
 		}
 	};
 
