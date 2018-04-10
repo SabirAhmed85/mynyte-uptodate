@@ -263,37 +263,46 @@ function formFieldHTML(params) {
 	var createFieldHTML = {
 		'Text': function () {
 			inputString += "<input name = '" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='text' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Textarea': function () {
 			inputString += "<textarea rows='3' name = '" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-textarea-input"+isReq+"' "+maxLen+""+minLen+" ></textarea></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Number': function () {
 			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'Double': function () {
 			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' step='0.01' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'Fake': function () {
 			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'>" + ((typeof(params.value) !== 'undefined') ? params.value: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'IMAGE': function () {
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'FILE': function () {
 			console.log("okos");
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'DATE': function () {
 			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'TIME': function () {
 			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		}
 	};
 

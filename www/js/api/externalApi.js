@@ -519,37 +519,46 @@ function formFieldHTML(params) {
 	var createFieldHTML = {
 		'Text': function () {
 			inputString += "<input name = '" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='text' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Textarea': function () {
 			inputString += "<textarea rows='3' name = '" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-textarea-input"+isReq+"' "+maxLen+""+minLen+" ></textarea></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Number': function () {
 			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'Double': function () {
 			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+"' type='number' step='0.01' "+maxLen+""+minLen+" /></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'Fake': function () {
 			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'><span class='selected-option-label'>" + ((typeof(params.value) !== 'undefined') ? params.value: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'IMAGE': function () {
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'FILE': function () {
 			console.log("okos");
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'DATE': function () {
 			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		},
 		'TIME': function () {
 			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div></span>";
+			inputString += (params.index > 0) ? '<button>Remove</button>': '';
 		}
 	};
 
@@ -782,7 +791,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val});
+						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2});
 						
 						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
 					},
@@ -797,17 +806,17 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 					var size = dataType.substr(dataType.indexOf('(') + 1, dataType.indexOf(')') - dataType.indexOf('(') - 1);
 					var fieldType = (parseInt(size) <= 1000) ? 'Text': 'Textarea';
 
-					inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop], value: val, index: i2});
 				}
 				/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
 				else if (dataType.indexOf('INT') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Number', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'Number', prop: modelProperties[prop], value: val, index: i2});
 				}
 				else if (dataType.indexOf('DOUBLE') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Double', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'Double', prop: modelProperties[prop], value: val, index: i2});
 				}
 				else if (dataType == 'DATE') {
-					inputString = formFieldHTML({fieldType: 'DATE', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'DATE', prop: modelProperties[prop], value: val, index: i2});
 					dateProps.push({
 						class: propNameCssFormatter(modelProperties[prop].Name), 
 						format: 'dd/mm/yyyy',
@@ -822,7 +831,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 					});
 				}
 				else if (dataType == 'TIME') {
-					inputString = formFieldHTML({fieldType: 'TIME', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'TIME', prop: modelProperties[prop], value: val, index: i2});
 					
 				}
 				else if (dataType == 'IMAGE' || dataType == 'FILE') {
@@ -874,7 +883,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 							readFile(0);
 					};
 
-					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop]});
+					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop], index: i2});
 				}
 
 				addPropFinal(i, isReqLabel, inputString, i2, maxIndex);

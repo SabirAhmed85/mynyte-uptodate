@@ -180,7 +180,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val});
+						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2});
 						
 						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
 					},
@@ -195,17 +195,17 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 					var size = dataType.substr(dataType.indexOf('(') + 1, dataType.indexOf(')') - dataType.indexOf('(') - 1);
 					var fieldType = (parseInt(size) <= 1000) ? 'Text': 'Textarea';
 
-					inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop], value: val, index: i2});
 				}
 				/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
 				else if (dataType.indexOf('INT') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Number', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'Number', prop: modelProperties[prop], value: val, index: i2});
 				}
 				else if (dataType.indexOf('DOUBLE') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Double', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'Double', prop: modelProperties[prop], value: val, index: i2});
 				}
 				else if (dataType == 'DATE') {
-					inputString = formFieldHTML({fieldType: 'DATE', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'DATE', prop: modelProperties[prop], value: val, index: i2});
 					dateProps.push({
 						class: propNameCssFormatter(modelProperties[prop].Name), 
 						format: 'dd/mm/yyyy',
@@ -220,7 +220,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 					});
 				}
 				else if (dataType == 'TIME') {
-					inputString = formFieldHTML({fieldType: 'TIME', prop: modelProperties[prop], value: val});
+					inputString = formFieldHTML({fieldType: 'TIME', prop: modelProperties[prop], value: val, index: i2});
 					
 				}
 				else if (dataType == 'IMAGE' || dataType == 'FILE') {
@@ -272,7 +272,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 							readFile(0);
 					};
 
-					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop]});
+					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop], index: i2});
 				}
 
 				addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
