@@ -24,7 +24,8 @@ var params = {
 		, './www/js/api-dev/apiPopup.js'
 		, './www/js/api-dev/apiCreateHTML.js'
 		, './www/js/api-dev/apiImportScripts.js'
-		, './www/js/api-dev/apiFormFunctions.js'],
+		, './www/js/api-dev/apiFormFunctions.js'
+		, './www/js/api-dev/apiItemViewFunctions.js'],
 	apiPath: './www/js/api/',
 	appCss: ['./www/css/*.css']
 }
@@ -87,6 +88,7 @@ gulp.task('processApi', function () {
 	var createHTML = fs.readFileSync(params.apiJs[5], "utf8");
 	var importScripts = fs.readFileSync(params.apiJs[6], "utf8");
 	var formScripts = fs.readFileSync(params.apiJs[7], "utf8");
+	var itemViewScripts = fs.readFileSync(params.apiJs[8], "utf8");
 
 	return gulp.src(params.apiJs[0])
         .pipe(replace('//***apiSetupVarsScript***//', setupVars))
@@ -96,6 +98,7 @@ gulp.task('processApi', function () {
         .pipe(replace('//***apiCreateHTMLScript***//', createHTML))
         .pipe(replace('//***apiImportScriptsScript***//', importScripts))
         .pipe(replace('//***apiFormFunctions***//', formScripts))
+        .pipe(replace('//***apiItemViewFunctions***//', itemViewScripts))
         //.pipe(rename('externalApi.min.js'))
         //.pipe(uglify())
         .pipe(gulp.dest(params.apiPath));
