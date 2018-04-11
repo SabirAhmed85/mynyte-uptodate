@@ -14,7 +14,7 @@ switch(IntendedEnvironment) {
 var dataFolder = (IntendedEnvironment == 'Local') ? 'json': 'sp';
 var AssetsFolderUrl = RootUrl + "sneak-preview";
 var AnalyticsScriptSrc = (IntendedPlatform == "browser") ? " https://www.google-analytics.com/ ": "";
-var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://stats.g.doubleclick.net/ https://www.cineworld.co.uk/ https://maps.googleapis.com/"+AnalyticsScriptSrc+"data:";
+var MetaContent = "default-src gap://ready file://* *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' " + RootUrl + " https://csi.gstatic.com/ https://1.bp.blogspot.com/ https://stats.g.doubleclick.net/ https://www.cineworld.co.uk/ https://maps.googleapis.com/ https://p.typekit.net/"+AnalyticsScriptSrc+"data:";
 
 app.constant("EnvironmentVariables", {
               "IntendedPlatform": IntendedPlatform,

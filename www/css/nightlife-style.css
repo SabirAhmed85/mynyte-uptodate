@@ -9256,6 +9256,11 @@ location-lookup ul li span {
         margin-top: 60px;
         margin-left: calc(50% - 440px);
     }
+    .register-form .scroll {
+        margin: 10px auto;
+        display: table;
+        float: none;
+    }
     .admin-view .scroll {
         margin-left: 0;
         max-width: none;
