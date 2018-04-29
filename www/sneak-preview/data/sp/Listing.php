@@ -66,7 +66,7 @@
     $_offerIdsString = prepareOfferIdString($result_prep, 5);
     mysqli_next_result($db_con);
     
-    $result_offers = mysqli_query($db_con, "CALL getOffersForMainFeed($_townId, $_userId, '$_offerIdsString');");
+    $result_offers = mysqli_query($db_con, "CALL getOffersForMainFeed('$_offerIdsString');");
     $output_offers = prepareOffersOutputObj($result_offers);
   }
   else if ($action == 'getListingsForFoodFeed') {
