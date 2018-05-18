@@ -120,6 +120,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 		function compileFieldHtml (val, i2, maxIndex) {
 			console.log("fieldVal: ", val);
+			var bif = MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1];
 			//Should actually check if the option is a select-style option
 			if (dataType.indexOf('INT') > -1 && propType != null) {
 				var propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
@@ -180,7 +181,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: bif.formType});
 						
 						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
 					},
@@ -264,7 +265,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 								imgTest.src = reader.result;
 								};
-							reader.onerror = function (error) {
+								reader.onerror = function (error) {
 									console.log('Error: ', error);
 								};
 							}
@@ -272,7 +273,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 							readFile(0);
 					};
 
-					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop], index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
 				addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
@@ -324,8 +325,8 @@ function mapBusinessItemValuesToModel(model, html) {
 	}
 }
 
-function prepareBusinessItemFormObject (successData) {
-	var htmlString = formGeneralHTML({element: 'formStart'});
+function prepareBusinessItemFormObject (successData, formType) {
+	var htmlString = formGeneralHTML({element: 'formStart', formType: formType});
 	var modelProperties = {};
 	var indexBased = (successData.items[0].vmIndex != null);
 
@@ -369,53 +370,10 @@ function createBusinessItemFormPageVar (params) {
 }
 
 function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
-	MynyteApi.toggleRelatedItemSelect = function (e, elem) {
-
-		e.preventDefault();
-		var propLabel = $(elem).data('name'),
-			propIndex = $(elem).data('index'),
-			popupCover = $('body').find('.dropdown-wrapper.'+propLabel+'-dropdown-wrapper').parents('.mynyte-popup-cover');
-			
-		if (popupCover.hasClass('mynyte-popup-open')) {
-			popupCover.removeClass('mynyte-popup-open');
-			popupCover.removeAttr('data-index');
-		} else {
-			popupCover.addClass('mynyte-popup-open');
-			popupCover.attr('data-index', propIndex);
-		}
-	}
-	
-	MynyteApi.addItemToFormFromDropdown = function  (button) {
-		var input, propLabel,
-			li = $(button).parents('li'),
-			item = li.data('item-ref'),
-			propToDisplay = li.data('prop-to-display'),
-			parUl = li.parents('ul.dropdown'),
-			parCover = $(parUl).closest('.mynyte-popup-cover'),
-			classList = parUl.attr('class').split(/\s+/);
-			
-		$(button).parents('.mynyte-popup-open').removeClass('mynyte-popup-open');
-		$.each(classList, function(index, i) {
-			if (i.indexOf('-dropdown') > -1) {
-    			//do something
-				propLabel = i.substr(0, i.indexOf('-dropdown'));
-				input = $('.mynyte-form-input.mynyte-form-fake-input[data-name="'+propLabel+'"]').eq(parCover[0].dataset.index);
-				
-				if ($(input).data('data-selected-item-ref')) {
-					$(input).data('selected-item-ref', item);
-				}
-				else {
-					$(input).attr('data-selected-item-ref', item);
-				}
-				$(input).find('.selected-option-label').html(propToDisplay);
-			}
-		});
-	}
-
-	MynyteApi.addBusinessItem = function () {
-		var pageObjectModel = MynyteApi.pageVars['Page Object'].Model;
+	function handleFormProcessing (pageObjectModel) {
 		MynyteApi.pageVars['Page Object']['Has Error'] = false;
 
+		console.log("lo");
 		function alterElemClass (action, inputType) {
 			if (action == "add") {
 				switch (inputType) {
@@ -536,8 +494,87 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				reverseErrorValHandling();
 			}
 		}
-
+		console.log("lo");
 		MynyteApi.pageVars['Page Object'].Model = pageObjectModel;
+	}
+
+	function createPageObjDataObj(pageObjectModel, inputString) {
+		for(var keys = Object.keys(pageObjectModel), i = 0, end = keys.length; i < end; i++) {
+			var checkForEndOfLoop = function checkForEndOfLoop () {
+				if (i < end - 1) { inputString += ",";}
+			  	else if (i == end - 1) {
+			  		if (typeof(thisBif.businessEntityItemSubType) !== 'undefined') {
+			  			inputString += ", [['" + thisBif.businessEntityItemTypeLabel + "', '" + thisBif.businessEntityItemSubType + "']]";	
+			  		}
+			  		inputString += ", [['Date Created', CURDATE()]], [['Time Created', CURTIME()]]";
+			  	}
+			};
+			if (pageObjectModel[keys[i]].Value.constructor === Array) {
+				for (var val = 0; val < pageObjectModel[keys[i]].Value.length; val++) {
+					inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value[val] + "']]";
+
+					if (val == pageObjectModel[keys[i]].Value.length - 1) {
+						checkForEndOfLoop();
+					}
+					else {
+						inputString += ",";
+					}
+				}
+			}
+			else {
+			  	inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value + "']]";
+
+			  	checkForEndOfLoop();
+			}
+		}
+	}
+
+	MynyteApi.toggleRelatedItemSelect = function (e, elem) {
+
+		e.preventDefault();
+		var propLabel = $(elem).data('name'),
+			propIndex = $(elem).data('index'),
+			popupCover = $('body').find('.dropdown-wrapper.'+propLabel+'-dropdown-wrapper').parents('.mynyte-popup-cover');
+			
+		if (popupCover.hasClass('mynyte-popup-open')) {
+			popupCover.removeClass('mynyte-popup-open');
+			popupCover.removeAttr('data-index');
+		} else {
+			popupCover.addClass('mynyte-popup-open');
+			popupCover.attr('data-index', propIndex);
+		}
+	}
+	
+	MynyteApi.addItemToFormFromDropdown = function  (button) {
+		var input, propLabel,
+			li = $(button).parents('li'),
+			item = li.data('item-ref'),
+			propToDisplay = li.data('prop-to-display'),
+			parUl = li.parents('ul.dropdown'),
+			parCover = $(parUl).closest('.mynyte-popup-cover'),
+			classList = parUl.attr('class').split(/\s+/);
+			
+		$(button).parents('.mynyte-popup-open').removeClass('mynyte-popup-open');
+		$.each(classList, function(index, i) {
+			if (i.indexOf('-dropdown') > -1) {
+    			//do something
+				propLabel = i.substr(0, i.indexOf('-dropdown'));
+				input = $('.mynyte-form-input.mynyte-form-fake-input[data-name="'+propLabel+'"]').eq(parCover[0].dataset.index);
+				
+				if ($(input).data('data-selected-item-ref')) {
+					$(input).data('selected-item-ref', item);
+				}
+				else {
+					$(input).attr('data-selected-item-ref', item);
+				}
+				$(input).find('.selected-option-label').html(propToDisplay);
+			}
+		});
+	}
+
+	MynyteApi.addBusinessItem = function () {
+		var pageObjectModel = MynyteApi.pageVars['Page Object'].Model;
+		handleFormProcessing(pageObjectModel);
 
 		console.log(MynyteApi.pageVars['Page Object']);
 		
@@ -553,34 +590,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 			createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Adding ' + itemDisplayName});
 			openPopup({'class': 'simple-loader'});
 
-			for(var keys = Object.keys(pageObjectModel), i = 0, end = keys.length; i < end; i++) {
-				var checkForEndOfLoop = function checkForEndOfLoop () {
-					if (i < end - 1) { inputString += ",";}
-				  	else if (i == end - 1) {
-				  		if (typeof(thisBif.businessEntityItemSubType) !== 'undefined') {
-				  			inputString += ", [['" + thisBif.businessEntityItemTypeLabel + "', '" + thisBif.businessEntityItemSubType + "']]";	
-				  		}
-				  		inputString += ", [['Date Created', CURDATE()]], [['Time Created', CURTIME()]]";
-				  	}
-				};
-				if (pageObjectModel[keys[i]].Value.constructor === Array) {
-					for (var val = 0; val < pageObjectModel[keys[i]].Value.length; val++) {
-						inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value[val] + "']]";
-
-						if (val == pageObjectModel[keys[i]].Value.length - 1) {
-							checkForEndOfLoop();
-						}
-						else {
-							inputString += ",";
-						}
-					}
-				}
-				else {
-				  	inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value + "']]";
-
-				  	checkForEndOfLoop();
-				}
-			}
+			createPageObjDataObj(pageObjectModel, inputString);
 
 			dataConnect({
 				className: 'BusinessEntity', 
@@ -615,6 +625,61 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				}
 			});
 			
+		}
+
+		return false;
+	};
+
+	MynyteApi.editBusinessItem = function () {
+		var pageObjectModel = MynyteApi.pageVars['Page Object'].Model;
+		handleFormProcessing(pageObjectModel);
+
+		if (!MynyteApi.pageVars['Page Object']['Has Error']) {
+			var inputString = "",
+				formData = new FormData($('form[name="mynyte-business-item-add-form"]')[newBifId]),
+				confirmationShown = false,
+				imageUploadComplete = false, 
+				_newItemId = null,
+				itemDisplayName = (typeof(thisBif.businessEntityItemSubType) !== 'undefined') ? thisBif.businessEntityItemSubType: thisBif.businessEntityItemType;
+
+			$('.mynyte-button-container button').attr("disabled", "disabled");
+			createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Adding ' + itemDisplayName});
+			openPopup({'class': 'simple-loader'});
+
+			createPageObjDataObj(pageObjectModel, inputString);
+
+			dataConnect({
+				className: 'BusinessEntity', 
+				action: 'updateBusinessEntityItem', 
+				data: {
+					_businessId: thisBif._businessId,
+					businessEntityItemName: thisBif._businessEntityItemId,
+					nameValuePairString: inputString
+				},
+				successCallback: function (params) {
+					var successData = params.successData;
+					_newItemId = successData.item;
+					closePopup({'class': 'simple-loader'});
+					createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
+					openPopup({'class': 'business-item-success'});
+					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
+				},
+				errorCallback: function (errorData) {
+
+				}
+			});
+			internalDataConnect({
+				className: 'Image', 
+				action: 'uploadImage', 
+				data: formData,
+				successCallback: function (params) {
+					var successData = params.successData;
+					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
+				},
+				errorCallback: function (errorData) {
+
+				}
+			});
 		}
 
 		return false;
@@ -673,7 +738,7 @@ function formObjectInit(params) {
 
 				initialiseBusinessItemFormFunctionsAndEvents(thisBif);
 
-				prepareBusinessItemFormObject(successData);
+				prepareBusinessItemFormObject(successData, thisBif.formType);
 
 			/*
 			RELATING TO LEGAL SERVE SPECIFICALLY

@@ -2698,6 +2698,45 @@ input.mynyte-form-input.mynyte-removeable-input {
     width: 100%;
 }
 
+.mynyte-form-input-container .existing-img-container {
+    width: 75px;
+    height: 75px;
+    border: 1px solid #ddd;
+    float: left;
+    position: relative;
+    margin-right: 10px;
+}
+
+.mynyte-form-input-container .existing-img-container img {
+    width: 75px;
+    height: 75px;
+    border: 1px solid #ddd;
+    float: left;
+}
+
+.mynyte-form-input-container .existing-img-container .remove-img-button {
+    background: #880000;
+    color: #fff;
+    border-radius: 16px;
+    width: 20px;
+    height: 20px;
+    float: right;
+    padding-left: 5px;
+    padding-top: 8px;
+    line-height: 0;
+    font-weight: bold;
+    font-size: 19px;
+    position: absolute;
+    top: 0;
+    right: -5px;
+}
+
+.mynyte-form-input-container .existing-img-container .remove-img-button:hover {
+    background: #aa0000;
+    color: #ddd;
+    cursor: pointer;
+}
+
 span.input-maxlength-note {
     float: right;
     margin-top: 5px;
