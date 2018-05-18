@@ -285,6 +285,9 @@ function formFieldHTML(params) {
 			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input"+removeableClass+"' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'" + selectedItemRegTag + "><span class='selected-option-label'>" + ((typeof(params.value) !== 'undefined') ? params.value: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 		},
 		'IMAGE': function () {
+			if (params.formType == 'edit-item-form') {
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span class='remove-img-button'>x</span></span>";
+			}
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {

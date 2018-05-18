@@ -120,6 +120,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 		function compileFieldHtml (val, i2, maxIndex) {
 			console.log("fieldVal: ", val);
+			var bif = MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1];
 			//Should actually check if the option is a select-style option
 			if (dataType.indexOf('INT') > -1 && propType != null) {
 				var propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
@@ -180,7 +181,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1].formType});
+						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: bif.formType});
 						
 						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
 					},
@@ -264,7 +265,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 								imgTest.src = reader.result;
 								};
-							reader.onerror = function (error) {
+								reader.onerror = function (error) {
 									console.log('Error: ', error);
 								};
 							}
@@ -272,7 +273,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 							readFile(0);
 					};
 
-					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop], index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
 				addPropFinal(i, isReqLabel, inputString, i2, maxIndex);

@@ -541,6 +541,9 @@ function formFieldHTML(params) {
 			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input"+removeableClass+"' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'" + selectedItemRegTag + "><span class='selected-option-label'>" + ((typeof(params.value) !== 'undefined') ? params.value: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 		},
 		'IMAGE': function () {
+			if (params.formType == 'edit-item-form') {
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span class='remove-img-button'>x</span></span>";
+			}
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
@@ -727,6 +730,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 		function compileFieldHtml (val, i2, maxIndex) {
 			console.log("fieldVal: ", val);
+			var bif = MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1];
 			//Should actually check if the option is a select-style option
 			if (dataType.indexOf('INT') > -1 && propType != null) {
 				var propSubType = modelProperties[prop]["Related Property Sub-Type"] || 'Landlord',
@@ -787,7 +791,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1].formType});
+						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: bif.formType});
 						
 						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
 					},
@@ -871,7 +875,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 								imgTest.src = reader.result;
 								};
-							reader.onerror = function (error) {
+								reader.onerror = function (error) {
 									console.log('Error: ', error);
 								};
 							}
@@ -879,7 +883,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 							readFile(0);
 					};
 
-					inputString = formFieldHTML({fieldType: dataType, prop: modelProperties[prop], index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
 				addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
