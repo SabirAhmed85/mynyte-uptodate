@@ -139,6 +139,9 @@ function internalDataConnect (params) {
 	var actionPropsMap = {
 		uploadImage: {
 			type: "POST", cache: false, processData: false, async: false
+		},
+		removeImage: {
+			type: "POST", cache: true, processData: true, async: true
 		}
 	};
 	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl);
@@ -152,7 +155,7 @@ function internalDataConnect (params) {
 		data: data,
     	cache: actionPropsMap[action].type,
     	processData: actionPropsMap[action].processData,
-    	contentType: false,
+    	contentType: 'Content-type:text/html; charset=UTF-8',
 		success: function (successData) {
 			successCallback({successData: successData, existingVars: existingVars});
 		},
@@ -174,43 +177,57 @@ function internalDataConnect (params) {
 	if ($('.mynyte-popup-cover.'+params.oldClass).length == 0) {
 		var div = $("<div/>").appendTo($('body'));
 		div.attr('class', 'mynyte-popup-cover ' + params.oldClass);
-	}
 
-	if (params.class == " menu-item-detail") {
-		popupHtml = '<div class="mynyte-popup'+params.class+'">';
-			popupHtml += '<div class="mn-popup-header">';
-				popupHtml += '<h4 class="menu-item-title"></h4>';
-				popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({});"></i>';
+		if (params.class == " menu-item-detail") {
+			popupHtml = '<div class="mynyte-popup'+params.class+'">';
+				popupHtml += '<div class="mn-popup-header">';
+					popupHtml += '<h4 class="menu-item-title"></h4>';
+					popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({});"></i>';
+				popupHtml += '</div>';
+				popupHtml += '<div class="mn-popup-body">';
+					popupHtml += '<img src="#" alt=""/>';
+					popupHtml += '<p class="menu-item-description"></p>';
+				popupHtml += '</div>';
 			popupHtml += '</div>';
-			popupHtml += '<div class="mn-popup-body">';
-				popupHtml += '<img src="#" alt=""/>';
-				popupHtml += '<p class="menu-item-description"></p>';
+		}
+		else if (params.class == " business-item-success") {
+			popupHtml = '<div class="mynyte-popup'+params.class+'">';
+				popupHtml += '<div class="mn-popup-header">';
+					popupHtml += '<h4 class="menu-item-title">' + params.itemName + ' Uploaded</h4>';
+					popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({});"></i>';
+				popupHtml += '</div>';
+				popupHtml += '<div class="mn-popup-body">';
+					popupHtml += '<p>Your ' + params.itemName + ' has been successfully uploaded</p>';
+					popupHtml += '<a class="button-link mynyte-button mynyte-button-secondary" target="_blank" href="' + params.itemLink + params._itemId +'">See your new ' + params.itemName + '</a>';
+					popupHtml += '<button class="mynyte-button-primary mynyte-button" onClick="window.location.reload()">Upload another ' + params.itemName + '</button>';
+				popupHtml += '</div>';
 			popupHtml += '</div>';
-		popupHtml += '</div>';
-	}
-	else if (params.class == " business-item-success") {
-		popupHtml = '<div class="mynyte-popup'+params.class+'">';
-			popupHtml += '<div class="mn-popup-header">';
-				popupHtml += '<h4 class="menu-item-title">' + params.itemName + ' Uploaded</h4>';
-				popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({});"></i>';
+		}
+		else if (params.class == " remove-image") {
+			popupHtml = '<div class="mynyte-popup'+params.class+'">';
+				popupHtml += '<div class="mn-popup-header">';
+					popupHtml += '<h4 class="menu-item-title">Delete Image</h4>';
+					popupHtml += '<i class="fa fa-times mn-popup-close" onclick="MynyteApi.closePopup({class: \'remove-image\'});"></i>';
+				popupHtml += '</div>';
+				popupHtml += '<div class="mn-popup-body">';
+					popupHtml += '<p>Are you sure you want to delete this image? This action cannot be undone.</p>';
+					popupHtml += '<button class="mynyte-button-primary mynyte-button" onclick="MynyteApi.confirmRemoveImage();">Delete Item</button>';
+					popupHtml += '<button class="mynyte-button-secondary mynyte-button" onclick="MynyteApi.closePopup({class: \'remove-image\'});">Cancel</button>';
+				popupHtml += '</div>';
 			popupHtml += '</div>';
-			popupHtml += '<div class="mn-popup-body">';
-				popupHtml += '<p>Your ' + params.itemName + ' has been successfully uploaded</p>';
-				popupHtml += '<a class="button-link mynyte-button mynyte-button-secondary" target="_blank" href="' + params.itemLink + params._itemId +'">See your new ' + params.itemName + '</a>';
-				popupHtml += '<button class="mynyte-button-primary mynyte-button" onClick="window.location.reload()">Upload another ' + params.itemName + '</button></p>';
+		}
+		else if (params.class == " simple-loader") {
+			popupHtml = '<div class="mynyte-popup'+params.class+'">';
+				popupHtml += '<div class="mn-popup-body">';
+					popupHtml += '<i class="fa-' + params.iconClass + ' fa"></i>';
+					popupHtml += '<p>' + params.message + '</p>';
+				popupHtml += '</div>';
 			popupHtml += '</div>';
-		popupHtml += '</div>';
-	}
-	else if (params.class == " simple-loader") {
-		popupHtml = '<div class="mynyte-popup'+params.class+'">';
-			popupHtml += '<div class="mn-popup-body">';
-				popupHtml += '<i class="fa-' + params.iconClass + ' fa"></i>';
-				popupHtml += '<p>' + params.message + '</p>';
-			popupHtml += '</div>';
-		popupHtml += '</div>';
-	}
+		}
 
-	$('.mynyte-popup-cover.'+params.oldClass).append(popupHtml);
+		$('.mynyte-popup-cover.'+params.oldClass).append(popupHtml);
+
+	}
 }
 
 function openPopup(params) {
@@ -542,7 +559,7 @@ function formFieldHTML(params) {
 		},
 		'IMAGE': function () {
 			if (params.formType == 'edit-item-form') {
-				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span class='remove-img-button'>x</span></span>";
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
@@ -580,7 +597,7 @@ function formGeneralHTML(params) {
 	var formGeneralHTML = {
 		'formStart': function () {
 			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addBusinessItem()': 'MynyteApi.editBusinessItem()';
-			htmlString += "<form action='#' name='mynyte-business-item-add-form' onsubmit='return " + onSub + ";'>";
+			htmlString += "<form action='#' name='mynyte-business-item-add-form' id='mynyte-business-item-add-form' onsubmit='return " + onSub + ";' data-item-id='" + params._businessEntityItemId + "'>";
 		},
 		'formFieldLabel': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s").replace(" Id", "").replace("_Related", ""),
@@ -835,7 +852,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 					
 				}
 				else if (dataType == 'IMAGE' || dataType == 'FILE') {
-					MynyteApi.imageUploadFileTypeCheck = function (elem) {
+					MynyteApi.imageUploadFileTypeCheck = MynyteApi.imageUploadFileTypeCheck || function (elem) {
 
 						function readFile(a) {
 							var reader = new FileReader();
@@ -883,6 +900,41 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 							readFile(0);
 					};
 
+					if (bif.formType == 'edit-item-form') {
+						MynyteApi.removeImage = MynyteApi.removeImage || function (elem) {
+							MynyteApi.imageToRemove = {'src': $(elem).data('src'), 'propName': $(elem).data('prop-name')};
+							createPopup({'class': 'remove-image', 'iconClass': 'circle-o-notch fa-spin fa-4x'});
+							openPopup({'class': 'remove-image'});
+						};
+
+						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
+							console.log(MynyteApi.imageToRemove);
+							/*
+							dataConnect({
+								className: 'BusinessEntity', 
+								action: 'removePropertyFromBusinessEntityItem', 
+								data: {
+									_businessEntityItemId: $('form#mynyte-business-item-add-form').data('item-id'),
+									metaName: MynyteApi.imageToRemove.propName,
+									metaValue: MynyteApi.imageToRemove.src
+								},
+								successCallback: function (params) {
+									MynyteApi.imageToRemove = {};
+									closePopup({'class': 'remove-image'});
+								},
+								errorCallback: function (errorData) {
+
+								}
+							});*/
+							internalDataConnect({
+								className: 'Image', 
+								action: 'removeImage', 
+								data: {'src': MynyteApi.imageToRemove.src},
+								successCallback: function (params) {}, errorCallback: function (errorData) {}
+							});
+						};
+					}
+					console.log(bif);
 					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
@@ -935,8 +987,8 @@ function mapBusinessItemValuesToModel(model, html) {
 	}
 }
 
-function prepareBusinessItemFormObject (successData, formType) {
-	var htmlString = formGeneralHTML({element: 'formStart', formType: formType});
+function prepareBusinessItemFormObject (successData, formType, _businessEntityItemId) {
+	var htmlString = formGeneralHTML({element: 'formStart', formType: formType, _businessEntityItemId: _businessEntityItemId});
 	var modelProperties = {};
 	var indexBased = (successData.items[0].vmIndex != null);
 
@@ -975,6 +1027,10 @@ function createBusinessItemFormPageVar (params) {
 		'internalDataUrl': params.internalDataUrl || '/',
 		'formType': params.formType || 'add-item-form'
 	};
+
+	if (window.location.href.indexOf('?_itemId') > -1) {
+		MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1]._businessEntityItemId = parseInt(window.location.href.substr(window.location.href.indexOf('?_itemId=') + 9, window.location.href.length));
+	}
 
 	return MynyteApi.pageVars['New Business Item Forms'].length - 1;
 }
@@ -1348,7 +1404,7 @@ function formObjectInit(params) {
 
 				initialiseBusinessItemFormFunctionsAndEvents(thisBif);
 
-				prepareBusinessItemFormObject(successData, thisBif.formType);
+				prepareBusinessItemFormObject(successData, thisBif.formType, thisBif._businessEntityItemId);
 
 			/*
 			RELATING TO LEGAL SERVE SPECIFICALLY

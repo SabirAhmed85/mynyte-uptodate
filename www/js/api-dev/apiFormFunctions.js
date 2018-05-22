@@ -225,7 +225,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 					
 				}
 				else if (dataType == 'IMAGE' || dataType == 'FILE') {
-					MynyteApi.imageUploadFileTypeCheck = function (elem) {
+					MynyteApi.imageUploadFileTypeCheck = MynyteApi.imageUploadFileTypeCheck || function (elem) {
 
 						function readFile(a) {
 							var reader = new FileReader();
@@ -273,6 +273,41 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 							readFile(0);
 					};
 
+					if (bif.formType == 'edit-item-form') {
+						MynyteApi.removeImage = MynyteApi.removeImage || function (elem) {
+							MynyteApi.imageToRemove = {'src': $(elem).data('src'), 'propName': $(elem).data('prop-name')};
+							createPopup({'class': 'remove-image', 'iconClass': 'circle-o-notch fa-spin fa-4x'});
+							openPopup({'class': 'remove-image'});
+						};
+
+						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
+							console.log(MynyteApi.imageToRemove);
+							/*
+							dataConnect({
+								className: 'BusinessEntity', 
+								action: 'removePropertyFromBusinessEntityItem', 
+								data: {
+									_businessEntityItemId: $('form#mynyte-business-item-add-form').data('item-id'),
+									metaName: MynyteApi.imageToRemove.propName,
+									metaValue: MynyteApi.imageToRemove.src
+								},
+								successCallback: function (params) {
+									MynyteApi.imageToRemove = {};
+									closePopup({'class': 'remove-image'});
+								},
+								errorCallback: function (errorData) {
+
+								}
+							});*/
+							internalDataConnect({
+								className: 'Image', 
+								action: 'removeImage', 
+								data: {'src': MynyteApi.imageToRemove.src},
+								successCallback: function (params) {}, errorCallback: function (errorData) {}
+							});
+						};
+					}
+					console.log(bif);
 					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
@@ -325,8 +360,8 @@ function mapBusinessItemValuesToModel(model, html) {
 	}
 }
 
-function prepareBusinessItemFormObject (successData, formType) {
-	var htmlString = formGeneralHTML({element: 'formStart', formType: formType});
+function prepareBusinessItemFormObject (successData, formType, _businessEntityItemId) {
+	var htmlString = formGeneralHTML({element: 'formStart', formType: formType, _businessEntityItemId: _businessEntityItemId});
 	var modelProperties = {};
 	var indexBased = (successData.items[0].vmIndex != null);
 
@@ -365,6 +400,10 @@ function createBusinessItemFormPageVar (params) {
 		'internalDataUrl': params.internalDataUrl || '/',
 		'formType': params.formType || 'add-item-form'
 	};
+
+	if (window.location.href.indexOf('?_itemId') > -1) {
+		MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1]._businessEntityItemId = parseInt(window.location.href.substr(window.location.href.indexOf('?_itemId=') + 9, window.location.href.length));
+	}
 
 	return MynyteApi.pageVars['New Business Item Forms'].length - 1;
 }
@@ -738,7 +777,7 @@ function formObjectInit(params) {
 
 				initialiseBusinessItemFormFunctionsAndEvents(thisBif);
 
-				prepareBusinessItemFormObject(successData, thisBif.formType);
+				prepareBusinessItemFormObject(successData, thisBif.formType, thisBif._businessEntityItemId);
 
 			/*
 			RELATING TO LEGAL SERVE SPECIFICALLY

@@ -286,7 +286,7 @@ function formFieldHTML(params) {
 		},
 		'IMAGE': function () {
 			if (params.formType == 'edit-item-form') {
-				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span class='remove-img-button'>x</span></span>";
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
@@ -324,7 +324,7 @@ function formGeneralHTML(params) {
 	var formGeneralHTML = {
 		'formStart': function () {
 			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addBusinessItem()': 'MynyteApi.editBusinessItem()';
-			htmlString += "<form action='#' name='mynyte-business-item-add-form' onsubmit='return " + onSub + ";'>";
+			htmlString += "<form action='#' name='mynyte-business-item-add-form' id='mynyte-business-item-add-form' onsubmit='return " + onSub + ";' data-item-id='" + params._businessEntityItemId + "'>";
 		},
 		'formFieldLabel': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s").replace(" Id", "").replace("_Related", ""),

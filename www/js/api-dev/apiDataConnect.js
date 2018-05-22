@@ -40,6 +40,9 @@ function internalDataConnect (params) {
 	var actionPropsMap = {
 		uploadImage: {
 			type: "POST", cache: false, processData: false, async: false
+		},
+		removeImage: {
+			type: "POST", cache: true, processData: true, async: true
 		}
 	};
 	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl);
@@ -53,7 +56,7 @@ function internalDataConnect (params) {
 		data: data,
     	cache: actionPropsMap[action].type,
     	processData: actionPropsMap[action].processData,
-    	contentType: false,
+    	contentType: 'Content-type:text/html; charset=UTF-8',
 		success: function (successData) {
 			successCallback({successData: successData, existingVars: existingVars});
 		},

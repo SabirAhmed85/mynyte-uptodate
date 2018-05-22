@@ -105,6 +105,24 @@
     $result = mysql_query('CALL updateBusinessEntityItem('.$_businessId.', "'.$_businessEntityItemId.'", "'.$updateString.'");');
   }
 
+  else if ($action == 'removePropertyFromBusinessEntityItem') {
+    $_businessEntityItemId = $_GET['_businessEntityItemId'];
+    $metaName = $_GET['metaName'];
+    $metaValue = $_GET['metaValue'];
+    
+    /*
+    updateBusinessEntityItem Method Parameters:
+      - _Business Entity Item Id (_id of business which owns the item)
+      - MetaName (VARCHAR(1000))
+      - MeteValye (VARCHAR(100000))
+
+      Example: CALL updateBusinessEntityItem(1, 2, "[['Status':='Complete']],[['Date Completed':=NOW()]]");
+
+    */
+    //echo 'CALL removePropertyFromBusinessEntityItem('.$_businessEntityItemId.', "'.$metaName.'", "'.$metaValue.'");';
+    $result = mysql_query('CALL removePropertyFromBusinessEntityItem('.$_businessEntityItemId.', "'.$metaName.'", "'.$metaValue.'");');
+  }
+
   else if ($action == 'deleteBusinessEntityItem') {
     $_businessId = $_GET['_businessId'];
     $_businessEntityItemId = $_GET['_businessEntityItemId'];
@@ -169,7 +187,7 @@
       header("Content-Type: application/json");
       echo $action.'({items:'.json_encode($output).'})';
   }
-  else {
+  else if ($action != 'removePropertyFromBusinessEntityItem') {
     $row = mysql_fetch_assoc($result);    
     header("Content-Type: application/json");
     echo $action.'({item:'.json_encode($row["@_businessItemId"]).'})';
