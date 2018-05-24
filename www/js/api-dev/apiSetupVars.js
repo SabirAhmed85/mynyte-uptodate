@@ -18,7 +18,9 @@ current_environment_file_url = (current_environment == 'localhost') ? "": curren
 current_db_environment_file_url = (current_environment == 'localhost') ? "": current_db_environment + "/";
 
 MynyteApi.scripts = {};
-MynyteApi.pageVars = {};
+MynyteApi.pageVars = {
+	_businessId: _bid
+};
 MynyteApi.pageVars.Globals = {
 	'Mynyte': {
 		'main-logo': 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',

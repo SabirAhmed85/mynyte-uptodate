@@ -481,8 +481,14 @@ MynyteApi = function () {
 		function nextItem () {
 			if (i == successData.items.length - 1) {
 				MynyteApi.pageVars['Page Object']["Business Items"] = businessItems;
+				MynyteApi.pageVars['Page Object']["Inner Business Items"] = MynyteApi.pageVars['Page Object']["Inner Business Items"] || [];
+				if (params.innerBusinessItemType) {
+					MynyteApi.pageVars['Page Object']["Inner Business Items"][params.innerBusinessItemType] = businessItems;
+				}
 				
-				prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'bisdIndex': params.bisdIndex});
+				if (viewType != null) {
+					prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'bisdIndex': params.bisdIndex});
+				}
 			}
 			else {
 				params.i += 1;

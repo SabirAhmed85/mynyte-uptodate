@@ -60,7 +60,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 	var addPropFinal = function addPropFinal (i, isReqLabel, inputString, i2, maxIndex) {
 		var prop = keys[i];
 
-		htmlString += (i2 != null && i2 > 0) ? formGeneralHTML({element: 'formFieldContainer', prop: modelProperties[prop], inputString: inputString}) : formGeneralHTML({element: 'formFieldLabel', prop: modelProperties[prop], inputString: inputString});
+		htmlString += (i2 != null && i2 > 0) ? formGeneralHTML({element: 'formFieldContainer', prop: modelProperties[prop], inputString: inputString, index: i2, maxIndex: maxIndex}) : formGeneralHTML({element: 'formFieldLabel', prop: modelProperties[prop], inputString: inputString, index: i2, maxIndex: maxIndex});
 
 		console.log(i2, maxIndex, "i2");
 		
@@ -97,18 +97,27 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 		};
 
 		MynyteApi.addFormInputToForm = function (button) {
-			var newInput = $(button).siblings('.input-container').find('.mynyte-form-input').first().clone(),
-				newImg = $(button).siblings('.input-container').find('.mynyte-image-input-images').first().clone().empty(),
+			var numbers, nameAttr, newNum;
+			var newInput = $(button).siblings('.input-container').find('.mynyte-form-input').last().clone(),
+				newImg = $(button).siblings('.input-container').find('.mynyte-image-input-images').last().clone().empty(),
 				par = $(button).siblings('.input-container')[0],
 				innerCont = $("<span class='input-inner-container'></span>"),
 				removeButton = $($.parseHTML("<button type='button' onclick='MynyteApi.removeFormInputFromForm(this);' class='remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon'><span class='mynyte-button-inner-wrapper'><i class='fa fa-minus'></i><span>Remove</span></span></button>"));
 
 			newInput.attr("data-index", $(button).siblings('.input-container').find('.mynyte-form-input').length);
+			nameAttr = newInput.attr("name");
+			numbers = nameAttr.match(/\d+/);
+
+			if (numbers != null) {
+				newNum = nameAttr.replace(/[0-9]/g, '');
+				newNum += parseInt(numbers[0]) + 1;
+				newInput.attr("name", newNum);
+			}
+
 			if ($(newInput).find('.selected-option-label').length) {
-				console.log($(newInput).find('.selected-option-label'));
 				$(newInput).find('.selected-option-label').find('span').html('');
 			}
-			console.log($(newInput).find('.selected-option-label').length);
+
 			newInput.val('').addClass('mynyte-removeable-input').appendTo(innerCont);
 			removeButton.appendTo(innerCont);
 
@@ -120,7 +129,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 		};
 
 		function compileFieldHtml (val, i2, maxIndex) {
-			console.log("fieldVal: ", val);
+			var displayVal;
 			var bif = MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1];
 			//Should actually check if the option is a select-style option
 			if (dataType.indexOf('INT') > -1 && propType != null) {
@@ -131,65 +140,79 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 				propType = modelProperties[prop]["Related Property Type"] || 'Business Item';
 
-					
-				if (modelProperties[prop]["Related Property ViewModel Props"]) {
-					var viewModelProps = modelProperties[prop]["Related Property ViewModel Props"].split(",");
-					propViewModelProps = [];
-					for (var a = 0; a < viewModelProps.length; a++) {
-						viewModelProps[a] = viewModelProps[a].trim();
-						propViewModelProps.push(viewModelProps[a]);
-					}
-				}
-				/*
-				propType = 'Catalogue Item';
-				propSubType = 'Property';
-				propLabel = 'Business Entity Item';
-				propSubLabel = "'Related Business Entity Specific Item Type'";
-				propViewModelProps = ['_id', 'Address Line 1'] || ['_id'];
-				*/
-						
-				var itemTypeObj = genericItemTypeObj({element: propLabel, propType: propType, propSubLabel: propSubLabel, propSubType: propSubType});
-				
-				dataConnect({
-					className: itemTypeObj[propLabel].class, action: itemTypeObj[propLabel].action, 
-					data: itemTypeObj[propLabel].data,
-					successCallback: function (params) {
-						var viewType = 'Dropdown Selection',
-							_businessId = MynyteApi.pageVars['New Business Item Forms'][0]._businessId,
-							ind = 0, 
-							successData = params.successData, 
-							businessItems = {}, 
-							htmlString = "", 
-							htmlElem = null,
-							htmlPropNameToDisplay = modelProperties[prop].Name.substr((modelProperties[prop].Name.indexOf('_') == 0) ? 1: 0, modelProperties[prop].Name.length).replace(" Id", ""),
-							propNameCssFormat = propNameCssFormatter(modelProperties[prop].Name),
-							popupHtml = '<div class="mynyte-popup-cover dropdown-wrapper '+propNameCssFormat+'-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+propNameCssFormat+'-dropdown-wrapper"><h4>Select a '+htmlPropNameToDisplay+'</h4><i data-name="' + propNameCssFormat + '" class="fa fa-times" onclick="MynyteApi.toggleRelatedItemSelect(event, this);"></i><ul class="dropdown '+propNameCssFormat+'-dropdown"></ul></div></div></div>';
-
-						MynyteApi.pageVars['Page Object']["Business Items"] = {};
-
-						if (!MynyteApi.pageVars['Business Item Summary Displays']) {
-							MynyteApi.pageVars['Business Item Summary Displays'] = [];
+				function completeCompilingFakeFieldHtml () {
+					for (var thisProp in MynyteApi.pageVars['Page Object']["Inner Business Items"][modelProperties[prop]["Related Property Sub-Type"]]) {
+						if (thisProp == parseInt(val)) {
+							displayVal = MynyteApi.pageVars['Page Object']["Inner Business Items"][modelProperties[prop]["Related Property Sub-Type"]][thisProp].Name;
 						}
-						MynyteApi.pageVars['Business Item Summary Displays'][MynyteApi.pageVars['Business Item Summary Displays'].length] = {
-							'viewModelProps': propViewModelProps,
-							'currentPage': 1,
-							'pageItemLimit': 0,
-							'pagerEnabled': false,
-							'viewModelProps': propViewModelProps
-						};
-
-						$('body').append(popupHtml);
-
-						loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
-
-						inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex, formType: bif.formType});
-						
-						addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
-					},
-					errorCallback: function (errorDara) {
-						console.log("error: ", errorData);
 					}
-				});
+					inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, displayValue: displayVal, index: i2, maxIndex: maxIndex, formType: bif.formType});
+					addPropFinal(i, isReqLabel, inputString, i2, maxIndex);
+				}
+
+				
+				if (i2 == 0 || i2 == null) {
+					if (modelProperties[prop]["Related Property ViewModel Props"]) {
+						var viewModelProps = modelProperties[prop]["Related Property ViewModel Props"].split(",");
+						propViewModelProps = [];
+						for (var a = 0; a < viewModelProps.length; a++) {
+							viewModelProps[a] = viewModelProps[a].trim();
+							propViewModelProps.push(viewModelProps[a]);
+						}
+					}
+					/*
+					propType = 'Catalogue Item';
+					propSubType = 'Property';
+					propLabel = 'Business Entity Item';
+					propSubLabel = "'Related Business Entity Specific Item Type'";
+					propViewModelProps = ['_id', 'Address Line 1'] || ['_id'];
+					*/
+						
+					var itemTypeObj = genericItemTypeObj({element: propLabel, propType: propType, propSubLabel: propSubLabel, propSubType: propSubType});
+
+					dataConnect({
+						className: itemTypeObj[propLabel].class, action: itemTypeObj[propLabel].action, 
+						data: itemTypeObj[propLabel].data,
+						successCallback: function (params) {
+							var viewType = 'Dropdown Selection',
+								_businessId = MynyteApi.pageVars['New Business Item Forms'][0]._businessId,
+								ind = 0, 
+								successData = params.successData, 
+								businessItems = {}, 
+								htmlString = "", 
+								htmlElem = null,
+								htmlPropNameToDisplay = modelProperties[prop].Name.substr((modelProperties[prop].Name.indexOf('_') == 0) ? 1: 0, modelProperties[prop].Name.length).replace(" Id", ""),
+								propNameCssFormat = propNameCssFormatter(modelProperties[prop].Name),
+								popupHtml = '<div class="mynyte-popup-cover dropdown-wrapper '+propNameCssFormat+'-dropdown-wrapper"><div class="mynyte-popup"><div class="mn-popup-body"><div class="dropdown-wrapper '+propNameCssFormat+'-dropdown-wrapper"><h4>Select a '+htmlPropNameToDisplay+'</h4><i data-name="' + propNameCssFormat + '" class="fa fa-times" onclick="MynyteApi.toggleRelatedItemSelect(event, this);"></i><ul class="dropdown '+propNameCssFormat+'-dropdown"></ul></div></div></div>';
+
+							MynyteApi.pageVars['Page Object']["Business Items"] = {};
+
+							if (!MynyteApi.pageVars['Business Item Summary Displays']) {
+								MynyteApi.pageVars['Business Item Summary Displays'] = [];
+							}
+							MynyteApi.pageVars['Business Item Summary Displays'][MynyteApi.pageVars['Business Item Summary Displays'].length] = {
+								'viewModelProps': propViewModelProps,
+								'currentPage': 1,
+								'pageItemLimit': 0,
+								'pagerEnabled': false,
+								'viewModelProps': propViewModelProps
+							};
+
+							$('body').append(popupHtml);
+
+							loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': modelProperties[prop]["Related Property Sub-Type"], 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
+
+							completeCompilingFakeFieldHtml();
+						},
+						errorCallback: function (errorDara) {
+							console.log("error: ", errorData);
+						}
+					});
+				}
+				else {
+					console.log("PAGEVARS", MynyteApi.pageVars['Page Object']["Inner Business Items"][modelProperties[prop]["Related Property Sub-Type"]]);
+					completeCompilingFakeFieldHtml();
+				}
 			}
 			else {
 
@@ -286,7 +309,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
 							console.log(MynyteApi.imageToRemove);
 							$('.mynyte-img-to-remove').parents('.existing-img-container').remove();
-							/*
+							
 							dataConnect({
 								className: 'BusinessEntity', 
 								action: 'removePropertyFromBusinessEntityItem', 
@@ -302,7 +325,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 								errorCallback: function (errorData) {
 
 								}
-							});*/
+							});
 							internalDataConnect({
 								className: 'Image', 
 								action: 'removeImage', 
@@ -321,7 +344,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 		}
 		
 		if (typeof(dataVal) === 'undefined' || dataVal == '') {
-			compileFieldHtml('', null, null);
+			compileFieldHtml('', 0, 0);
 		} else if (i2 == null) {
 			compileFieldHtml(dataVal[0], 0, dataVal.length - 1);
 		}
@@ -458,7 +481,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 		};
 
 		var handleInputVal = function (i, name) {
-			var input = $('input[name="' + name + '"]').eq(i);
+			var input = $('input[data-name="' + name + '"]').eq(i);
 			var valToAssign;
 
 			if ($(input).attr('data-dummy') != 'true') {
@@ -484,7 +507,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 		};
 
 		var handleTextareaVal = function (i, name) {
-			var valToAssign = $('textarea[name="' + name + '"]').val();
+			var valToAssign = $('textarea[data-name="' + name + '"]').val();
 			assignValToPageObject(i, valToAssign);
 		};
 
@@ -506,9 +529,9 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				valToAssign = null,
 				a = 0;
 
-			if ($('input[name="' + name + '"]').length) {
+			if ($('input[data-name="' + name + '"]').length) {
 				inputType = 'input';
-				for (a = 0; a < $('input[name="' + name + '"]').length; a++) {
+				for (a = 0; a < $('input[data-name="' + name + '"]').length; a++) {
 					handleInputVal(a, name);
 				}
 			}
@@ -518,9 +541,9 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 					handleDivVal(a, name);
 				}
 			}
-			else if ($('textarea[name="' + name + '"]').length) {
+			else if ($('textarea[data-name="' + name + '"]').length) {
 				inputType = 'textarea';
-				for (a = 0; a < $('textarea[name="' + name + '"]').length; a++) {
+				for (a = 0; a < $('textarea[data-name="' + name + '"]').length; a++) {
 					handleTextareaVal(a, name);
 				}
 			}

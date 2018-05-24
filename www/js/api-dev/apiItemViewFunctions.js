@@ -117,6 +117,42 @@ function itemViewObjectInit(params) {
 			console.log(buttonHtml);
 		}
 
+		function getPossibleValsForObjectProperty (itemModel) {
+			if (typeof(itemModel) === 'undefined') {return false;}
+			if (itemModel["Data Type"].indexOf('INT') > -1 && itemModel["Related Property Type"] != null) {
+				var propSubType = itemModel["Related Property Sub-Type"] || 'Landlord',
+					propLabel = itemModel["Related Property Label"] || 'Business Entity Item',
+					propSubLabel = itemModel["Related Property Sub-Label"] || "'Related Business Entity Specific Item Type'",
+					propViewModelProps = itemModel["Related Property ViewModel Props"] || ['_id'],
+					propType = itemModel["Related Property Type"] || 'Business Item';
+					
+				var itemTypeObj = genericItemTypeObj({element: propLabel, propType: propType, propSubLabel: propSubLabel, propSubType: propSubType});
+
+				dataConnect({
+					className: itemTypeObj[propLabel].class, action: itemTypeObj[propLabel].action, 
+					data: itemTypeObj[propLabel].data,
+					successCallback: function (params) {
+						var viewType = 'Dropdown Selection',
+							_businessId = MynyteApi.pageVars._businessId,
+							ind = 0, 
+							successData = params.successData, 
+							businessItems = {}, 
+							htmlString = "", 
+							htmlElem = null,
+							htmlPropNameToDisplay = itemModel.Name.substr((itemModel.Name.indexOf('_') == 0) ? 1: 0, itemModel.Name.length).replace(" Id", ""),
+							propNameCssFormat = propNameCssFormatter(itemModel.Name);
+
+						loopObjPropsToCompileObj ({'format': 'default', 'viewType': null, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': itemModel["Related Property Sub-Type"]});
+						
+						console.log("DOOS44IE", MynyteApi.pageVars['Page Object']["Inner Business Items"][itemModel["Related Property Sub-Type"]]);
+					},
+					errorCallback: function (errorDara) {
+						console.log("error: ", errorData);
+					}
+				});
+			}
+		}
+
 		function loopPropertiesToCreateItemHtml () {
 			var htmlString = "";
 
@@ -130,9 +166,12 @@ function itemViewObjectInit(params) {
 					arrays[item.metaName].push(item);
 				}
 				else if (item.metaName.indexOf("Arr[]") > -1) {
+					getPossibleValsForObjectProperty(itemModel);
 					arrays[item.metaName] = [item];
 				}
 				else {
+					console.log(itemModel);
+					getPossibleValsForObjectProperty(itemModel);
 					htmlString += businessItemPropertyHtml({item: item, dataType: dataType, internalDataUrl: bidd.internalDataUrl});
 				}
 

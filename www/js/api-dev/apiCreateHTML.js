@@ -6,7 +6,7 @@ function genericItemTypeObj (params) {
 				'Business Entity Item': {
 					class: 'BusinessEntity', action: 'getBusinessEntityItems',
 					data: {
-						_businessId: MynyteApi.pageVars['New Business Item Forms'][0]._businessId,
+						_businessId: MynyteApi.pageVars._businessId,
 						businessEntityItemType: params.propType,
 						extraFiltersString: "[['"+params.propSubLabel+"':='"+params.propSubType+"']]",
 						_relatedViewModelId: 'NULL'
@@ -264,41 +264,41 @@ function formFieldHTML(params) {
 
 	var createFieldHTML = {
 		'Text': function () {
-			inputString += "<input name = '" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='text' "+maxLen+""+minLen+" />";
+			inputString += "<input name = '" +name+ "' data-name='" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='text' "+maxLen+""+minLen+" />";
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Textarea': function () {
-			inputString += "<textarea rows='3' name = '" +name+ "' class='mynyte-form-input mynyte-form-textarea-input"+isReq+removeableClass+"' "+maxLen+""+minLen+" >" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</textarea>";
+			inputString += "<textarea rows='3' name='" +name+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-textarea-input"+isReq+removeableClass+"' "+maxLen+""+minLen+" >" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</textarea>";
 			if (maxLen != "") {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
 		'Number': function () {
-			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='number' "+maxLen+""+minLen+" />";
+			inputString += "<input name='"+name+"' data-name='" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='number' "+maxLen+""+minLen+" />";
 		},
 		'Double': function () {
-			inputString += "<input name='"+name+"' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='number' step='0.01' "+maxLen+""+minLen+" />";
+			inputString += "<input name='"+name+"' data-name='" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='number' step='0.01' "+maxLen+""+minLen+" />";
 		},
 		'Fake': function () {
-			inputString += "<div data-index='0' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input"+removeableClass+"' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'" + selectedItemRegTag + "><span class='selected-option-label'>" + ((typeof(params.value) !== 'undefined') ? params.value: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
+			inputString += "<div data-index='" + params.index + "' name='" + propNameCssFormat + "' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input"+removeableClass+"' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'" + selectedItemRegTag + "><span class='selected-option-label'>" + ((typeof(params.displayValue) !== 'undefined') ? params.displayValue: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 		},
 		'IMAGE': function () {
 			if (params.formType == 'edit-item-form') {
 				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
-			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
 			console.log("okos");
-			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
+			inputString += "<div name='" + name + "' data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
 		},
 		'TIME': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
+			inputString += "<div name='" + name + "' data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
 		}
 	};
 
@@ -306,11 +306,12 @@ function formFieldHTML(params) {
 	for (var val in globalFieldSetup) {
 		globalFieldSetup[val]();
 	}
-	inputString += "<span class='input-container'>";
-	inputString += (params.index > 0) ? '<span class="input-inner-container">': '';
+	inputString += (params.index == 0 || params.index == null) ? "<span class='input-container'>": '';
+	inputString += (params.index == 1) ? '<span class="input-inner-container">': '';
 	createFieldHTML[params.fieldType]();
-	inputString += (params.index > 0) ? '<button type="button" class="remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon"><span class="mynyte-button-inner-wrapper"><i class="fa fa-minus"></i><span>Remove</span></span></button></span>': '';
-	inputString += "</span>";
+	inputString += (params.index > 0) ? '<button type="button" onclick="MynyteApi.removeFormInputFromForm(this);" class="remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon"><span class="mynyte-button-inner-wrapper"><i class="fa fa-minus"></i><span>Remove</span></span></button>': '';
+	inputString += (params.index == params.maxIndex && params.index != null) ? "</span>": ''; // end the input inner container
+	inputString += (params.index == params.maxIndex || params.index == null) ? "</span>": ''; // end the input container
 
 	if (!!isArray && (params.index == null || params.index == params.maxIndex)) {
 		inputString += "<button onclick='MynyteApi.addFormInputToForm(this)' class='add-input-button mynyte-button mynyte-button-secondary mynyte-button-with-icon' type='button'><span class='mynyte-button-inner-wrapper'><i class='fa fa-plus'></i><span>Add Another</span></span></button>";
@@ -332,10 +333,14 @@ function formGeneralHTML(params) {
 				cssName = params.prop.Name.replace(/ /g, "-").replace(".", "").toLowerCase();
 
 			htmlString += "<div class='mynyte-form-field-container " + cssName + "-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
-			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
+			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString;
+			htmlString += (params.index == params.maxIndex || params.index == null) ? "</div></div>": "";
+			console.log('formFieldLabel: ', params.index, params.maxIndex);
 		},
 		'formFieldContainer': function () {
-			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
+			htmlString += params.inputString;
+			htmlString += (params.index == params.maxIndex) ? "</div></div>": "";
+			console.log('formFieldContainer: ', params.index, params.maxIndex);
 		},
 		'formComplete': function () {
 			var text = (params.formType != 'edit-item-form') ? 'Add': 'Update';
