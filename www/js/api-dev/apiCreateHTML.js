@@ -63,7 +63,7 @@ function buttonsHtmlObj (params) {
 		},
 		'Edit': function () {
 			obj = {
-				html: "<div class='mynyte-form-field-container mynyte-button-container'><button class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
+				html: "<div class='mynyte-form-field-container mynyte-button-container'><button id='mynyte-item-edit-button' class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
 			};
 		}
 	};
@@ -246,7 +246,7 @@ function businessItemsSummaryGeneralHTML(params) {
 
 function formFieldHTML(params) {
 	var inputString = "";
-	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType, prop = params.prop;
+	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType, prop = params.prop, isArray, removeableClass;
 
 	var globalFieldSetup = {
 		dataType: function () {dataType =  prop["Data Type"];},
@@ -288,17 +288,17 @@ function formFieldHTML(params) {
 			if (params.formType == 'edit-item-form') {
 				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
-			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
 			console.log("okos");
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
 		},
 		'TIME': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
 		}
 	};
 
@@ -323,7 +323,7 @@ function formGeneralHTML(params) {
 	var htmlString = "";
 	var formGeneralHTML = {
 		'formStart': function () {
-			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addBusinessItem()': 'MynyteApi.editBusinessItem()';
+			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addOrUpdateBusinessItem("add")': 'MynyteApi.addOrUpdateBusinessItem("edit")';
 			htmlString += "<form action='#' name='mynyte-business-item-add-form' id='mynyte-business-item-add-form' onsubmit='return " + onSub + ";' data-item-id='" + params._businessEntityItemId + "'>";
 		},
 		'formFieldLabel': function () {
@@ -338,7 +338,8 @@ function formGeneralHTML(params) {
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
 		},
 		'formComplete': function () {
-			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>Add Item</button></div>";
+			var text = (params.formType != 'edit-item-form') ? 'Add': 'Update';
+			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>" + text + " Item</button></div>";
 			htmlString += "</form>";
 		}
 	};

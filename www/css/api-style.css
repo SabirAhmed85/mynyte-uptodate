@@ -3086,9 +3086,14 @@ span.mynyte-label-detail.with-image img {
   border-radius: 5px;
 }
 
-.mn-popup-body button {
+.mn-popup-body button,
+.mn-popup-body a.button-link {
     float: right;
     margin: 10px 0 5px 10px;
+}
+
+.mn-popup-body a:hover {
+    text-decoration: none;
 }
 
 .simple-loader .mn-popup-body {

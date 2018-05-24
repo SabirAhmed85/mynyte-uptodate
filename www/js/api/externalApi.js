@@ -128,7 +128,7 @@ $(document)
 	});
 }
 
-function internalDataConnect (params) {
+function internalDataFileConnect (params) {
 	var className = params.className;
 	var action = params.action;
 	var data = params.data || null;
@@ -138,13 +138,10 @@ function internalDataConnect (params) {
 
 	var actionPropsMap = {
 		uploadImage: {
-			type: "POST", cache: false, processData: false, async: false
-		},
-		removeImage: {
-			type: "POST", cache: true, processData: true, async: true
+			type: "POST", cache: false, processData: false, async: true
 		}
 	};
-	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl);
+
 	console.log(action);
 	$.ajax({
 		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
@@ -155,7 +152,38 @@ function internalDataConnect (params) {
 		data: data,
     	cache: actionPropsMap[action].type,
     	processData: actionPropsMap[action].processData,
-    	contentType: 'Content-type:text/html; charset=UTF-8',
+    	contentType: false,
+		success: function (successData) {
+			successCallback({successData: successData, existingVars: existingVars});
+		},
+		error: function (jqxhr,status,errorData) {
+			errorCallback(errorData);
+		},
+		complete: function (data) {
+
+		}
+	});
+}
+
+function internalDataConnect (params) {
+	var className = params.className;
+	var action = params.action;
+	var data = params.data || null;
+	var existingVars = params.existingVars || null;
+	var successCallback = params.successCallback || function () {};
+	var errorCallback = params.errorCallback || function () {};
+
+	var actionPropsMap = {
+		removeImage: {
+			type: "POST"
+		}
+	};
+
+	$.ajax({
+		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
+		type: actionPropsMap[action].type,
+		dataType: "json",
+		data: data,
 		success: function (successData) {
 			successCallback({successData: successData, existingVars: existingVars});
 		},
@@ -336,7 +364,7 @@ function buttonsHtmlObj (params) {
 		},
 		'Edit': function () {
 			obj = {
-				html: "<div class='mynyte-form-field-container mynyte-button-container'><button class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
+				html: "<div class='mynyte-form-field-container mynyte-button-container'><button id='mynyte-item-edit-button' class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
 			};
 		}
 	};
@@ -519,7 +547,7 @@ function businessItemsSummaryGeneralHTML(params) {
 
 function formFieldHTML(params) {
 	var inputString = "";
-	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType, prop = params.prop;
+	var dataType, name, isReq, maxLen, minLen, propNameCssFormat, propType, propSubType, prop = params.prop, isArray, removeableClass;
 
 	var globalFieldSetup = {
 		dataType: function () {dataType =  prop["Data Type"];},
@@ -561,17 +589,17 @@ function formFieldHTML(params) {
 			if (params.formType == 'edit-item-form') {
 				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
-			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
 			console.log("okos");
 			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name = '" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
 		},
 		'TIME': function () {
-			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
+			inputString += "<div data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='timepicker-" + propNameCssFormat + "' class='mynyte-form-timepicker'><i class='fa fa-clock'></i></button></div>";
 		}
 	};
 
@@ -596,7 +624,7 @@ function formGeneralHTML(params) {
 	var htmlString = "";
 	var formGeneralHTML = {
 		'formStart': function () {
-			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addBusinessItem()': 'MynyteApi.editBusinessItem()';
+			var onSub = (params.formType != 'edit-item-form') ? 'MynyteApi.addOrUpdateBusinessItem("add")': 'MynyteApi.addOrUpdateBusinessItem("edit")';
 			htmlString += "<form action='#' name='mynyte-business-item-add-form' id='mynyte-business-item-add-form' onsubmit='return " + onSub + ";' data-item-id='" + params._businessEntityItemId + "'>";
 		},
 		'formFieldLabel': function () {
@@ -611,7 +639,8 @@ function formGeneralHTML(params) {
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString + "</div></div>";
 		},
 		'formComplete': function () {
-			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>Add Item</button></div>";
+			var text = (params.formType != 'edit-item-form') ? 'Add': 'Update';
+			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>" + text + " Item</button></div>";
 			htmlString += "</form>";
 		}
 	};
@@ -662,7 +691,8 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 	}
 	
 	var completeForm = function completeForm () {
-		htmlString += formGeneralHTML({element: 'formComplete'});
+		var bif = MynyteApi.pageVars['New Business Item Forms'][MynyteApi.pageVars['New Business Item Forms'].length - 1]
+		htmlString += formGeneralHTML({element: 'formComplete', formType: bif.formType});
 
 		MynyteApi.pageVars['Page Object'].Model = modelProperties;
 
@@ -823,17 +853,17 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 					var size = dataType.substr(dataType.indexOf('(') + 1, dataType.indexOf(')') - dataType.indexOf('(') - 1);
 					var fieldType = (parseInt(size) <= 1000) ? 'Text': 'Textarea';
 
-					inputString = formFieldHTML({fieldType: fieldType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: fieldType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 				/* THE REAL METHOD TO USE FOR INT WITH NO EXTRA LOGIC NEEDED */
 				else if (dataType.indexOf('INT') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Number', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: 'Number', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 				else if (dataType.indexOf('DOUBLE') > -1 && propType == null) {
-					inputString = formFieldHTML({fieldType: 'Double', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: 'Double', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 				else if (dataType == 'DATE') {
-					inputString = formFieldHTML({fieldType: 'DATE', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: 'DATE', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 					dateProps.push({
 						class: propNameCssFormatter(modelProperties[prop].Name), 
 						format: 'dd/mm/yyyy',
@@ -848,7 +878,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 					});
 				}
 				else if (dataType == 'TIME') {
-					inputString = formFieldHTML({fieldType: 'TIME', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
+					inputString = formFieldHTML({formType: bif.formType, fieldType: 'TIME', prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 					
 				}
 				else if (dataType == 'IMAGE' || dataType == 'FILE') {
@@ -902,6 +932,8 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 					if (bif.formType == 'edit-item-form') {
 						MynyteApi.removeImage = MynyteApi.removeImage || function (elem) {
+							$('.mynyte-img-to-remove').removeClass('.mynyte-img-to-remove');
+							$(elem).addClass('mynyte-img-to-remove');
 							MynyteApi.imageToRemove = {'src': $(elem).data('src'), 'propName': $(elem).data('prop-name')};
 							createPopup({'class': 'remove-image', 'iconClass': 'circle-o-notch fa-spin fa-4x'});
 							openPopup({'class': 'remove-image'});
@@ -909,6 +941,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
 							console.log(MynyteApi.imageToRemove);
+							$('.mynyte-img-to-remove').parents('.existing-img-container').remove();
 							/*
 							dataConnect({
 								className: 'BusinessEntity', 
@@ -934,7 +967,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 							});
 						};
 					}
-					console.log(bif);
+
 					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
@@ -943,11 +976,9 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 
 		}
 		
-		console.log("dataVal: ", dataVal, i2);
 		if (typeof(dataVal) === 'undefined' || dataVal == '') {
 			compileFieldHtml('', null, null);
 		} else if (i2 == null) {
-			console.log(i2, maxIndex, "null");
 			compileFieldHtml(dataVal[0], 0, dataVal.length - 1);
 		}
 		else {
@@ -956,7 +987,6 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 	};
 
 	//orderModelProps();
-	console.log("Val: ", modelProperties[keys[0]]["Value"]);
 	if (modelProperties[keys[0]]["Value"]) {
 		compilePropHtmlToAdd(0, 0, modelProperties[keys[0]]["Value"].length - 1);
 	}
@@ -1040,7 +1070,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 		MynyteApi.pageVars['Page Object']['Has Error'] = false;
 
 		console.log("lo");
-		function alterElemClass (action, inputType) {
+		function alterElemClass (action, inputType, name) {
 			if (action == "add") {
 				switch (inputType) {
 					case 'input':
@@ -1083,51 +1113,46 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 			}
 		};
 
-		var handleInputVal = function (i) {
+		var handleInputVal = function (i, name) {
 			var input = $('input[name="' + name + '"]').eq(i);
+			var valToAssign;
 
-			if (input.attr('type') == 'file' && input[0].files[0]) {
-				var inputImageAlt = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-alt').val();
-				var inputImageTitle = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-title').val();
-				valToAssign = input[0].files[0].name;
-				pageObjectModel[prop].IsImage = true;
-				pageObjectModel[prop].AltText = inputImageAlt;
-				pageObjectModel[prop].TitleText = inputImageTitle;
+			if ($(input).attr('data-dummy') != 'true') {
+				if (input.attr('type') == 'file' && input[0].files[0]) {
+					var inputImageAlt = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-alt').val();
+					var inputImageTitle = input.siblings('.mynyte-image-input-images').eq(0).find('input.img-container-title').val();
+					valToAssign = input[0].files[0].name;
+					pageObjectModel[prop].IsImage = true;
+					pageObjectModel[prop].AltText = inputImageAlt;
+					pageObjectModel[prop].TitleText = inputImageTitle;
+				}
+				else {
+					valToAssign = input.val();
+				}
+
+				assignValToPageObject(i, valToAssign);
 			}
-			else {
-				valToAssign = input.val();
-			}
-
-			assignValToPageObject(i, valToAssign);
-			inputType = 'input';
 		};
 
-		var handleDivVal = function (i) {
-			name = propNameCssFormatter(name);
-			valToAssign = $('div[data-name="' + name + '"]').data('selected-item-ref');
-			console.log(valToAssign, i);
+		var handleDivVal = function (i, name) {
+			var valToAssign = $('div[data-name="' + name + '"]').eq(i).attr('data-selected-item-ref');
 			assignValToPageObject(i, valToAssign);
-			
-			inputType = 'div';
 		};
 
-		var handleTextareaVal = function (i) {
-			valToAssign = $('textarea[name="' + name + '"]').val();
-
+		var handleTextareaVal = function (i, name) {
+			var valToAssign = $('textarea[name="' + name + '"]').val();
 			assignValToPageObject(i, valToAssign);
-
-			inputType = 'textarea';
 		};
 
-		var handleErrorVal = function () {
+		var handleErrorVal = function (name) {
 			pageObjectModel[prop].error = "Please fill in a value for this field";
-			alterElemClass("add", inputType);
+			alterElemClass("add", inputType, name);
 			MynyteApi.pageVars['Page Object']['Has Error'] = true;
 		};
 
-		var reverseErrorValHandling = function () {
+		var reverseErrorValHandling = function (name) {
 			pageObjectModel[prop].error = null;
-			alterElemClass("remove", inputType);
+			alterElemClass("remove", inputType, name);
 		};
 
 		for (var prop in pageObjectModel) {
@@ -1138,61 +1163,33 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				a = 0;
 
 			if ($('input[name="' + name + '"]').length) {
+				inputType = 'input';
 				for (a = 0; a < $('input[name="' + name + '"]').length; a++) {
-					handleInputVal(a);
+					handleInputVal(a, name);
 				}
 			}
 			else if ($('div[data-name="' + name + '"]').length) {
+				inputType = 'div';
 				for (a = 0; a < $('div[data-name="' + name + '"]').length; a++) {
-					handleDivVal(a);
+					handleDivVal(a, name);
 				}
 			}
 			else if ($('textarea[name="' + name + '"]').length) {
+				inputType = 'textarea';
 				for (a = 0; a < $('textarea[name="' + name + '"]').length; a++) {
-					handleTextareaVal(a);
+					handleTextareaVal(a, name);
 				}
 			}
 
 			if (pageObjectModel[prop]["Is Required"] && ((pageObjectModel[prop].Value == "" || typeof(pageObjectModel[prop].Value) === 'undefined') && pageObjectModel[prop]) ) {
-				handleErrorVal();
+				handleErrorVal(name);
 			}
 			else if (pageObjectModel[prop]["Is Required"]) {
-				reverseErrorValHandling();
+				reverseErrorValHandling(name);
 			}
 		}
-		console.log("lo");
+
 		MynyteApi.pageVars['Page Object'].Model = pageObjectModel;
-	}
-
-	function createPageObjDataObj(pageObjectModel, inputString) {
-		for(var keys = Object.keys(pageObjectModel), i = 0, end = keys.length; i < end; i++) {
-			var checkForEndOfLoop = function checkForEndOfLoop () {
-				if (i < end - 1) { inputString += ",";}
-			  	else if (i == end - 1) {
-			  		if (typeof(thisBif.businessEntityItemSubType) !== 'undefined') {
-			  			inputString += ", [['" + thisBif.businessEntityItemTypeLabel + "', '" + thisBif.businessEntityItemSubType + "']]";	
-			  		}
-			  		inputString += ", [['Date Created', CURDATE()]], [['Time Created', CURTIME()]]";
-			  	}
-			};
-			if (pageObjectModel[keys[i]].Value.constructor === Array) {
-				for (var val = 0; val < pageObjectModel[keys[i]].Value.length; val++) {
-					inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value[val] + "']]";
-
-					if (val == pageObjectModel[keys[i]].Value.length - 1) {
-						checkForEndOfLoop();
-					}
-					else {
-						inputString += ",";
-					}
-				}
-			}
-			else {
-			  	inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value + "']]";
-
-			  	checkForEndOfLoop();
-			}
-		}
 	}
 
 	MynyteApi.toggleRelatedItemSelect = function (e, elem) {
@@ -1238,47 +1235,97 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 		});
 	}
 
-	MynyteApi.addBusinessItem = function () {
+	MynyteApi.addOrUpdateBusinessItem = function (addOrUpdate) {
+		console.log(addOrUpdate);
 		var pageObjectModel = MynyteApi.pageVars['Page Object'].Model;
+		var action = (addOrUpdate == 'add') ? 'addBusinessEntityItem': 'updateBusinessEntityItem';
+		var newBifId = MynyteApi.pageVars['New Business Item Forms'].length - 1;
+		var thisBif = MynyteApi.pageVars['New Business Item Forms'][newBifId];
+		var inputString = "";
 		handleFormProcessing(pageObjectModel);
 
 		console.log(MynyteApi.pageVars['Page Object']);
 		
 		if (!MynyteApi.pageVars['Page Object']['Has Error']) {
-			var inputString = "",
-				formData = new FormData($('form[name="mynyte-business-item-add-form"]')[newBifId]),
+			var formData = new FormData($('form[name="mynyte-business-item-add-form"]')[newBifId]),
 				confirmationShown = false,
 				imageUploadComplete = false, 
 				_newItemId = null,
+				data,
 				itemDisplayName = (typeof(thisBif.businessEntityItemSubType) !== 'undefined') ? thisBif.businessEntityItemSubType: thisBif.businessEntityItemType;
 
 			$('.mynyte-button-container button').attr("disabled", "disabled");
-			createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Adding ' + itemDisplayName});
-			openPopup({'class': 'simple-loader'});
+			createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': ((addOrUpdate == 'add') ? 'Adding ': 'Editing ') + itemDisplayName});
+			openPopup({'class': 'simple-loader', 'speed': 'fast'});
 
-			createPageObjDataObj(pageObjectModel, inputString);
+			for(var keys = Object.keys(pageObjectModel), i = 0, end = keys.length; i < end; i++) {
+				var checkForEndOfLoop = function () {
+					if (i < end - 1) {
+						inputString += ",";
+					}
+				  	else if (i == end - 1) {
+				  		if (typeof(thisBif.businessEntityItemSubType) !== 'undefined') {
+				  			inputString += ",[['" + thisBif.businessEntityItemTypeLabel + "', '" + thisBif.businessEntityItemSubType + "']]";	
+				  		}
+				  		inputString += (addOrUpdate == 'add') ? ",[['Date Created', CURDATE()]],[['Time Created', CURTIME()]]" : ",[['Date Updated', CURDATE()]],[['Time Updated', CURTIME()]]";
+				  	}
+				};
+				if (pageObjectModel[keys[i]].Value.constructor === Array) {
+					for (var val = 0; val < pageObjectModel[keys[i]].Value.length; val++) {
+						inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value[val] + "']]";
 
-			dataConnect({
-				className: 'BusinessEntity', 
-				action: 'addBusinessEntityItem', 
-				data: {
+						if (val == pageObjectModel[keys[i]].Value.length - 1) {
+							checkForEndOfLoop();
+						}
+						else {
+							inputString += ",";
+						}
+					}
+				}
+				else {
+				  	inputString += "[['" + pageObjectModel[keys[i]].Name + "', '" + pageObjectModel[keys[i]].Value + "']]";
+
+				  	checkForEndOfLoop();
+				}
+			}
+
+			data = (addOrUpdate == 'add') ? 
+				{
 					_businessId: thisBif._businessId,
 					businessEntityItemName: thisBif.businessEntityItemType,
 					nameValuePairString: inputString
-				},
+				}: 
+				{
+					_businessId: thisBif._businessId,
+					_businessEntityItemId: thisBif._businessEntityItemId,
+					updateString: inputString
+				}
+			;
+
+			dataConnect({
+				className: 'BusinessEntity', 
+				action: action, 
+				data: data,
 				successCallback: function (params) {
 					var successData = params.successData;
 					_newItemId = successData.item;
-					closePopup({'class': 'simple-loader'});
-					createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
-					openPopup({'class': 'business-item-success'});
+					if (addOrUpdate == 'add') {
+						closePopup({'class': 'simple-loader'});
+						createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
+						openPopup({'class': 'business-item-success'});
+					}
+					else {
+						closePopup({'class': 'simple-loader'});
+						MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
+						location.reload();
+					}
 					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
 				},
 				errorCallback: function (errorData) {
 
 				}
 			});
-			internalDataConnect({
+			internalDataFileConnect({
 				className: 'Image', 
 				action: 'uploadImage', 
 				data: formData,
@@ -1291,61 +1338,6 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				}
 			});
 			
-		}
-
-		return false;
-	};
-
-	MynyteApi.editBusinessItem = function () {
-		var pageObjectModel = MynyteApi.pageVars['Page Object'].Model;
-		handleFormProcessing(pageObjectModel);
-
-		if (!MynyteApi.pageVars['Page Object']['Has Error']) {
-			var inputString = "",
-				formData = new FormData($('form[name="mynyte-business-item-add-form"]')[newBifId]),
-				confirmationShown = false,
-				imageUploadComplete = false, 
-				_newItemId = null,
-				itemDisplayName = (typeof(thisBif.businessEntityItemSubType) !== 'undefined') ? thisBif.businessEntityItemSubType: thisBif.businessEntityItemType;
-
-			$('.mynyte-button-container button').attr("disabled", "disabled");
-			createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Adding ' + itemDisplayName});
-			openPopup({'class': 'simple-loader'});
-
-			createPageObjDataObj(pageObjectModel, inputString);
-
-			dataConnect({
-				className: 'BusinessEntity', 
-				action: 'updateBusinessEntityItem', 
-				data: {
-					_businessId: thisBif._businessId,
-					businessEntityItemName: thisBif._businessEntityItemId,
-					nameValuePairString: inputString
-				},
-				successCallback: function (params) {
-					var successData = params.successData;
-					_newItemId = successData.item;
-					closePopup({'class': 'simple-loader'});
-					createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
-					openPopup({'class': 'business-item-success'});
-					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
-				},
-				errorCallback: function (errorData) {
-
-				}
-			});
-			internalDataConnect({
-				className: 'Image', 
-				action: 'uploadImage', 
-				data: formData,
-				successCallback: function (params) {
-					var successData = params.successData;
-					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
-				},
-				errorCallback: function (errorData) {
-
-				}
-			});
 		}
 
 		return false;

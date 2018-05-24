@@ -101,7 +101,7 @@
       Example: CALL updateBusinessEntityItem(1, 2, "[['Status':='Complete']],[['Date Completed':=NOW()]]");
 
     */
-
+    //echo 'CALL updateBusinessEntityItem('.$_businessId.', "'.$_businessEntityItemId.'", "'.$updateString.'");';
     $result = mysql_query('CALL updateBusinessEntityItem('.$_businessId.', "'.$_businessEntityItemId.'", "'.$updateString.'");');
   }
 
