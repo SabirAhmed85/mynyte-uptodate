@@ -291,8 +291,10 @@ function formFieldHTML(params) {
 			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
-			console.log("okos");
-			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			if (params.formType == 'edit-item-form') {
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
+			}
+			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
 			inputString += "<div name='" + name + "' data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";

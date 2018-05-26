@@ -594,8 +594,10 @@ function formFieldHTML(params) {
 			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
-			console.log("okos");
-			inputString += "<span><input onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			if (params.formType == 'edit-item-form') {
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
+			}
+			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
 			inputString += "<div name='" + name + "' data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
@@ -768,6 +770,7 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 				removeButton = $($.parseHTML("<button type='button' onclick='MynyteApi.removeFormInputFromForm(this);' class='remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon'><span class='mynyte-button-inner-wrapper'><i class='fa fa-minus'></i><span>Remove</span></span></button>"));
 
 			newInput.attr("data-index", $(button).siblings('.input-container').find('.mynyte-form-input').length);
+			newInput.attr("data-dummy", false);
 			nameAttr = newInput.attr("name");
 			numbers = nameAttr.match(/\d+/);
 
@@ -1347,7 +1350,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 					else {
 						closePopup({'class': 'simple-loader'});
 						MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
-						location.reload();
+						//location.reload();
 					}
 					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
 				},
@@ -2073,6 +2076,7 @@ MynyteApi.itemViewObjectInit = itemViewObjectInit;
 			'businessEntityItemType': params.businessEntityItemType,
 			'businessEntityItemTypeLabel': params.businessEntityItemTypeLabel,
 			'businessEntityItemSubType': params.businessEntityItemSubType,
+			'_relatedViewModelId': params._relatedViewModelId,
 			'extraFiltersString': params.extraFiltersString,
 			'noItemsNote': params.noItemsNote || "You currently have 0 " + params.businessEntityItemSubType + "s.",
             'specialProps': params.specialProps,
@@ -2094,7 +2098,8 @@ MynyteApi.itemViewObjectInit = itemViewObjectInit;
 			data: {
 				_businessId: bisd._businessId,
 				businessEntityItemType: bisd.businessEntityItemType,
-				extraFiltersString: bisd.extraFiltersString
+				extraFiltersString: bisd.extraFiltersString,
+				_relatedViewModelId: bisd._relatedViewModelId
 			},
 			successCallback: function (params) {
 				var viewType = 'Item Summary',

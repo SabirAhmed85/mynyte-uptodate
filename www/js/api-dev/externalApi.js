@@ -373,6 +373,7 @@ MynyteApi = function () {
 			'businessEntityItemType': params.businessEntityItemType,
 			'businessEntityItemTypeLabel': params.businessEntityItemTypeLabel,
 			'businessEntityItemSubType': params.businessEntityItemSubType,
+			'_relatedViewModelId': params._relatedViewModelId,
 			'extraFiltersString': params.extraFiltersString,
 			'noItemsNote': params.noItemsNote || "You currently have 0 " + params.businessEntityItemSubType + "s.",
             'specialProps': params.specialProps,
@@ -394,7 +395,8 @@ MynyteApi = function () {
 			data: {
 				_businessId: bisd._businessId,
 				businessEntityItemType: bisd.businessEntityItemType,
-				extraFiltersString: bisd.extraFiltersString
+				extraFiltersString: bisd.extraFiltersString,
+				_relatedViewModelId: bisd._relatedViewModelId
 			},
 			successCallback: function (params) {
 				var viewType = 'Item Summary',

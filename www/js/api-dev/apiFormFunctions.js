@@ -105,6 +105,7 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 				removeButton = $($.parseHTML("<button type='button' onclick='MynyteApi.removeFormInputFromForm(this);' class='remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon'><span class='mynyte-button-inner-wrapper'><i class='fa fa-minus'></i><span>Remove</span></span></button>"));
 
 			newInput.attr("data-index", $(button).siblings('.input-container').find('.mynyte-form-input').length);
+			newInput.attr("data-dummy", false);
 			nameAttr = newInput.attr("name");
 			numbers = nameAttr.match(/\d+/);
 
@@ -684,7 +685,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 					else {
 						closePopup({'class': 'simple-loader'});
 						MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
-						location.reload();
+						//location.reload();
 					}
 					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
 				},
