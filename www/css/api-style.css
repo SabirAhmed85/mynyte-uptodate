@@ -1189,9 +1189,9 @@ span.mynyte-label-detail {
 }
 span.mynyte-label-detail.with-image {
     width: 100px;
-    height: 100px;
     overflow: hidden;
     border: 1px solid #ccc;
+    margin: 5px 0 10px 20px;
 }
 
 span.mynyte-label-detail.with-image img {
@@ -2886,17 +2886,6 @@ button.mynyte-form-selecttoggler {
     width: 50px;
     margin-top: -5px;
     margin-bottom: 5px;
-}
-
-span.mynyte-label-detail {
-    float: left;
-    margin-left: 20px;
-}
-span.mynyte-label-detail.with-image {
-    width: 100px;
-    height: 100px;
-    overflow: hidden;
-    border: 1px solid #ccc;
 }
 
 span.mynyte-label-detail.with-image img {

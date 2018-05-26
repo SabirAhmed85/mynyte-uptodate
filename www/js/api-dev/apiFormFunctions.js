@@ -142,9 +142,9 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 				propType = modelProperties[prop]["Related Property Type"] || 'Business Item';
 
 				function completeCompilingFakeFieldHtml () {
-					for (var thisProp in MynyteApi.pageVars['Page Object']["Inner Business Items"][modelProperties[prop]["Related Property Sub-Type"]]) {
+					for (var thisProp in MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType]) {
 						if (thisProp == parseInt(val)) {
-							displayVal = MynyteApi.pageVars['Page Object']["Inner Business Items"][modelProperties[prop]["Related Property Sub-Type"]][thisProp].Name;
+							displayVal = MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType][thisProp].Name;
 						}
 					}
 					inputString = formFieldHTML({fieldType: 'Fake', prop: modelProperties[prop], value: val, displayValue: displayVal, index: i2, maxIndex: maxIndex, formType: bif.formType});
@@ -201,11 +201,11 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 
 							$('body').append(popupHtml);
 
-							loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': modelProperties[prop]["Related Property Sub-Type"], 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), bisdIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
+							loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': modelProperties[prop]["Related Property Sub-Type"], 'htmlString': "", 'htmlElem': $('.dropdown.'+propNameCssFormat+'-dropdown'), objIndex: MynyteApi.pageVars['Business Item Summary Displays'].length - 1});
 
 							completeCompilingFakeFieldHtml();
 						},
-						errorCallback: function (errorDara) {
+						errorCallback: function (errorData) {
 							console.log("error: ", errorData);
 						}
 					});

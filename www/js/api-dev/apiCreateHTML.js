@@ -124,6 +124,7 @@ function feedGeneralHTML(params) {
 
 function businessItemPropertyHtml(params) {
 	var html = "", metaName = params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.item.metaValue;
+	console.log("meta", metaName, metaValue, params.dataType);
 
 	if (params.dataType != "image") {
 		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
@@ -180,9 +181,13 @@ function businessItemsSummaryItemHTML(params) {
 		},
 		'nonArrayProp': function () {
 			var cssPropToDisplay = globalSetup.cssPropToDisplay();
+			var imgClass = (params.prop.indexOf('Image') > -1) ? " with-image": "";
 
 			html += "<div class='mynyte-label-container "+cssPropToDisplay+"-label-container'><label class='mynyte-label'>" + params.prop + "</label>";
-			html += "<span class='mynyte-label-detail'>" + params.item[params.prop] + "</span></div>";
+			html += "<span class='mynyte-label-detail" + imgClass + "'>";
+			html += (params.prop.indexOf('Image') == -1) ? params.item[params.prop] : "";
+			html += (params.prop.indexOf('Image') > -1) ? "<img class='mynyte-label-img' src='" + params.internalDataUrl + "images/" + params.item[params.prop] + "' />" : "";
+			html += "</span></div>";
 		},
 		'arrayProp': function () {
 			html += "<div class='mynyte-label-container "+params.prop+"-label-container'><label class='mynyte-label'>" + params.prop2 + "</label>";

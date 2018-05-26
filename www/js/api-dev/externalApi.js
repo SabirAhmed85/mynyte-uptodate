@@ -409,9 +409,11 @@ MynyteApi = function () {
 				MynyteApi.pageVars['Page Object']["Business Items"] = {};
 
                 if (successData.items != null && (bisd.htmlViewModelMethod != 'custom' || bisd.htmlViewModelScript == '')) {
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({successData: successData});
                     loopObjPropsToCompileObj({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'bisdIndex': 0});
                 }
                 else if (successData.items != null && (bisd.htmlViewModelMethod == 'custom' && bisd.htmlViewModelScript != '')) {
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({successData: successData});
                 	loopObjPropsToCompileObj({'format': 'custom', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'htmlViewModelParams': bisd.htmlViewModelParams, 'htmlViewModelScript': bisd.htmlViewModelScript, 'internalDataUrl': bisd.internalDataUrl, 'bisdIndex': 0});
                 }
                 else {
@@ -462,10 +464,27 @@ MynyteApi = function () {
 			onComplete();
 		}
 	}
+
+	function orderObjPropsByVMIndex (params) {
+		var items = params.successData.items,
+			newItems;
+
+		function compare(a,b) {
+		  if (a.vmIndex < b.vmIndex)
+		    return -1;
+		  if (a.vmIndex > b.vmIndex)
+		    return 1;
+		  return 0;
+		}
+
+		items.sort(compare);
+
+		newItems = {'items': items};
+
+		return newItems;
+	}
 	
 	function loopObjPropsToCompileObj (params) {
-		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.bisdIndex];
-
 		var format = params.format,
 			viewType = params.viewType,
 			_businessId = params._businessId,
@@ -474,12 +493,14 @@ MynyteApi = function () {
 			businessItems = params.businessItems,
 			htmlString = params.htmlString,
 			htmlElem = params.htmlElem,
-			viewModelProps = bisd.viewModelProps || null,
 			thisItem = successData.items[i],
 			htmlViewModelParams = params.htmlViewModelParams,
 			htmlViewModelScript = params.htmlViewModelScript,
 			internalDataUrl = params.internalDataUrl;
-			
+
+		var obj = (params.viewType == 'Detail Display') ? MynyteApi.pageVars['Business Item Detail Displays'][params.objIndex] : MynyteApi.pageVars['Business Item Summary Displays'][params.objIndex];
+		var viewModelProps = obj.viewModelProps || null;
+
 		function nextItem () {
 			if (i == successData.items.length - 1) {
 				MynyteApi.pageVars['Page Object']["Business Items"] = businessItems;
@@ -487,9 +508,9 @@ MynyteApi = function () {
 				if (params.innerBusinessItemType) {
 					MynyteApi.pageVars['Page Object']["Inner Business Items"][params.innerBusinessItemType] = businessItems;
 				}
-				
-				if (viewType != null) {
-					prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'bisdIndex': params.bisdIndex});
+
+				if (viewType != null && viewType != 'Detail Display') {
+					prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'objIndex': params.objIndex});
 				}
 			}
 			else {
@@ -581,7 +602,7 @@ MynyteApi = function () {
 	}
 	
 	function prepareBusinessItemsView (params) {
-		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.bisdIndex];
+		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.objIndex];
 
 		var format = params.format,
 			viewType = params.viewType,
@@ -637,10 +658,10 @@ MynyteApi = function () {
 			console.log(firstItemIndex, lastItemIndex);
 			for (var ind = firstItemIndex; ind < lastItemIndex; ind++) {
 				htmlString += businessItemsSummaryItemHTML({element: 'itemStart', item: businessItems[ind], view: viewType});
-
+console.log(businessItems[ind]);
 				for (var prop in businessItems[ind]) {
 					if (prop != "Arrays" && prop != '_itemId') {
-						htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop});
+						htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop, internalDataUrl: bisd.internalDataUrl});
 					} else if (prop != '_itemId') {
 						for (var prop2 in businessItems[ind][prop]) {
 							htmlString += businessItemsSummaryItemHTML({element: 'arrayProp', item: businessItems[ind], prop: prop, prop2: prop2});
