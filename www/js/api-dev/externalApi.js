@@ -625,8 +625,27 @@ MynyteApi = function () {
 		lastItemIndex = ((currentPage*pageItemLimit) < businessItems.length) ? (currentPage*pageItemLimit) : businessItems.length;
 
 		if (!!pagerEnabled) {
+			if (window.location.href.indexOf("?") == -1) {
+				var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=1';
+				window.history.pushState({ path: newurl }, '', newurl);
+			}
+
 			MynyteApi.changeBusinessItemsCurrentPage = function (select) {
+				var pageNum = $(select).val().replace("page_", "");
 				console.log($(select).val());
+				var oldPage, newSearch;
+
+				function getParameterByName(name) {
+				    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				    results = regex.exec(location.search);
+				    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+
+				oldPage = getParameterByName('page');
+				newSearch = window.location.search.replace('?page='+oldPage, '?page='+pageNum);
+				newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + newSearch;
+				window.history.pushState({ path: newurl }, '', newurl);
 				$(bisd.elem).empty();
 				MynyteApi.createSummary({
 					'elem': bisd.elem,
@@ -642,7 +661,7 @@ MynyteApi = function () {
 					'dataLink': bisd.dataLink,
 					'noItemsNote': bisd.noItemsNote,
 					'pageItemLimit': bisd.pageItemLimit,
-					'currentPage': $(select).val().replace("page_", "")
+					'currentPage': pageNum
 				});
 			}
 
