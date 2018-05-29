@@ -640,7 +640,7 @@ function formFieldHTML(params) {
 	inputString += (params.index == 0 || params.index == null) ? "<span class='input-container'>": '';
 	inputString += (params.index == 1) ? '<span class="input-inner-container">': '';
 	createFieldHTML[params.fieldType]();
-	inputString += (params.index > 0) ? '<button type="button" onclick="MynyteApi.removeFormInputFromForm(this);" class="remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon"><span class="mynyte-button-inner-wrapper"><i class="fa fa-minus"></i><span>Remove</span></span></button>': '';
+	inputString += (params.index > 0 && ((params.fieldType != "IMAGE" && params.fieldType != "FILE") || (params.formType != 'edit-item-form'))) ? '<button type="button" onclick="MynyteApi.removeFormInputFromForm(this);" class="remove-input-button mynyte-button mynyte-button-secondary mynyte-button-secondary-alt mynyte-button-secondary-dark mynyte-button-with-icon"><span class="mynyte-button-inner-wrapper"><i class="fa fa-minus"></i><span>Remove</span></span></button>': '';
 	inputString += (params.index == params.maxIndex && params.index != null) ? "</span>": ''; // end the input inner container
 	inputString += (params.index == params.maxIndex || params.index == null) ? "</span>": ''; // end the input container
 
