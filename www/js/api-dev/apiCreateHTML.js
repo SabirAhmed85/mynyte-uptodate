@@ -126,15 +126,18 @@ function businessItemPropertyHtml(params) {
 	var html = "", metaName = params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.item.metaValue;
 	console.log("meta", metaName, metaValue, params.dataType);
 
-	if (params.dataType != "image") {
+	if (params.dataType != "image" && params.dataType != "file") {
+		if (params.dataFormat == 'money') {
+			metaValue = formatMoneyVal({value: metaValue});
+		}
 		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail'>" + metaValue + "</span></div>";
 	}
-	else if (params.dataType == "image" && metaName.indexOf("Arr[]") == -1) {
+	else if ((params.dataType == "image" || params.dataType == "file") && metaName.indexOf("Arr[]") == -1) {
 		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail with-image'><img src='"+intDataUrl+"/images/"+metaValue+"' alt='' /></span></div>";
 	}
-	else if (params.dataType == "image" && metaName.indexOf("Arr[]") > -1) {
+	else if ((params.dataType == "image" || params.dataType == "file") && metaName.indexOf("Arr[]") > -1) {
 		//ACTUALLY DO SOMETHING DIFFERENT TO CREATE A COMBINED DIV
 		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail with-image'><img src='"+intDataUrl+"/images/"+metaValue+"' alt='' /></span></div>";

@@ -64,7 +64,7 @@
       Example: CALL getBusinessEntityItemsMeta(1, 2, 12);
 
     */
-
+    //echo 'CALL getBusinessEntityItemsMeta('.$_businessId.', '.$_businessEntityItemId.', '.$_relatedViewModelId.')';
     $result = mysql_query('CALL getBusinessEntityItemsMeta('.$_businessId.', '.$_businessEntityItemId.', '.$_relatedViewModelId.')');
   }
 

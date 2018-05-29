@@ -363,7 +363,11 @@ MynyteApi = function () {
 
 	function createSummary (params) {
 		var htmlDiv = params.elem,
-			bisd;
+			bisd,
+			itemPluralName = (params.businessEntityItemSubType.indexOf(params.businessEntityItemSubType.length - 1) == 'y') ? params.businessEntityItemSubType.substr(0, params.businessEntityItemSubType.length - 1) + 'ies': params.businessEntityItemType + 's';
+
+		createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Loading ' + itemPluralName});
+		openPopup({'class': 'simple-loader', 'speed': 'fast'});
 		
 		MynyteApi.pageVars['Page Object'] = {};
 		MynyteApi.pageVars['Business Item Summary Displays'] = [];
@@ -409,15 +413,15 @@ MynyteApi = function () {
 				MynyteApi.pageVars['Page Object']["Business Items"] = {};
 
                 if (successData.items != null && (bisd.htmlViewModelMethod != 'custom' || bisd.htmlViewModelScript == '')) {
-                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({successData: successData});
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({items: successData.items});
                     loopObjPropsToCompileObj({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'objIndex': 0});
                 }
                 else if (successData.items != null && (bisd.htmlViewModelMethod == 'custom' && bisd.htmlViewModelScript != '')) {
-                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({successData: successData});
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({items: successData.items});
                 	loopObjPropsToCompileObj({'format': 'custom', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'htmlViewModelParams': bisd.htmlViewModelParams, 'htmlViewModelScript': bisd.htmlViewModelScript, 'internalDataUrl': bisd.internalDataUrl, 'objIndex': 0});
                 }
                 else {
-                    prepareBusinessItemsView({'format': 'custom', 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'bisdIndex': 0});
+                    prepareBusinessItemsView({'format': 'custom', 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'objIndex': 0});
                 }
 			},
 			errorCallback: function (errorData) {
@@ -466,13 +470,13 @@ MynyteApi = function () {
 	}
 
 	function orderObjPropsByVMIndex (params) {
-		var items = params.successData.items,
+		var items = params.items,
 			newItems;
 
 		function compare(a,b) {
-		  if (a.vmIndex < b.vmIndex)
+		  if (parseInt(a.vmIndex) < parseInt(b.vmIndex))
 		    return -1;
-		  if (a.vmIndex > b.vmIndex)
+		  if (parseInt(a.vmIndex) > parseInt(b.vmIndex))
 		    return 1;
 		  return 0;
 		}
@@ -674,10 +678,9 @@ MynyteApi = function () {
 		}
 			
 		if (successData.items != null && format == 'default') {
-			console.log(firstItemIndex, lastItemIndex);
 			for (var ind = firstItemIndex; ind < lastItemIndex; ind++) {
 				htmlString += businessItemsSummaryItemHTML({element: 'itemStart', item: businessItems[ind], view: viewType});
-console.log(businessItems[ind]);
+
 				for (var prop in businessItems[ind]) {
 					if (prop != "Arrays" && prop != '_itemId') {
 						htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop, internalDataUrl: bisd.internalDataUrl});
@@ -699,6 +702,7 @@ console.log(businessItems[ind]);
 				
 				if (ind == lastItemIndex - 1 && viewType == 'Item Summary') {
 					htmlElem.append(htmlString).css({'display': 'block'});
+					closePopup({'class': 'simple-loader'});
 				}
 				else if (ind == lastItemIndex - 1 && viewType == 'Dropdown Selection') {
 					htmlElem.append(htmlString);
@@ -717,6 +721,7 @@ console.log(businessItems[ind]);
 					items: businessItems,
 					onComplete: function (html) {
 						htmlElem.append(html).css({'display': 'block'});
+						closePopup({'class': 'simple-loader'});
 					},
 					internalDataUrl: internalDataUrl,
 					extraParams: htmlViewModelParams,
@@ -733,6 +738,7 @@ console.log(businessItems[ind]);
 			
 			if (viewType == 'Item Summary') {
 				htmlElem.append(htmlString).css({'display': 'block'});
+				closePopup({'class': 'simple-loader'});
 			}
 			else if (viewType == 'Dropdown Selection') {
 				htmlElem.append(htmlString);

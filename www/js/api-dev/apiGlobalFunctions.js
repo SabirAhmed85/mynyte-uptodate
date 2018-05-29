@@ -1,3 +1,7 @@
+const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function disableScrolling() {
     disableScroll = true;
 }
@@ -24,6 +28,7 @@ function lockScroll () {
 }
 
 function unlockScroll() {
+    console.log("unlock");
 	var html = jQuery('html');
 	var scrollPosition = html.data('scroll-position');
 	html.css('overflow', html.data('previous-overflow'));
@@ -32,6 +37,15 @@ function unlockScroll() {
 
 function propNameCssFormatter(name) {
     return name.replace(/ /g, '-').replace(/\[/g, "").replace(/\]/g, "").toLowerCase();
+}
+
+function formatMoneyVal(params) {
+    var value = params.value;
+
+    value = numberWithCommas(value);
+    value = (params.withCurrencySymbol == false) ? value: '£' + value;
+
+    return value;
 }
 
 $(document)

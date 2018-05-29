@@ -55,6 +55,8 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 		if (dateProps.length) {
 			addFormDatePickers();
 		}
+
+		closePopup({'class': 'simple-loader'});
 	};
 	
 	var addPropFinal = function addPropFinal (i, isReqLabel, inputString, i2, maxIndex) {
@@ -308,8 +310,14 @@ function prepareBusinessItemForm (modelProperties, htmlString) {
 						};
 
 						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
-							console.log(MynyteApi.imageToRemove);
+							var inputCont = $('.mynyte-img-to-remove').parents('.existing-img-container').parents('.input-container'),
+							lastExistingImg = inputCont.find('.existing-img-container').length == 1;
 							$('.mynyte-img-to-remove').parents('.existing-img-container').remove();
+
+							if (!!lastExistingImg) {
+								inputString = formFieldHTML({formType: null, fieldType: dataType, prop: modelProperties[prop], value: null, index: i2, maxIndex: maxIndex});
+								$(inputCont).append(inputString);
+							}
 							
 							dataConnect({
 								className: 'BusinessEntity', 
@@ -685,7 +693,7 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 					else {
 						closePopup({'class': 'simple-loader'});
 						MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
-						//location.reload();
+						location.reload();
 					}
 					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
 				},
@@ -716,6 +724,9 @@ function formObjectInit(params) {
 	var newBifId = createBusinessItemFormPageVar(params);
 	var extraFiltersString = "";
 	var thisBif = MynyteApi.pageVars['New Business Item Forms'][newBifId];
+
+	createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Loading Form'});
+	openPopup({'class': 'simple-loader', 'speed': 'fast'});
 
 	MynyteApi.pageVars['Page Object'] = (thisBif.formType == 'edit-item-form') ? MynyteApi.pageVars['Page Object']: {};
 
