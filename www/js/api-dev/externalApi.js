@@ -549,10 +549,12 @@ MynyteApi = function () {
 				},
 				thisItemId = thisItem._id,
 				thisItemMetaName = thisItem.metaName,
-				thisItemMetaNameFormatted = thisItem.metaName.replace(/-/g, "").replace("_", "").replace(" Id", ""),
-				firstStringPos = getPosition(thisItem.metaName, "-", 1),
-				lastStringPos = getPosition(thisItem.metaName, "-", 2),
-				thisItemPropertyName = thisItem.metaName.substring(firstStringPos + 1, lastStringPos);
+				thisItemMetaNameWithHyphen = thisItem.metaName.replace(" Id", "- Id").replace("_Related ", "_Related -"),
+				thisItemMetaNameFormatted = thisItemMetaNameWithHyphen.replace(/-/g, "").replace("_", "").replace(" Id", ""),
+				firstStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 1),
+				lastStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 2),
+				thisItemPropertyName = thisItemMetaNameWithHyphen.substring(firstStringPos + 1, lastStringPos),
+				specialProps = JSON.parse(MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps);
 			
 			dataConnect({
 				existingVars: {"thisItemId": thisItemId, "thisItemMetaName": thisItemMetaName,
@@ -564,12 +566,12 @@ MynyteApi = function () {
 					_businessEntityItemId: thisItem.metaValue
 				},
 				successCallback: function (success) {
-					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName]) {
+					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && specialProps[thisItemPropertyName]) {
 						var counter = 0;
 						businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] = "";
 
 						for (var z = 0; z < success.successData.items.length; z++) {
-							if (MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
+							if (specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
 								if (counter > 0) {
 									businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] += " - ";
 								}

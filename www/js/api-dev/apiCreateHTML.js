@@ -123,8 +123,7 @@ function feedGeneralHTML(params) {
 }
 
 function businessItemPropertyHtml(params) {
-	var html = "", metaName = params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.item.metaValue;
-	console.log("meta", metaName, metaValue, params.dataType);
+	var html = "", metaName = params.metaName || params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.metaValue || params.item.metaValue;
 
 	if (params.dataType != "image" && params.dataType != "file") {
 		if (params.dataFormat == 'money') {

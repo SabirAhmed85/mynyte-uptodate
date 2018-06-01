@@ -444,8 +444,7 @@ function feedGeneralHTML(params) {
 }
 
 function businessItemPropertyHtml(params) {
-	var html = "", metaName = params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.item.metaValue;
-	console.log("meta", metaName, metaValue, params.dataType);
+	var html = "", metaName = params.metaName || params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.metaValue || params.item.metaValue;
 
 	if (params.dataType != "image" && params.dataType != "file") {
 		if (params.dataFormat == 'money') {
@@ -1689,64 +1688,51 @@ MynyteApi.formObjectInit = formObjectInit;
 					if (item.viewProperty == false) {
 						nextItem(a);
 					}
-					else {
-						if (item.metaName.indexOf("Arr[]") > -1 && arrays[item.metaName]) {
-							arrays[item.metaName].push(item);
-							nextItem(a);
-						}
-						else if (item.metaName.indexOf("Arr[]") > -1) {
-							arrays[item.metaName] = [item];
-							nextItem(a);
-						}
-						else {
-							//item.metaValue = getPossibleValsForObjectProperty(itemModel, item.metaValue);
-							/*
-							if (itemModel && itemModel["Data Type"].indexOf('INT') > -1 && itemModel["Related Property Type"] != null) {
-								var propSubType = itemModel["Related Property Sub-Type"] || 'Landlord',
-									propLabel = itemModel["Related Property Label"] || 'Business Entity Item',
-									propSubLabel = itemModel["Related Property Sub-Label"] || "'Related Business Entity Specific Item Type'",
-									propViewModelProps = itemModel["Related Property ViewModel Props"] || ['_id'],
-									propType = itemModel["Related Property Type"] || 'Business Item',
-									dataType = itemModel["Data Type"] || 'VARCHAR';
-									
-								var itemTypeObj = genericItemTypeObj({element: propLabel, propType: propType, propSubLabel: propSubLabel, propSubType: propSubType});
+					else if (item.metaName.indexOf("Arr[]") > -1 && arrays[item.metaName]) {
+						arrays[item.metaName].push(item);
+						nextItem(a);
+					}
+					else if (item.metaName.indexOf("Arr[]") > -1) {
+						arrays[item.metaName] = [item];
+						nextItem(a);
+					}
+					else if (itemModel && itemModel["Data Type"].indexOf('INT') > -1 && itemModel["Related Property Type"] != null) {
+						var propSubType = itemModel["Related Property Sub-Type"] || 'Landlord',
+							propLabel = itemModel["Related Property Label"] || 'Business Entity Item',
+							propSubLabel = itemModel["Related Property Sub-Label"] || "'Related Business Entity Specific Item Type'",
+							propViewModelProps = itemModel["Related Property ViewModel Props"] || ['_id'],
+							propType = itemModel["Related Property Type"] || 'Business Item',
+							dataType = itemModel["Data Type"] || 'VARCHAR';
+							
+						var itemTypeObj = genericItemTypeObj({element: propLabel, propType: propType, propSubLabel: propSubLabel, propSubType: propSubType});
 
-								dataConnect({
-									className: itemTypeObj[propLabel].class, action: itemTypeObj[propLabel].action, 
-									data: itemTypeObj[propLabel].data,
-									successCallback: function (params) {
-										var viewType = 'Detail Display',
-											_businessId = MynyteApi.pageVars._businessId,
-											ind = 0, 
-											successData = params.successData, 
-											businessItems = {}, 
-											htmlString = "", 
-											htmlElem = null,
-											htmlPropNameToDisplay = itemModel.Name.substr((itemModel.Name.indexOf('_') == 0) ? 1: 0, itemModel.Name.length).replace(" Id", ""),
-											propNameCssFormat = propNameCssFormatter(itemModel.Name);
+						dataConnect({
+							className: itemTypeObj[propLabel].class, action: itemTypeObj[propLabel].action, 
+							data: itemTypeObj[propLabel].data,
+							successCallback: function (params) {
+								var viewType = 'Detail Display',
+									successData = params.successData,
+									htmlPropNameToDisplay = itemModel.Name.substr((itemModel.Name.indexOf('_') == 0) ? 1: 0, itemModel.Name.length).replace(" Id", ""),
+									propNameCssFormat = propNameCssFormatter(itemModel.Name);
 
-										loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': ind, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': itemModel["Related Property Sub-Type"], objIndex: MynyteApi.pageVars['Business Item Detail Displays'].length - 1});
-										
-										for (var thisProp in MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType]) {
-											console.log(thisProp, item.metaValue, "HEY");
-											if (thisProp == parseInt(item.metaValue)) {
-												//item.metaValue = MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType][thisProp].Name;
-												htmlString += businessItemPropertyHtml({item: item, dataType: dataType, internalDataUrl: bidd.internalDataUrl});
-												nextItem(a);
-											}
-										}
-									},
-									errorCallback: function (errorData) {
-										console.log("error: ", errorData);
+								loopObjPropsToCompileObj ({'format': 'default', 'viewType': viewType, '_businessId': MynyteApi.pageVars._businessId, 'i': 0, 'successData': successData, 'businessItems': {}, 'innerBusinessItemType': itemModel["Related Property Sub-Type"], objIndex: MynyteApi.pageVars['Business Item Detail Displays'].length - 1});
+								
+								for (var thisProp in MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType]) {
+									if (thisProp == parseInt(item.metaValue)) {
+										htmlString += businessItemPropertyHtml({item: item, metaName: htmlPropNameToDisplay, metaValue: MynyteApi.pageVars['Page Object']["Inner Business Items"][propSubType][thisProp].Name, dataType: dataType, internalDataUrl: bidd.internalDataUrl});
+										nextItem(a);
 									}
-								});
+								}
+							},
+							errorCallback: function (errorData) {
+								console.log("error: ", errorData);
 							}
-							else {
-								*/
-								htmlString += businessItemPropertyHtml({item: item, dataType: dataType, dataFormat: dataFormat, internalDataUrl: bidd.internalDataUrl});
-								nextItem(a);
-							//}
-						}
+						});
+					}
+					else {
+						
+						htmlString += businessItemPropertyHtml({item: item, dataType: dataType, dataFormat: dataFormat, internalDataUrl: bidd.internalDataUrl});
+						nextItem(a);
 					}
 				}
 
@@ -2392,10 +2378,12 @@ MynyteApi.itemViewObjectInit = itemViewObjectInit;
 				},
 				thisItemId = thisItem._id,
 				thisItemMetaName = thisItem.metaName,
-				thisItemMetaNameFormatted = thisItem.metaName.replace(/-/g, "").replace("_", "").replace(" Id", ""),
-				firstStringPos = getPosition(thisItem.metaName, "-", 1),
-				lastStringPos = getPosition(thisItem.metaName, "-", 2),
-				thisItemPropertyName = thisItem.metaName.substring(firstStringPos + 1, lastStringPos);
+				thisItemMetaNameWithHyphen = thisItem.metaName.replace(" Id", "- Id").replace("_Related ", "_Related -"),
+				thisItemMetaNameFormatted = thisItemMetaNameWithHyphen.replace(/-/g, "").replace("_", "").replace(" Id", ""),
+				firstStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 1),
+				lastStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 2),
+				thisItemPropertyName = thisItemMetaNameWithHyphen.substring(firstStringPos + 1, lastStringPos),
+				specialProps = JSON.parse(MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps);
 			
 			dataConnect({
 				existingVars: {"thisItemId": thisItemId, "thisItemMetaName": thisItemMetaName,
@@ -2407,12 +2395,12 @@ MynyteApi.itemViewObjectInit = itemViewObjectInit;
 					_businessEntityItemId: thisItem.metaValue
 				},
 				successCallback: function (success) {
-					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName]) {
+					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && specialProps[thisItemPropertyName]) {
 						var counter = 0;
 						businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] = "";
 
 						for (var z = 0; z < success.successData.items.length; z++) {
-							if (MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
+							if (specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
 								if (counter > 0) {
 									businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] += " - ";
 								}
