@@ -550,7 +550,7 @@ MynyteApi = function () {
 				thisItemId = thisItem._id,
 				thisItemMetaName = thisItem.metaName,
 				thisItemMetaNameWithHyphen = thisItem.metaName.replace(" Id", "- Id").replace("_Related ", "_Related -"),
-				thisItemMetaNameFormatted = thisItemMetaNameWithHyphen.replace(/-/g, "").replace("_", "").replace(" Id", ""),
+				thisItemMetaNameFormatted = thisItemMetaNameWithHyphen.replace(/-/g, "").replace(/_/g, "").replace(" Id", ""),
 				firstStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 1),
 				lastStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 2),
 				thisItemPropertyName = thisItemMetaNameWithHyphen.substring(firstStringPos + 1, lastStringPos),
@@ -638,7 +638,6 @@ MynyteApi = function () {
 
 			MynyteApi.changeBusinessItemsCurrentPage = function (select) {
 				var pageNum = $(select).val().replace("page_", "");
-				console.log($(select).val());
 				var oldPage, newSearch;
 
 				function getParameterByName(name) {

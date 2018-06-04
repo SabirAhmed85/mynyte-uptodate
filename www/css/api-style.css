@@ -2708,6 +2708,12 @@ input.mynyte-form-input.mynyte-removeable-input {
     margin-right: 10px;
 }
 
+.mynyte-form-input-container .existing-img-container.img-title-container {
+    width: auto;
+    height: auto;
+    padding: 0 20px 0 6px;
+}
+
 .mynyte-form-input-container .existing-img-container img {
     width: 75px;
     height: 75px;

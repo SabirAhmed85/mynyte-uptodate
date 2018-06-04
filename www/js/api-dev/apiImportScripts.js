@@ -24,3 +24,9 @@ function importBootstrapDatepicker(params) {
 	importJSScript({src: current_environment_root_prefix + "/" +current_environment_file_url+'js/api/bootstrap/js/bootstrap-datepicker.min.js', onLoad: params.onLoad});
 }
 MynyteApi.importBootstrapDatepicker = importBootstrapDatepicker;
+
+function importHtmlEditor(params) {
+	$('head').append('<link rel="stylesheet" href="'+ current_environment_root_prefix + "/" +current_environment_file_url+'js/api/html-editor/css/editor.css" type="text/css" />');
+	importJSScript({src: current_environment_root_prefix + "/" +current_environment_file_url+'js/api/html-editor/js/editor.js', onLoad: params.onLoad});
+}
+MynyteApi.importHtmlEditor = importHtmlEditor;

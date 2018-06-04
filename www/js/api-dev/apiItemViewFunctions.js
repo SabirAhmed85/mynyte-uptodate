@@ -54,7 +54,6 @@ function itemViewObjectInit(params) {
 			arrays = {},
 			htmlString = "";
 		MynyteApi.pageVars['Page Object'] = successData;
-		console.log(successData);
 
 		if (successData.items != null && successData.items.length > 0) {
 
@@ -72,7 +71,6 @@ function itemViewObjectInit(params) {
 			function formDisplayToggle(toHide, b) {
 				var p = b.parents('.mynyte-button-container').eq(0);
 				if (!!toHide) {
-					console.log(toHide);
 					p.siblings('.mynyte-label-container').show();
 					p.siblings('form').hide();
 				} else {
@@ -125,7 +123,6 @@ function itemViewObjectInit(params) {
 			function createItemEditButton () {
 				var buttonHtml = buttonsHtmlObj({element: 'Edit'});
 				bidd.elem.append(buttonHtml.html);
-				console.log(buttonHtml);
 			}
 
 			function getPossibleValsForObjectProperty (itemModel, itemVal) {

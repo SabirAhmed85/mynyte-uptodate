@@ -1,6 +1,6 @@
 function createPopup(params) {
 	var popupHtml = "";
-	console.log(params);
+
 	params.oldClass = params.class;
 	params.class = (params.class) ? ' ' + params.class : '';
 
@@ -88,7 +88,6 @@ MynyteApi.openPopup = openPopup;
 function closePopup(params) {
 	var className = (params.class) ? '.'+params.class: '';
 	$('.mynyte-popup-cover.mynyte-popup-open').removeClass("mynyte-popup-open");
-	console.log($('.mynyte-popup-cover'+className));
 	// un-lock scroll position
 	if (params.class != 'simple-loader') {
   		unlockScroll();

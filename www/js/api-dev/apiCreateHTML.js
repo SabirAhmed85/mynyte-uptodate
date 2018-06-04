@@ -123,22 +123,22 @@ function feedGeneralHTML(params) {
 }
 
 function businessItemPropertyHtml(params) {
-	var html = "", metaName = params.metaName || params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.metaValue || params.item.metaValue;
+	var html = "", metaName = params.metaName || params.item.metaName, intDataUrl = params.internalDataUrl, metaValue = params.metaValue || params.item.metaValue, cssMetaName = propNameCssFormatter(metaName);
 
-	if (params.dataType != "image" && params.dataType != "file") {
+	if (params.dataType != "image") {
 		if (params.dataFormat == 'money') {
 			metaValue = formatMoneyVal({value: metaValue});
 		}
-		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
+		html += "<div class='mynyte-label-container " + cssMetaName + "-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail'>" + metaValue + "</span></div>";
 	}
-	else if ((params.dataType == "image" || params.dataType == "file") && metaName.indexOf("Arr[]") == -1) {
-		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
+	else if ((params.dataType == "image") && metaName.indexOf("Arr[]") == -1) {
+		html += "<div class='mynyte-label-container " + cssMetaName + "-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail with-image'><img src='"+intDataUrl+"/images/"+metaValue+"' alt='' /></span></div>";
 	}
-	else if ((params.dataType == "image" || params.dataType == "file") && metaName.indexOf("Arr[]") > -1) {
+	else if ((params.dataType == "image") && metaName.indexOf("Arr[]") > -1) {
 		//ACTUALLY DO SOMETHING DIFFERENT TO CREATE A COMBINED DIV
-		html += "<div class='mynyte-label-container'><label class='mynyte-label'>" + metaName + "</label>";
+		html += "<div class='mynyte-label-container " + cssMetaName + "-label-container'><label class='mynyte-label'>" + metaName + "</label>";
 		html += "<span class='mynyte-label-detail with-image'><img src='"+intDataUrl+"/images/"+metaValue+"' alt='' /></span></div>";
 	}
 
@@ -178,7 +178,7 @@ function businessItemsSummaryItemHTML(params) {
 					return "";
 				}
 			};
-			console.log(params.item._itemId);
+
 			html += "<"+ elemType + dataPropToDisplayString() +" class='mynyte-business-items-summary-item"+dropdownClass+"' data-item-ref='"+params.item._itemId+"'>";
 		},
 		'nonArrayProp': function () {
@@ -282,6 +282,12 @@ function formFieldHTML(params) {
 				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
 			}
 		},
+		'Htmltext': function () {
+			inputString += "<div name='" + name + "' data-name='html--" + name + "'' class='htmlEditor'"+isReq+removeableClass+"' "+maxLen+""+minLen+" >" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</div>";
+			if (maxLen != "") {
+				inputString += "<span class='input-maxlength-note'>" + maxLen + " Char Max</span>";
+			}
+		},
 		'Number': function () {
 			inputString += "<input name='"+name+"' data-name='" +name+ "' value='" + ((typeof(params.value) !== 'undefined') ? params.value: '')+ "' class='mynyte-form-input mynyte-form-text-input"+isReq+removeableClass+"' type='number' "+maxLen+""+minLen+" />";
 		},
@@ -292,16 +298,16 @@ function formFieldHTML(params) {
 			inputString += "<div data-index='" + params.index + "' name='" + propNameCssFormat + "' data-name='" + propNameCssFormat + "' class='mynyte-form-input mynyte-form-fake-input"+removeableClass+"' onclick='return MynyteApi.toggleRelatedItemSelect(event, this)'" + selectedItemRegTag + "><span class='selected-option-label'>" + ((typeof(params.displayValue) !== 'undefined') ? params.displayValue: 'Select an Option') + "</span><button class='mynyte-form-select-toggler'><i class='fa fa-chevron-down'></i></button></div>";
 		},
 		'IMAGE': function () {
-			if (params.formType == 'edit-item-form') {
+			if (params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) {
 				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
-			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span style='display: " + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'none': 'inherit') + "'><input data-dummy='" + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'true': 'false') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
-			if (params.formType == 'edit-item-form') {
-				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
+			if (params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) {
+				inputString += "<span class='existing-img-container img-title-container'><span>" + params.value + "</span><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
-			inputString += "<span style='display: " + ((params.formType != 'edit-item-form') ? 'inherit': 'none') + "'><input data-dummy='" + ((params.formType != 'edit-item-form') ? 'false': 'true') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
+			inputString += "<span style='display: " + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'none': 'inherit') + "'><input data-dummy='" + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'true': 'false') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'DATE': function () {
 			inputString += "<div name='" + name + "' data-name='" +  name + "' class='mynyte-form-input mynyte-form-fake-input"+isReq+removeableClass+"'" + selectedItemRegTag + "><span>" + ((typeof(params.value) !== 'undefined') ? params.value: '') + "</span><button id='datepicker-"+ propNameCssFormat +"' type='button' class='mynyte-form-datepicker "+ propNameCssFormat +"'><i class='fa fa-calendar'></i></button></div>";
@@ -339,17 +345,15 @@ function formGeneralHTML(params) {
 		'formFieldLabel': function () {
 			var name = params.prop.Name.replace(" Arr[]", "s").replace(" Id", "").replace("_Related", ""),
 				isReqLabel = (params.prop["Is Required"]) ? " (Required)": "",
-				cssName = params.prop.Name.replace(/ /g, "-").replace(".", "").toLowerCase();
+				cssName = params.prop.Name.replace(/ /g, "-").replace(/\./g, "").toLowerCase();
 
 			htmlString += "<div class='mynyte-form-field-container " + cssName + "-field-container'><label class='mynyte-form-field-label'>" + name + isReqLabel + "</label>";
 			htmlString += "<div class='mynyte-form-input-container'>" + params.inputString;
 			htmlString += (params.index == params.maxIndex || params.index == null) ? "</div></div>": "";
-			console.log('formFieldLabel: ', params.index, params.maxIndex);
 		},
 		'formFieldContainer': function () {
 			htmlString += params.inputString;
 			htmlString += (params.index == params.maxIndex) ? "</div></div>": "";
-			console.log('formFieldContainer: ', params.index, params.maxIndex);
 		},
 		'formComplete': function () {
 			var text = (params.formType != 'edit-item-form') ? 'Add': 'Update';

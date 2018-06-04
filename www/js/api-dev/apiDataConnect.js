@@ -43,7 +43,6 @@ function internalDataFileConnect (params) {
 		}
 	};
 
-	console.log(action);
 	$.ajax({
 		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
 		type: actionPropsMap[action].type,
