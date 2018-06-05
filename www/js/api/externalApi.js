@@ -618,13 +618,13 @@ function formFieldHTML(params) {
 		},
 		'IMAGE': function () {
 			if (params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) {
-				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
+				inputString += "<span class='existing-img-container'><img src='mynyte-data/images/" + params.value + "' /><span data-image-type='IMAGE' data-prop='" + JSON.stringify(params.prop).replace(/'/g, "\\'") + "' data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
 			inputString += "<span style='display: " + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'none': 'inherit') + "'><input data-dummy='" + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'true': 'false') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' data-name='" + name + "' name='" +name+(params.index||0)+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' accept='image/*' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
 		'FILE': function () {
 			if (params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) {
-				inputString += "<span class='existing-img-container img-title-container'><span>" + params.value + "</span><span data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
+				inputString += "<span class='existing-img-container img-title-container'><span>" + params.value + "</span><span data-image-type='FILE' data-prop='" + JSON.stringify(params.prop).replace(/'/g, "\\'") + "' data-src='" + params.value + "' data-prop-name='" + prop.Name + "' class='remove-img-button' onclick='MynyteApi.removeImage(this)'>x</span></span>";
 			}
 			inputString += "<span style='display: " + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'none': 'inherit') + "'><input data-dummy='" + ((params.formType == 'edit-item-form' && params.value != "" && params.value.length > 0) ? 'true': 'false') + "' onchange='MynyteApi.imageUploadFileTypeCheck(this)' name='" +name+params.index+ "' data-name='" +name+ "' class='mynyte-form-input mynyte-form-image-input"+isReq+removeableClass+"' type='file' "+maxLen+""+minLen+"/><span class='mynyte-image-input-images'></span></span>";
 		},
@@ -1014,65 +1014,80 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 						function readFile(a) {
 							var reader = new FileReader();
 
-								reader.readAsDataURL(elem.files[a]);
-								reader.onload = function (read) {
-								var imgTest = new Image();
+							reader.readAsDataURL(elem.files[a]);
+							reader.onload = function (read) {
+								var fileType = elem.files[a]["type"];
+								var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+								var imgTest;
+								
+								if ($.inArray(fileType, ValidImageTypes) < 0) {
+								    var fileRefContainer = $('<div class="img-outer-container"></div>');
+									var fileRefsContainer = $(elem).parent('span').find('.mynyte-image-input-images');
+									fileRefContainer.html(elem.files[a].name);
+									fileRefsContainer.html('');
+									fileRefsContainer.append(fileRefContainer);
 
-								function createRealImg (t) {
-									var imgOuterContainer = $('<div class="img-outer-container"></div>');
-									var imgContainer = $('<div class="img-container"></div>');
-									var imgInputContainer = $('<div class="img-input-container"></div>');
-									var img = $('<img />');
-									var imgsContainer = $(elem).parent('span').find('.mynyte-image-input-images');
-									img.attr('src', reader.result);
-									img.attr('style', 'margin-top: ' + t);
-
-									imgContainer.append(img);
-									imgOuterContainer.append(imgContainer);
-									//imgInputContainer.append($('<input class="img-container-alt mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Alternative Text (for SEO)"/>'));
-									//imgInputContainer.append($('<input class="img-container-title mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Title" />'));
-									imgOuterContainer.append(imgInputContainer);
-									imgsContainer.append(imgOuterContainer);
-
-									if (a < elem.files.length - 1) {
+								    if (a < elem.files.length - 1) {
 										readFile(a+1);
 									}
-									else {
-
-									}
 								}
+								else {
+									imgTest = new Image();
 
-								imgTest.onload = function() {
-									var w = this.width, h = this.height, t = ((((w-h)/w)*100)/2) + '%';
-									createRealImg(t);
-								};
+									function createRealImg (t) {
+										var imgOuterContainer = $('<div class="img-outer-container"></div>');
+										var imgContainer = $('<div class="img-container"></div>');
+										var imgInputContainer = $('<div class="img-input-container"></div>');
+										var img = $('<img />');
+										var imgsContainer = $(elem).parent('span').find('.mynyte-image-input-images');
+										img.attr('src', reader.result);
+										img.attr('style', 'margin-top: ' + t);
 
-								imgTest.src = reader.result;
-								};
-								reader.onerror = function (error) {
-									console.log('Error: ', error);
-								};
-							}
+										imgContainer.append(img);
+										imgOuterContainer.append(imgContainer);
+										//imgInputContainer.append($('<input class="img-container-alt mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Alternative Text (for SEO)"/>'));
+										//imgInputContainer.append($('<input class="img-container-title mynyte-form-input mynyte-form-text-input" type="text" placeholder="Image Title" />'));
+										imgOuterContainer.append(imgInputContainer);
+										imgsContainer.append(imgOuterContainer);
 
-							readFile(0);
+										if (a < elem.files.length - 1) {
+											readFile(a+1);
+										}
+									}
+
+									imgTest.onload = function() {
+										var w = this.width, h = this.height, t = ((((w-h)/w)*100)/2) + '%';
+										createRealImg(t);
+									};
+
+									imgTest.src = reader.result;
+								}
+							};
+							reader.onerror = function (error) {
+								console.log('Error: ', error);
+							};
+						}
+
+						readFile(0);
 					};
 
 					if (bif.formType == 'edit-item-form') {
 						MynyteApi.removeImage = MynyteApi.removeImage || function (elem) {
 							$('.mynyte-img-to-remove').removeClass('.mynyte-img-to-remove');
 							$(elem).addClass('mynyte-img-to-remove');
-							MynyteApi.imageToRemove = {'src': $(elem).data('src'), 'propName': $(elem).data('prop-name')};
+							MynyteApi.imageToRemove = {'src': $(elem).data('src'), 'prop': $(elem).data('prop'), 'propName': $(elem).data('prop-name'), 'imageType': $(elem).data('image-type')};
 							createPopup({'class': 'remove-image', 'iconClass': 'circle-o-notch fa-spin fa-4x'});
 							openPopup({'class': 'remove-image'});
 						};
 
 						MynyteApi.confirmRemoveImage = MynyteApi.confirmRemoveImage || function () {
 							var inputCont = $('.mynyte-img-to-remove').parents('.existing-img-container').parents('.input-container'),
-							lastExistingImg = inputCont.find('.existing-img-container').length == 1;
+							lastExistingImg = inputCont.find('.existing-img-container').length == 1,
+							inputType = MynyteApi.imageToRemove.imageType;
 							$('.mynyte-img-to-remove').parents('.existing-img-container').remove();
 
 							if (!!lastExistingImg) {
-								inputString = formFieldHTML({formType: null, fieldType: dataType, prop: modelProperties[prop], value: null, index: i2, maxIndex: maxIndex});
+								inputString = formFieldHTML({formType: null, fieldType: inputType, prop: MynyteApi.imageToRemove.prop, value: null, index: i2, maxIndex: maxIndex});
 								$(inputCont).append(inputString);
 							}
 							
@@ -1085,6 +1100,16 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 									metaValue: MynyteApi.imageToRemove.src
 								},
 								successCallback: function (params) {
+									var pageObjModel = MynyteApi.pageVars['Page Object'].Model;
+									for (var model in pageObjModel) {
+										if (pageObjModel[model].Name == MynyteApi.imageToRemove.propName && pageObjModel[model].Value.constructor === Array) {
+											pageObjModel[model].Value.splice(pageObjModel[model].Value.indexOf(MynyteApi.imageToRemove.src), 1);
+										}
+										else if (pageObjModel[model].Name == MynyteApi.imageToRemove.propName && pageObjModel[model].Value.constructor !== Array) {
+											pageObjModel[model].Value = "";
+										}
+									}
+
 									MynyteApi.imageToRemove = {};
 									closePopup({'class': 'remove-image'});
 								},
@@ -1101,7 +1126,6 @@ MynyteApi.scripts.formGeneralHTML = formGeneralHTML;
 						};
 					}
 
-					console.log(val, dataType, i2);
 					inputString = formFieldHTML({formType: bif.formType, fieldType: dataType, prop: modelProperties[prop], value: val, index: i2, maxIndex: maxIndex});
 				}
 
@@ -1448,29 +1472,6 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				}
 			;
 
-			dataConnect({
-				className: 'BusinessEntity', 
-				action: action, 
-				data: data,
-				successCallback: function (params) {
-					var successData = params.successData;
-					_newItemId = successData.item;
-					if (addOrUpdate == 'add') {
-						closePopup({'class': 'simple-loader'});
-						createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
-						openPopup({'class': 'business-item-success'});
-					}
-					else {
-						closePopup({'class': 'simple-loader'});
-						MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
-						location.reload();
-					}
-					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
-				},
-				errorCallback: function (errorData) {
-
-				}
-			});
 			internalDataFileConnect({
 				className: 'Image', 
 				action: 'uploadImage', 
@@ -1478,6 +1479,29 @@ function initialiseBusinessItemFormFunctionsAndEvents(thisBif) {
 				successCallback: function (params) {
 					var successData = params.successData;
 					//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
+					dataConnect({
+						className: 'BusinessEntity', 
+						action: action, 
+						data: data,
+						successCallback: function (params) {
+							var successData = params.successData;
+							_newItemId = successData.item;
+							if (addOrUpdate == 'add') {
+								closePopup({'class': 'simple-loader'});
+								createPopup({'class': 'business-item-success', 'itemName': 'Property', '_itemId': _newItemId, 'itemLink': 'new-property-admin.php?_itemId='});
+								openPopup({'class': 'business-item-success'});
+							}
+							else {
+								closePopup({'class': 'simple-loader'});
+								MynyteApi.editButtonClicked($('#mynyte-item-edit-button'));
+								location.reload();
+							}
+							//window.location.href = MynyteApi.pageVars['New Business Item Forms'][0]['onUploadCompleteUrl'];
+						},
+						errorCallback: function (errorData) {
+
+						}
+					});
 				},
 				errorCallback: function (errorData) {
 
