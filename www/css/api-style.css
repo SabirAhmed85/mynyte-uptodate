@@ -1190,8 +1190,10 @@ span.mynyte-label-detail {
 span.mynyte-label-detail.with-image {
     width: 100px;
     overflow: hidden;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc;    
+    line-height: 0;
     margin: 5px 0 10px 20px;
+
 }
 
 span.mynyte-label-detail.with-image img {

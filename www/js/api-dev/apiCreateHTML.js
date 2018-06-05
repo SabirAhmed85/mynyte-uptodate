@@ -63,7 +63,7 @@ function buttonsHtmlObj (params) {
 		},
 		'Edit': function () {
 			obj = {
-				html: "<div class='mynyte-form-field-container mynyte-button-container'><button id='mynyte-item-edit-button' class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
+				html: "<div class='mynyte-form-field-container mynyte-button-container button-container-border-bottom'><button id='mynyte-item-edit-button' class='mynyte-button-secondary mynyte-button' onclick='MynyteApi.editButtonClicked(this)'><span class='mynyte-button-inner-wrapper'><i class='fa fa-edit'></i><span>Edit</span></span></button></div>"
 			};
 		}
 	};
@@ -357,7 +357,7 @@ function formGeneralHTML(params) {
 		},
 		'formComplete': function () {
 			var text = (params.formType != 'edit-item-form') ? 'Add': 'Update';
-			htmlString += "<div class='mynyte-form-field-container mynyte-button-container'><button type='submit'>" + text + " Item</button></div>";
+			htmlString += "<div class='mynyte-form-field-container mynyte-button-container button-container-border-top'><button type='submit'>" + text + " Item</button></div>";
 			htmlString += "</form>";
 		}
 	};
