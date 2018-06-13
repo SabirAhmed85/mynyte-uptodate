@@ -29,7 +29,7 @@ function dataConnect (params) {
 	});
 }
 
-function internalDataConnect (params) {
+function internalDataFileConnect (params) {
 	var className = params.className;
 	var action = params.action;
 	var data = params.data || null;
@@ -39,11 +39,10 @@ function internalDataConnect (params) {
 
 	var actionPropsMap = {
 		uploadImage: {
-			type: "POST", cache: false, processData: false, async: false
+			type: "POST", cache: false, processData: false, async: true
 		}
 	};
-	console.log(params, MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl);
-	console.log(action);
+
 	$.ajax({
 		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
 		type: actionPropsMap[action].type,
@@ -54,6 +53,37 @@ function internalDataConnect (params) {
     	cache: actionPropsMap[action].type,
     	processData: actionPropsMap[action].processData,
     	contentType: false,
+		success: function (successData) {
+			successCallback({successData: successData, existingVars: existingVars});
+		},
+		error: function (jqxhr,status,errorData) {
+			errorCallback(errorData);
+		},
+		complete: function (data) {
+
+		}
+	});
+}
+
+function internalDataConnect (params) {
+	var className = params.className;
+	var action = params.action;
+	var data = params.data || null;
+	var existingVars = params.existingVars || null;
+	var successCallback = params.successCallback || function () {};
+	var errorCallback = params.errorCallback || function () {};
+
+	var actionPropsMap = {
+		removeImage: {
+			type: "POST"
+		}
+	};
+
+	$.ajax({
+		url: MynyteApi.pageVars['New Business Item Forms'][0].internalDataUrl+"/"+className+".php?action="+action,
+		type: actionPropsMap[action].type,
+		dataType: "json",
+		data: data,
 		success: function (successData) {
 			successCallback({successData: successData, existingVars: existingVars});
 		},

@@ -1630,7 +1630,7 @@ textarea {
     background: #171616;
 }
 
-#detailed-mainText .business-type-panel button {
+#detailed-mainText .business-type-panel span.btn-red {
     float: right;
     width: 205px;
     padding: 3px 0px;
@@ -1640,16 +1640,18 @@ textarea {
     border-radius: 0;
     margin: 0;
     border: none;
+    line-height: 1.42857;
 }
 
-#detailed-mainText .business-type-panel button i {
+#detailed-mainText .business-type-panel span.btn-red i {
     float: right;
     margin: -5px 23px 0 20px;
     font-size: 23px;
     font-weight: bold;
     color: #c7c7c7;
+    pointer-events: visible;
 }
-#detailed-mainText .business-type-panel button i.active {
+#detailed-mainText .business-type-panel span.btn-red i.active {
     color: #984F4F;
     text-shadow: 1px 1px 2px #333;
 }
@@ -10445,9 +10447,9 @@ location-lookup ul li span {
         -webkit-user-select: none;
         z-index: 0;
     }
-	
-	.left-side-display .display-item,
-	.right-side-display .display-item {
+    
+    .left-side-display .display-item,
+    .right-side-display .display-item {
         width: 100%;
     }
     

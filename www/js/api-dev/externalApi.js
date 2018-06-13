@@ -363,7 +363,11 @@ MynyteApi = function () {
 
 	function createSummary (params) {
 		var htmlDiv = params.elem,
-			bisd;
+			bisd,
+			itemPluralName = (params.businessEntityItemSubType.indexOf(params.businessEntityItemSubType.length - 1) == 'y') ? params.businessEntityItemSubType.substr(0, params.businessEntityItemSubType.length - 1) + 'ies': params.businessEntityItemType + 's';
+
+		createPopup({'class': 'simple-loader', 'iconClass': 'circle-o-notch fa-spin fa-4x', 'message': 'Loading ' + itemPluralName});
+		openPopup({'class': 'simple-loader', 'speed': 'fast'});
 		
 		MynyteApi.pageVars['Page Object'] = {};
 		MynyteApi.pageVars['Business Item Summary Displays'] = [];
@@ -373,6 +377,7 @@ MynyteApi = function () {
 			'businessEntityItemType': params.businessEntityItemType,
 			'businessEntityItemTypeLabel': params.businessEntityItemTypeLabel,
 			'businessEntityItemSubType': params.businessEntityItemSubType,
+			'_relatedViewModelId': params._relatedViewModelId,
 			'extraFiltersString': params.extraFiltersString,
 			'noItemsNote': params.noItemsNote || "You currently have 0 " + params.businessEntityItemSubType + "s.",
             'specialProps': params.specialProps,
@@ -394,7 +399,8 @@ MynyteApi = function () {
 			data: {
 				_businessId: bisd._businessId,
 				businessEntityItemType: bisd.businessEntityItemType,
-				extraFiltersString: bisd.extraFiltersString
+				extraFiltersString: bisd.extraFiltersString,
+				_relatedViewModelId: bisd._relatedViewModelId
 			},
 			successCallback: function (params) {
 				var viewType = 'Item Summary',
@@ -407,13 +413,15 @@ MynyteApi = function () {
 				MynyteApi.pageVars['Page Object']["Business Items"] = {};
 
                 if (successData.items != null && (bisd.htmlViewModelMethod != 'custom' || bisd.htmlViewModelScript == '')) {
-                    loopObjPropsToCompileObj({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'bisdIndex': 0});
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({items: successData.items});
+                    loopObjPropsToCompileObj({'format': 'default', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'objIndex': 0});
                 }
                 else if (successData.items != null && (bisd.htmlViewModelMethod == 'custom' && bisd.htmlViewModelScript != '')) {
-                	loopObjPropsToCompileObj({'format': 'custom', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'htmlViewModelParams': bisd.htmlViewModelParams, 'htmlViewModelScript': bisd.htmlViewModelScript, 'internalDataUrl': bisd.internalDataUrl, 'bisdIndex': 0});
+                	successData = (successData.items[0].vmIndex == null) ? successData: orderObjPropsByVMIndex({items: successData.items});
+                	loopObjPropsToCompileObj({'format': 'custom', 'viewType': viewType, '_businessId': _businessId, 'i': i, 'successData': successData, 'businessItems': businessItems, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'htmlViewModelParams': bisd.htmlViewModelParams, 'htmlViewModelScript': bisd.htmlViewModelScript, 'internalDataUrl': bisd.internalDataUrl, 'objIndex': 0});
                 }
                 else {
-                    prepareBusinessItemsView({'format': 'custom', 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'bisdIndex': 0});
+                    prepareBusinessItemsView({'format': 'custom', 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': $( "div.mynyte-business-items-summary"), 'objIndex': 0});
                 }
 			},
 			errorCallback: function (errorData) {
@@ -460,10 +468,27 @@ MynyteApi = function () {
 			onComplete();
 		}
 	}
+
+	function orderObjPropsByVMIndex (params) {
+		var items = params.items,
+			newItems;
+
+		function compare(a,b) {
+		  if (parseInt(a.vmIndex) < parseInt(b.vmIndex))
+		    return -1;
+		  if (parseInt(a.vmIndex) > parseInt(b.vmIndex))
+		    return 1;
+		  return 0;
+		}
+
+		items.sort(compare);
+
+		newItems = {'items': items};
+
+		return newItems;
+	}
 	
 	function loopObjPropsToCompileObj (params) {
-		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.bisdIndex];
-
 		var format = params.format,
 			viewType = params.viewType,
 			_businessId = params._businessId,
@@ -472,17 +497,25 @@ MynyteApi = function () {
 			businessItems = params.businessItems,
 			htmlString = params.htmlString,
 			htmlElem = params.htmlElem,
-			viewModelProps = bisd.viewModelProps || null,
 			thisItem = successData.items[i],
 			htmlViewModelParams = params.htmlViewModelParams,
 			htmlViewModelScript = params.htmlViewModelScript,
 			internalDataUrl = params.internalDataUrl;
-			
+
+		var obj = (params.viewType == 'Detail Display') ? MynyteApi.pageVars['Business Item Detail Displays'][params.objIndex] : MynyteApi.pageVars['Business Item Summary Displays'][params.objIndex];
+		var viewModelProps = obj.viewModelProps || null;
+
 		function nextItem () {
 			if (i == successData.items.length - 1) {
 				MynyteApi.pageVars['Page Object']["Business Items"] = businessItems;
-				
-				prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'bisdIndex': params.bisdIndex});
+				MynyteApi.pageVars['Page Object']["Inner Business Items"] = MynyteApi.pageVars['Page Object']["Inner Business Items"] || [];
+				if (params.innerBusinessItemType) {
+					MynyteApi.pageVars['Page Object']["Inner Business Items"][params.innerBusinessItemType] = businessItems;
+				}
+
+				if (viewType != null && viewType != 'Detail Display') {
+					prepareBusinessItemsView({'format': format, 'viewType': viewType, 'successData': successData, 'htmlString': htmlString, 'htmlElem': htmlElem, 'htmlViewModelParams': htmlViewModelParams, 'htmlViewModelScript': htmlViewModelScript, 'internalDataUrl': internalDataUrl, 'objIndex': params.objIndex});
+				}
 			}
 			else {
 				params.i += 1;
@@ -516,10 +549,12 @@ MynyteApi = function () {
 				},
 				thisItemId = thisItem._id,
 				thisItemMetaName = thisItem.metaName,
-				thisItemMetaNameFormatted = thisItem.metaName.replace(/-/g, "").replace("_", "").replace(" Id", ""),
-				firstStringPos = getPosition(thisItem.metaName, "-", 1),
-				lastStringPos = getPosition(thisItem.metaName, "-", 2),
-				thisItemPropertyName = thisItem.metaName.substring(firstStringPos + 1, lastStringPos);
+				thisItemMetaNameWithHyphen = thisItem.metaName.replace(" Id", "- Id").replace("_Related ", "_Related -"),
+				thisItemMetaNameFormatted = thisItemMetaNameWithHyphen.replace(/-/g, "").replace(/_/g, "").replace(" Id", ""),
+				firstStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 1),
+				lastStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 2),
+				thisItemPropertyName = thisItemMetaNameWithHyphen.substring(firstStringPos + 1, lastStringPos),
+				specialProps = JSON.parse(MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps);
 			
 			dataConnect({
 				existingVars: {"thisItemId": thisItemId, "thisItemMetaName": thisItemMetaName,
@@ -531,12 +566,12 @@ MynyteApi = function () {
 					_businessEntityItemId: thisItem.metaValue
 				},
 				successCallback: function (success) {
-					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName]) {
+					if (MynyteApi.pageVars['Business Item Summary Displays'] && MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps && specialProps[thisItemPropertyName]) {
 						var counter = 0;
 						businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] = "";
 
 						for (var z = 0; z < success.successData.items.length; z++) {
-							if (MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
+							if (specialProps[thisItemPropertyName].indexOf(success.successData.items[z].metaName) > -1) {
 								if (counter > 0) {
 									businessItems[success.existingVars.thisItemId][success.existingVars.thisItemMetaNameFormatted] += " - ";
 								}
@@ -573,7 +608,7 @@ MynyteApi = function () {
 	}
 	
 	function prepareBusinessItemsView (params) {
-		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.bisdIndex];
+		var bisd = MynyteApi.pageVars['Business Item Summary Displays'][params.objIndex];
 
 		var format = params.format,
 			viewType = params.viewType,
@@ -596,8 +631,26 @@ MynyteApi = function () {
 		lastItemIndex = ((currentPage*pageItemLimit) < businessItems.length) ? (currentPage*pageItemLimit) : businessItems.length;
 
 		if (!!pagerEnabled) {
+			if (window.location.href.indexOf("?") == -1) {
+				var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=1';
+				window.history.pushState({ path: newurl }, '', newurl);
+			}
+
 			MynyteApi.changeBusinessItemsCurrentPage = function (select) {
-				console.log($(select).val());
+				var pageNum = $(select).val().replace("page_", "");
+				var oldPage, newSearch;
+
+				function getParameterByName(name) {
+				    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				    results = regex.exec(location.search);
+				    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+
+				oldPage = getParameterByName('page');
+				newSearch = window.location.search.replace('?page='+oldPage, '?page='+pageNum);
+				newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + newSearch;
+				window.history.pushState({ path: newurl }, '', newurl);
 				$(bisd.elem).empty();
 				MynyteApi.createSummary({
 					'elem': bisd.elem,
@@ -613,7 +666,7 @@ MynyteApi = function () {
 					'dataLink': bisd.dataLink,
 					'noItemsNote': bisd.noItemsNote,
 					'pageItemLimit': bisd.pageItemLimit,
-					'currentPage': $(select).val().replace("page_", "")
+					'currentPage': pageNum
 				});
 			}
 
@@ -626,13 +679,12 @@ MynyteApi = function () {
 		}
 			
 		if (successData.items != null && format == 'default') {
-			console.log(firstItemIndex, lastItemIndex);
 			for (var ind = firstItemIndex; ind < lastItemIndex; ind++) {
 				htmlString += businessItemsSummaryItemHTML({element: 'itemStart', item: businessItems[ind], view: viewType});
 
 				for (var prop in businessItems[ind]) {
 					if (prop != "Arrays" && prop != '_itemId') {
-						htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop});
+						htmlString += businessItemsSummaryItemHTML({element: 'nonArrayProp', item: businessItems[ind], prop: prop, internalDataUrl: bisd.internalDataUrl});
 					} else if (prop != '_itemId') {
 						for (var prop2 in businessItems[ind][prop]) {
 							htmlString += businessItemsSummaryItemHTML({element: 'arrayProp', item: businessItems[ind], prop: prop, prop2: prop2});
@@ -651,6 +703,7 @@ MynyteApi = function () {
 				
 				if (ind == lastItemIndex - 1 && viewType == 'Item Summary') {
 					htmlElem.append(htmlString).css({'display': 'block'});
+					closePopup({'class': 'simple-loader'});
 				}
 				else if (ind == lastItemIndex - 1 && viewType == 'Dropdown Selection') {
 					htmlElem.append(htmlString);
@@ -669,6 +722,7 @@ MynyteApi = function () {
 					items: businessItems,
 					onComplete: function (html) {
 						htmlElem.append(html).css({'display': 'block'});
+						closePopup({'class': 'simple-loader'});
 					},
 					internalDataUrl: internalDataUrl,
 					extraParams: htmlViewModelParams,
@@ -685,6 +739,7 @@ MynyteApi = function () {
 			
 			if (viewType == 'Item Summary') {
 				htmlElem.append(htmlString).css({'display': 'block'});
+				closePopup({'class': 'simple-loader'});
 			}
 			else if (viewType == 'Dropdown Selection') {
 				htmlElem.append(htmlString);

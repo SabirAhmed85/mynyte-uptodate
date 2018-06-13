@@ -12,13 +12,15 @@ var current_environment_root_prefix = (current_environment == 'localhost' && loc
 	(typeof(local_root_prefix) !== 'undefined') ? local_root_prefix : "localhost/": 
 	"https://www.mynyte.co.uk";
 var _bid = mynyte_business_id;
-console.log(_bid);
+
 current_environment_page_url = (current_environment == 'staging') ? "staging/": "";
 current_environment_file_url = (current_environment == 'localhost') ? "": current_environment + "/";
 current_db_environment_file_url = (current_environment == 'localhost') ? "": current_db_environment + "/";
 
 MynyteApi.scripts = {};
-MynyteApi.pageVars = {};
+MynyteApi.pageVars = {
+	_businessId: _bid
+};
 MynyteApi.pageVars.Globals = {
 	'Mynyte': {
 		'main-logo': 'https://www.mynyte.co.uk/sneak-preview/img/logo.png',

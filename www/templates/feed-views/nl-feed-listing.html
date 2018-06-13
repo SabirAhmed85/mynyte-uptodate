@@ -29,7 +29,7 @@
                       ng-class="{'person': listing.listingType == 'Person'}">
                         <div class="header-panel">
                               <span class="business-type-panel">
-                                <button class="btn-red btn"
+                                <span class="btn-red btn"
                                   ng-if="listing.listingType != 'Person' && (rootScope.user.isBusiness == '0' || !rootScope.userLoggedIn)">
                                     <!--<i class="ion-ios-people"
                                       ng-click="shareListing($event, listing);"></i>-->
@@ -41,7 +41,7 @@
                                         ng-if="rootScope.userLoggedIn"
                                         ng-class="{'active': listing.like == '3'}"
                                         ng-click="attemptToLikeOrFollowListing('Like', listing, $event);"></i>
-                                </button>
+                                </span>
                               </span>
                               <span class="title-panel">
                                 <span id="listing-date-details"
