@@ -1633,7 +1633,7 @@ textarea {
 #detailed-mainText .business-type-panel span.btn-red {
     float: right;
     width: 205px;
-    padding: 3px 0px;
+    padding: 5px 0px;
     font-size: 12px;
     height: 30px;
     background-color: #171616;
@@ -1645,7 +1645,7 @@ textarea {
 
 #detailed-mainText .business-type-panel span.btn-red i {
     float: right;
-    margin: -5px 23px 0 20px;
+    margin: -8px 23px 0 20px;
     font-size: 23px;
     font-weight: bold;
     color: #c7c7c7;
@@ -9280,6 +9280,7 @@ location-lookup ul li span {
     }
     .main-visual-image-display {
         max-height: 200px !important;
+        width: 100%;
     }
 
     #searchBox {
