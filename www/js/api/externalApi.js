@@ -2484,7 +2484,7 @@ MynyteApi.itemViewObjectInit = itemViewObjectInit;
 				firstStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 1),
 				lastStringPos = getPosition(thisItemMetaNameWithHyphen, "-", 2),
 				thisItemPropertyName = thisItemMetaNameWithHyphen.substring(firstStringPos + 1, lastStringPos),
-				specialProps = JSON.parse(MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps);
+				specialProps = JSON.parse(MynyteApi.pageVars['Business Item Summary Displays'][0].specialProps || '[]');
 			
 			dataConnect({
 				existingVars: {"thisItemId": thisItemId, "thisItemMetaName": thisItemMetaName,
